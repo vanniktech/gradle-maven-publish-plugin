@@ -1,0 +1,116 @@
+buildscript {
+  ext.kotlinVersion = '1.2.41'
+
+  repositories {
+    mavenCentral()
+    google()
+    gradlePluginPortal()
+  }
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    classpath 'com.gradle.publish:plugin-publish-plugin:0.9.10'
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
+    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.10.0'
+    classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.11.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.1.0'
+  }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'kotlin'
+apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'com.vanniktech.code.quality.tools'
+apply plugin: 'com.vanniktech.android.junit.jacoco'
+apply plugin: 'com.gradle.plugin-publish'
+apply plugin: "com.vanniktech.maven.publish"
+
+// Workaround for having both Groovy + Kotlin.
+compileGroovy {
+  dependsOn tasks.getByPath('compileKotlin')
+  classpath += files(compileKotlin.destinationDir)
+}
+
+codeQualityTools {
+  ktlint {
+    toolVersion = '0.23.1'
+  }
+  detekt {
+    toolVersion = '1.0.0.RC7'
+  }
+  findbugs {
+    enabled = false
+  }
+  pmd {
+    enabled = false
+  }
+  checkstyle {
+    enabled = false
+  }
+  cpd {
+    enabled = false
+  }
+  errorProne {
+    enabled = false
+  }
+}
+
+gradlePlugin {
+  plugins {
+    mavenPublishPlugin {
+      id = 'com.vanniktech.maven.publish'
+      implementationClass = 'com.vanniktech.maven.publish.MavenPublishPlugin'
+    }
+  }
+}
+
+repositories {
+  mavenCentral()
+  google()
+  jcenter()
+}
+
+dependencies {
+  implementation localGroovy()
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  implementation gradleApi()
+
+  testImplementation 'junit:junit:4.12'
+  testImplementation 'org.assertj:assertj-core:3.10.0'
+  testImplementation 'com.android.tools.build:gradle:3.1.2'
+  testImplementation 'com.github.stefanbirkner:system-rules:1.17.2'
+  testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+  testImplementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+
+pluginBundle {
+  website = POM_URL
+  vcsUrl = POM_SCM_URL
+
+  plugins {
+    codeQualityTools {
+      id = 'com.vanniktech.maven.publish'
+      displayName = POM_NAME
+      tags = ['gradle', 'android', 'kotlin', 'maven', 'publish', 'library']
+      description = POM_DESCRIPTION
+    }
+  }
+}
+
+tasks.withType(Test) {
+  testLogging {
+    events "failed"
+    exceptionFormat "full"
+    showExceptions true
+    showStackTraces true
+    showCauses true
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.6'
+  distributionType = Wrapper.DistributionType.ALL
+}

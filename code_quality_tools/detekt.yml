@@ -1,0 +1,19 @@
+failFast: true
+
+potential-bugs:
+  UnsafeCast:
+    active: false # We know what we're doing.
+  LateinitUsage:
+    active: false # We know what we're doing.
+
+style:
+  TopLevelPropertyNaming:
+    active: false
+  MaxLineLength:
+    active: false
+
+comments:
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicFunction:
+    active: false
