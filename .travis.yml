@@ -1,16 +1,17 @@
-language: groovy
+language: android
 
-groovy:
-  - 2.3.6
-  - 2.3.9
-
-jdk:
-  - oraclejdk8
+jdk: oraclejdk8
 
 before_install:
   - pip install --user codecov
-
-install: true
+  # Download SDK
+  - yes | sdkmanager "tools" &>/dev/null
+  - yes | sdkmanager "platform-tools" &>/dev/null
+  - yes | sdkmanager "build-tools;27.0.3" &>/dev/null
+  - yes | sdkmanager "platforms;android-27" &>/dev/null
+  # Update remaining dependencies and accept licenses
+  - yes | sdkmanager --update &>/dev/null
+  - yes | sdkmanager --licenses &>/dev/null
 
 script: ./gradlew clean build
 
@@ -32,7 +33,11 @@ notifications:
 
 sudo: false
 
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle
-    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache

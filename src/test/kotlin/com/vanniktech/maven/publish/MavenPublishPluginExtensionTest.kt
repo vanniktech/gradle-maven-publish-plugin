@@ -3,6 +3,7 @@ package com.vanniktech.maven.publish
 import org.assertj.core.api.Java6Assertions.assertThat
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,6 +32,7 @@ class MavenPublishPluginExtensionTest {
   }
 
   @Test fun defaultRepositoryUsernameNothing() {
+    assumeTrue(System.getenv("TRAVIS") != "true") // Do not run on travis since we inject the same values.
     assertThat(MavenPublishPluginExtension(project).repositoryUsername).isNull()
   }
 
@@ -40,6 +42,7 @@ class MavenPublishPluginExtensionTest {
   }
 
   @Test fun defaultRepositoryPasswordNothing() {
+    assumeTrue(System.getenv("TRAVIS") != "true") // Do not run on travis since we inject the same values.
     assertThat(MavenPublishPluginExtension(project).repositoryPassword).isNull()
   }
 }
