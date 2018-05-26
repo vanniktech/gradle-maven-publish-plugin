@@ -12,7 +12,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.1.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.2.0'
   }
 }
 
