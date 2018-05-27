@@ -58,7 +58,7 @@ class MavenPublishPluginTest {
 
     val manifestFile = File(project.projectDir, "src/main/AndroidManifest.xml")
     manifestFile.parentFile.mkdirs()
-    manifestFile.writeText("""<manifest package="com.foo.bar"/>""".trimIndent())
+    manifestFile.writeText("""<manifest package="com.foo.bar"/>""")
   }
 
   // This does not assert anything but it's a good start.

@@ -3,7 +3,6 @@ language: android
 jdk: oraclejdk8
 
 before_install:
-  - pip install --user codecov
   # Download SDK
   - yes | sdkmanager "tools" &>/dev/null
   - yes | sdkmanager "platform-tools" &>/dev/null
@@ -16,7 +15,7 @@ before_install:
 script: ./gradlew clean build
 
 after_success:
-  - codecov
+  - bash <(curl -s https://codecov.io/bash)
   - .buildscript/deploy_snapshot.sh
 
 env:
