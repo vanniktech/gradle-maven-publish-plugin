@@ -1,14 +1,13 @@
 package com.vanniktech.maven.publish
 
-import org.gradle.api.JavaVersion
 import org.gradle.api.GradleException
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
-import com.vanniktech.maven.publish.MavenPublishPluginExtension
 import org.gradle.plugins.signing.SigningPlugin
 
 class MavenPublishPlugin implements Plugin<Project> {
@@ -127,6 +126,13 @@ class MavenPublishPlugin implements Plugin<Project> {
           archives project.androidJavadocsJar
         }
       } else {
+        if (plugins.hasPlugin('groovy')) {
+          project.tasks.create("groovydocJar", Jar.class) {
+            classifier = 'groovydoc'
+            from project.groovydoc.destinationDir
+          }.dependsOn("groovydoc")
+        }
+
         project.tasks.create("sourcesJar", Jar.class) {
           classifier = 'sources'
           from project.sourceSets.main.allSource
@@ -138,8 +144,14 @@ class MavenPublishPlugin implements Plugin<Project> {
         }.dependsOn("javadoc")
 
         project.artifacts {
-          archives project.sourcesJar
+          archives project.jar
           archives project.javadocsJar
+
+          if (plugins.hasPlugin('groovy')) {
+            archives project.groovydocJar
+          }
+
+          archives project.sourcesJar
         }
       }
 
