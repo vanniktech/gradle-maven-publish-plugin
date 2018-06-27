@@ -12,14 +12,14 @@ open class MavenPublishPluginExtension(project: Project) {
    * This defaults to the sonatypes url.
    * @since 0.1.0
    */
-  var releaseRepositoryUrl: String = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+  var releaseRepositoryUrl: String = project.findProperty("RELEASE_REPOSITORY_URL") as String? ?: System.getenv("RELEASE_REPOSITORY_URL") ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 
   /**
    * The snapshot repository url this should be published to.
    * This defaults to the sonatypes url.
    * @since 0.1.0
    */
-  var snapshotRepositoryUrl: String = "https://oss.sonatype.org/content/repositories/snapshots/"
+  var snapshotRepositoryUrl: String = project.findProperty("SNAPSHOT_REPOSITORY_URL") as String? ?: System.getenv("SNAPSHOT_REPOSITORY_URL") ?: "https://oss.sonatype.org/content/repositories/snapshots/"
 
   /**
    * The username that should be used for publishing.

@@ -26,6 +26,16 @@ class MavenPublishPluginExtensionTest {
     assertThat(MavenPublishPluginExtension(project).snapshotRepositoryUrl).isEqualTo("https://oss.sonatype.org/content/repositories/snapshots/")
   }
 
+  @Test fun defaultReleaseRepositoryUrlEnvironmentVariable() {
+    environmentVariables.set("RELEASE_REPOSITORY_URL", "https://releases.fake/")
+    assertThat(MavenPublishPluginExtension(project).releaseRepositoryUrl).isEqualTo("https://releases.fake/")
+  }
+
+  @Test fun defaultSnapshotRepositoryUrlEnvironmentVariable() {
+    environmentVariables.set("SNAPSHOT_REPOSITORY_URL", "https://snapshots.fake/")
+    assertThat(MavenPublishPluginExtension(project).snapshotRepositoryUrl).isEqualTo("https://snapshots.fake/")
+  }
+
   @Test fun defaultRepositoryUsernameEnvironmentVariable() {
     environmentVariables.set("SONATYPE_NEXUS_USERNAME", "env")
     assertThat(MavenPublishPluginExtension(project).repositoryUsername).isEqualTo("env")

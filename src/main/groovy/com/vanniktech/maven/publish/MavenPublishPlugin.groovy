@@ -24,16 +24,6 @@ class MavenPublishPlugin implements Plugin<Project> {
 
     p.afterEvaluate { project ->
       project.uploadArchives {
-        doFirst {
-          if (extension.repositoryUsername == null) {
-            throw new GradleException("Please configure repositoryUsername via mavenPublish.repositoryUsername or alternatively set the Gradle / System environment variable SONATYPE_NEXUS_USERNAME")
-          }
-
-          if (extension.repositoryPassword == null) {
-            throw new GradleException("Please configure repositoryPassword via mavenPublish.repositoryPassword or alternatively set the Gradle / System environment variable SONATYPE_NEXUS_PASSWORD")
-          }
-        }
-
         repositories {
           mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> project.signing.signPom(deployment) }
@@ -41,6 +31,14 @@ class MavenPublishPlugin implements Plugin<Project> {
             pom.groupId = project.findProperty("GROUP")
             pom.artifactId = project.findProperty("POM_ARTIFACT_ID")
             pom.version = project.findProperty("VERSION_NAME")
+
+            if (extension.repositoryUsername == null) {
+              throw new GradleException("Please configure repositoryUsername via mavenPublish.repositoryUsername or alternatively set the Gradle / System environment variable SONATYPE_NEXUS_USERNAME")
+            }
+
+            if (extension.repositoryPassword == null) {
+              throw new GradleException("Please configure repositoryPassword via mavenPublish.repositoryPassword or alternatively set the Gradle / System environment variable SONATYPE_NEXUS_PASSWORD")
+            }
 
             repository(url: extension.releaseRepositoryUrl) {
               authentication(userName: extension.repositoryUsername, password: extension.repositoryPassword)
