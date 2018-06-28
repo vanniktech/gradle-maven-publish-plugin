@@ -9,14 +9,14 @@ import org.gradle.api.Project
 open class MavenPublishPluginExtension(project: Project) {
   /**
    * The release repository url this should be published to.
-   * This defaults to the sonatypes url.
+   * This defaults to either the RELEASE_REPOSITORY_URL Gradle property, the system environment variable or the snapshot url.
    * @since 0.1.0
    */
   var releaseRepositoryUrl: String = project.findProperty("RELEASE_REPOSITORY_URL") as String? ?: System.getenv("RELEASE_REPOSITORY_URL") ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 
   /**
    * The snapshot repository url this should be published to.
-   * This defaults to the sonatypes url.
+   * This defaults to either the SNAPSHOT_REPOSITORY_URL Gradle property, the system environment variable or the snapshot sonatype url.
    * @since 0.1.0
    */
   var snapshotRepositoryUrl: String = project.findProperty("SNAPSHOT_REPOSITORY_URL") as String? ?: System.getenv("SNAPSHOT_REPOSITORY_URL") ?: "https://oss.sonatype.org/content/repositories/snapshots/"
