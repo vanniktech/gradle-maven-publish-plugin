@@ -26,7 +26,7 @@ Information: [This plugin is also available on Gradle plugins](https://plugins.g
 Can be found [here](https://oss.sonatype.org/#nexus-search;quick~gradle-maven-publish-plugin). Current one is:
 
 ```groovy
-classpath 'com.vanniktech:gradle-maven-publish-plugin:0.4.0-SNAPSHOT'
+classpath 'com.vanniktech:gradle-maven-publish-plugin:0.5.0-SNAPSHOT'
 ```
 
 ## Configuration
