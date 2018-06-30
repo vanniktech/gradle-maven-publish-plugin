@@ -1,7 +1,9 @@
 # Change Log
 
-Version 0.4.0 *(In development)*
---------------------------------
+Version 0.4.0 *(2018-06-30)*
+----------------------------
+
+- Remove checks for username and password. [\#12](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/12) ([vanniktech](https://github.com/vanniktech))
 
 Version 0.3.0 *(2018-06-29)*
 ----------------------------
