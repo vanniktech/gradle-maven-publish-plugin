@@ -46,7 +46,7 @@ Once you've configured this you and defined the typical pom attributes via Gradl
 
 # Sample
 
-This Gradle plugin is using itself to publish any of the updates. It applies a previously released version in the build.gradle just as mentioned above and sets the Grale properties in this [gradle.properties](gradle.properties).
+This Gradle plugin is using itself to publish any of the updates. It applies a previously released version in the build.gradle just as mentioned above and sets the Gradle properties in this [gradle.properties](gradle.properties).
 
 # License
 
