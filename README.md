@@ -42,7 +42,7 @@ mavenPublish {
 }
 ```
 
-Once you've configured this you and defined the typical pom attributes via Gradle properties you can upload your library using the `uploadArchives` task.
+Once you've configured this and defined the typical pom attributes via Gradle properties you can upload your library using the `uploadArchives` task.
 
 # Sample
 
