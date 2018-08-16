@@ -1,7 +1,12 @@
 # Change Log
 
-Version 0.5.0 *(In development)*
---------------------------------
+Version 0.5.0 *(2018-08-16)*
+----------------------------
+
+- Add installArchives task to allow installing android library projects to local maven. [\#17](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/17) ([vanniktech](https://github.com/vanniktech))
+- Fix a typo in README [\#16](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/16) ([Egorand](https://github.com/Egorand))
+- Fix typo in README.md [\#15](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/15) ([egor-n](https://github.com/egor-n))
+- fix README not actually setting properties [\#14](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/14) ([gabrielittner](https://github.com/gabrielittner))
 
 Version 0.4.0 *(2018-06-30)*
 ----------------------------
