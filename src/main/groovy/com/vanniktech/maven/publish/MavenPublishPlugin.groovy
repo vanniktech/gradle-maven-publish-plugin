@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.plugins.MavenPlugin
+import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.plugins.signing.SigningPlugin
@@ -148,6 +149,17 @@ class MavenPublishPlugin implements Plugin<Project> {
         project.allprojects {
           tasks.withType(Javadoc) {
             options.addStringOption('Xdoclint:none', '-quiet')
+          }
+        }
+      }
+
+      project.tasks.create("installArchives", Upload) {
+        description = "Installs the artifacts to the local Maven repository."
+        group = "upload"
+        configuration = project.configurations['archives']
+        repositories {
+          mavenDeployer {
+            repository url: project.repositories.mavenLocal().url
           }
         }
       }

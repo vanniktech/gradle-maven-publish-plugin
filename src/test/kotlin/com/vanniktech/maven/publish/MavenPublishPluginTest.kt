@@ -9,6 +9,7 @@ import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.MavenPlugin
+import org.gradle.api.tasks.Upload
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
@@ -86,8 +87,13 @@ class MavenPublishPluginTest {
     assertThat(project.group).isNotNull()
     assertThat(project.version).isNotNull()
 
-    val task = project.tasks.getByName("uploadArchives")
-    assertThat(task.description).isEqualTo("Uploads all artifacts belonging to configuration ':archives'")
-    assertThat(task.group).isEqualTo("upload")
+    val uploadArchives = project.tasks.getByName("uploadArchives")
+    assertThat(uploadArchives.description).isEqualTo("Uploads all artifacts belonging to configuration ':archives'")
+    assertThat(uploadArchives.group).isEqualTo("upload")
+
+    val installArchives = project.tasks.getByName("installArchives") as Upload
+    assertThat(installArchives.description).isEqualTo("Installs the artifacts to the local Maven repository.")
+    assertThat(installArchives.group).isEqualTo("upload")
+    assertThat(installArchives.configuration).isEqualTo(project.configurations.getByName("archives"))
   }
 }
