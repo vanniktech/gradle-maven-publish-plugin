@@ -9,7 +9,7 @@ buildscript {
 
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    classpath 'com.gradle.publish:plugin-publish-plugin:0.9.10'
+    classpath 'com.gradle.publish:plugin-publish-plugin:0.10.0'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
     classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.10.0'
     classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.11.0'
@@ -92,8 +92,7 @@ pluginBundle {
   vcsUrl = POM_SCM_URL
 
   plugins {
-    codeQualityTools {
-      id = 'com.vanniktech.maven.publish'
+    mavenPublishPlugin {
       displayName = POM_NAME
       tags = ['gradle', 'android', 'kotlin', 'maven', 'publish', 'library']
       description = POM_DESCRIPTION
