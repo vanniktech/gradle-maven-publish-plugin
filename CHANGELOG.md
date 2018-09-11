@@ -1,7 +1,10 @@
 # Change Log
 
-Version 0.6.0 *(In development)*
---------------------------------
+Version 0.6.0 *(2018-09-11)*
+----------------------------
+
+- Configure pom of installArchives task. [\#20](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/20) ([gabrielittner](https://github.com/gabrielittner))
+- Update Plugin Publish Plugin to 0.10.0 [\#19](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/19) ([vanniktech](https://github.com/vanniktech))
 
 Version 0.5.0 *(2018-08-16)*
 ----------------------------
