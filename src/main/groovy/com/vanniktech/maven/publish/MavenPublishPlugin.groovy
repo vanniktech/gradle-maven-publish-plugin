@@ -4,6 +4,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.maven.MavenDeployment
+import org.gradle.api.artifacts.maven.MavenPom
 import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.Jar
@@ -28,10 +29,6 @@ class MavenPublishPlugin implements Plugin<Project> {
           mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> project.signing.signPom(deployment) }
 
-            pom.groupId = project.findProperty("GROUP")
-            pom.artifactId = project.findProperty("POM_ARTIFACT_ID")
-            pom.version = project.findProperty("VERSION_NAME")
-
             repository(url: extension.releaseRepositoryUrl) {
               authentication(userName: extension.repositoryUsername, password: extension.repositoryPassword)
             }
@@ -40,33 +37,7 @@ class MavenPublishPlugin implements Plugin<Project> {
               authentication(userName: extension.repositoryUsername, password: extension.repositoryPassword)
             }
 
-            pom.project {
-              name project.findProperty("POM_NAME")
-              packaging project.findProperty("POM_PACKAGING")
-              description project.findProperty("POM_DESCRIPTION")
-              url project.findProperty("POM_URL")
-
-              scm {
-                url project.findProperty("POM_SCM_URL")
-                connection project.findProperty("POM_SCM_CONNECTION")
-                developerConnection project.findProperty("POM_SCM_DEV_CONNECTION")
-              }
-
-              licenses {
-                license {
-                  name project.findProperty("POM_LICENCE_NAME")
-                  url project.findProperty("POM_LICENCE_URL")
-                  distribution project.findProperty("POM_LICENCE_DIST")
-                }
-              }
-
-              developers {
-                developer {
-                  id project.findProperty("POM_DEVELOPER_ID")
-                  name project.findProperty("POM_DEVELOPER_NAME")
-                }
-              }
-            }
+            configurePom(p, pom)
           }
         }
       }
@@ -160,7 +131,43 @@ class MavenPublishPlugin implements Plugin<Project> {
         repositories {
           mavenDeployer {
             repository url: project.repositories.mavenLocal().url
+
+            configurePom(p, pom)
           }
+        }
+      }
+    }
+  }
+
+  private void configurePom(Project project, MavenPom pom) {
+    pom.groupId = project.findProperty("GROUP")
+    pom.artifactId = project.findProperty("POM_ARTIFACT_ID")
+    pom.version = project.findProperty("VERSION_NAME")
+
+    pom.project {
+      name project.findProperty("POM_NAME")
+      packaging project.findProperty("POM_PACKAGING")
+      description project.findProperty("POM_DESCRIPTION")
+      url project.findProperty("POM_URL")
+
+      scm {
+        url project.findProperty("POM_SCM_URL")
+        connection project.findProperty("POM_SCM_CONNECTION")
+        developerConnection project.findProperty("POM_SCM_DEV_CONNECTION")
+      }
+
+      licenses {
+        license {
+          name project.findProperty("POM_LICENCE_NAME")
+          url project.findProperty("POM_LICENCE_URL")
+          distribution project.findProperty("POM_LICENCE_DIST")
+        }
+      }
+
+      developers {
+        developer {
+          id project.findProperty("POM_DEVELOPER_ID")
+          name project.findProperty("POM_DEVELOPER_NAME")
         }
       }
     }
