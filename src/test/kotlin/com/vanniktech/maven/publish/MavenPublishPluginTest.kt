@@ -77,8 +77,8 @@ class MavenPublishPluginTest {
     project.plugins.apply(MavenPublishPlugin::class.java)
 
     val extension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
-    extension.repositoryUsername = "bar"
-    extension.repositoryPassword = "foo"
+    extension.targets.getByName("uploadArchives").repositoryUsername = "bar"
+    extension.targets.getByName("uploadArchives").repositoryPassword = "foo"
 
     (project as DefaultProject).evaluate()
 
