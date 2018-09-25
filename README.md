@@ -35,10 +35,14 @@ Those are all the available configurations - shown with default values and their
 
 ```groovy
 mavenPublish {
-  releaseRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-  snapshotRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-  repositoryUsername = null // This defaults to either the SONATYPE_NEXUS_USERNAME Gradle property or the system environment variable.
-  repositoryPassword = null // This defaults to either the SONATYPE_NEXUS_PASSWORD Gradle property or the system environment variable.
+  targets {
+    uploadArchives {
+      releaseRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      snapshotRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+      repositoryUsername = null // This defaults to either the SONATYPE_NEXUS_USERNAME Gradle property or the system environment variable.
+      repositoryPassword = null // This defaults to either the SONATYPE_NEXUS_PASSWORD Gradle property or the system environment variable.
+    }
+  }
 }
 ```
 
