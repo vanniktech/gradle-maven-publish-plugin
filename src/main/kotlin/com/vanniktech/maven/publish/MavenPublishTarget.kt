@@ -6,7 +6,7 @@ data class MavenPublishTarget(
    * The release repository url this should be published to.
    * @since 0.7.0
    */
-  var releaseRepositoryUrl: String,
+  var releaseRepositoryUrl: String? = null,
 
   /**
    * The snapshot repository url this should be published to.

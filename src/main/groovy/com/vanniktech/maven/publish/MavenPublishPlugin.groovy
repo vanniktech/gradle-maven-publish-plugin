@@ -27,6 +27,10 @@ class MavenPublishPlugin implements Plugin<Project> {
 
     p.afterEvaluate { Project project ->
       extension.targets.each { target ->
+        if (target.releaseRepositoryUrl == null) {
+          throw new IllegalStateException("The release repository url of ${target.name} is null or not set")
+        }
+
         Upload upload = getUploadTask(project, target.name)
         configureMavenDeployer(project, upload, target)
       }

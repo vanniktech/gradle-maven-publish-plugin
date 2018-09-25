@@ -27,7 +27,7 @@ open class MavenPublishPluginExtension(project: Project) {
    * This defaults to either the RELEASE_REPOSITORY_URL Gradle property, the system environment variable or the sonatype url.
    * @since 0.1.0
    */
-  var releaseRepositoryUrl: String
+  var releaseRepositoryUrl: String?
     get() = defaultTarget.releaseRepositoryUrl
     set(value) { defaultTarget.releaseRepositoryUrl = value }
 
@@ -63,7 +63,7 @@ open class MavenPublishPluginExtension(project: Project) {
    * @since 0.7.0
    */
   val targets: NamedDomainObjectContainer<MavenPublishTarget> =
-    project.container(MavenPublishTarget::class.java) { MavenPublishTarget(it, "") }.apply {
+    project.container(MavenPublishTarget::class.java) { MavenPublishTarget(it) }.apply {
       add(defaultTarget)
       add(localTarget)
     }
