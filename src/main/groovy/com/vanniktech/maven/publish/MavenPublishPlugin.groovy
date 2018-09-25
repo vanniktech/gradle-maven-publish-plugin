@@ -14,7 +14,7 @@ import org.gradle.plugins.signing.SigningPlugin
 
 class MavenPublishPlugin implements Plugin<Project> {
   @Override void apply(final Project p) {
-    p.extensions.create('mavenPublish', MavenPublishPluginExtension.class, p)
+    def extension = p.extensions.create('mavenPublish', MavenPublishPluginExtension.class, p)
     def extraRepos = p.extensions.create('mavenRepositories', MavenPublishRepositories.class)
 
     p.plugins.apply(MavenPlugin)
@@ -23,29 +23,11 @@ class MavenPublishPlugin implements Plugin<Project> {
     p.group = p.findProperty("GROUP")
     p.version = p.findProperty("VERSION_NAME")
 
-    def extension = p.mavenPublish
-
-    p.afterEvaluate { project ->
-      project.uploadArchives {
-        repositories {
-          mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> project.signing.signPom(deployment) }
-
-            repository(url: extension.releaseRepositoryUrl) {
-              authentication(userName: extension.repositoryUsername, password: extension.repositoryPassword)
-            }
-
-            snapshotRepository(url: extension.snapshotRepositoryUrl) {
-              authentication(userName: extension.repositoryUsername, password: extension.repositoryPassword)
-            }
-
-            configurePom(p, pom)
-          }
-        }
-      }
+    p.afterEvaluate { Project project ->
+      configureMavenDeployer(project, (Upload) project.uploadArchives, extension.defaultTarget)
 
       extraRepos.map.each { key, value ->
-        def taskName = "upload" + key.capitalize()
+        def taskName = "uploadArchives" + key.capitalize()
         project.logger.debug("Creating $taskName to upload to ${value.releaseRepositoryUrl} / ${value.snapshotRepositoryUrl}")
         project.tasks.create(taskName, Upload.class) {
 
@@ -61,20 +43,7 @@ class MavenPublishPlugin implements Plugin<Project> {
           dependsOn(defaultUploadArchives.dependsOn.clone())
 
           // setup repositories
-          repositories {
-            mavenDeployer {
-              beforeDeployment { MavenDeployment deployment -> project.signing.signPom(deployment) }
-
-              repository(url: value.releaseRepositoryUrl) {
-                authentication(userName: value.repositoryUsername, password: value.repositoryPassword)
-              }
-
-              snapshotRepository(url: value.snapshotRepositoryUrl) {
-                authentication(userName: value.repositoryUsername, password: value.repositoryPassword)
-              }
-              configurePom(p, pom)
-            }
-          }
+          configureMavenDeployer(project, it, value)
         }
       }
 
@@ -164,13 +133,30 @@ class MavenPublishPlugin implements Plugin<Project> {
         description = "Installs the artifacts to the local Maven repository."
         group = "upload"
         configuration = project.configurations['archives']
-        repositories {
-          mavenDeployer {
-            repository url: project.repositories.mavenLocal().url
 
-            configurePom(p, pom)
+        configureMavenDeployer(project, it, extension.localTarget)
+      }
+    }
+  }
+
+  private void configureMavenDeployer(Project project, Upload upload, MavenPublishTarget target) {
+    upload.repositories {
+      mavenDeployer {
+        if (target.signing) {
+          beforeDeployment { MavenDeployment deployment -> project.signing.signPom(deployment) }
+        }
+
+        repository(url: target.releaseRepositoryUrl) {
+          authentication(userName: target.repositoryUsername, password: target.repositoryPassword)
+        }
+
+        if (target.snapshotRepositoryUrl != null) {
+          snapshotRepository(url: target.snapshotRepositoryUrl) {
+            authentication(userName: target.repositoryUsername, password: target.repositoryPassword)
           }
         }
+
+        configurePom(project, pom)
       }
     }
   }
