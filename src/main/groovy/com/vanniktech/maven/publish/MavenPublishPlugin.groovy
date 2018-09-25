@@ -3,6 +3,7 @@ package com.vanniktech.maven.publish
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.artifacts.maven.MavenPom
 import org.gradle.api.plugins.MavenPlugin
@@ -14,6 +15,7 @@ import org.gradle.plugins.signing.SigningPlugin
 class MavenPublishPlugin implements Plugin<Project> {
   @Override void apply(final Project p) {
     p.extensions.create('mavenPublish', MavenPublishPluginExtension.class, p)
+    def extraRepos = p.extensions.create('mavenRepositories', MavenPublishRepositories.class)
 
     p.plugins.apply(MavenPlugin)
     p.plugins.apply(SigningPlugin)
@@ -38,6 +40,40 @@ class MavenPublishPlugin implements Plugin<Project> {
             }
 
             configurePom(p, pom)
+          }
+        }
+      }
+
+      extraRepos.map.each { key, value ->
+        def taskName = "upload" + key.capitalize()
+        project.logger.debug("Creating $taskName to upload to ${value.releaseRepositoryUrl} / ${value.snapshotRepositoryUrl}")
+        project.tasks.create(taskName, Upload.class) {
+
+          // add group and description.
+          group = "upload"
+          description = "Uploads all artifacts to ${key}"
+
+          // Use archives configurations from the project
+          configuration = project.configurations[Dependency.ARCHIVES_CONFIGURATION]
+
+          // depends on same tasks as uploadArchives
+          def defaultUploadArchives = project.uploadArchives as Upload
+          dependsOn(defaultUploadArchives.dependsOn.clone())
+
+          // setup repositories
+          repositories {
+            mavenDeployer {
+              beforeDeployment { MavenDeployment deployment -> project.signing.signPom(deployment) }
+
+              repository(url: value.releaseRepositoryUrl) {
+                authentication(userName: value.repositoryUsername, password: value.repositoryPassword)
+              }
+
+              snapshotRepository(url: value.snapshotRepositoryUrl) {
+                authentication(userName: value.repositoryUsername, password: value.repositoryPassword)
+              }
+              configurePom(p, pom)
+            }
           }
         }
       }
