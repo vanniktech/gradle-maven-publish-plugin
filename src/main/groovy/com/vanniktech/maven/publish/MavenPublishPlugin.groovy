@@ -37,7 +37,7 @@ class MavenPublishPlugin implements Plugin<Project> {
 
       project.signing {
         required { !project.version.contains("SNAPSHOT") && project.gradle.taskGraph.hasTask("uploadArchives") }
-        sign project.configurations.archives
+        sign project.configurations[Dependency.ARCHIVES_CONFIGURATION]
       }
 
       def plugins = project.getPlugins()
@@ -124,11 +124,11 @@ class MavenPublishPlugin implements Plugin<Project> {
     if (name == DEFAULT_TARGET) {
       upload = project.uploadArchives
     } else if (name == LOCAL_TARGET) {
-      upload = createUploadTask(project, "installArchives",
-          "Installs the artifacts to the local Maven repository.")
+      upload = createUploadTask(project, name,
+              "Installs the artifacts to the local Maven repository.")
     } else {
-      upload = createUploadTask(project, project.uploadArchives.name + name.capitalize(),
-          "Upload all artifacts to $name")
+      upload = createUploadTask(project, DEFAULT_TARGET + name.capitalize(),
+              "Upload all artifacts to $name")
     }
     return upload
   }

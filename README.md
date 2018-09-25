@@ -48,6 +48,27 @@ mavenPublish {
 
 Once you've configured this and defined the typical pom attributes via Gradle properties you can upload your library using the `uploadArchives` task.
 
+If you need to upload to multiple repositories you can also add additional targets.
+
+```groovy
+mavenPublish {
+  targets {
+    uploadArchives {
+       // configure as above
+    }
+
+    internalRepo {
+       // configure as above
+    }
+
+    betaRepo {
+       // configure as above
+    }
+  }
+}
+
+This would make `uploadArchivesInternalRepo` and `uploadArchivesBetaRepo` tasks available.
+
 # Sample
 
 This Gradle plugin is using itself to publish any of the updates. It applies a previously released version in the build.gradle just as mentioned above and sets the Gradle properties in this [gradle.properties](gradle.properties).

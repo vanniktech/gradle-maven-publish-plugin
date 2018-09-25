@@ -41,7 +41,7 @@ open class MavenPublishPluginExtension(project: Project) {
   }
 
   internal companion object {
-    internal const val DEFAULT_TARGET = "upload"
-    internal const val LOCAL_TARGET = "install"
+    internal const val DEFAULT_TARGET = "uploadArchives"
+    internal const val LOCAL_TARGET = "installArchives"
   }
 }
