@@ -15,7 +15,6 @@ import org.gradle.plugins.signing.SigningPlugin
 class MavenPublishPlugin implements Plugin<Project> {
   @Override void apply(final Project p) {
     def extension = p.extensions.create('mavenPublish', MavenPublishPluginExtension.class, p)
-    def extraRepos = p.extensions.create('mavenRepositories', MavenPublishRepositories.class)
 
     p.plugins.apply(MavenPlugin)
     p.plugins.apply(SigningPlugin)
@@ -26,24 +25,20 @@ class MavenPublishPlugin implements Plugin<Project> {
     p.afterEvaluate { Project project ->
       configureMavenDeployer(project, (Upload) project.uploadArchives, extension.defaultTarget)
 
-      extraRepos.map.each { key, value ->
-        def taskName = "uploadArchives" + key.capitalize()
-        project.logger.debug("Creating $taskName to upload to ${value.releaseRepositoryUrl} / ${value.snapshotRepositoryUrl}")
+      extension.targets.each { target ->
+        def taskName = "uploadArchives" + target.name.capitalize()
+        project.logger.debug("Creating $taskName to upload to ${target.releaseRepositoryUrl} / ${target.snapshotRepositoryUrl}")
         project.tasks.create(taskName, Upload.class) {
 
           // add group and description.
           group = "upload"
-          description = "Uploads all artifacts to ${key}"
+          description = "Uploads all artifacts to ${target.name}"
 
           // Use archives configurations from the project
           configuration = project.configurations[Dependency.ARCHIVES_CONFIGURATION]
 
-          // depends on same tasks as uploadArchives
-          def defaultUploadArchives = project.uploadArchives as Upload
-          dependsOn(defaultUploadArchives.dependsOn.clone())
-
           // setup repositories
-          configureMavenDeployer(project, it, value)
+          configureMavenDeployer(project, it, target)
         }
       }
 
