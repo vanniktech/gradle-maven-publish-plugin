@@ -27,7 +27,7 @@ class MavenPublishPlugin implements Plugin<Project> {
       configureMavenDeployer(project, (Upload) project.uploadArchives, extension.defaultTarget)
 
       extraRepos.map.each { key, value ->
-        def taskName = "upload" + key.capitalize()
+        def taskName = "uploadArchives" + key.capitalize()
         project.logger.debug("Creating $taskName to upload to ${value.releaseRepositoryUrl} / ${value.snapshotRepositoryUrl}")
         project.tasks.create(taskName, Upload.class) {
 
