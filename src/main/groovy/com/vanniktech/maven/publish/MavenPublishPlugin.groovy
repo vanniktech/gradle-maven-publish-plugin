@@ -12,10 +12,12 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.plugins.signing.SigningPlugin
 
+import static com.vanniktech.maven.publish.MavenPublishPluginExtension.DEFAULT_TARGET
+import static com.vanniktech.maven.publish.MavenPublishPluginExtension.LOCAL_TARGET
+
 class MavenPublishPlugin implements Plugin<Project> {
   @Override void apply(final Project p) {
     def extension = p.extensions.create('mavenPublish', MavenPublishPluginExtension.class, p)
-    def extraRepos = p.extensions.create('mavenRepositories', MavenPublishRepositories.class)
 
     p.plugins.apply(MavenPlugin)
     p.plugins.apply(SigningPlugin)
@@ -24,32 +26,18 @@ class MavenPublishPlugin implements Plugin<Project> {
     p.version = p.findProperty("VERSION_NAME")
 
     p.afterEvaluate { Project project ->
-      configureMavenDeployer(project, (Upload) project.uploadArchives, extension.defaultTarget)
-
-      extraRepos.map.each { key, value ->
-        def taskName = "uploadArchives" + key.capitalize()
-        project.logger.debug("Creating $taskName to upload to ${value.releaseRepositoryUrl} / ${value.snapshotRepositoryUrl}")
-        project.tasks.create(taskName, Upload.class) {
-
-          // add group and description.
-          group = "upload"
-          description = "Uploads all artifacts to ${key}"
-
-          // Use archives configurations from the project
-          configuration = project.configurations[Dependency.ARCHIVES_CONFIGURATION]
-
-          // depends on same tasks as uploadArchives
-          def defaultUploadArchives = project.uploadArchives as Upload
-          dependsOn(defaultUploadArchives.dependsOn.clone())
-
-          // setup repositories
-          configureMavenDeployer(project, it, value)
+      extension.targets.each { target ->
+        if (target.releaseRepositoryUrl == null) {
+          throw new IllegalStateException("The release repository url of ${target.name} is null or not set")
         }
+
+        Upload upload = getUploadTask(project, target.name)
+        configureMavenDeployer(project, upload, target)
       }
 
       project.signing {
         required { !project.version.contains("SNAPSHOT") && project.gradle.taskGraph.hasTask("uploadArchives") }
-        sign project.configurations.archives
+        sign project.configurations[Dependency.ARCHIVES_CONFIGURATION]
       }
 
       def plugins = project.getPlugins()
@@ -128,14 +116,28 @@ class MavenPublishPlugin implements Plugin<Project> {
           }
         }
       }
+    }
+  }
 
-      project.tasks.create("installArchives", Upload) {
-        description = "Installs the artifacts to the local Maven repository."
-        group = "upload"
-        configuration = project.configurations['archives']
+  private Upload getUploadTask(Project project, String name) {
+    Upload upload
+    if (name == DEFAULT_TARGET) {
+      upload = project.uploadArchives
+    } else if (name == LOCAL_TARGET) {
+      upload = createUploadTask(project, name,
+              "Installs the artifacts to the local Maven repository.")
+    } else {
+      upload = createUploadTask(project, DEFAULT_TARGET + name.capitalize(),
+              "Upload all artifacts to $name")
+    }
+    return upload
+  }
 
-        configureMavenDeployer(project, it, extension.localTarget)
-      }
+  private Upload createUploadTask(Project project, String name, String taskDescription) {
+    return (Upload) project.tasks.create(name, Upload.class) {
+      group = "upload"
+      description = taskDescription
+      configuration = project.configurations[Dependency.ARCHIVES_CONFIGURATION]
     }
   }
 
