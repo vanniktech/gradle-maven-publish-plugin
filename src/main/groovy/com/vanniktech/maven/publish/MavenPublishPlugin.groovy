@@ -3,16 +3,12 @@ package com.vanniktech.maven.publish
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.artifacts.maven.MavenPom
-import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
-import org.gradle.plugins.signing.Sign
-import org.gradle.plugins.signing.SigningPlugin
 
 import static com.vanniktech.maven.publish.MavenPublishPluginExtension.DEFAULT_TARGET
 import static com.vanniktech.maven.publish.MavenPublishPluginExtension.LOCAL_TARGET
@@ -21,28 +17,10 @@ class MavenPublishPlugin implements Plugin<Project> {
   @Override void apply(final Project p) {
     def extension = p.extensions.create('mavenPublish', MavenPublishPluginExtension.class, p)
 
-    p.plugins.apply(MavenPlugin)
-    p.plugins.apply(SigningPlugin)
+    Configurer configurer = new GroovyUploadArchivesConfigurer(p, extension)
 
     p.group = p.findProperty("GROUP")
     p.version = p.findProperty("VERSION_NAME")
-
-    p.signing {
-      required { !p.version.contains("SNAPSHOT") }
-      sign p.configurations[Dependency.ARCHIVES_CONFIGURATION]
-    }
-    p.tasks.withType(Sign).each { sign ->
-      sign.onlyIf {
-        Set<MavenPublishTarget> signedTargets = extension.targets.findAll { it.signing }
-        sign.logger.info("Targets that should be signed: ${signedTargets.collect { it.name }}")
-        signedTargets.any { target ->
-          Task task = p.tasks.getByName(target.taskName)
-          boolean taskInGraph = p.gradle.taskGraph.hasTask(task)
-          sign.logger.info("Task for ${target.name} will be executed: $taskInGraph")
-          taskInGraph
-        }
-      }
-    }
 
     p.afterEvaluate { Project project ->
       extension.targets.each { target ->
@@ -50,8 +28,7 @@ class MavenPublishPlugin implements Plugin<Project> {
           throw new IllegalStateException("The release repository url of ${target.name} is null or not set")
         }
 
-        Upload upload = getUploadTask(project, target.name, target.taskName)
-        configureMavenDeployer(project, upload, target)
+        configurer.configureTarget(target)
       }
 
       def plugins = project.getPlugins()
@@ -89,10 +66,8 @@ class MavenPublishPlugin implements Plugin<Project> {
           from project.android.sourceSets.main.java.sourceFiles
         }
 
-        project.artifacts {
-          archives project.androidSourcesJar
-          archives project.androidJavadocsJar
-        }
+        configurer.addTaskOutput(project.androidSourcesJar)
+        configurer.addTaskOutput(project.androidJavadocsJar)
       } else {
         if (plugins.hasPlugin('groovy')) {
           project.tasks.create("groovydocJar", Jar.class) {
@@ -111,16 +86,12 @@ class MavenPublishPlugin implements Plugin<Project> {
           from project.javadoc.destinationDir
         }.dependsOn("javadoc")
 
-        project.artifacts {
-          archives project.jar
-          archives project.javadocsJar
-
-          if (plugins.hasPlugin('groovy')) {
-            archives project.groovydocJar
-          }
-
-          archives project.sourcesJar
+        configurer.addTaskOutput(project.jar)
+        configurer.addTaskOutput(project.javadocsJar)
+        if (plugins.hasPlugin('groovy')) {
+          configurer.addTaskOutput(project.groovydocJar)
         }
+        configurer.addTaskOutput(project.sourcesJar)
       }
 
       if (JavaVersion.current().isJava8Compatible()) {
@@ -133,7 +104,7 @@ class MavenPublishPlugin implements Plugin<Project> {
     }
   }
 
-  private Upload getUploadTask(Project project, String name, String taskName) {
+  static Upload getUploadTask(Project project, String name, String taskName) {
     if (name == DEFAULT_TARGET) {
       return (Upload) project.tasks.getByName(taskName)
     } else if (name == LOCAL_TARGET) {
@@ -143,7 +114,7 @@ class MavenPublishPlugin implements Plugin<Project> {
     }
   }
 
-  private Upload createUploadTask(Project project, String name, String taskDescription) {
+  private static Upload createUploadTask(Project project, String name, String taskDescription) {
     return (Upload) project.tasks.create(name, Upload.class) {
       group = "upload"
       description = taskDescription
@@ -151,7 +122,7 @@ class MavenPublishPlugin implements Plugin<Project> {
     }
   }
 
-  private void configureMavenDeployer(Project project, Upload upload, MavenPublishTarget target) {
+  static void configureMavenDeployer(Project project, Upload upload, MavenPublishTarget target) {
     upload.repositories {
       mavenDeployer {
         if (target.signing) {
@@ -173,7 +144,7 @@ class MavenPublishPlugin implements Plugin<Project> {
     }
   }
 
-  private void configurePom(Project project, MavenPom pom) {
+  private static void configurePom(Project project, MavenPom pom) {
     pom.groupId = project.findProperty("GROUP")
     pom.artifactId = project.findProperty("POM_ARTIFACT_ID")
     pom.version = project.findProperty("VERSION_NAME")
