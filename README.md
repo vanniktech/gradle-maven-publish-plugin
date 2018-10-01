@@ -31,43 +31,18 @@ classpath 'com.vanniktech:gradle-maven-publish-plugin:0.7.0-SNAPSHOT'
 
 ## Configuration
 
-Those are all the available configurations - shown with default values and their types. More information can be found in the [Documentation of the Extension](src/main/kotlin/com/vanniktech/maven/publish/MavenPublishPluginExtension.kt).
+Those are all the available configurations - shown with default values and their types. More information can be found in the [Documentation of the Extension](src/test/kotlin/com/vanniktech/maven/publish/MavenPublishPluginExtensionTest.kt).
 
 ```groovy
 mavenPublish {
-  targets {
-    uploadArchives {
-      releaseRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-      snapshotRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-      repositoryUsername = null // This defaults to either the SONATYPE_NEXUS_USERNAME Gradle property or the system environment variable.
-      repositoryPassword = null // This defaults to either the SONATYPE_NEXUS_PASSWORD Gradle property or the system environment variable.
-    }
-  }
+  releaseRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+  snapshotRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+  repositoryUsername = null // This defaults to either the SONATYPE_NEXUS_USERNAME Gradle property or the system environment variable.
+  repositoryPassword = null // This defaults to either the SONATYPE_NEXUS_PASSWORD Gradle property or the system environment variable.
 }
 ```
 
 Once you've configured this and defined the typical pom attributes via Gradle properties you can upload your library using the `uploadArchives` task.
-
-If you need to upload to multiple repositories you can also add additional targets.
-
-```groovy
-mavenPublish {
-  targets {
-    uploadArchives {
-       // Configure as above.
-    }
-
-    internalRepo {
-       // Configure as above.
-    }
-
-    betaRepo {
-       // Configure as above.
-    }
-  }
-}
-
-This will create `uploadArchivesInternalRepo` and `uploadArchivesBetaRepo` tasks.
 
 # Sample
 
