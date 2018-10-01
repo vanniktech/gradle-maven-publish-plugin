@@ -1,15 +1,17 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.DEFAULT_TARGET
+import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_TARGET
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.plugins.MavenPlugin
+import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import java.util.concurrent.Callable
-import kotlin.math.sign
 
 internal abstract class UploadArchivesConfigurer(
   protected val project: Project,
@@ -37,6 +39,27 @@ internal abstract class UploadArchivesConfigurer(
       }
     }
   }
+
+  override fun configureTarget(target: MavenPublishTarget) {
+    val upload = getUploadTask(target.name, target.taskName)
+    upload.configureMavenDeployer(target)
+  }
+
+  private fun getUploadTask(name: String, taskName: String): Upload =
+    when (name) {
+      DEFAULT_TARGET -> project.tasks.getByName(taskName) as Upload
+      LOCAL_TARGET -> createUploadTask(taskName, "Installs the artifacts to the local Maven repository.")
+      else -> createUploadTask(taskName, "Upload all artifacts to $name")
+    }
+
+  private fun createUploadTask(name: String, description: String): Upload =
+    project.tasks.create(name, Upload::class.java) {
+      it.group = "upload"
+      it.description = description
+      it.configuration = project.configurations.getByName(ARCHIVES_CONFIGURATION)
+    }
+
+  protected abstract fun Upload.configureMavenDeployer(target: MavenPublishTarget)
 
   override fun addComponent(component: SoftwareComponent) = Unit
 

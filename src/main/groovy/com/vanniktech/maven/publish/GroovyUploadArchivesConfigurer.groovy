@@ -11,8 +11,7 @@ class GroovyUploadArchivesConfigurer extends UploadArchivesConfigurer {
     }
 
     @Override
-    void configureTarget(@NotNull MavenPublishTarget target) {
-        Upload upload = MavenPublishPlugin.getUploadTask(project, target.name, target.taskName)
+    protected void configureMavenDeployer(@NotNull Upload upload, @NotNull MavenPublishTarget target) {
         MavenPublishPlugin.configureMavenDeployer(project, upload, target)
     }
 }
