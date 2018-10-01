@@ -120,17 +120,13 @@ class MavenPublishPlugin implements Plugin<Project> {
   }
 
   private Upload getUploadTask(Project project, String name) {
-    Upload upload
     if (name == DEFAULT_TARGET) {
-      upload = project.uploadArchives
+      return project.uploadArchives
     } else if (name == LOCAL_TARGET) {
-      upload = createUploadTask(project, name,
-              "Installs the artifacts to the local Maven repository.")
+      return createUploadTask(project, name, "Installs the artifacts to the local Maven repository.")
     } else {
-      upload = createUploadTask(project, DEFAULT_TARGET + name.capitalize(),
-              "Upload all artifacts to $name")
+      return createUploadTask(project, DEFAULT_TARGET + name.capitalize(), "Upload all artifacts to $name")
     }
-    return upload
   }
 
   private Upload createUploadTask(Project project, String name, String taskDescription) {

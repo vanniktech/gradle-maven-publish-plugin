@@ -31,7 +31,7 @@ classpath 'com.vanniktech:gradle-maven-publish-plugin:0.7.0-SNAPSHOT'
 
 ## Configuration
 
-Those are all the available configurations - shown with default values and their types. More information can be found in the [Documentation of the Extension](src/test/kotlin/com/vanniktech/maven/publish/MavenPublishPluginExtensionTest.kt).
+Those are all the available configurations - shown with default values and their types. More information can be found in the [Documentation of the Extension](src/main/kotlin/com/vanniktech/maven/publish/MavenPublishPluginExtension.kt).
 
 ```groovy
 mavenPublish {
@@ -54,20 +54,20 @@ If you need to upload to multiple repositories you can also add additional targe
 mavenPublish {
   targets {
     uploadArchives {
-       // configure as above
+       // Configure as above.
     }
 
     internalRepo {
-       // configure as above
+       // Configure as above.
     }
 
     betaRepo {
-       // configure as above
+       // Configure as above.
     }
   }
 }
 
-This would make `uploadArchivesInternalRepo` and `uploadArchivesBetaRepo` tasks available.
+This will create `uploadArchivesInternalRepo` and `uploadArchivesBetaRepo` tasks.
 
 # Sample
 
