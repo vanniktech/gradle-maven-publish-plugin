@@ -9,9 +9,7 @@ import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugins.signing.Sign
-import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
-import java.util.concurrent.Callable
 
 internal abstract class UploadArchivesConfigurer(
   protected val project: Project,
@@ -23,7 +21,7 @@ internal abstract class UploadArchivesConfigurer(
     project.plugins.apply(SigningPlugin::class.java)
 
     project.signing.apply {
-      setRequired(Callable<Boolean> { !project.version.toString().contains("SNAPSHOT") })
+      setRequired(project.isSigningRequired)
       sign(project.configurations.getByName(ARCHIVES_CONFIGURATION))
     }
     project.tasks.withType(Sign::class.java).all { sign ->
@@ -66,6 +64,4 @@ internal abstract class UploadArchivesConfigurer(
   override fun addTaskOutput(task: AbstractArchiveTask) {
     project.artifacts.add(ARCHIVES_CONFIGURATION, task)
   }
-
-  private val Project.signing get() = extensions.getByType(SigningExtension::class.java)
 }
