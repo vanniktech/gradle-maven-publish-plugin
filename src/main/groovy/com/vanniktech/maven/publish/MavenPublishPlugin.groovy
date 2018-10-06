@@ -3,6 +3,7 @@ package com.vanniktech.maven.publish
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.artifacts.maven.MavenPom
 import org.gradle.api.plugins.MavenPlugin
@@ -11,9 +12,12 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.plugins.signing.SigningPlugin
 
+import static com.vanniktech.maven.publish.MavenPublishPluginExtension.DEFAULT_TARGET
+import static com.vanniktech.maven.publish.MavenPublishPluginExtension.LOCAL_TARGET
+
 class MavenPublishPlugin implements Plugin<Project> {
   @Override void apply(final Project p) {
-    p.extensions.create('mavenPublish', MavenPublishPluginExtension.class, p)
+    def extension = p.extensions.create('mavenPublish', MavenPublishPluginExtension.class, p)
 
     p.plugins.apply(MavenPlugin)
     p.plugins.apply(SigningPlugin)
@@ -21,30 +25,19 @@ class MavenPublishPlugin implements Plugin<Project> {
     p.group = p.findProperty("GROUP")
     p.version = p.findProperty("VERSION_NAME")
 
-    def extension = p.mavenPublish
-
-    p.afterEvaluate { project ->
-      project.uploadArchives {
-        repositories {
-          mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> project.signing.signPom(deployment) }
-
-            repository(url: extension.releaseRepositoryUrl) {
-              authentication(userName: extension.repositoryUsername, password: extension.repositoryPassword)
-            }
-
-            snapshotRepository(url: extension.snapshotRepositoryUrl) {
-              authentication(userName: extension.repositoryUsername, password: extension.repositoryPassword)
-            }
-
-            configurePom(p, pom)
-          }
+    p.afterEvaluate { Project project ->
+      extension.targets.each { target ->
+        if (target.releaseRepositoryUrl == null) {
+          throw new IllegalStateException("The release repository url of ${target.name} is null or not set")
         }
+
+        Upload upload = getUploadTask(project, target.name)
+        configureMavenDeployer(project, upload, target)
       }
 
       project.signing {
         required { !project.version.contains("SNAPSHOT") && project.gradle.taskGraph.hasTask("uploadArchives") }
-        sign project.configurations.archives
+        sign project.configurations[Dependency.ARCHIVES_CONFIGURATION]
       }
 
       def plugins = project.getPlugins()
@@ -123,18 +116,45 @@ class MavenPublishPlugin implements Plugin<Project> {
           }
         }
       }
+    }
+  }
 
-      project.tasks.create("installArchives", Upload) {
-        description = "Installs the artifacts to the local Maven repository."
-        group = "upload"
-        configuration = project.configurations['archives']
-        repositories {
-          mavenDeployer {
-            repository url: project.repositories.mavenLocal().url
+  private Upload getUploadTask(Project project, String name) {
+    if (name == DEFAULT_TARGET) {
+      return project.uploadArchives
+    } else if (name == LOCAL_TARGET) {
+      return createUploadTask(project, name, "Installs the artifacts to the local Maven repository.")
+    } else {
+      return createUploadTask(project, DEFAULT_TARGET + name.capitalize(), "Upload all artifacts to $name")
+    }
+  }
 
-            configurePom(p, pom)
+  private Upload createUploadTask(Project project, String name, String taskDescription) {
+    return (Upload) project.tasks.create(name, Upload.class) {
+      group = "upload"
+      description = taskDescription
+      configuration = project.configurations[Dependency.ARCHIVES_CONFIGURATION]
+    }
+  }
+
+  private void configureMavenDeployer(Project project, Upload upload, MavenPublishTarget target) {
+    upload.repositories {
+      mavenDeployer {
+        if (target.signing) {
+          beforeDeployment { MavenDeployment deployment -> project.signing.signPom(deployment) }
+        }
+
+        repository(url: target.releaseRepositoryUrl) {
+          authentication(userName: target.repositoryUsername, password: target.repositoryPassword)
+        }
+
+        if (target.snapshotRepositoryUrl != null) {
+          snapshotRepository(url: target.snapshotRepositoryUrl) {
+            authentication(userName: target.repositoryUsername, password: target.repositoryPassword)
           }
         }
+
+        configurePom(project, pom)
       }
     }
   }
