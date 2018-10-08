@@ -145,34 +145,36 @@ class MavenPublishPlugin implements Plugin<Project> {
   }
 
   private static void configurePom(Project project, MavenPom pom) {
-    pom.groupId = project.findProperty("GROUP")
-    pom.artifactId = project.findProperty("POM_ARTIFACT_ID")
-    pom.version = project.findProperty("VERSION_NAME")
+    MavenPublishPom publishPom = MavenPublishPom.fromProject(project)
+
+    pom.groupId = publishPom.groupId
+    pom.artifactId = publishPom.artifactId
+    pom.version = publishPom.version
 
     pom.project {
-      name project.findProperty("POM_NAME")
-      packaging project.findProperty("POM_PACKAGING")
-      description project.findProperty("POM_DESCRIPTION")
-      url project.findProperty("POM_URL")
+      name publishPom.name
+      packaging publishPom.packaging
+      description publishPom.description
+      url publishPom.url
 
       scm {
-        url project.findProperty("POM_SCM_URL")
-        connection project.findProperty("POM_SCM_CONNECTION")
-        developerConnection project.findProperty("POM_SCM_DEV_CONNECTION")
+        url publishPom.scmUrl
+        connection publishPom.scmConnection
+        developerConnection publishPom.scmDeveloperConnection
       }
 
       licenses {
         license {
-          name project.findProperty("POM_LICENCE_NAME")
-          url project.findProperty("POM_LICENCE_URL")
-          distribution project.findProperty("POM_LICENCE_DIST")
+          name publishPom.licenseName
+          url publishPom.licenseUrl
+          distribution publishPom.licenseDistribution
         }
       }
 
       developers {
         developer {
-          id project.findProperty("POM_DEVELOPER_ID")
-          name project.findProperty("POM_DEVELOPER_NAME")
+          id publishPom.developerId
+          name publishPom.developerName
         }
       }
     }
