@@ -3,15 +3,11 @@ package com.vanniktech.maven.publish
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.artifacts.maven.MavenPom
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
-
-import static com.vanniktech.maven.publish.MavenPublishPluginExtension.DEFAULT_TARGET
-import static com.vanniktech.maven.publish.MavenPublishPluginExtension.LOCAL_TARGET
 
 class MavenPublishPlugin implements Plugin<Project> {
   @Override void apply(final Project p) {
@@ -101,24 +97,6 @@ class MavenPublishPlugin implements Plugin<Project> {
           }
         }
       }
-    }
-  }
-
-  static Upload getUploadTask(Project project, String name, String taskName) {
-    if (name == DEFAULT_TARGET) {
-      return (Upload) project.tasks.getByName(taskName)
-    } else if (name == LOCAL_TARGET) {
-      return createUploadTask(project, taskName, "Installs the artifacts to the local Maven repository.")
-    } else {
-      return createUploadTask(project, taskName, "Upload all artifacts to $name")
-    }
-  }
-
-  private static Upload createUploadTask(Project project, String name, String taskDescription) {
-    return (Upload) project.tasks.create(name, Upload.class) {
-      group = "upload"
-      description = taskDescription
-      configuration = project.configurations[Dependency.ARCHIVES_CONFIGURATION]
     }
   }
 
