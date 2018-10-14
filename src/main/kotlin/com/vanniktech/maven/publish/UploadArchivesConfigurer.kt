@@ -38,7 +38,7 @@ internal abstract class UploadArchivesConfigurer(
     }
   }
 
-  override fun addComponent(component: SoftwareComponent) {}
+  override fun addComponent(component: SoftwareComponent) = Unit
 
   override fun addTaskOutput(task: AbstractArchiveTask) {
     project.artifacts.add(ARCHIVES_CONFIGURATION, task)
