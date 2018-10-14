@@ -66,7 +66,7 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
       repo.name = target.repositoryName
       repo.url = target.repositoryUrl(project.version.toString())
       if (target.repositoryUsername != null) {
-        repo.credentials { it ->
+        repo.credentials {
           it.username = target.repositoryUsername
           it.password = target.repositoryPassword
         }
@@ -94,8 +94,7 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
     } else {
       releaseRepositoryUrl
     }
-    // the releaseRepositoryUrl is null checked in the plugin
-    return URI.create(@Suppress("UnsafeCallOnNullableType") url!!)
+    return URI.create(requireNotNull(url))
   }
 
   private fun publishTaskName(repository: String) =
