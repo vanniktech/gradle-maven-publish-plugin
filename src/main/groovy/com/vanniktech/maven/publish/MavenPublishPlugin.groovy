@@ -13,12 +13,17 @@ class MavenPublishPlugin implements Plugin<Project> {
   @Override void apply(final Project p) {
     def extension = p.extensions.create('mavenPublish', MavenPublishPluginExtension.class, p)
 
-    Configurer configurer = new GroovyUploadArchivesConfigurer(p, extension)
-
     p.group = p.findProperty("GROUP")
     p.version = p.findProperty("VERSION_NAME")
 
     p.afterEvaluate { Project project ->
+      Configurer configurer
+      if (extension.useMavenPublish) {
+        configurer = new MavenPublishConfigurer(p)
+      } else {
+        configurer = new GroovyUploadArchivesConfigurer(p, extension)
+      }
+
       extension.targets.each { target ->
         if (target.releaseRepositoryUrl == null) {
           throw new IllegalStateException("The release repository url of ${target.name} is null or not set")
@@ -62,6 +67,9 @@ class MavenPublishPlugin implements Plugin<Project> {
           from project.android.sourceSets.main.java.sourceFiles
         }
 
+        if (extension.useMavenPublish) {
+          throw IllegalArgumentException("Using maven-publish for Android libraries is currently unsupported.")
+        }
         configurer.addTaskOutput(project.androidSourcesJar)
         configurer.addTaskOutput(project.androidJavadocsJar)
       } else {
@@ -82,6 +90,7 @@ class MavenPublishPlugin implements Plugin<Project> {
           from project.javadoc.destinationDir
         }.dependsOn("javadoc")
 
+        configurer.addComponent(project.components.java)
         configurer.addTaskOutput(project.jar)
         configurer.addTaskOutput(project.javadocsJar)
         if (plugins.hasPlugin('groovy')) {
