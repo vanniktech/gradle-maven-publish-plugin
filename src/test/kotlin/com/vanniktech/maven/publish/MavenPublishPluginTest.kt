@@ -12,24 +12,32 @@ import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.tasks.Upload
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Before
 import org.junit.Test
 import java.io.File
 
 class MavenPublishPluginTest {
+
+  private lateinit var project: Project
+
+  @Before
+  fun setUp() {
+    project = ProjectBuilder.builder().withName("project").build()
+    project.extensions.extraProperties.set("GROUP", "com.example")
+    project.extensions.extraProperties.set("VERSION_NAME", "1.0.0")
+  }
+
   @Test fun javaPlugin() {
-    val project = ProjectBuilder.builder().build()
     project.plugins.apply(JavaPlugin::class.java)
     assert(project)
   }
 
   @Test fun javaLibraryPlugin() {
-    val project = ProjectBuilder.builder().build()
     project.plugins.apply(JavaLibraryPlugin::class.java)
     assert(project)
   }
 
   @Test fun javaLibraryPluginWithGroovy() {
-    val project = ProjectBuilder.builder().build()
     project.plugins.apply(JavaLibraryPlugin::class.java)
     project.plugins.apply(GroovyPlugin::class.java)
     assert(project)
@@ -38,7 +46,6 @@ class MavenPublishPluginTest {
   }
 
   @Test fun androidLibraryPlugin() {
-    val project = ProjectBuilder.builder().build()
     project.plugins.apply(LibraryPlugin::class.java)
 
     prepareAndroidLibraryProject(project)
@@ -47,7 +54,6 @@ class MavenPublishPluginTest {
   }
 
   @Test fun androidLibraryPluginWithKotlinAndroid() {
-    val project = ProjectBuilder.builder().build()
     project.plugins.apply(LibraryPlugin::class.java)
     project.plugins.apply("kotlin-android")
 
@@ -57,7 +63,6 @@ class MavenPublishPluginTest {
   }
 
   @Test fun javaLibraryPluginWithKotlin() {
-    val project = ProjectBuilder.builder().withName("single").build() as DefaultProject
     project.plugins.apply(JavaLibraryPlugin::class.java)
     project.plugins.apply("kotlin")
     assert(project)
