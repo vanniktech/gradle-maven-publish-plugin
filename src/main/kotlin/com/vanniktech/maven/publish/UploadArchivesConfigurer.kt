@@ -11,9 +11,10 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 
-internal abstract class UploadArchivesConfigurer(
-  protected val project: Project,
-  private val extension: MavenPublishPluginExtension
+internal class UploadArchivesConfigurer(
+  private val project: Project,
+  private val targets: Iterable<MavenPublishTarget>,
+  private val configureMavenDeployer: Upload.(Project, MavenPublishTarget) -> Unit
 ) : Configurer {
 
   init {
@@ -26,7 +27,7 @@ internal abstract class UploadArchivesConfigurer(
     }
     project.tasks.withType(Sign::class.java).all { sign ->
       sign.onlyIf { _ ->
-        val signedTargets = extension.targets.filter { it.signing }
+        val signedTargets = targets.filter { it.signing }
         sign.logger.info("Targets that should be signed: ${signedTargets.map { it.name }}")
         signedTargets.any { target ->
           val task = project.tasks.getByName(target.taskName)
@@ -40,7 +41,7 @@ internal abstract class UploadArchivesConfigurer(
 
   override fun configureTarget(target: MavenPublishTarget) {
     val upload = getUploadTask(target.name, target.taskName)
-    upload.configureMavenDeployer(target)
+    upload.configureMavenDeployer(project, target)
   }
 
   private fun getUploadTask(name: String, taskName: String): Upload =
@@ -56,8 +57,6 @@ internal abstract class UploadArchivesConfigurer(
       it.description = description
       it.configuration = project.configurations.getByName(ARCHIVES_CONFIGURATION)
     }
-
-  protected abstract fun Upload.configureMavenDeployer(target: MavenPublishTarget)
 
   override fun addComponent(component: SoftwareComponent) = Unit
 
