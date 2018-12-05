@@ -39,10 +39,21 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       options.linksOffline "https://developer.android.com/reference", "${project.android.sdkDirectory}/docs/reference"
     }
 
-    project.tasks.create("androidJavadocsJar", Jar.class) {
+    def androidJavadocsJar = project.tasks.create("androidJavadocsJar", Jar.class) {
       classifier = 'javadoc'
       from project.androidJavadocs.destinationDir
-    }.dependsOn("androidJavadocs")
+    }
+
+    if (plugins.hasPlugin('kotlin-android')) {
+      project.plugins.apply('org.jetbrains.dokka-android')
+      project.dokka {
+        outputFormat 'javadoc'
+        outputDirectory project.androidJavadocs.destinationDir.path
+      }
+      androidJavadocsJar.dependsOn("dokka")
+    } else {
+      androidJavadocsJar.dependsOn("androidJavadocs")
+    }
 
     project.tasks.create("androidSourcesJar", Jar.class) {
       classifier = 'sources'
@@ -72,10 +83,21 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       from project.sourceSets.main.allSource
     }.dependsOn("classes")
 
-    project.tasks.create("javadocsJar", Jar.class) {
+    def javadocsJar = project.tasks.create("javadocsJar", Jar.class) {
       classifier = 'javadoc'
       from project.javadoc.destinationDir
-    }.dependsOn("javadoc")
+    }
+
+    if (project.plugins.hasPlugin("kotlin")) {
+      project.plugins.apply('org.jetbrains.dokka')
+      project.dokka {
+        outputFormat 'javadoc'
+        outputDirectory project.javadoc.destinationDir.path
+      }
+      javadocsJar.dependsOn("dokka")
+    } else {
+      javadocsJar.dependsOn("javadoc")
+    }
 
     configurer.addComponent(project.components.java)
     configurer.addTaskOutput(project.jar)
