@@ -41,18 +41,25 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
 
     def androidJavadocsJar = project.tasks.create("androidJavadocsJar", Jar.class) {
       classifier = 'javadoc'
-      from project.androidJavadocs.destinationDir
     }
 
     if (plugins.hasPlugin('kotlin-android')) {
+      def dokkaOutput = "${project.docsDir}/dokka"
       project.plugins.apply('org.jetbrains.dokka-android')
       project.dokka {
         outputFormat 'javadoc'
-        outputDirectory project.androidJavadocs.destinationDir.path
+        outputDirectory dokkaOutput
       }
       androidJavadocsJar.dependsOn("dokka")
+      androidJavadocsJar.configure {
+        dependsOn "dokka"
+        from dokkaOutput
+      }
     } else {
-      androidJavadocsJar.dependsOn("androidJavadocs")
+      androidJavadocsJar.configure {
+        dependsOn "androidJavadocs"
+        from project.androidJavadocs.destinationDir
+      }
     }
 
     project.tasks.create("androidSourcesJar", Jar.class) {
@@ -85,18 +92,24 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
 
     def javadocsJar = project.tasks.create("javadocsJar", Jar.class) {
       classifier = 'javadoc'
-      from project.javadoc.destinationDir
     }
 
     if (project.plugins.hasPlugin("kotlin")) {
+      def dokkaOutput = "${project.docsDir}/dokka"
       project.plugins.apply('org.jetbrains.dokka')
       project.dokka {
         outputFormat 'javadoc'
-        outputDirectory project.javadoc.destinationDir.path
+        outputDirectory dokkaOutput
       }
-      javadocsJar.dependsOn("dokka")
+      javadocsJar.configure {
+        dependsOn "dokka"
+        from dokkaOutput
+      }
     } else {
-      javadocsJar.dependsOn("javadoc")
+      javadocsJar.configure {
+        dependsOn "javadoc"
+        from project.javadoc.destinationDir
+      }
     }
 
     configurer.addComponent(project.components.java)
