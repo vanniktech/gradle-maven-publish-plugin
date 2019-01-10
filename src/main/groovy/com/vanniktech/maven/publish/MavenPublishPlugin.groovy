@@ -50,7 +50,6 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
         outputFormat 'javadoc'
         outputDirectory dokkaOutput
       }
-      androidJavadocsJar.dependsOn("dokka")
       androidJavadocsJar.configure {
         dependsOn "dokka"
         from dokkaOutput
