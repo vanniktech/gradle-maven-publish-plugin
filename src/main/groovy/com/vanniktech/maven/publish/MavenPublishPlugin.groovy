@@ -78,7 +78,6 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     }.dependsOn("javadoc")
 
     configurer.addComponent(project.components.java)
-    configurer.addTaskOutput(project.jar)
     configurer.addTaskOutput(project.javadocsJar)
     if (plugins.hasPlugin('groovy')) {
       configurer.addTaskOutput(project.groovydocJar)

@@ -4,6 +4,7 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import org.assertj.core.api.Java6Assertions.assertThat
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
 import org.gradle.api.internal.project.DefaultProject
 import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
@@ -30,18 +31,20 @@ class MavenPublishPluginTest {
   @Test fun javaPlugin() {
     project.plugins.apply(JavaPlugin::class.java)
     assert(project)
+    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(6)
   }
 
   @Test fun javaLibraryPlugin() {
     project.plugins.apply(JavaLibraryPlugin::class.java)
     assert(project)
+    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(6)
   }
 
   @Test fun javaLibraryPluginWithGroovy() {
     project.plugins.apply(JavaLibraryPlugin::class.java)
     project.plugins.apply(GroovyPlugin::class.java)
     assert(project)
-
+    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(8)
     assertThat(project.tasks.getByName("groovydocJar")).isNotNull()
   }
 
