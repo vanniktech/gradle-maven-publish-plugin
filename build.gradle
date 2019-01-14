@@ -24,8 +24,8 @@ apply plugin: 'kotlin'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.vanniktech.code.quality.tools'
 apply plugin: 'com.vanniktech.android.junit.jacoco'
-apply plugin: 'com.gradle.plugin-publish'
 apply plugin: "com.vanniktech.maven.publish"
+apply plugin: 'com.gradle.plugin-publish'
 
 // Workaround for having both Groovy + Kotlin.
 compileGroovy {
