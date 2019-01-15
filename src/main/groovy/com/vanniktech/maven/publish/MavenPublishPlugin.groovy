@@ -39,10 +39,27 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       options.linksOffline "https://developer.android.com/reference", "${project.android.sdkDirectory}/docs/reference"
     }
 
-    project.tasks.create("androidJavadocsJar", Jar.class) {
+    def androidJavadocsJar = project.tasks.create("androidJavadocsJar", Jar.class) {
       classifier = 'javadoc'
-      from project.androidJavadocs.destinationDir
-    }.dependsOn("androidJavadocs")
+    }
+
+    if (plugins.hasPlugin('kotlin-android')) {
+      def dokkaOutput = "${project.docsDir}/dokka"
+      project.plugins.apply('org.jetbrains.dokka-android')
+      project.dokka {
+        outputFormat 'javadoc'
+        outputDirectory dokkaOutput
+      }
+      androidJavadocsJar.configure {
+        dependsOn "dokka"
+        from dokkaOutput
+      }
+    } else {
+      androidJavadocsJar.configure {
+        dependsOn "androidJavadocs"
+        from project.androidJavadocs.destinationDir
+      }
+    }
 
     project.tasks.create("androidSourcesJar", Jar.class) {
       classifier = 'sources'
@@ -72,10 +89,27 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       from project.sourceSets.main.allSource
     }.dependsOn("classes")
 
-    project.tasks.create("javadocsJar", Jar.class) {
+    def javadocsJar = project.tasks.create("javadocsJar", Jar.class) {
       classifier = 'javadoc'
-      from project.javadoc.destinationDir
-    }.dependsOn("javadoc")
+    }
+
+    if (project.plugins.hasPlugin("kotlin")) {
+      def dokkaOutput = "${project.docsDir}/dokka"
+      project.plugins.apply('org.jetbrains.dokka')
+      project.dokka {
+        outputFormat 'javadoc'
+        outputDirectory dokkaOutput
+      }
+      javadocsJar.configure {
+        dependsOn "dokka"
+        from dokkaOutput
+      }
+    } else {
+      javadocsJar.configure {
+        dependsOn "javadoc"
+        from project.javadoc.destinationDir
+      }
+    }
 
     configurer.addComponent(project.components.java)
     configurer.addTaskOutput(project.javadocsJar)
