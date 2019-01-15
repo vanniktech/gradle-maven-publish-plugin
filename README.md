@@ -44,12 +44,9 @@ mavenPublish {
 
 Once you've configured this and defined the typical pom attributes via Gradle properties you can upload your library using the `uploadArchives` task.
 
-__Note:__ To prevent looping behavior, especially in Kotlin projects / modules, you need to add the following snippet in your `gradle.properties` file in order to disable `parallel` and `daemon` Gradle flags:
+__Note:__ To prevent looping behavior, especially in Kotlin projects / modules, you need to run the `uploadArchives` task with `--no-daemon`and `--no-parallel` flags:
 
-```
-org.gradle.daemon=false
-org.gradle.parallel=false
-```
+`./gradlew uploadArchives --no-daemon --no-parallel`
 
 # Sample
 
