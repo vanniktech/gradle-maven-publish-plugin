@@ -12,7 +12,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.6.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.7.0'
   }
 }
 
@@ -31,18 +31,43 @@ classpath 'com.vanniktech:gradle-maven-publish-plugin:0.7.0-SNAPSHOT'
 
 ## Configuration
 
-Those are all the available configurations - shown with default values and their types. More information can be found in the [Documentation of the Extension](src/test/kotlin/com/vanniktech/maven/publish/MavenPublishPluginExtensionTest.kt).
+Those are all the available configurations - shown with default values and their types. More information can be found in the [Documentation of the Extension](src/main/kotlin/com/vanniktech/maven/publish/MavenPublishPluginExtension.kt).
 
 ```groovy
 mavenPublish {
-  releaseRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-  snapshotRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-  repositoryUsername = null // This defaults to either the SONATYPE_NEXUS_USERNAME Gradle property or the system environment variable.
-  repositoryPassword = null // This defaults to either the SONATYPE_NEXUS_PASSWORD Gradle property or the system environment variable.
+  targets {
+    uploadArchives {
+      releaseRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      snapshotRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+      repositoryUsername = null // This defaults to either the SONATYPE_NEXUS_USERNAME Gradle property or the system environment variable.
+      repositoryPassword = null // This defaults to either the SONATYPE_NEXUS_PASSWORD Gradle property or the system environment variable.
+    }
+  }
 }
 ```
 
 Once you've configured this and defined the typical pom attributes via Gradle properties you can upload your library using the `uploadArchives` task.
+
+If you need to upload to multiple repositories you can also add additional targets.
+
+```groovy
+mavenPublish {
+  targets {
+    uploadArchives {
+       // Configure as above.
+    }
+
+    internalRepo {
+       // Configure as above.
+    }
+
+    betaRepo {
+       // Configure as above.
+    }
+  }
+}
+
+This will create `uploadArchivesInternalRepo` and `uploadArchivesBetaRepo` tasks.
 
 __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, you need to run the `uploadArchives` task with `--no-daemon`and `--no-parallel` flags:
 
