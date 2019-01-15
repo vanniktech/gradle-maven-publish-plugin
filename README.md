@@ -44,6 +44,10 @@ mavenPublish {
 
 Once you've configured this and defined the typical pom attributes via Gradle properties you can upload your library using the `uploadArchives` task.
 
+__Note:__ To prevent looping behavior, especially in Kotlin projects / modules, you need to run the `uploadArchives` task with `--no-daemon`and `--no-parallel` flags:
+
+`./gradlew uploadArchives --no-daemon --no-parallel`
+
 # Sample
 
 This Gradle plugin is using itself to publish any of the updates. It applies a previously released version in the build.gradle just as mentioned above and sets the Gradle properties in this [gradle.properties](gradle.properties).
