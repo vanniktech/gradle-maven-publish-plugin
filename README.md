@@ -66,6 +66,7 @@ mavenPublish {
     }
   }
 }
+```
 
 This will create `uploadArchivesInternalRepo` and `uploadArchivesBetaRepo` tasks.
 
