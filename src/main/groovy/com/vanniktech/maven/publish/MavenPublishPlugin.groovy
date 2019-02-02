@@ -47,7 +47,7 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       def dokkaOutput = "${project.docsDir}/dokka"
       project.plugins.apply('org.jetbrains.dokka-android')
       project.dokka {
-        outputFormat 'javadoc'
+        outputFormat 'html'
         outputDirectory dokkaOutput
       }
       androidJavadocsJar.configure {
@@ -97,7 +97,7 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       def dokkaOutput = "${project.docsDir}/dokka"
       project.plugins.apply('org.jetbrains.dokka')
       project.dokka {
-        outputFormat 'javadoc'
+        outputFormat 'html'
         outputDirectory dokkaOutput
       }
       javadocsJar.configure {
