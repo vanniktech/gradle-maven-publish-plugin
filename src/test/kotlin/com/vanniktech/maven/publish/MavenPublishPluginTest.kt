@@ -31,20 +31,20 @@ class MavenPublishPluginTest {
   @Test fun javaPlugin() {
     project.plugins.apply(JavaPlugin::class.java)
     assert(project)
-    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(6)
+    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(2)
   }
 
   @Test fun javaLibraryPlugin() {
     project.plugins.apply(JavaLibraryPlugin::class.java)
     assert(project)
-    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(6)
+    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(2)
   }
 
   @Test fun javaLibraryPluginWithGroovy() {
     project.plugins.apply(JavaLibraryPlugin::class.java)
     project.plugins.apply(GroovyPlugin::class.java)
     assert(project)
-    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(8)
+    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(2)
     assertThat(project.tasks.getByName("groovydocJar")).isNotNull()
   }
 

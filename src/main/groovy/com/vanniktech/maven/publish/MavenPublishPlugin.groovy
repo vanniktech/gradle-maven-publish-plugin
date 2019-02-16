@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.artifacts.maven.MavenPom
 import org.gradle.api.plugins.PluginContainer
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -17,19 +18,20 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     PluginContainer plugins = project.plugins
     MavenPublishPluginExtension extension = project.extensions.getByType(MavenPublishPluginExtension.class)
 
-    project.tasks.create("androidJavadocs", Javadoc.class) {
+    // Append also the classpath and files for release library variants. This fixes the javadoc warnings.
+    // Got it from here - https://github.com/novoda/bintray-release/pull/39/files
+    def releaseVariantCompileProvider = project.android.libraryVariants.toList().last().javaCompileProvider
+    TaskProvider<Javadoc> docTask = project.tasks.register("androidJavadocs", Javadoc.class) {
+      dependsOn releaseVariantCompileProvider
       if (!plugins.hasPlugin('kotlin-android')) {
         source = project.android.sourceSets.main.java.srcDirs
       }
 
       failOnError true
       classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
-
-      // Append also the classpath and files for release library variants. This fixes the javadoc warnings.
-      // Got it from here - https://github.com/novoda/bintray-release/pull/39/files
-      def releaseVariant = project.android.libraryVariants.toList().last()
-      classpath += releaseVariant.javaCompile.classpath
-      classpath += releaseVariant.javaCompile.outputs.files
+      // Safe to call get() here because we'ved marked this as dependent on the TaskProvider
+      classpath += releaseVariantCompileProvider.get().classpath
+      classpath += releaseVariantCompileProvider.get().outputs.files
 
       // We don't need javadoc for internals.
       exclude '**/internal/*'
@@ -39,8 +41,9 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       options.linksOffline "https://developer.android.com/reference", "${project.android.sdkDirectory}/docs/reference"
     }
 
-    def androidJavadocsJar = project.tasks.create("androidJavadocsJar", Jar.class) {
+    def androidJavadocsJar = project.tasks.register("androidJavadocsJar", Jar.class) {
       classifier = 'javadoc'
+      configurer.addTaskOutput(it)
     }
 
     if (plugins.hasPlugin('kotlin-android')) {
@@ -56,21 +59,20 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       }
     } else {
       androidJavadocsJar.configure {
-        dependsOn "androidJavadocs"
+        dependsOn docTask
         from project.androidJavadocs.destinationDir
       }
     }
 
-    project.tasks.create("androidSourcesJar", Jar.class) {
+    project.tasks.register("androidSourcesJar", Jar.class) {
       classifier = 'sources'
       from project.android.sourceSets.main.java.sourceFiles
+      configurer.addTaskOutput(it)
     }
 
     if (extension.useMavenPublish) {
       throw IllegalArgumentException("Using maven-publish for Android libraries is currently unsupported.")
     }
-    configurer.addTaskOutput(project.androidSourcesJar)
-    configurer.addTaskOutput(project.androidJavadocsJar)
   }
 
   @Override
@@ -78,19 +80,26 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     PluginContainer plugins = project.plugins
 
     if (plugins.hasPlugin('groovy')) {
-      project.tasks.create("groovydocJar", Jar.class) {
+      project.tasks.register("groovydocJar", Jar.class) {
+        dependsOn project.tasks.named("groovydoc")
         classifier = 'groovydoc'
         from project.groovydoc.destinationDir
-      }.dependsOn("groovydoc")
+        if (plugins.hasPlugin('groovy')) {
+          configurer.addTaskOutput(it)
+        }
+      }
     }
 
-    project.tasks.create("sourcesJar", Jar.class) {
+    project.tasks.register("sourcesJar", Jar.class) {
+      dependsOn project.tasks.named("classes")
       classifier = 'sources'
       from project.sourceSets.main.allSource
-    }.dependsOn("classes")
+      configurer.addTaskOutput(it)
+    }
 
-    def javadocsJar = project.tasks.create("javadocsJar", Jar.class) {
+    def javadocsJar = project.tasks.register("javadocsJar", Jar.class) {
       classifier = 'javadoc'
+      configurer.addTaskOutput(it)
     }
 
     if (project.plugins.hasPlugin("kotlin")) {
@@ -112,11 +121,6 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     }
 
     configurer.addComponent(project.components.java)
-    configurer.addTaskOutput(project.javadocsJar)
-    if (plugins.hasPlugin('groovy')) {
-      configurer.addTaskOutput(project.groovydocJar)
-    }
-    configurer.addTaskOutput(project.sourcesJar)
   }
 
   @Override
