@@ -1,7 +1,11 @@
 # Change Log
 
-Version 0.8.0 *(In development)*
---------------------------------
+Version 0.8.0 *(2019-02-18)*
+----------------------------
+
+- Change docs format for Kotlin project docs [\#45](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/45) ([Ilya-Gh](https://github.com/Ilya-Gh))
+- Add missing backticks in README.md [\#43](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/43) ([Egorand](https://github.com/Egorand))
+- Generate javadocs for Kotlin project with Dokka [\#37](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/37) ([Ilya-Gh](https://github.com/Ilya-Gh))
 
 Version 0.7.0 *(2018-01-15)*
 ----------------------------
