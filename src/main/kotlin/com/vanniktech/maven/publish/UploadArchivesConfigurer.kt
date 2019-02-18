@@ -6,6 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.plugins.MavenPlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugins.signing.Sign
@@ -26,7 +27,7 @@ internal class UploadArchivesConfigurer(
       sign(project.configurations.getByName(ARCHIVES_CONFIGURATION))
     }
     project.tasks.withType(Sign::class.java).all { sign ->
-      sign.onlyIf { _ ->
+      sign.onlyIf {
         val signedTargets = targets.filter { it.signing }
         sign.logger.info("Targets that should be signed: ${signedTargets.map { it.name }}")
         signedTargets.any { target ->
@@ -41,18 +42,21 @@ internal class UploadArchivesConfigurer(
 
   override fun configureTarget(target: MavenPublishTarget) {
     val upload = getUploadTask(target.name, target.taskName)
-    upload.configureMavenDeployer(project, target)
+    upload.configure {
+      it.configureMavenDeployer(project, target)
+    }
   }
 
-  private fun getUploadTask(name: String, taskName: String): Upload =
+  @Suppress("UNCHECKED_CAST")
+  private fun getUploadTask(name: String, taskName: String): TaskProvider<Upload> =
     when (name) {
-      DEFAULT_TARGET -> project.tasks.getByName(taskName) as Upload
+      DEFAULT_TARGET -> project.tasks.named(taskName) as TaskProvider<Upload>
       LOCAL_TARGET -> createUploadTask(taskName, "Installs the artifacts to the local Maven repository.")
       else -> createUploadTask(taskName, "Upload all artifacts to $name")
     }
 
-  private fun createUploadTask(name: String, description: String): Upload =
-    project.tasks.create(name, Upload::class.java) {
+  private fun createUploadTask(name: String, description: String): TaskProvider<Upload> =
+    project.tasks.register(name, Upload::class.java) {
       it.group = "upload"
       it.description = description
       it.configuration = project.configurations.getByName(ARCHIVES_CONFIGURATION)
