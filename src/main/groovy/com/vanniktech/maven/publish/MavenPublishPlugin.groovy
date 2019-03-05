@@ -66,7 +66,7 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
 
     project.tasks.register("androidSourcesJar", Jar.class) {
       classifier = 'sources'
-      from project.android.sourceSets.main.java.sourceFiles
+      from project.android.sourceSets.main.java.srcDirs
       configurer.addTaskOutput(it)
     }
 
