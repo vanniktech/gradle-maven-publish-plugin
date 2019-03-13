@@ -1,0 +1,22 @@
+sourceSets {
+    integrationTest {
+        groovy.srcDirs = ['src/integrationTest/groovy']
+        resources.srcDir file('src/integrationTest/resources')
+        compileClasspath += sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+gradlePlugin {
+    testSourceSets sourceSets.integrationTest
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    mustRunAfter test
+}
+
+check.dependsOn integrationTest

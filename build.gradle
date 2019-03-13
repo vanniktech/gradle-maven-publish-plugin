@@ -26,6 +26,7 @@ apply plugin: 'com.vanniktech.code.quality.tools'
 apply plugin: 'com.vanniktech.android.junit.jacoco'
 apply plugin: "com.vanniktech.maven.publish"
 apply plugin: 'com.gradle.plugin-publish'
+apply from: "gradle/integration-test.gradle"
 
 // Workaround for having both Groovy + Kotlin.
 compileGroovy {
@@ -54,13 +55,6 @@ codeQualityTools {
   }
   errorProne {
     enabled = false
-  }
-}
-
-sourceSets {
-  integrationTest {
-    groovy.srcDirs = ['src/integrationTest/groovy']
-    resources.srcDir file('src/integrationTest/resources')
   }
 }
 
@@ -118,13 +112,3 @@ wrapper {
   gradleVersion = '5.2.1'
   distributionType = Wrapper.DistributionType.ALL
 }
-
-task integrationTest(type: Test) {
-  description = 'Runs the integration tests.'
-  group = 'verification'
-  testClassesDirs = sourceSets.integrationTest.output.classesDirs
-  classpath = sourceSets.integrationTest.runtimeClasspath
-  mustRunAfter test
-}
-
-check.dependsOn integrationTest
