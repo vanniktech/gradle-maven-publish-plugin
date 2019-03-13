@@ -57,19 +57,19 @@ codeQualityTools {
   }
 }
 
+sourceSets {
+  integrationTest {
+    groovy.srcDirs = ['src/integrationTest/groovy']
+    resources.srcDir file('src/integrationTest/resources')
+  }
+}
+
 gradlePlugin {
   plugins {
     mavenPublishPlugin {
       id = 'com.vanniktech.maven.publish'
       implementationClass = 'com.vanniktech.maven.publish.MavenPublishPlugin'
     }
-  }
-}
-
-sourceSets {
-  integrationTest {
-    java.srcDirs = ['integrationTest']
-    resources.srcDir file('integrationTest/resources')
   }
 }
 
@@ -95,6 +95,7 @@ dependencies {
   testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
   testImplementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
+  integrationTestImplementation gradleTestKit()
   integrationTestImplementation 'junit:junit:4.12'
 }
 
