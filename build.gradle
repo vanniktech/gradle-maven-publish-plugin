@@ -94,6 +94,8 @@ dependencies {
   testImplementation 'com.github.stefanbirkner:system-rules:1.18.0'
   testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
   testImplementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+
+  integrationTestImplementation 'junit:junit:4.12'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_7
