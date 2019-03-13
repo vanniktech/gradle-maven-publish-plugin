@@ -66,6 +66,13 @@ gradlePlugin {
   }
 }
 
+sourceSets {
+  integrationTest {
+    java.srcDirs = ['integrationTest']
+    resources.srcDir file('integrationTest/resources')
+  }
+}
+
 repositories {
   mavenCentral()
   google()
