@@ -115,3 +115,13 @@ wrapper {
   gradleVersion = '5.2.1'
   distributionType = Wrapper.DistributionType.ALL
 }
+
+task integrationTest(type: Test) {
+  description = 'Runs the integration tests.'
+  group = 'verification'
+  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+  classpath = sourceSets.integrationTest.runtimeClasspath
+  mustRunAfter test
+}
+
+check.dependsOn integrationTest
