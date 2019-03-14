@@ -13,7 +13,6 @@ class MavenPublishPluginIntegrationTest {
   static final String TEST_VERSION_NAME = "1.0.0"
   static final String TEST_POM_ARTIFACT_ID = "test-artifact"
 
-
   @Rule
   public TemporaryFolder testProjectDir = new TemporaryFolder()
   File repoFolder
