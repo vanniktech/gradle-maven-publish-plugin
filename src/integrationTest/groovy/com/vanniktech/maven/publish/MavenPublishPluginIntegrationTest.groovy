@@ -59,14 +59,31 @@ class MavenPublishPluginIntegrationTest {
     """
     setupFixture("passing_java_project")
 
-    def result = GradleRunner.create()
-        .withProjectDir(testProjectDir.root)
-        .withArguments('javadocsJar', 'sourcesJar', 'installArchives', '--info')
-        .withPluginClasspath()
-        .build()
+    def result = executeGradleCommands('javadocsJar', 'sourcesJar', 'installArchives', '--info')
 
     assert result.task(":installArchives").outcome == SUCCESS
     assertExpectedArtifactsGenerated()
+  }
+
+  @Test
+  void generatesArtifactsAndDocumentationOnJavaLibraryProject() {
+    buildFile << """
+      apply plugin: "java-library"
+    """
+    setupFixture("passing_java_library_project")
+
+    def result = executeGradleCommands('javadocsJar', 'sourcesJar', 'installArchives', '--info')
+
+    assert result.task(":installArchives").outcome == SUCCESS
+    assertExpectedArtifactsGenerated()
+  }
+
+  private def executeGradleCommands(String... commands) {
+    return GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments(commands)
+        .withPluginClasspath()
+        .build()
   }
 
   private void assertExpectedArtifactsGenerated() {
