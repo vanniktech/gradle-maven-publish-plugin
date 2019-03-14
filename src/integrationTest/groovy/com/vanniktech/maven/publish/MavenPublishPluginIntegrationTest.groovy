@@ -13,10 +13,12 @@ class MavenPublishPluginIntegrationTest {
   static final String TEST_VERSION_NAME = "1.0.0"
   static final String TEST_POM_ARTIFACT_ID = "test-artifact"
 
+
   @Rule
   public TemporaryFolder testProjectDir = new TemporaryFolder()
   File repoFolder
   File buildFile
+  String artifactFolder
 
   /**
    * Copies test fixture into temp directory under test.
@@ -45,11 +47,17 @@ class MavenPublishPluginIntegrationTest {
         }
       }
     """
+
     testProjectDir.newFile('gradle.properties') << """
       GROUP=$TEST_GROUP
       VERSION_NAME=$TEST_VERSION_NAME
       POM_ARTIFACT_ID=$TEST_POM_ARTIFACT_ID
     """
+
+    def group = TEST_GROUP.replace(".", "/")
+    def artifactId = TEST_POM_ARTIFACT_ID
+    def version = TEST_VERSION_NAME
+    artifactFolder = "$repoFolder.absolutePath/$group/$artifactId/$version"
   }
 
   @Test
@@ -59,10 +67,15 @@ class MavenPublishPluginIntegrationTest {
     """
     setupFixture("passing_java_project")
 
-    def result = executeGradleCommands('javadocsJar', 'sourcesJar', 'installArchives', '--info')
+    def result = executeGradleCommands(
+        'javadocsJar',
+        'sourcesJar',
+        'installArchives',
+        '--info'
+    )
 
     assert result.task(":installArchives").outcome == SUCCESS
-    assertExpectedArtifactsGenerated()
+    assertExpectedCommonArtifactsGenerated()
   }
 
   @Test
@@ -72,10 +85,64 @@ class MavenPublishPluginIntegrationTest {
     """
     setupFixture("passing_java_library_project")
 
-    def result = executeGradleCommands('javadocsJar', 'sourcesJar', 'installArchives', '--info')
+    def result = executeGradleCommands(
+        'javadocsJar',
+        'sourcesJar',
+        'installArchives',
+        '--info'
+    )
 
     assert result.task(":installArchives").outcome == SUCCESS
-    assertExpectedArtifactsGenerated()
+    assertExpectedCommonArtifactsGenerated()
+  }
+
+  @Test
+  void generatesArtifactsAndDocumentationOnJavaLibraryWithGroovyProject() {
+    buildFile << """
+      apply plugin: "java-library"
+      apply plugin: "groovy"
+      sourceSets {
+          main {
+              groovy {
+                  srcDirs = ['src/main/groovy']
+              }
+          }
+      }      
+      repositories {
+          mavenCentral()
+      }
+      dependencies {
+          compile 'org.codehaus.groovy:groovy-all:2.5.6'
+      }
+    """
+    setupFixture("passing_java_library_with_groovy_project")
+
+    def result = executeGradleCommands(
+        'javadocsJar',
+        'groovydocJar',
+        'sourcesJar',
+        'installArchives',
+        '--info'
+    )
+
+    assert result.task(":installArchives").outcome == SUCCESS
+    assertExpectedCommonArtifactsGenerated()
+    assertArtifactGenerated("$TEST_POM_ARTIFACT_ID-${TEST_VERSION_NAME}-groovydoc.jar")
+  }
+
+  private void assertExpectedCommonArtifactsGenerated() {
+    def artifactJar = "$TEST_POM_ARTIFACT_ID-${TEST_VERSION_NAME}.jar"
+    def pomFile = "$TEST_POM_ARTIFACT_ID-${TEST_VERSION_NAME}.pom"
+    def javadocJar = "$TEST_POM_ARTIFACT_ID-${TEST_VERSION_NAME}-javadoc.jar"
+    def sourcesJar = "$TEST_POM_ARTIFACT_ID-${TEST_VERSION_NAME}-sources.jar"
+    assertArtifactGenerated(artifactJar)
+    assertArtifactGenerated(pomFile)
+    assertArtifactGenerated(javadocJar)
+    assertArtifactGenerated(sourcesJar)
+  }
+
+  private void assertArtifactGenerated(String artifactFileNameWithExtenstion) {
+    assert new File("$artifactFolder/$artifactFileNameWithExtenstion").exists()
   }
 
   private def executeGradleCommands(String... commands) {
@@ -84,20 +151,5 @@ class MavenPublishPluginIntegrationTest {
         .withArguments(commands)
         .withPluginClasspath()
         .build()
-  }
-
-  private void assertExpectedArtifactsGenerated() {
-    def group = "com/example"
-    def artifactId = "test-artifact"
-    def version = "1.0.0"
-    def artifactFolder = "$repoFolder.absolutePath/$group/$artifactId/$version"
-    def artifactJar = "$artifactId-${version}.jar"
-    def pomFile = "$artifactId-${version}.pom"
-    def javadocJar = "$artifactId-${version}-javadoc.jar"
-    def sourcesJar = "$artifactId-${version}-sources.jar"
-    assert new File("$artifactFolder/$artifactJar").exists()
-    assert new File("$artifactFolder/$pomFile").exists()
-    assert new File("$artifactFolder/$javadocJar").exists()
-    assert new File("$artifactFolder/$sourcesJar").exists()
   }
 }
