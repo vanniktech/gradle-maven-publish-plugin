@@ -161,11 +161,9 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
     assertThat(File("$artifactFolder/$artifactFileNameWithExtension")).exists()
   }
 
-  private fun executeGradleCommands(vararg commands: String): BuildResult {
-    return GradleRunner.create()
-      .withProjectDir(testProjectDir.root)
-      .withArguments(*commands)
-      .withPluginClasspath()
-      .build()
-  }
+  private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
+    .withProjectDir(testProjectDir.root)
+    .withArguments(*commands)
+    .withPluginClasspath()
+    .build()
 }
