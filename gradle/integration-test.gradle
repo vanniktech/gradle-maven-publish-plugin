@@ -1,22 +1,27 @@
 sourceSets {
-    integrationTest {
-        groovy.srcDirs = ['src/integrationTest/groovy']
-        resources.srcDir file('src/integrationTest/resources')
-        compileClasspath += sourceSets.main.output + configurations.testRuntime
-        runtimeClasspath += output + compileClasspath
-    }
+  integrationTest {
+    kotlin.srcDirs = ['src/integrationTest/kotlin']
+    resources.srcDir file('src/integrationTest/resources')
+    compileClasspath += sourceSets.main.output + configurations.testRuntime
+    runtimeClasspath += output + compileClasspath
+  }
+}
+
+configurations {
+  integrationTestCompile.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
 }
 
 gradlePlugin {
-    testSourceSets sourceSets.integrationTest
+  testSourceSets sourceSets.integrationTest
 }
 
 task integrationTest(type: Test) {
-    description = 'Runs the integration tests.'
-    group = 'verification'
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-    mustRunAfter test
+  description = 'Runs the integration tests.'
+  group = 'verification'
+  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+  classpath = sourceSets.integrationTest.runtimeClasspath
+  mustRunAfter test
 }
 
 check.dependsOn integrationTest
