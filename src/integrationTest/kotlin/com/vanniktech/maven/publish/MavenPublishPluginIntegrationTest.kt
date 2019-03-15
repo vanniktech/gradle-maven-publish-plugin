@@ -90,7 +90,6 @@ class MavenPublishPluginIntegrationTest {
     assertExpectedCommonArtifactsGenerated()
   }
 
-
   @Test
   fun generatesArtifactsAndDocumentationOnJavaLibraryWithGroovyProject() {
     buildFile.appendText(
