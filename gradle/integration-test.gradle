@@ -12,10 +12,6 @@ configurations {
   integrationTestRuntime.extendsFrom testRuntime
 }
 
-gradlePlugin {
-  testSourceSets sourceSets.integrationTest
-}
-
 task integrationTest(type: Test) {
   description = 'Runs the integration tests.'
   group = 'verification'
