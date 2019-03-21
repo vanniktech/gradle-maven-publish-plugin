@@ -1,0 +1,23 @@
+sourceSets {
+  integrationTest {
+    kotlin.srcDirs = ['src/integrationTest/kotlin']
+    resources.srcDir file('src/integrationTest/resources')
+    compileClasspath += sourceSets.main.output + configurations.testRuntime
+    runtimeClasspath += output + compileClasspath
+  }
+}
+
+configurations {
+  integrationTestCompile.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
+}
+
+task integrationTest(type: Test) {
+  description = 'Runs the integration tests.'
+  group = 'verification'
+  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+  classpath = sourceSets.integrationTest.runtimeClasspath
+  mustRunAfter test
+}
+
+check.dependsOn integrationTest

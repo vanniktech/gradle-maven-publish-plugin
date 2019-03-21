@@ -1,5 +1,7 @@
 buildscript {
   ext.kotlinVersion = '1.3.21'
+  ext.junitVersion = '4.12'
+  ext.assertjVersion = '3.10.0'
 
   repositories {
     mavenCentral()
@@ -26,6 +28,7 @@ apply plugin: 'com.vanniktech.code.quality.tools'
 apply plugin: 'com.vanniktech.android.junit.jacoco'
 apply plugin: "com.vanniktech.maven.publish"
 apply plugin: 'com.gradle.plugin-publish'
+apply from: "gradle/integration-test.gradle"
 
 // Workaround for having both Groovy + Kotlin.
 compileGroovy {
@@ -81,12 +84,16 @@ dependencies {
   runtime "org.jetbrains.dokka:dokka-android-gradle-plugin:${dokkaVersion}"
   runtime "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
 
-  testImplementation 'junit:junit:4.12'
-  testImplementation 'org.assertj:assertj-core:3.10.0'
+  testImplementation "junit:junit:${junitVersion}"
+  testImplementation "org.assertj:assertj-core:${assertjVersion}"
   testImplementation 'com.android.tools.build:gradle:3.3.1'
   testImplementation 'com.github.stefanbirkner:system-rules:1.18.0'
   testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
   testImplementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+
+  integrationTestImplementation gradleTestKit()
+  integrationTestImplementation "junit:junit:${junitVersion}"
+  integrationTestImplementation "org.assertj:assertj-core:${assertjVersion}"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_7
