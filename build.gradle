@@ -89,7 +89,7 @@ dependencies {
   testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
   testImplementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
-  testCompileOnly gradleTestKit()
+  integrationTestImplementation gradleTestKit()
   integrationTestImplementation 'junit:junit:4.12'
   integrationTestImplementation 'org.assertj:assertj-core:3.10.0'
 }
