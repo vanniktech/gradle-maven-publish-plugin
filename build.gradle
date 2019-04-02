@@ -80,7 +80,7 @@ dependencies {
   api localGroovy()
   api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-  def dokkaVersion = '0.9.17'
+  def dokkaVersion = '0.9.18'
   runtime "org.jetbrains.dokka:dokka-android-gradle-plugin:${dokkaVersion}"
   runtime "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
 
