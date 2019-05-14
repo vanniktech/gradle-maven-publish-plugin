@@ -1,7 +1,8 @@
 buildscript {
-  ext.kotlinVersion = '1.3.21'
-  ext.junitVersion = '4.12'
-  ext.assertjVersion = '3.10.0'
+  ext.kotlinVersion = '1.3.31'
+  ext.junitVersion = '4.13-beta-3'
+  ext.assertjVersion = '3.12.2'
+  ext.dokkaVersion = '0.9.18'
 
   repositories {
     mavenCentral()
@@ -11,10 +12,10 @@ buildscript {
 
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    classpath 'com.gradle.publish:plugin-publish-plugin:0.10.0'
-    classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
-    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.10.0'
-    classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.11.0'
+    classpath 'com.gradle.publish:plugin-publish-plugin:0.10.1'
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
+    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.18.0'
+    classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.14.0'
     classpath 'com.vanniktech:gradle-maven-publish-plugin:0.8.0'
   }
 }
@@ -38,13 +39,10 @@ compileGroovy {
 
 codeQualityTools {
   ktlint {
-    toolVersion = '0.24.0'
+    toolVersion = '0.31.0'
   }
   detekt {
-    toolVersion = '1.0.0.RC7'
-  }
-  findbugs {
-    enabled = false
+    toolVersion = '1.0.0-RC14'
   }
   pmd {
     enabled = false
@@ -80,20 +78,19 @@ dependencies {
   api localGroovy()
   api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-  def dokkaVersion = '0.9.18'
-  runtime "org.jetbrains.dokka:dokka-android-gradle-plugin:${dokkaVersion}"
-  runtime "org.jetbrains.dokka:dokka-gradle-plugin:${dokkaVersion}"
+  runtime "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
+  runtime "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
-  testImplementation "junit:junit:${junitVersion}"
-  testImplementation "org.assertj:assertj-core:${assertjVersion}"
-  testImplementation 'com.android.tools.build:gradle:3.3.1'
-  testImplementation 'com.github.stefanbirkner:system-rules:1.18.0'
+  testImplementation "junit:junit:$junitVersion"
+  testImplementation "org.assertj:assertj-core:$assertjVersion"
+  testImplementation 'com.android.tools.build:gradle:3.4.0'
+  testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
   testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
   testImplementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
   integrationTestImplementation gradleTestKit()
-  integrationTestImplementation "junit:junit:${junitVersion}"
-  integrationTestImplementation "org.assertj:assertj-core:${assertjVersion}"
+  integrationTestImplementation "junit:junit:$junitVersion"
+  integrationTestImplementation "org.assertj:assertj-core:$assertjVersion"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_7
@@ -112,6 +109,13 @@ pluginBundle {
 }
 
 wrapper {
-  gradleVersion = '5.2.1'
+  gradleVersion = '5.4.1'
   distributionType = Wrapper.DistributionType.ALL
+}
+
+configurations.all {
+  resolutionStrategy {
+    force "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    force "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  }
 }
