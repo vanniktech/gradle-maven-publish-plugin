@@ -74,7 +74,7 @@ __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, 
 
 `./gradlew uploadArchives --no-daemon --no-parallel`
 
-__Note:__  Other than the common maven plugin you must do the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html) manualy.
+__Note:__  Other than the common maven plugin you must do the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html) manually.
 
 # Sample
 
