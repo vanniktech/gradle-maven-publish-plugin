@@ -74,6 +74,8 @@ __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, 
 
 `./gradlew uploadArchives --no-daemon --no-parallel`
 
+__Note:__  Other than the common maven plugin you must do the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html) manualy.
+
 # Sample
 
 This Gradle plugin is using itself to publish any of the updates. It applies a previously released version in the build.gradle just as mentioned above and sets the Gradle properties in this [gradle.properties](gradle.properties).
