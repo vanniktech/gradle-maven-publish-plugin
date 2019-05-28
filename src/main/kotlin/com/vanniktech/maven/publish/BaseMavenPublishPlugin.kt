@@ -10,8 +10,9 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
   override fun apply(p: Project) {
     val extension = p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
 
+
     val gradleVersion = VersionNumber.parse(p.gradle.gradleVersion)
-    if (gradleVersion < VersionNumber(4, 10, 1, null)) {
+    if (gradleVersion < VersionNumber(MINIMUM_GRADLE_MAJOR, MINIMUM_GRADLE_MINOR, MINIMUM_GRADLE_MICRO, null)) {
       throw IllegalArgumentException("You need gradle version 4.10.1 or higher")
     }
 
@@ -53,4 +54,10 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     project: Project,
     target: MavenPublishTarget
   )
+
+  companion object {
+    const val MINIMUM_GRADLE_MAJOR = 4
+    const val MINIMUM_GRADLE_MINOR = 10
+    const val MINIMUM_GRADLE_MICRO = 1
+  }
 }
