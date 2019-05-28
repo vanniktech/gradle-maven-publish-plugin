@@ -119,3 +119,10 @@ configurations.all {
     force "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   }
 }
+
+test {
+  testLogging {
+    events "passed", "skipped", "failed"
+    exceptionFormat "full"
+  }
+}
