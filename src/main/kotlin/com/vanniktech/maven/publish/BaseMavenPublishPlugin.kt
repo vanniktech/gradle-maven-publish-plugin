@@ -3,13 +3,17 @@ package com.vanniktech.maven.publish
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Upload
+import org.gradle.util.VersionNumber
 
 internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
 
   override fun apply(p: Project) {
     val extension = p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
 
-    checkGradleVersion(p)
+    val gradleVersion = VersionNumber.parse(p.gradle.gradleVersion)
+    if (gradleVersion < VersionNumber(4, 10, 1, null)) {
+      throw IllegalArgumentException("You need gradle version 4.10.1 or higher")
+    }
 
     val pom = MavenPublishPom.fromProject(p)
     p.group = requireNotNull(pom.groupId) { "groupId is required to be set" }
@@ -35,17 +39,6 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       }
 
       java8Javadoc(project)
-    }
-  }
-
-  private fun checkGradleVersion(p: Project) {
-    val gradleVersion = p.gradle.gradleVersion
-    val v = gradleVersion.split(".")
-    when {
-      v.size < 2 -> throw IllegalArgumentException("Unrecognized gradle version: $gradleVersion")
-      v[0].toInt() < 4 -> throw IllegalArgumentException("You need gradle version 4.10.1 or higher")
-      v[0].toInt() == 4 && v[1].toInt() < 10 -> throw IllegalArgumentException("You need gradle version 4.10.1 or higher")
-      v.size == 2 && v[0].toInt() == 4 && v[1].toInt() == 10 -> throw IllegalArgumentException("You need gradle version 4.10.1 or higher")
     }
   }
 
