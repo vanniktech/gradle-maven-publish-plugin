@@ -22,7 +22,6 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       }
 
       extension.targets.all {
-        println("configuring target ${it.name}")
         checkNotNull(it.releaseRepositoryUrl) {
           "releaseRepositoryUrl of ${it.name} is required to be set"
         }
