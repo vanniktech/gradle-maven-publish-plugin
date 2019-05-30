@@ -16,8 +16,8 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     }
 
     val pom = MavenPublishPom.fromProject(p)
-    p.group = requireNotNull(pom.groupId) { "groupId is required to be set" }
-    p.version = requireNotNull(pom.version) { "version is required to be set" }
+    p.group = pom.groupId
+    p.version = pom.version
 
     p.afterEvaluate { project ->
       val configurer = when {
