@@ -26,6 +26,7 @@ class MavenPublishPluginTest {
     project = ProjectBuilder.builder().withName("project").build()
     project.extensions.extraProperties.set("GROUP", "com.example")
     project.extensions.extraProperties.set("VERSION_NAME", "1.0.0")
+    project.extensions.extraProperties.set("POM_ARTIFACT_ID", "artifact")
   }
 
   @Test fun javaPlugin() {
