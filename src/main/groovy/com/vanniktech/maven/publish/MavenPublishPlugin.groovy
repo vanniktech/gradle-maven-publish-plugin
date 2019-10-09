@@ -48,7 +48,7 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
 
     if (plugins.hasPlugin('kotlin-android')) {
       def dokkaOutput = "${project.docsDir}/dokka"
-      project.plugins.apply('org.jetbrains.dokka-android')
+      project.plugins.apply('org.jetbrains.dokka')
       project.dokka {
         outputFormat 'html'
         outputDirectory dokkaOutput
