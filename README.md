@@ -81,7 +81,7 @@ __Note:__  Other than the common maven plugin you must do the [release steps at 
 This Gradle plugin is using itself to publish any of the updates. It applies a previously released version in the build.gradle just as mentioned above and sets the Gradle properties in this [gradle.properties](gradle.properties).
 
 In addition to these properties, you will also want to add the following, keeping them hidden and out of source control.
-```
+```groovy
 signing.keyId=12345678
 signing.password=some_password
 signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
