@@ -86,7 +86,6 @@ signing.keyId=12345678
 signing.password=some_password
 signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
 ```
-You can learn more about GPG signing in [this post](https://medium.com/@nmauti/publishing-a-project-on-maven-central-8106393db2c3).
 
 # License
 
