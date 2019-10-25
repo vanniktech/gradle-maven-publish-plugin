@@ -80,6 +80,13 @@ __Note:__  Other than the common maven plugin you must do the [release steps at 
 
 This Gradle plugin is using itself to publish any of the updates. It applies a previously released version in the build.gradle just as mentioned above and sets the Gradle properties in this [gradle.properties](gradle.properties).
 
+If you require your binary to be signed with GPG (mavenCentral requires this for instance), please add the following Gradle properties. It's best to place them inside your home directory, `$HOME/.gradle/gradle.properties`.
+```groovy
+signing.keyId=12345678
+signing.password=some_password
+signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
+```
+
 # License
 
 Copyright (C) 2018 Vanniktech - Niklas Baudy
