@@ -41,6 +41,7 @@ mavenPublish {
       snapshotRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
       repositoryUsername = null // This defaults to either the SONATYPE_NEXUS_USERNAME Gradle property or the system environment variable.
       repositoryPassword = null // This defaults to either the SONATYPE_NEXUS_PASSWORD Gradle property or the system environment variable.
+      signing = true // This defaults to true. GPG signing is required by mavenCentral. If you are deploying elsewhere, you can set this to false.
     }
   }
 }
