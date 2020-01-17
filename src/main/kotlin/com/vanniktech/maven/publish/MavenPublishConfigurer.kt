@@ -6,6 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugins.signing.SigningPlugin
 import java.net.URI
@@ -13,6 +14,8 @@ import java.net.URI
 internal class MavenPublishConfigurer(private val project: Project) : Configurer {
 
   private val publication: MavenPublication
+
+  private val publishTaskProviders = mutableListOf<TaskProvider<*>>()
 
   init {
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
@@ -73,10 +76,12 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
       }
     }
 
+    val publishTaskName = publishTaskName(target.repositoryName)
+    publishTaskProviders.add(project.tasks.named(publishTaskName))
+
     // create task that depends on new publishing task for compatibility and easier switching
     project.tasks.register(target.taskName) {
-      val publicationTaskName = publishTaskName(target.repositoryName)
-      it.dependsOn(project.tasks.named(publicationTaskName))
+      it.dependsOn(project.tasks.named(publishTaskName))
     }
   }
 
@@ -104,7 +109,14 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
     publication.from(component)
   }
 
-  override fun addTaskOutput(task: AbstractArchiveTask) {
-    publication.artifact(task)
+  override fun addTaskOutput(taskProvider: TaskProvider<AbstractArchiveTask>) {
+    taskProvider.configure { task ->
+      publication.artifact(task)
+    }
+    publishTaskProviders.forEach {
+      it.configure { publishTask ->
+        publishTask.dependsOn(taskProvider)
+      }
+    }
   }
 }

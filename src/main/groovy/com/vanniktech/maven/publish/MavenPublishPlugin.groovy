@@ -43,8 +43,8 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
 
     def androidJavadocsJar = project.tasks.register("androidJavadocsJar", Jar.class) {
       classifier = 'javadoc'
-      configurer.addTaskOutput(it)
     }
+    configurer.addTaskOutput(androidJavadocsJar)
 
     if (plugins.hasPlugin('kotlin-android')) {
       def dokkaOutput = "${project.docsDir}/dokka"
@@ -64,11 +64,11 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       }
     }
 
-    project.tasks.register("androidSourcesJar", Jar.class) {
+    def androidSourcesJar = project.tasks.register("androidSourcesJar", Jar.class) {
       classifier = 'sources'
       from project.android.sourceSets.main.java.srcDirs
-      configurer.addTaskOutput(it)
     }
+    configurer.addTaskOutput(androidSourcesJar)
 
     if (extension.useMavenPublish) {
       throw IllegalArgumentException("Using maven-publish for Android libraries is currently unsupported.")
@@ -77,30 +77,31 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
 
   @Override
   protected void setupConfigurerForJava(@NotNull Project project, @NotNull Configurer configurer) {
+
+    configurer.addComponent(project.components.java)
+
     PluginContainer plugins = project.plugins
 
     if (plugins.hasPlugin('groovy')) {
-      project.tasks.register("groovydocJar", Jar.class) {
+      def goovydocJar = project.tasks.register("groovydocJar", Jar.class) {
         dependsOn project.tasks.named("groovydoc")
         classifier = 'groovydoc'
         from project.groovydoc.destinationDir
-        if (plugins.hasPlugin('groovy')) {
-          configurer.addTaskOutput(it)
-        }
       }
+      configurer.addTaskOutput(goovydocJar)
     }
 
-    project.tasks.register("sourcesJar", Jar.class) {
+    def sourcesJar = project.tasks.register("sourcesJar", Jar.class) {
       dependsOn project.tasks.named("classes")
       classifier = 'sources'
       from project.sourceSets.main.allSource
-      configurer.addTaskOutput(it)
     }
+    configurer.addTaskOutput(sourcesJar)
 
     def javadocsJar = project.tasks.register("javadocsJar", Jar.class) {
       classifier = 'javadoc'
-      configurer.addTaskOutput(it)
     }
+    configurer.addTaskOutput(javadocsJar)
 
     if (project.plugins.hasPlugin("kotlin")) {
       def dokkaOutput = "${project.docsDir}/dokka"
@@ -119,8 +120,6 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
         from project.javadoc.destinationDir
       }
     }
-
-    configurer.addComponent(project.components.java)
   }
 
   @Override

@@ -71,9 +71,7 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
 
     setupFixture("passing_java_project")
 
-    val result = executeGradleCommands(
-      "javadocsJar", "sourcesJar", mavenPublishTargetTaskName, "--info"
-    )
+    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
 
     assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
     assertExpectedCommonArtifactsGenerated()
@@ -86,9 +84,7 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
 
     setupFixture("passing_java_library_project")
 
-    val result = executeGradleCommands(
-      "javadocsJar", "sourcesJar", mavenPublishTargetTaskName, "--info"
-    )
+    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
 
     assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
     assertExpectedCommonArtifactsGenerated()
@@ -117,9 +113,7 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
 
     setupFixture("passing_java_library_with_groovy_project")
 
-    val result = executeGradleCommands(
-      "javadocsJar", "groovydocJar", "sourcesJar", mavenPublishTargetTaskName, "--info"
-    )
+    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
 
     assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
     assertExpectedCommonArtifactsGenerated()

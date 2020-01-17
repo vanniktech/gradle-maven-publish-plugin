@@ -18,6 +18,8 @@ internal class UploadArchivesConfigurer(
   private val configureMavenDeployer: Upload.(Project, MavenPublishTarget) -> Unit
 ) : Configurer {
 
+  private val uploadTaskProviders = mutableListOf<TaskProvider<Upload>>()
+
   init {
     project.plugins.apply(MavenPlugin::class.java)
     project.plugins.apply(SigningPlugin::class.java)
@@ -45,6 +47,7 @@ internal class UploadArchivesConfigurer(
     upload.configure {
       it.configureMavenDeployer(project, target)
     }
+    uploadTaskProviders.add(upload)
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -64,7 +67,14 @@ internal class UploadArchivesConfigurer(
 
   override fun addComponent(component: SoftwareComponent) = Unit
 
-  override fun addTaskOutput(task: AbstractArchiveTask) {
-    project.artifacts.add(ARCHIVES_CONFIGURATION, task)
+  override fun addTaskOutput(taskProvider: TaskProvider<AbstractArchiveTask>) {
+    taskProvider.configure { task ->
+        project.artifacts.add(ARCHIVES_CONFIGURATION, task)
+    }
+    uploadTaskProviders.forEach {
+      it.configure { uploadTask ->
+        uploadTask.dependsOn(taskProvider)
+      }
+    }
   }
 }
