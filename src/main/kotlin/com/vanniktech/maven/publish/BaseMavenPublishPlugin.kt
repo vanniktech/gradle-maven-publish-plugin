@@ -21,8 +21,8 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
 
     p.afterEvaluate { project ->
       val configurer = when {
-        extension.useMavenPublish -> MavenPublishConfigurer(project)
-        else -> UploadArchivesConfigurer(project, extension.targets, ::configureMavenDeployer)
+        extension.useLegacyMode -> UploadArchivesConfigurer(project, extension.targets, ::configureMavenDeployer)
+        else -> MavenPublishConfigurer(project)
       }
 
       extension.targets.all {

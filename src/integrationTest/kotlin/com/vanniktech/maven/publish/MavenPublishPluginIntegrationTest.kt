@@ -5,6 +5,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.junit.Assume.assumeFalse
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -18,7 +19,7 @@ import java.io.File
 class MavenPublishPluginIntegrationTest(
   private val uploadArchivesTargetTaskName: String,
   private val mavenPublishTargetTaskName: String,
-  private val useMavenPublish: Boolean
+  private val useLegacyMode: Boolean
 ) {
   companion object {
     const val TEST_GROUP = "com.example"
@@ -26,7 +27,7 @@ class MavenPublishPluginIntegrationTest(
     const val TEST_POM_ARTIFACT_ID = "test-artifact"
 
     @JvmStatic
-    @Parameters(name = "{0} with useMavenPublish={2}")
+    @Parameters(name = "{0} with legacyMode={2}")
     fun mavenPublishTargetsToTest() = listOf(
       arrayOf("installArchives", "publishMavenPublicationToLocalRepository", false),
       arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository", false),
@@ -56,7 +57,7 @@ class MavenPublishPluginIntegrationTest(
         }
 
         mavenPublish {
-          useMavenPublish = $useMavenPublish
+          useLegacyMode = $useLegacyMode
           targets {
             installArchives {
               releaseRepositoryUrl = "file://${repoFolder.absolutePath}"
@@ -144,7 +145,7 @@ class MavenPublishPluginIntegrationTest(
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
-    assumeFalse(useMavenPublish)
+    assumeTrue(useLegacyMode)
 
     val currentBuildFile = buildFile.readText()
     buildFile.writeText("""
@@ -176,10 +177,10 @@ class MavenPublishPluginIntegrationTest(
 
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
     assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
-    if (useMavenPublish) {
-      assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
-    } else {
+    if (useLegacyMode) {
       assertThat(result.task(":$mavenPublishTargetTaskName")).isNull()
+    } else {
+      assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
     }
   }
 
