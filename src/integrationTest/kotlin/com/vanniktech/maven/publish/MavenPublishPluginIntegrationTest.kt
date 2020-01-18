@@ -12,15 +12,20 @@ import org.junit.runners.Parameterized
 import java.io.File
 
 @RunWith(Parameterized::class)
-class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: String) {
+class MavenPublishPluginIntegrationTest(
+  private val mavenPublishTargetTaskName: String,
+  private val useMavenPublish: Boolean
+) {
   companion object {
     const val TEST_GROUP = "com.example"
     const val TEST_VERSION_NAME = "1.0.0"
     const val TEST_POM_ARTIFACT_ID = "test-artifact"
 
     @JvmStatic @Parameterized.Parameters fun mavenPublishTargetsToTest() = listOf(
-      "installArchives",
-      "uploadArchives"
+      arrayOf("installArchives", false),
+      arrayOf("uploadArchives", false),
+      arrayOf("installArchives", true),
+      arrayOf("uploadArchives", true)
     )
   }
 
@@ -39,14 +44,15 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
         }
 
         mavenPublish {
+          useMavenPublish = $useMavenPublish
           targets {
             installArchives {
               releaseRepositoryUrl = "file://${repoFolder.absolutePath}"
-              signing = false
+              signing = true
             }
             uploadArchives {
               releaseRepositoryUrl = "file://${repoFolder.absolutePath}"
-              signing = false
+              signing = true
             }
           }
         }
@@ -56,7 +62,12 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
         GROUP=$TEST_GROUP
         VERSION_NAME=$TEST_VERSION_NAME
         POM_ARTIFACT_ID=$TEST_POM_ARTIFACT_ID
+
+        signing.keyId=B89C4055
+        signing.password=test
+        signing.secretKeyRingFile=secring.gpg
         """)
+    File("src/integrationTest/fixtures/test-secring.gpg").copyTo(File(testProjectDir.root, "secring.gpg"))
 
     val group = TEST_GROUP.replace(".", "/")
     val artifactId = TEST_POM_ARTIFACT_ID
@@ -144,6 +155,7 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
 
   private fun assertArtifactGenerated(artifactFileNameWithExtension: String) {
     assertThat(File("$artifactFolder/$artifactFileNameWithExtension")).exists()
+    assertThat(File("$artifactFolder/$artifactFileNameWithExtension.asc")).exists()
   }
 
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
