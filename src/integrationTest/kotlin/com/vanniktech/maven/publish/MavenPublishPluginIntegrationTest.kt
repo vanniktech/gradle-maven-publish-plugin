@@ -4,6 +4,7 @@ import org.assertj.core.api.Java6Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.junit.Assume.assumeFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -142,7 +143,9 @@ class MavenPublishPluginIntegrationTest(
     assertArtifactGenerated("$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
   }
 
-  @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {    
+  @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
+    assumeFalse(useMavenPublish)
+
     val currentBuildFile = buildFile.readText()
     buildFile.writeText("""
         plugins {
@@ -158,7 +161,7 @@ class MavenPublishPluginIntegrationTest(
 
     setupFixture("passing_android_project")
 
-    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated("aar")
