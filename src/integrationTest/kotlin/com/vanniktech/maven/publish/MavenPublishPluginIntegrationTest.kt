@@ -37,7 +37,7 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
         plugins {
           id "com.vanniktech.maven.publish"
         }
-        
+
         repositories {
             google()
             mavenCentral()
@@ -137,11 +137,6 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
     buildFile.appendText("""
         android {
           compileSdkVersion 29
-          
-          buildTypes {
-            debug {}
-            release {}
-          }
         }
         """)
 
