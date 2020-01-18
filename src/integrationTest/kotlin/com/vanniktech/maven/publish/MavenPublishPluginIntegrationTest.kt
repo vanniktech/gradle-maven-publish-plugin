@@ -147,7 +147,7 @@ class MavenPublishPluginIntegrationTest(
     assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
     if (useMavenPublish) {
       assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
-    } else{
+    } else {
       assertThat(result.task(":$mavenPublishTargetTaskName")).isNull()
     }
   }
