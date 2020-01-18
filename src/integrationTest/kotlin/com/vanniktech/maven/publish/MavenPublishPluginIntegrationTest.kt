@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish
 
 import org.assertj.core.api.Java6Assertions.assertThat
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.junit.Before
@@ -9,10 +10,12 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.junit.runners.Parameterized.Parameters
 import java.io.File
 
 @RunWith(Parameterized::class)
 class MavenPublishPluginIntegrationTest(
+  private val uploadArchivesTargetTaskName: String,
   private val mavenPublishTargetTaskName: String,
   private val useMavenPublish: Boolean
 ) {
@@ -21,11 +24,13 @@ class MavenPublishPluginIntegrationTest(
     const val TEST_VERSION_NAME = "1.0.0"
     const val TEST_POM_ARTIFACT_ID = "test-artifact"
 
-    @JvmStatic @Parameterized.Parameters fun mavenPublishTargetsToTest() = listOf(
-      arrayOf("installArchives", false),
-      arrayOf("uploadArchives", false),
-      arrayOf("installArchives", true),
-      arrayOf("uploadArchives", true)
+    @JvmStatic
+    @Parameters(name = "{0} with useMavenPublish={2}")
+    fun mavenPublishTargetsToTest() = listOf(
+      arrayOf("installArchives", "publishMavenPublicationToLocalRepository", false),
+      arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository", false),
+      arrayOf("installArchives", "publishMavenPublicationToLocalRepository", true),
+      arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository", true)
     )
   }
 
@@ -82,9 +87,9 @@ class MavenPublishPluginIntegrationTest(
 
     setupFixture("passing_java_project")
 
-    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
-    assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
   }
 
@@ -95,9 +100,9 @@ class MavenPublishPluginIntegrationTest(
 
     setupFixture("passing_java_library_project")
 
-    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
-    assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
   }
 
@@ -124,9 +129,9 @@ class MavenPublishPluginIntegrationTest(
 
     setupFixture("passing_java_library_with_groovy_project")
 
-    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
-    assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
     assertArtifactGenerated("$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
   }
@@ -136,6 +141,15 @@ class MavenPublishPluginIntegrationTest(
    */
   private fun setupFixture(fixtureName: String) {
     File("src/integrationTest/fixtures/$fixtureName").copyRecursively(testProjectDir.root)
+  }
+
+  private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    if (useMavenPublish) {
+      assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    } else{
+      assertThat(result.task(":$mavenPublishTargetTaskName")).isNull()
+    }
   }
 
   /**
