@@ -22,6 +22,7 @@ class MavenPublishPluginIntegrationTest(
 ) {
   companion object {
     const val FIXTURES = "src/integrationTest/fixtures"
+    const val EXPECTED_POM = "expected/test-artifact.pom"
 
     const val TEST_GROUP = "com.example"
     const val TEST_VERSION_NAME = "1.0.0"
@@ -45,7 +46,7 @@ class MavenPublishPluginIntegrationTest(
   @Before fun setUp() {
     repoFolder = testProjectDir.newFolder("repo")
 
-    File("$FIXTURES/common").listFiles()!!.forEach { it.copyTo(File(testProjectDir.root, it.name)) }
+    File("$FIXTURES/common").listFiles()!!.forEach { it.copyRecursively(File(testProjectDir.root, it.name)) }
     File(testProjectDir.root, "gradle.properties").appendText("""
         GROUP=$TEST_GROUP
         VERSION_NAME=$TEST_VERSION_NAME
@@ -104,7 +105,7 @@ class MavenPublishPluginIntegrationTest(
    * Copies test fixture into temp directory under test.
    */
   private fun setupFixture(fixtureName: String) {
-    File("$FIXTURES/$fixtureName").copyRecursively(testProjectDir.root)
+    File("$FIXTURES/$fixtureName").copyRecursively(testProjectDir.root, overwrite = true)
   }
 
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
@@ -129,6 +130,8 @@ class MavenPublishPluginIntegrationTest(
     assertArtifactGenerated(pomFile)
     assertArtifactGenerated(javadocJar)
     assertArtifactGenerated(sourcesJar)
+
+    assertThat(File("$artifactFolder/$pomFile")).hasSameContentAs(File(testProjectDir.root, EXPECTED_POM))
   }
 
   private fun assertArtifactGenerated(artifactFileNameWithExtension: String) {
