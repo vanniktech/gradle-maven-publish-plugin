@@ -1,0 +1,14 @@
+mavenPublish {
+    useMavenPublish = project.property("test.useMavenPublish").toBoolean()
+    println("usemvnpublish ${project.property("test.useMavenPublish")} $useMavenPublish")
+    targets {
+        installArchives {
+            releaseRepositoryUrl = "file://${project.property("test.releaseRepository")}"
+            signing = true
+        }
+        uploadArchives {
+            releaseRepositoryUrl = "file://${project.property("test.releaseRepository")}"
+            signing = true
+        }
+    }
+}
