@@ -71,12 +71,32 @@ class MavenPublishPluginIntegrationTest(
     assertExpectedCommonArtifactsGenerated("jar")
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnJavaWithKotlinProject() {
+    setupFixture("passing_java_with_kotlin_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedCommonArtifactsGenerated("jar")
+  }
+
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryProject() {
     setupFixture("passing_java_library_project")
 
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated("jar")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithKotlinProject() {
+    setupFixture("passing_java_library_with_kotlin_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
     assertExpectedCommonArtifactsGenerated("jar")
   }
 
@@ -98,6 +118,18 @@ class MavenPublishPluginIntegrationTest(
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated("aar")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinProject() {
+    assumeFalse(useMavenPublish)
+
+    setupFixture("passing_android_with_kotlin_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
     assertExpectedCommonArtifactsGenerated("aar")
   }
 
