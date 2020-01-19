@@ -10,7 +10,6 @@ import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.jetbrains.annotations.NotNull
-import java.lang.IllegalStateException
 
 class MavenPublishPlugin extends BaseMavenPublishPlugin {
 
@@ -18,6 +17,10 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
   protected void setupConfigurerForAndroid(@NotNull Project project, @NotNull Configurer configurer) {
     PluginContainer plugins = project.plugins
     MavenPublishPluginExtension extension = project.extensions.getByType(MavenPublishPluginExtension.class)
+
+    if (!extension.useLegacyMode) {
+      configurer.addComponent(project.components.getByName(extension.androidVariantToPublish))
+    }
 
     // Append also the classpath and files for release library variants. This fixes the javadoc warnings.
     // Got it from here - https://github.com/novoda/bintray-release/pull/39/files
@@ -70,10 +73,6 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       from project.android.sourceSets.main.java.srcDirs
     }
     configurer.addTaskOutput(androidSourcesJar)
-
-    if (!extension.useLegacyMode) {
-      throw IllegalArgumentException("Using maven-publish for Android libraries is currently unsupported.")
-    }
   }
 
   @Override

@@ -4,7 +4,6 @@ import org.assertj.core.api.Java6Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -111,8 +110,6 @@ class MavenPublishPluginIntegrationTest(
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
-    assumeTrue(useLegacyMode)
-
     setupFixture("passing_android_project")
 
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
@@ -122,8 +119,6 @@ class MavenPublishPluginIntegrationTest(
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinProject() {
-    assumeTrue(useLegacyMode)
-
     setupFixture("passing_android_with_kotlin_project")
 
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
@@ -163,7 +158,20 @@ class MavenPublishPluginIntegrationTest(
     assertArtifactGenerated(javadocJar)
     assertArtifactGenerated(sourcesJar)
 
-    assertThat(artifactFolder.resolve(pomFile)).hasSameContentAs(testProjectDir.root.resolve(EXPECTED_POM))
+    // in legacyMode for Android the packaging is written, for all other modes it's currently not written
+    // https://github.com/vanniktech/gradle-maven-publish-plugin/issues/82
+    val resolvedPomFile = artifactFolder.resolve(pomFile)
+    val lines = resolvedPomFile.readLines()
+    if (lines.contains("  <packaging>aar</packaging>")) {
+      resolvedPomFile.writeText("")
+      lines.forEach { line ->
+        if (line != "  <packaging>aar</packaging>") {
+          resolvedPomFile.appendText(line)
+          resolvedPomFile.appendText("\n")
+        }
+      }
+    }
+    assertThat(resolvedPomFile).hasSameContentAs(testProjectDir.root.resolve(EXPECTED_POM))
   }
 
   private fun assertArtifactGenerated(artifactFileNameWithExtension: String) {
