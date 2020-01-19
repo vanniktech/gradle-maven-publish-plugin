@@ -4,7 +4,7 @@ import org.assertj.core.api.Java6Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import org.junit.Assume.assumeFalse
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -18,7 +18,7 @@ import java.io.File
 class MavenPublishPluginIntegrationTest(
   private val uploadArchivesTargetTaskName: String,
   private val mavenPublishTargetTaskName: String,
-  private val useMavenPublish: Boolean
+  private val useLegacyMode: Boolean
 ) {
   companion object {
     const val FIXTURES = "src/integrationTest/fixtures"
@@ -29,7 +29,7 @@ class MavenPublishPluginIntegrationTest(
     const val TEST_POM_ARTIFACT_ID = "test-artifact"
 
     @JvmStatic
-    @Parameters(name = "{0} with useMavenPublish={2}")
+    @Parameters(name = "{0} with legacyMode={2}")
     fun mavenPublishTargetsToTest() = listOf(
       arrayOf("installArchives", "publishMavenPublicationToLocalRepository", false),
       arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository", false),
@@ -53,7 +53,7 @@ class MavenPublishPluginIntegrationTest(
         POM_ARTIFACT_ID=$TEST_POM_ARTIFACT_ID
 
         test.releaseRepository=$repoFolder
-        test.useMavenPublish=$useMavenPublish
+        test.useLegacyMode=$useLegacyMode
         """)
 
     val group = TEST_GROUP.replace(".", "/")
@@ -111,7 +111,7 @@ class MavenPublishPluginIntegrationTest(
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
-    assumeFalse(useMavenPublish)
+    assumeTrue(useLegacyMode)
 
     setupFixture("passing_android_project")
 
@@ -122,7 +122,7 @@ class MavenPublishPluginIntegrationTest(
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinProject() {
-    assumeFalse(useMavenPublish)
+    assumeTrue(useLegacyMode)
 
     setupFixture("passing_android_with_kotlin_project")
 
@@ -142,10 +142,10 @@ class MavenPublishPluginIntegrationTest(
 
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
     assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
-    if (useMavenPublish) {
-      assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
-    } else {
+    if (useLegacyMode) {
       assertThat(result.task(":$mavenPublishTargetTaskName")).isNull()
+    } else {
+      assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
     }
   }
 

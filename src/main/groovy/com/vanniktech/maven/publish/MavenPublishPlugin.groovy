@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.jetbrains.annotations.NotNull
+import java.lang.IllegalStateException
 
 class MavenPublishPlugin extends BaseMavenPublishPlugin {
 
@@ -70,7 +71,7 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     }
     configurer.addTaskOutput(androidSourcesJar)
 
-    if (extension.useMavenPublish) {
+    if (!extension.useLegacyMode) {
       throw IllegalArgumentException("Using maven-publish for Android libraries is currently unsupported.")
     }
   }

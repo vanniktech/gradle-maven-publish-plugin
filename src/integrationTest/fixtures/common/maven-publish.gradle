@@ -1,6 +1,5 @@
 mavenPublish {
-    useMavenPublish = project.property("test.useMavenPublish").toBoolean()
-    println("usemvnpublish ${project.property("test.useMavenPublish")} $useMavenPublish")
+    useLegacyMode = project.property("test.useLegacyMode").toBoolean()
     targets {
         installArchives {
             releaseRepositoryUrl = "file://${project.property("test.releaseRepository")}"
