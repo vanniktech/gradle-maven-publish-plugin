@@ -21,6 +21,9 @@ class MavenPublishPluginIntegrationTest(
   private val useLegacyMode: Boolean
 ) {
   companion object {
+    const val FIXTURES = "src/integrationTest/fixtures"
+    const val EXPECTED_POM = "expected/test-artifact.pom"
+
     const val TEST_GROUP = "com.example"
     const val TEST_VERSION_NAME = "1.0.0"
     const val TEST_POM_ARTIFACT_ID = "test-artifact"
@@ -38,60 +41,28 @@ class MavenPublishPluginIntegrationTest(
   @get:Rule val testProjectDir: TemporaryFolder = TemporaryFolder()
 
   private lateinit var repoFolder: File
-  private lateinit var buildFile: File
-  private lateinit var artifactFolder: String
+  private lateinit var artifactFolder: File
 
   @Before fun setUp() {
     repoFolder = testProjectDir.newFolder("repo")
-    buildFile = testProjectDir.newFile("build.gradle")
-    buildFile.writeText("""
-        plugins {
-          id "com.vanniktech.maven.publish"
-        }
 
-        repositories {
-            google()
-            mavenCentral()
-            jcenter()
-        }
-
-        mavenPublish {
-          useLegacyMode = $useLegacyMode
-          targets {
-            installArchives {
-              releaseRepositoryUrl = "file://${repoFolder.absolutePath}"
-              signing = true
-            }
-            uploadArchives {
-              releaseRepositoryUrl = "file://${repoFolder.absolutePath}"
-              signing = true
-            }
-          }
-        }
-        """)
-
-    testProjectDir.newFile("gradle.properties").writeText("""
+    File("$FIXTURES/common").listFiles()?.forEach { it.copyRecursively(testProjectDir.root.resolve(it.name)) }
+    testProjectDir.root.resolve("gradle.properties").appendText("""
         GROUP=$TEST_GROUP
         VERSION_NAME=$TEST_VERSION_NAME
         POM_ARTIFACT_ID=$TEST_POM_ARTIFACT_ID
 
-        signing.keyId=B89C4055
-        signing.password=test
-        signing.secretKeyRingFile=secring.gpg
+        test.releaseRepository=$repoFolder
+        test.useLegacyMode=$useLegacyMode
         """)
-    File("src/integrationTest/fixtures/test-secring.gpg").copyTo(File(testProjectDir.root, "secring.gpg"))
 
     val group = TEST_GROUP.replace(".", "/")
     val artifactId = TEST_POM_ARTIFACT_ID
     val version = TEST_VERSION_NAME
-    artifactFolder = "${repoFolder.absolutePath}/$group/$artifactId/$version"
+    artifactFolder = repoFolder.resolve("$group/$artifactId/$version")
   }
 
   @Test fun generatesArtifactsAndDocumentationOnJavaProject() {
-    buildFile.appendText("""
-        apply plugin: "java"
-        """)
-
     setupFixture("passing_java_project")
 
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
@@ -100,11 +71,17 @@ class MavenPublishPluginIntegrationTest(
     assertExpectedCommonArtifactsGenerated("jar")
   }
 
-  @Test fun generatesArtifactsAndDocumentationOnJavaLibraryProject() {
-    buildFile.appendText("""
-        apply plugin: "java-library"
-        """)
+  @Test fun generatesArtifactsAndDocumentationOnJavaWithKotlinProject() {
+    setupFixture("passing_java_with_kotlin_project")
 
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedCommonArtifactsGenerated("jar")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnJavaLibraryProject() {
     setupFixture("passing_java_library_project")
 
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
@@ -113,27 +90,17 @@ class MavenPublishPluginIntegrationTest(
     assertExpectedCommonArtifactsGenerated("jar")
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithKotlinProject() {
+    setupFixture("passing_java_library_with_kotlin_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedCommonArtifactsGenerated("jar")
+  }
+
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithGroovyProject() {
-    buildFile.appendText("""
-        apply plugin: "java-library"
-        apply plugin: "groovy"
-        sourceSets {
-            main {
-                groovy {
-                    srcDirs = ['src/main/groovy']
-                }
-            }
-        }
-
-        repositories {
-            mavenCentral()
-        }
-
-        dependencies {
-            compile 'org.codehaus.groovy:groovy-all:2.5.6'
-        }
-        """)
-
     setupFixture("passing_java_library_with_groovy_project")
 
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
@@ -146,19 +113,6 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
     assumeTrue(useLegacyMode)
 
-    val currentBuildFile = buildFile.readText()
-    buildFile.writeText("""
-        plugins {
-          id "com.android.library"
-        }
-        """)
-    buildFile.appendText(currentBuildFile)
-    buildFile.appendText("""
-        android {
-          compileSdkVersion 29
-        }
-        """)
-
     setupFixture("passing_android_project")
 
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
@@ -167,11 +121,23 @@ class MavenPublishPluginIntegrationTest(
     assertExpectedCommonArtifactsGenerated("aar")
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinProject() {
+    assumeTrue(useLegacyMode)
+
+    setupFixture("passing_android_with_kotlin_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedCommonArtifactsGenerated("aar")
+  }
+
   /**
    * Copies test fixture into temp directory under test.
    */
   private fun setupFixture(fixtureName: String) {
-    File("src/integrationTest/fixtures/$fixtureName").copyRecursively(testProjectDir.root)
+    File("$FIXTURES/$fixtureName").copyRecursively(testProjectDir.root, overwrite = true)
   }
 
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
@@ -196,11 +162,13 @@ class MavenPublishPluginIntegrationTest(
     assertArtifactGenerated(pomFile)
     assertArtifactGenerated(javadocJar)
     assertArtifactGenerated(sourcesJar)
+
+    assertThat(artifactFolder.resolve(pomFile)).hasSameContentAs(testProjectDir.root.resolve(EXPECTED_POM))
   }
 
   private fun assertArtifactGenerated(artifactFileNameWithExtension: String) {
-    assertThat(File("$artifactFolder/$artifactFileNameWithExtension")).exists()
-    assertThat(File("$artifactFolder/$artifactFileNameWithExtension.asc")).exists()
+    assertThat(artifactFolder.resolve(artifactFileNameWithExtension)).exists()
+    assertThat(artifactFolder.resolve("$artifactFileNameWithExtension.asc")).exists()
   }
 
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()

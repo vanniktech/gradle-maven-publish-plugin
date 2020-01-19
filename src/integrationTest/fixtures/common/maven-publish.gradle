@@ -1,0 +1,13 @@
+mavenPublish {
+    useLegacyMode = project.property("test.useLegacyMode").toBoolean()
+    targets {
+        installArchives {
+            releaseRepositoryUrl = "file://${project.property("test.releaseRepository")}"
+            signing = true
+        }
+        uploadArchives {
+            releaseRepositoryUrl = "file://${project.property("test.releaseRepository")}"
+            signing = true
+        }
+    }
+}

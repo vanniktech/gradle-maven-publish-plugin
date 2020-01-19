@@ -1,0 +1,10 @@
+plugins {
+    id "java-library"
+    id "com.vanniktech.maven.publish"
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply from: "maven-publish.gradle"
