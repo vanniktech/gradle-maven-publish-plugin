@@ -41,13 +41,13 @@ class MavenPublishPluginIntegrationTest(
   @get:Rule val testProjectDir: TemporaryFolder = TemporaryFolder()
 
   private lateinit var repoFolder: File
-  private lateinit var artifactFolder: String
+  private lateinit var artifactFolder: File
 
   @Before fun setUp() {
     repoFolder = testProjectDir.newFolder("repo")
 
-    File("$FIXTURES/common").listFiles()?.forEach { it.copyRecursively(File(testProjectDir.root, it.name)) }
-    File(testProjectDir.root, "gradle.properties").appendText("""
+    File("$FIXTURES/common").listFiles()?.forEach { it.copyRecursively(testProjectDir.root.resolve(it.name)) }
+    testProjectDir.root.resolve("gradle.properties").appendText("""
         GROUP=$TEST_GROUP
         VERSION_NAME=$TEST_VERSION_NAME
         POM_ARTIFACT_ID=$TEST_POM_ARTIFACT_ID
@@ -59,7 +59,7 @@ class MavenPublishPluginIntegrationTest(
     val group = TEST_GROUP.replace(".", "/")
     val artifactId = TEST_POM_ARTIFACT_ID
     val version = TEST_VERSION_NAME
-    artifactFolder = "${repoFolder.absolutePath}/$group/$artifactId/$version"
+    artifactFolder = repoFolder.resolve("$group/$artifactId/$version")
   }
 
   @Test fun generatesArtifactsAndDocumentationOnJavaProject() {
@@ -163,12 +163,12 @@ class MavenPublishPluginIntegrationTest(
     assertArtifactGenerated(javadocJar)
     assertArtifactGenerated(sourcesJar)
 
-    assertThat(File("$artifactFolder/$pomFile")).hasSameContentAs(File(testProjectDir.root, EXPECTED_POM))
+    assertThat(artifactFolder.resolve(pomFile)).hasSameContentAs(testProjectDir.root.resolve(EXPECTED_POM))
   }
 
   private fun assertArtifactGenerated(artifactFileNameWithExtension: String) {
-    assertThat(File("$artifactFolder/$artifactFileNameWithExtension")).exists()
-    assertThat(File("$artifactFolder/$artifactFileNameWithExtension.asc")).exists()
+    assertThat(artifactFolder.resolve(artifactFileNameWithExtension)).exists()
+    assertThat(artifactFolder.resolve("$artifactFileNameWithExtension.asc")).exists()
   }
 
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
