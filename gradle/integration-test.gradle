@@ -18,10 +18,6 @@ task integrationTest(type: Test) {
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
   mustRunAfter test
-
-  testLogging {
-    showStandardStreams = true
-  }
 }
 
 check.dependsOn integrationTest
