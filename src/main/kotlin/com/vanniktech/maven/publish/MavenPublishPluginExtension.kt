@@ -36,6 +36,16 @@ open class MavenPublishPluginExtension(project: Project) {
   var useLegacyMode: Boolean = true
 
   /**
+   * The Android library variant that should be published. Projects not using any product flavors, that just want
+   * to publish the release build type can use the default.
+   *
+   * This is **not supported** in legacy mode.
+   *
+   * @Since 0.9.0
+   */
+  var androidVariantToPublish: String = "release"
+
+  /**
    * Allows to add additional [MavenPublishTargets][MavenPublishTarget] to publish to multiple repositories.
    * @since 0.7.0
    */
