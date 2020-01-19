@@ -1,26 +1,37 @@
 package com.vanniktech.maven.publish
 
 import org.assertj.core.api.Java6Assertions.assertThat
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.junit.Assume.assumeFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.junit.runners.Parameterized.Parameters
 import java.io.File
 
 @RunWith(Parameterized::class)
-class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: String) {
+class MavenPublishPluginIntegrationTest(
+  private val uploadArchivesTargetTaskName: String,
+  private val mavenPublishTargetTaskName: String,
+  private val useMavenPublish: Boolean
+) {
   companion object {
     const val TEST_GROUP = "com.example"
     const val TEST_VERSION_NAME = "1.0.0"
     const val TEST_POM_ARTIFACT_ID = "test-artifact"
 
-    @JvmStatic @Parameterized.Parameters fun mavenPublishTargetsToTest() = listOf(
-      "installArchives",
-      "uploadArchives"
+    @JvmStatic
+    @Parameters(name = "{0} with useMavenPublish={2}")
+    fun mavenPublishTargetsToTest() = listOf(
+      arrayOf("installArchives", "publishMavenPublicationToLocalRepository", false),
+      arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository", false),
+      arrayOf("installArchives", "publishMavenPublicationToLocalRepository", true),
+      arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository", true)
     )
   }
 
@@ -45,14 +56,15 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
         }
 
         mavenPublish {
+          useMavenPublish = $useMavenPublish
           targets {
             installArchives {
               releaseRepositoryUrl = "file://${repoFolder.absolutePath}"
-              signing = false
+              signing = true
             }
             uploadArchives {
               releaseRepositoryUrl = "file://${repoFolder.absolutePath}"
-              signing = false
+              signing = true
             }
           }
         }
@@ -62,7 +74,12 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
         GROUP=$TEST_GROUP
         VERSION_NAME=$TEST_VERSION_NAME
         POM_ARTIFACT_ID=$TEST_POM_ARTIFACT_ID
+
+        signing.keyId=B89C4055
+        signing.password=test
+        signing.secretKeyRingFile=secring.gpg
         """)
+    File("src/integrationTest/fixtures/test-secring.gpg").copyTo(File(testProjectDir.root, "secring.gpg"))
 
     val group = TEST_GROUP.replace(".", "/")
     val artifactId = TEST_POM_ARTIFACT_ID
@@ -77,9 +94,9 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
 
     setupFixture("passing_java_project")
 
-    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
-    assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated("jar")
   }
 
@@ -90,9 +107,9 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
 
     setupFixture("passing_java_library_project")
 
-    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
-    assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated("jar")
   }
 
@@ -119,14 +136,16 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
 
     setupFixture("passing_java_library_with_groovy_project")
 
-    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
-    assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated("jar")
     assertArtifactGenerated("$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
+    assumeFalse(useMavenPublish)
+
     val currentBuildFile = buildFile.readText()
     buildFile.writeText("""
         plugins {
@@ -142,9 +161,9 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
 
     setupFixture("passing_android_project")
 
-    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
-    assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated("aar")
   }
 
@@ -153,6 +172,15 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
    */
   private fun setupFixture(fixtureName: String) {
     File("src/integrationTest/fixtures/$fixtureName").copyRecursively(testProjectDir.root)
+  }
+
+  private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    if (useMavenPublish) {
+      assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    } else {
+      assertThat(result.task(":$mavenPublishTargetTaskName")).isNull()
+    }
   }
 
   /**
@@ -172,6 +200,7 @@ class MavenPublishPluginIntegrationTest(private val mavenPublishTargetTaskName: 
 
   private fun assertArtifactGenerated(artifactFileNameWithExtension: String) {
     assertThat(File("$artifactFolder/$artifactFileNameWithExtension")).exists()
+    assertThat(File("$artifactFolder/$artifactFileNameWithExtension.asc")).exists()
   }
 
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
