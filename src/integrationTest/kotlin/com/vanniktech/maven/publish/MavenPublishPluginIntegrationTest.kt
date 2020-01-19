@@ -46,7 +46,7 @@ class MavenPublishPluginIntegrationTest(
   @Before fun setUp() {
     repoFolder = testProjectDir.newFolder("repo")
 
-    File("$FIXTURES/common").listFiles()!!.forEach { it.copyRecursively(File(testProjectDir.root, it.name)) }
+    File("$FIXTURES/common").listFiles()?.forEach { it.copyRecursively(File(testProjectDir.root, it.name)) }
     File(testProjectDir.root, "gradle.properties").appendText("""
         GROUP=$TEST_GROUP
         VERSION_NAME=$TEST_VERSION_NAME
