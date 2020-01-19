@@ -28,8 +28,7 @@ open class MavenPublishPluginExtension(project: Project) {
    * If set to false the new `maven-publish` plugin will be used instead of the soon to be deprecated
    * `maven` plugin.
    *
-   * This is **experimental** and Android projects are unsupported until
-   * [this issue][https://issuetracker.google.com/issues/37055147] is fixed.
+   * For Android libraries version 3.6.0 of the Android Gradle Plugin is required in non legacy mode.
    *
    * @Since 0.9.0
    */
