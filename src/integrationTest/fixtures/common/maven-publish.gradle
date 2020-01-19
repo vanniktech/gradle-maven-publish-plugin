@@ -3,10 +3,14 @@ mavenPublish {
     targets {
         installArchives {
             releaseRepositoryUrl = "file://${project.property("test.releaseRepository")}"
+            repositoryUsername = null
+            repositoryPassword = null
             signing = true
         }
         uploadArchives {
             releaseRepositoryUrl = "file://${project.property("test.releaseRepository")}"
+            repositoryUsername = null
+            repositoryPassword = null
             signing = true
         }
     }
