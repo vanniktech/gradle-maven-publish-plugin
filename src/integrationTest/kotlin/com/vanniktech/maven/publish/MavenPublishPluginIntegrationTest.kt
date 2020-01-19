@@ -48,6 +48,12 @@ class MavenPublishPluginIntegrationTest(
           id "com.vanniktech.maven.publish"
         }
 
+        repositories {
+            google()
+            mavenCentral()
+            jcenter()
+        }
+
         mavenPublish {
           useMavenPublish = $useMavenPublish
           targets {
@@ -90,7 +96,7 @@ class MavenPublishPluginIntegrationTest(
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
+    assertExpectedCommonArtifactsGenerated("jar")
   }
 
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryProject() {
@@ -103,7 +109,7 @@ class MavenPublishPluginIntegrationTest(
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
+    assertExpectedCommonArtifactsGenerated("jar")
   }
 
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithGroovyProject() {
@@ -132,8 +138,30 @@ class MavenPublishPluginIntegrationTest(
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
+    assertExpectedCommonArtifactsGenerated("jar")
     assertArtifactGenerated("$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {    
+    val currentBuildFile = buildFile.readText()
+    buildFile.writeText("""
+        plugins {
+          id "com.android.library"
+        }
+        """)
+    buildFile.appendText(currentBuildFile)
+    buildFile.appendText("""
+        android {
+          compileSdkVersion 29
+        }
+        """)
+
+    setupFixture("passing_android_project")
+
+    val result = executeGradleCommands(mavenPublishTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated("aar")
   }
 
   /**
@@ -156,8 +184,8 @@ class MavenPublishPluginIntegrationTest(
    * Makes sure common artifacts are generated (POM, javadoc, sources, etc.),
    * no matter what project type is and which plugins are applied.
    */
-  private fun assertExpectedCommonArtifactsGenerated() {
-    val artifactJar = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME.jar"
+  private fun assertExpectedCommonArtifactsGenerated(artifactExtension: String) {
+    val artifactJar = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME.$artifactExtension"
     val pomFile = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME.pom"
     val javadocJar = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-javadoc.jar"
     val sourcesJar = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-sources.jar"
