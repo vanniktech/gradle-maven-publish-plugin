@@ -25,15 +25,15 @@ open class MavenPublishPluginExtension(project: Project) {
   )
 
   /**
-   * If set to true the new `maven-publish` plugin will be used instead of the soon to be deprecated
+   * If set to false the new `maven-publish` plugin will be used instead of the soon to be deprecated
    * `maven` plugin.
    *
    * This is **experimental** and Android projects are unsupported until
    * [this issue][https://issuetracker.google.com/issues/37055147] is fixed.
    *
-   * @Since 0.8.0
+   * @Since 0.9.0
    */
-  var useMavenPublish: Boolean = false
+  var useLegacyMode: Boolean = true
 
   /**
    * Allows to add additional [MavenPublishTargets][MavenPublishTarget] to publish to multiple repositories.
