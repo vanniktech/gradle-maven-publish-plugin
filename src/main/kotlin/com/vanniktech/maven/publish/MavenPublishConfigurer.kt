@@ -2,8 +2,13 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.DEFAULT_TARGET
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_TARGET
+import com.vanniktech.maven.publish.tasks.AndroidJavadocs
+import com.vanniktech.maven.publish.tasks.AndroidJavadocsJar
+import com.vanniktech.maven.publish.tasks.AndroidSourcesJar
+import com.vanniktech.maven.publish.tasks.GroovydocsJar
+import com.vanniktech.maven.publish.tasks.JavadocsJar
+import com.vanniktech.maven.publish.tasks.SourcesJar
 import org.gradle.api.Project
-import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
@@ -29,6 +34,7 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
       publication.artifactId = publishPom.artifactId
       publication.version = publishPom.version
 
+      @Suppress("UnstableApiUsage")
       publication.pom { pom ->
         pom.name.set(publishPom.name)
         pom.packaging = publishPom.packaging
@@ -61,6 +67,7 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
 
     project.signing.apply {
       setRequired(project.isSigningRequired)
+      @Suppress("UnstableApiUsage")
       sign(publication)
     }
   }
@@ -106,11 +113,34 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
   private fun publishTaskName(repository: String) =
     "publish${publication.name.capitalize()}PublicationTo${repository.capitalize()}Repository"
 
-  override fun addComponent(component: SoftwareComponent) {
-    publication.from(component)
+  override fun configureAndroidArtifacts() {
+    val extension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
+    publication.from(project.components.getByName(extension.androidVariantToPublish))
+
+    val androidSourcesJar = project.tasks.register("androidSourcesJar", AndroidSourcesJar::class.java)
+    addTaskOutput(androidSourcesJar)
+
+    project.tasks.register("androidJavadocs", AndroidJavadocs::class.java)
+    val androidJavadocsJar = project.tasks.register("androidJavadocsJar", AndroidJavadocsJar::class.java)
+    addTaskOutput(androidJavadocsJar)
   }
 
-  override fun addTaskOutput(taskProvider: TaskProvider<AbstractArchiveTask>) {
+  override fun configureJavaArtifacts() {
+    publication.from(project.components.getByName("java"))
+
+    val sourcesJar = project.tasks.register("sourcesJar", SourcesJar::class.java)
+    addTaskOutput(sourcesJar)
+
+    val javadocsJar = project.tasks.register("javadocsJar", JavadocsJar::class.java)
+    addTaskOutput(javadocsJar)
+
+    if (project.plugins.hasPlugin("groovy")) {
+      val goovydocsJar = project.tasks.register("groovydocJar", GroovydocsJar::class.java)
+      addTaskOutput(goovydocsJar)
+    }
+  }
+
+  private fun addTaskOutput(taskProvider: TaskProvider<out AbstractArchiveTask>) {
     taskProvider.configure { task ->
       publication.artifact(task)
     }

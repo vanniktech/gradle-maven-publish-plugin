@@ -1,9 +1,5 @@
 package com.vanniktech.maven.publish
 
-import org.gradle.api.component.SoftwareComponent
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
-
 internal interface Configurer {
   /**
    * Needs to be called for all targets before `addComponent` and
@@ -11,7 +7,7 @@ internal interface Configurer {
    */
   fun configureTarget(target: MavenPublishTarget)
 
-  fun addComponent(component: SoftwareComponent)
+  fun configureAndroidArtifacts()
 
-  fun addTaskOutput(taskProvider: TaskProvider<AbstractArchiveTask>)
+  fun configureJavaArtifacts()
 }
