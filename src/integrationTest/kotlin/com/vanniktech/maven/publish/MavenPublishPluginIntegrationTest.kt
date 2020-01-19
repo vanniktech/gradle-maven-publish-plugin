@@ -175,5 +175,6 @@ class MavenPublishPluginIntegrationTest(
       .withProjectDir(testProjectDir.root)
       .withArguments(*commands)
       .withPluginClasspath()
+      .forwardOutput()
       .build()
 }
