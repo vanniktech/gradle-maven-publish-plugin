@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.tasks.AndroidSourcesJar
+import com.vanniktech.maven.publish.tasks.SourcesJar
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.artifacts.maven.MavenDeployment
@@ -21,6 +23,9 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     if (!extension.useLegacyMode) {
       configurer.addComponent(project.components.getByName(extension.androidVariantToPublish))
     }
+
+    def androidSourcesJar = project.tasks.register("androidSourcesJar", AndroidSourcesJar.class)
+    configurer.addTaskOutput(androidSourcesJar)
 
     // Append also the classpath and files for release library variants. This fixes the javadoc warnings.
     // Got it from here - https://github.com/novoda/bintray-release/pull/39/files
@@ -67,20 +72,16 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
         from project.androidJavadocs.destinationDir
       }
     }
-
-    def androidSourcesJar = project.tasks.register("androidSourcesJar", Jar.class) {
-      classifier = 'sources'
-      from project.android.sourceSets.main.java.srcDirs
-    }
-    configurer.addTaskOutput(androidSourcesJar)
   }
 
   @Override
   protected void setupConfigurerForJava(@NotNull Project project, @NotNull Configurer configurer) {
+    PluginContainer plugins = project.plugins
 
     configurer.addComponent(project.components.java)
 
-    PluginContainer plugins = project.plugins
+    def sourcesJar = project.tasks.register("sourcesJar", SourcesJar.class)
+    configurer.addTaskOutput(sourcesJar)
 
     if (plugins.hasPlugin('groovy')) {
       def goovydocJar = project.tasks.register("groovydocJar", Jar.class) {
@@ -90,13 +91,6 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
       }
       configurer.addTaskOutput(goovydocJar)
     }
-
-    def sourcesJar = project.tasks.register("sourcesJar", Jar.class) {
-      dependsOn project.tasks.named("classes")
-      classifier = 'sources'
-      from project.sourceSets.main.allSource
-    }
-    configurer.addTaskOutput(sourcesJar)
 
     def javadocsJar = project.tasks.register("javadocsJar", Jar.class) {
       classifier = 'javadoc'
