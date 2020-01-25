@@ -128,6 +128,15 @@ class MavenPublishPluginIntegrationTest(
     assertExpectedCommonArtifactsGenerated("aar")
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnMinimalPomProject() {
+    setupFixture("minimal_pom_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated("jar")
+  }
+
   /**
    * Copies test fixture into temp directory under test.
    */
