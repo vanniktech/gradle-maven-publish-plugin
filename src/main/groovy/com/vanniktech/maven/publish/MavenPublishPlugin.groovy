@@ -211,6 +211,9 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
           if (publishPom.developerName != null) {
             name publishPom.developerName
           }
+          if (publishPom.developerUrl != null) {
+            url publishPom.developerUrl
+          }
         }
       }
     }
