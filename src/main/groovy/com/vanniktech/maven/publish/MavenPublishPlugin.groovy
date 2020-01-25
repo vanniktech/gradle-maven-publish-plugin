@@ -187,6 +187,7 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
         developer {
           id publishPom.developerId
           name publishPom.developerName
+          url publishPom.developerUrl
         }
       }
     }

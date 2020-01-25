@@ -21,7 +21,8 @@ internal data class MavenPublishPom(
   val licenseDistribution: String?,
 
   val developerId: String?,
-  val developerName: String?
+  val developerName: String?,
+  val developerUrl: String?
 ) {
 
   internal companion object {
@@ -41,7 +42,8 @@ internal data class MavenPublishPom(
         findOptionalProperty(project, "POM_LICENCE_URL"),
         findOptionalProperty(project, "POM_LICENCE_DIST"),
         findOptionalProperty(project, "POM_DEVELOPER_ID"),
-        findOptionalProperty(project, "POM_DEVELOPER_NAME")
+        findOptionalProperty(project, "POM_DEVELOPER_NAME"),
+        findOptionalProperty(project, "POM_DEVELOPER_URL")
     )
 
     private fun findMandatoryProperty(project: Project, propertyName: String): String {

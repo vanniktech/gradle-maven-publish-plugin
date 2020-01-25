@@ -53,6 +53,7 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
           developers.developer {
             it.id.set(publishPom.developerId)
             it.name.set(publishPom.developerName)
+            it.url.set(publishPom.developerUrl)
           }
         }
       }
