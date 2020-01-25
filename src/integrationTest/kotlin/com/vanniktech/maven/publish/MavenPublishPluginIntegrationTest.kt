@@ -46,14 +46,6 @@ class MavenPublishPluginIntegrationTest(
     repoFolder = testProjectDir.newFolder("repo")
 
     File("$FIXTURES/common").listFiles()?.forEach { it.copyRecursively(testProjectDir.root.resolve(it.name)) }
-    testProjectDir.root.resolve("gradle.properties").appendText("""
-        GROUP=$TEST_GROUP
-        VERSION_NAME=$TEST_VERSION_NAME
-        POM_ARTIFACT_ID=$TEST_POM_ARTIFACT_ID
-
-        test.releaseRepository=$repoFolder
-        test.useLegacyMode=$useLegacyMode
-        """)
 
     val group = TEST_GROUP.replace(".", "/")
     val artifactId = TEST_POM_ARTIFACT_ID
@@ -142,6 +134,15 @@ class MavenPublishPluginIntegrationTest(
    */
   private fun setupFixture(fixtureName: String) {
     File("$FIXTURES/$fixtureName").copyRecursively(testProjectDir.root, overwrite = true)
+
+    testProjectDir.root.resolve("gradle.properties").appendText("""
+        GROUP=$TEST_GROUP
+        VERSION_NAME=$TEST_VERSION_NAME
+        POM_ARTIFACT_ID=$TEST_POM_ARTIFACT_ID
+
+        test.releaseRepository=$repoFolder
+        test.useLegacyMode=$useLegacyMode
+        """)
   }
 
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
