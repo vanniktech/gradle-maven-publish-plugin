@@ -78,8 +78,8 @@ dependencies {
   api localGroovy()
   api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-  runtime "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
-  runtime "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
+  implementation "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
+  implementation "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
   testImplementation "junit:junit:$junitVersion"
   testImplementation "org.assertj:assertj-core:$assertjVersion"

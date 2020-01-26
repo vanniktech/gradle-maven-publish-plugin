@@ -2,8 +2,10 @@ package com.vanniktech.maven.publish
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.Upload
 import org.gradle.util.VersionNumber
+import org.jetbrains.dokka.gradle.DokkaTask
 
 internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
 
@@ -18,6 +20,8 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     val pom = MavenPublishPom.fromProject(p)
     p.group = pom.groupId
     p.version = pom.version
+
+    configureDokka(p)
 
     p.afterEvaluate { project ->
       val configurer = when {
@@ -39,6 +43,23 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       }
 
       java8Javadoc(project)
+    }
+  }
+
+  private fun configureDokka(project: Project) {
+    project.plugins.withId("org.jetbrains.kotlin.jvm") {
+      project.plugins.apply("org.jetbrains.dokka")
+    }
+    project.plugins.withId("org.jetbrains.kotlin.android") {
+      project.plugins.apply("org.jetbrains.dokka")
+    }
+    project.plugins.withId("org.jetbrains.dokka") {
+      project.tasks.withType(DokkaTask::class.java).configureEach {
+        if (it.outputDirectory.isEmpty()) {
+          val javaConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
+          it.outputDirectory = javaConvention.docsDir.resolve("dokka").toRelativeString(project.projectDir)
+        }
+      }
     }
   }
 
