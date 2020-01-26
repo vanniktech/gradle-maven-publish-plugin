@@ -48,7 +48,7 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
   private fun configureJavadoc(project: Project) {
     project.tasks.withType(Javadoc::class.java).configureEach {
       val options = it.options as StandardJavadocDocletOptions
-      if(JavaVersion.current().isJava9Compatible) {
+      if (JavaVersion.current().isJava9Compatible) {
         options.addBooleanOption("html5", true)
       }
       if (JavaVersion.current().isJava8Compatible) {
