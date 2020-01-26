@@ -20,4 +20,8 @@ task integrationTest(type: Test) {
   mustRunAfter test
 }
 
+tasks.withType(PluginUnderTestMetadata.class).configureEach {
+  pluginClasspath.from(configurations.compileOnly)
+}
+
 check.dependsOn integrationTest

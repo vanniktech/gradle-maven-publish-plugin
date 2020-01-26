@@ -81,7 +81,8 @@ dependencies {
   runtime "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
   runtime "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
 
-  compileOnly "com.android.tools.build:gradle:3.5.3"
+  compileOnly "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+  compileOnly "com.android.tools.build:gradle:3.6.0-rc01"
 
   testImplementation "junit:junit:$junitVersion"
   testImplementation "org.assertj:assertj-core:$assertjVersion"
