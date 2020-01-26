@@ -48,12 +48,12 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
 
   private fun configureDokka(project: Project) {
     project.plugins.withId("org.jetbrains.kotlin.jvm") {
-      project.plugins.apply("org.jetbrains.dokka")
+      project.plugins.apply(PLUGIN_DOKKA)
     }
     project.plugins.withId("org.jetbrains.kotlin.android") {
-      project.plugins.apply("org.jetbrains.dokka")
+      project.plugins.apply(PLUGIN_DOKKA)
     }
-    project.plugins.withId("org.jetbrains.dokka") {
+    project.plugins.withId(PLUGIN_DOKKA) {
       project.tasks.withType(DokkaTask::class.java).configureEach {
         if (it.outputDirectory.isEmpty()) {
           val javaConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
@@ -79,5 +79,7 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     const val MINIMUM_GRADLE_MAJOR = 4
     const val MINIMUM_GRADLE_MINOR = 10
     const val MINIMUM_GRADLE_MICRO = 1
+
+    const val PLUGIN_DOKKA = "org.jetbrains.dokka"
   }
 }
