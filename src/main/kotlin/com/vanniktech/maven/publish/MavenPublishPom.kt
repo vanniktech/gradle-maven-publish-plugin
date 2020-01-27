@@ -47,7 +47,7 @@ internal data class MavenPublishPom(
     )
 
     private fun findMandatoryProperty(project: Project, propertyName: String): String {
-      val value = project.findProperty(propertyName) as String?
+      val value = project.findProperty(propertyName)?.toString()
       if (value == null) {
         throw IllegalArgumentException("Please define \"$propertyName\" in your gradle.properties file")
       } else {
