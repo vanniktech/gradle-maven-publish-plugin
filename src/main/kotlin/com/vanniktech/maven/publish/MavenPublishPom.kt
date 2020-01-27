@@ -51,8 +51,6 @@ internal data class MavenPublishPom(
       return requireNotNull(value) { "Please define \"$propertyName\" in your gradle.properties file" }
     }
 
-    private fun Project.findOptionalProperty(propertyName: String): String? {
-      return findProperty(propertyName)?.toString()
-    }
+    private fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
   }
 }
