@@ -3,10 +3,12 @@ package com.vanniktech.maven.publish
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.util.VersionNumber
+import org.jetbrains.dokka.gradle.DokkaTask
 
 internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
 
@@ -23,6 +25,7 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     p.version = pom.version
 
     configureJavadoc(p)
+    configureDokka(p)
 
     p.afterEvaluate { project ->
       val configurer = when {
@@ -57,6 +60,23 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     }
   }
 
+  private fun configureDokka(project: Project) {
+    project.plugins.withId("org.jetbrains.kotlin.jvm") {
+      project.plugins.apply(PLUGIN_DOKKA)
+    }
+    project.plugins.withId("org.jetbrains.kotlin.android") {
+      project.plugins.apply(PLUGIN_DOKKA)
+    }
+    project.plugins.withId(PLUGIN_DOKKA) {
+      project.tasks.withType(DokkaTask::class.java).configureEach {
+        if (it.outputDirectory.isEmpty()) {
+          val javaConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
+          it.outputDirectory = javaConvention.docsDir.resolve("dokka").toRelativeString(project.projectDir)
+        }
+      }
+    }
+  }
+
   protected abstract fun setupConfigurerForAndroid(project: Project, configurer: Configurer)
 
   protected abstract fun setupConfigurerForJava(project: Project, configurer: Configurer)
@@ -71,5 +91,7 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     const val MINIMUM_GRADLE_MAJOR = 4
     const val MINIMUM_GRADLE_MINOR = 10
     const val MINIMUM_GRADLE_MICRO = 1
+
+    const val PLUGIN_DOKKA = "org.jetbrains.dokka"
   }
 }

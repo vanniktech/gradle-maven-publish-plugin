@@ -50,16 +50,10 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     }
     configurer.addTaskOutput(androidJavadocsJar)
 
-    if (plugins.hasPlugin('kotlin-android')) {
-      def dokkaOutput = "${project.docsDir}/dokka"
-      project.plugins.apply('org.jetbrains.dokka')
-      project.dokka {
-        outputFormat 'html'
-        outputDirectory dokkaOutput
-      }
+    if (project.plugins.hasPlugin("org.jetbrains.dokka")) {
       androidJavadocsJar.configure {
         dependsOn "dokka"
-        from dokkaOutput
+        from project.dokka.outputDirectory
       }
     } else {
       androidJavadocsJar.configure {
@@ -103,16 +97,10 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     }
     configurer.addTaskOutput(javadocsJar)
 
-    if (project.plugins.hasPlugin("kotlin")) {
-      def dokkaOutput = "${project.docsDir}/dokka"
-      project.plugins.apply('org.jetbrains.dokka')
-      project.dokka {
-        outputFormat 'html'
-        outputDirectory dokkaOutput
-      }
+    if (project.plugins.hasPlugin("org.jetbrains.dokka")) {
       javadocsJar.configure {
         dependsOn "dokka"
-        from dokkaOutput
+        from project.dokka.outputDirectory
       }
     } else {
       javadocsJar.configure {
