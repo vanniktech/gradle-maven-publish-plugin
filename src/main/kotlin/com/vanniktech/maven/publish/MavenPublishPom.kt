@@ -28,32 +28,31 @@ internal data class MavenPublishPom(
   internal companion object {
     @JvmStatic
     fun fromProject(project: Project) = MavenPublishPom(
-        findMandatoryProperty(project, "GROUP"),
-        findMandatoryProperty(project, "POM_ARTIFACT_ID"),
-        findMandatoryProperty(project, "VERSION_NAME"),
-        findOptionalProperty(project, "POM_NAME"),
-        findOptionalProperty(project, "POM_PACKAGING"),
-        findOptionalProperty(project, "POM_DESCRIPTION"),
-        findOptionalProperty(project, "POM_URL"),
-        findOptionalProperty(project, "POM_SCM_URL"),
-        findOptionalProperty(project, "POM_SCM_CONNECTION"),
-        findOptionalProperty(project, "POM_SCM_DEV_CONNECTION"),
-        findOptionalProperty(project, "POM_LICENCE_NAME"),
-        findOptionalProperty(project, "POM_LICENCE_URL"),
-        findOptionalProperty(project, "POM_LICENCE_DIST"),
-        findOptionalProperty(project, "POM_DEVELOPER_ID"),
-        findOptionalProperty(project, "POM_DEVELOPER_NAME"),
-        findOptionalProperty(project, "POM_DEVELOPER_URL")
+        project.findMandatoryProperty("GROUP"),
+        project.findMandatoryProperty("POM_ARTIFACT_ID"),
+        project.findMandatoryProperty("VERSION_NAME"),
+        project.findOptionalProperty("POM_NAME"),
+        project.findOptionalProperty("POM_PACKAGING"),
+        project.findOptionalProperty("POM_DESCRIPTION"),
+        project.findOptionalProperty("POM_URL"),
+        project.findOptionalProperty("POM_SCM_URL"),
+        project.findOptionalProperty("POM_SCM_CONNECTION"),
+        project.findOptionalProperty("POM_SCM_DEV_CONNECTION"),
+        project.findOptionalProperty("POM_LICENCE_NAME"),
+        project.findOptionalProperty("POM_LICENCE_URL"),
+        project.findOptionalProperty("POM_LICENCE_DIST"),
+        project.findOptionalProperty("POM_DEVELOPER_ID"),
+        project.findOptionalProperty("POM_DEVELOPER_NAME"),
+        project.findOptionalProperty("POM_DEVELOPER_URL")
     )
 
-    private fun findMandatoryProperty(project: Project, propertyName: String): String {
-      val value = project.findProperty(propertyName)?.toString()
-      if (value == null) {
-        throw IllegalArgumentException("Please define \"$propertyName\" in your gradle.properties file")
-      } else {
-        return value
-      }
+    private fun Project.findMandatoryProperty(propertyName: String): String {
+      val value = this.findOptionalProperty(propertyName)
+      return requireNotNull(value) { "Please define \"$propertyName\" in your gradle.properties file" }
     }
-    private fun findOptionalProperty(project: Project, propertyName: String) = project.findProperty(propertyName) as String?
+
+    private fun Project.findOptionalProperty(propertyName: String): String? {
+      return findProperty(propertyName)?.toString()
+    }
   }
 }
