@@ -12,7 +12,7 @@ before_install:
   - yes | sdkmanager --update &>/dev/null
   - yes | sdkmanager --licenses &>/dev/null
 
-script: ./gradlew clean build
+script: ./gradlew clean build --stacktrace
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

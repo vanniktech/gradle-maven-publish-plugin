@@ -111,17 +111,6 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
   }
 
   @Override
-  protected void java8Javadoc(Project project) {
-    if (JavaVersion.current().isJava8Compatible()) {
-      project.allprojects {
-        tasks.withType(Javadoc) {
-          options.addStringOption('Xdoclint:none', '-quiet')
-        }
-      }
-    }
-  }
-
-  @Override
   protected void configureMavenDeployer(Upload upload, Project project, MavenPublishTarget target) {
     upload.repositories {
       mavenDeployer {
