@@ -117,17 +117,6 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
   }
 
   @Override
-  protected void java8Javadoc(Project project) {
-    if (JavaVersion.current().isJava8Compatible()) {
-      project.allprojects {
-        tasks.withType(Javadoc) {
-          options.addStringOption('Xdoclint:none', '-quiet')
-        }
-      }
-    }
-  }
-
-  @Override
   protected void configureMavenDeployer(Upload upload, Project project, MavenPublishTarget target) {
     upload.repositories {
       mavenDeployer {
@@ -158,29 +147,56 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     pom.version = publishPom.version
 
     pom.project {
-      name publishPom.name
-      packaging publishPom.packaging
-      description publishPom.description
-      url publishPom.url
+      if (publishPom.name != null) {
+        name publishPom.name
+      }
+      if (publishPom.packaging != null) {
+        packaging publishPom.packaging
+      }
+      if (publishPom.description != null) {
+        description publishPom.description
+      }
+      if (publishPom.url != null) {
+        url publishPom.url
+      }
 
       scm {
-        url publishPom.scmUrl
-        connection publishPom.scmConnection
-        developerConnection publishPom.scmDeveloperConnection
+        if (publishPom.scmUrl != null) {
+          url publishPom.scmUrl
+        }
+        if (publishPom.scmConnection != null) {
+          connection publishPom.scmConnection
+        }
+        if (publishPom.scmDeveloperConnection != null) {
+          developerConnection publishPom.scmDeveloperConnection
+        }
       }
 
       licenses {
         license {
-          name publishPom.licenseName
-          url publishPom.licenseUrl
-          distribution publishPom.licenseDistribution
+          if (publishPom.licenseName != null) {
+            name publishPom.licenseName
+          }
+          if (publishPom.licenseUrl != null) {
+            url publishPom.licenseUrl
+          }
+          if (publishPom.licenseDistribution != null) {
+            distribution publishPom.licenseDistribution
+          }
         }
       }
 
       developers {
         developer {
-          id publishPom.developerId
-          name publishPom.developerName
+          if (publishPom.developerId != null) {
+            id publishPom.developerId
+          }
+          if (publishPom.developerName != null) {
+            name publishPom.developerName
+          }
+          if (publishPom.developerUrl != null) {
+            url publishPom.developerUrl
+          }
         }
       }
     }
