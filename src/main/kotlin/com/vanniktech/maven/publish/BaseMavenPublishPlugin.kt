@@ -1,8 +1,11 @@
 package com.vanniktech.maven.publish
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Upload
+import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.util.VersionNumber
 
 internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
@@ -18,6 +21,8 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     val pom = MavenPublishPom.fromProject(p)
     p.group = pom.groupId
     p.version = pom.version
+
+    configureJavadoc(p)
 
     p.afterEvaluate { project ->
       val configurer = when {
@@ -37,16 +42,24 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       } else {
         setupConfigurerForJava(project, configurer)
       }
+    }
+  }
 
-      java8Javadoc(project)
+  private fun configureJavadoc(project: Project) {
+    project.tasks.withType(Javadoc::class.java).configureEach {
+      val options = it.options as StandardJavadocDocletOptions
+      if (JavaVersion.current().isJava9Compatible) {
+        options.addBooleanOption("html5", true)
+      }
+      if (JavaVersion.current().isJava8Compatible) {
+        options.addStringOption("Xdoclint:none", "-quiet")
+      }
     }
   }
 
   protected abstract fun setupConfigurerForAndroid(project: Project, configurer: Configurer)
 
   protected abstract fun setupConfigurerForJava(project: Project, configurer: Configurer)
-
-  protected abstract fun java8Javadoc(project: Project)
 
   protected abstract fun configureMavenDeployer(
     upload: Upload,
