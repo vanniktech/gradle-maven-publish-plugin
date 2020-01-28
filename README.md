@@ -31,6 +31,8 @@ classpath 'com.vanniktech:gradle-maven-publish-plugin:0.9.0-SNAPSHOT'
 
 ## Configuration
 
+***Uploading:***
+
 Those are all the available configurations - shown with default values and their types. More information can be found in the [Documentation of the Extension](src/main/kotlin/com/vanniktech/maven/publish/MavenPublishPluginExtension.kt).
 
 ```groovy
@@ -75,7 +77,33 @@ __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, 
 
 `./gradlew uploadArchives --no-daemon --no-parallel`
 
-__Note:__  Other than the common maven plugin you must do the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html) manually.
+***Releasing:***
+
+Once `uploadArchives` is called, and if you're using a Nexus repository, you'll have to make a release. This can be done manually by following the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html).
+
+Alternatively, you can configure the plugin to do so automatically:
+
+```groovy
+mavenPublish {
+    // ...
+    nexus {
+        baseUrl = "https://your_nexus_instance" // defaults to "https://oss.sonatype.org/service/local/"
+        groupId = "net.example" // defaults to the GROUP Gradle Property if not set
+        respositoryUserName = "username" // defaults to the SONATYPE_NEXUS_USERNAME Gradle Property if not set
+        respositoryPassword = "password" // defaults to the SONATYPE_NEXUS_PASSWORD Gradle Property if not set
+    }
+}
+```
+
+This will create a `closeAndReleaseRepository` task that you can call after `uploadArchives`:
+
+```
+# prepare your release by assigning a version (remove the -SNAPSHOT suffix)
+./gradlew uploadArchives
+./gradlew closeAndReleaseRepository
+```
+
+It assumes there's only one staging repository active when closeAndReleaseRepository is called. If you have stale staging repositories, you'll have to delete them by logging at https://oss.sonatype.org (or you Nexus instance).
 
 # Sample
 
