@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish
 
 import org.gradle.api.JavaVersion
+import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
@@ -45,6 +46,8 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       } else {
         setupConfigurerForJava(project, configurer)
       }
+
+      NexusConfigurer(project)
     }
   }
 

@@ -1,6 +1,8 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.nexus.NexusOptions
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 
@@ -43,6 +45,20 @@ open class MavenPublishPluginExtension(project: Project) {
    * @Since 0.9.0
    */
   var androidVariantToPublish: String = "release"
+
+  /**
+   * Allows to promote repositories without connecting to the nexus instance console.
+   * @since 0.9.0
+   */
+  var nexusOptions = NexusOptions()
+
+  /**
+   * Allows to promote repositories without connecting to the nexus instance console.
+   * @since 0.9.0
+   */
+  fun nexus(action: Action<NexusOptions>) {
+    action.execute(nexusOptions)
+  }
 
   /**
    * Allows to add additional [MavenPublishTargets][MavenPublishTarget] to publish to multiple repositories.

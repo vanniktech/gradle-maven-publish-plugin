@@ -45,12 +45,5 @@ internal data class MavenPublishPom(
         project.findOptionalProperty("POM_DEVELOPER_NAME"),
         project.findOptionalProperty("POM_DEVELOPER_URL")
     )
-
-    private fun Project.findMandatoryProperty(propertyName: String): String {
-      val value = this.findOptionalProperty(propertyName)
-      return requireNotNull(value) { "Please define \"$propertyName\" in your gradle.properties file" }
-    }
-
-    private fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
   }
 }
