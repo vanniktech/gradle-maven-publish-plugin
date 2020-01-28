@@ -10,7 +10,7 @@ open class AndroidJavadocsJar : Jar() {
   init {
     archiveClassifier.set("javadoc")
 
-    if (project.plugins.hasPlugin("dokka")) {
+    if (project.plugins.hasPlugin("org.jetbrains.dokka")) {
       val dokkaTask = project.tasks.getByName("dokka") as DokkaTask
       dependsOn(dokkaTask)
       from(dokkaTask.outputDirectory)
