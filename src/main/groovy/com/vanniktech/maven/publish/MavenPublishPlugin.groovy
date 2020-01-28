@@ -44,7 +44,7 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
     configurer.addTaskOutput(javadocsJar)
 
     if (plugins.hasPlugin('groovy')) {
-      def goovydocsJar = project.tasks.register("groovydocsJar", GroovydocsJar.class)
+      def goovydocsJar = project.tasks.register("groovydocJar", GroovydocsJar.class)
       configurer.addTaskOutput(goovydocsJar)
     }
   }
