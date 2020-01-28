@@ -86,6 +86,8 @@ class Nexus(username: String, password: String, val groupId: String, baseUrl: St
       }
 
       print("\r${waitingChars[i++ % waitingChars.size]} waiting for close...")
+      System.out.flush()
+      
       Thread.sleep(CLOSE_WAIT_INTERVAL_MILLIS)
 
       try {
