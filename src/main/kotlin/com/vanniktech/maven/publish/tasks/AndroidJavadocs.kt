@@ -14,7 +14,7 @@ open class AndroidJavadocs : Javadoc() {
     // Got it from here - https://github.com/novoda/bintray-release/pull/39/files
     val releaseVariantCompileProvider = androidExtension.libraryVariants.toList().last().javaCompileProvider
     dependsOn(androidExtension.libraryVariants.toList().last().javaCompileProvider)
-    if (!project.plugins.hasPlugin("kotlin-android")) {
+    if (!project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
       setSource(androidExtension.sourceSets.getByName("main").java.srcDirs)
     }
 
