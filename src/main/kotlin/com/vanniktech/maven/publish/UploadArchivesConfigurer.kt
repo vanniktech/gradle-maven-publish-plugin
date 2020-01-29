@@ -2,9 +2,14 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.DEFAULT_TARGET
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_TARGET
+import com.vanniktech.maven.publish.tasks.AndroidJavadocs
+import com.vanniktech.maven.publish.tasks.AndroidJavadocsJar
+import com.vanniktech.maven.publish.tasks.AndroidSourcesJar
+import com.vanniktech.maven.publish.tasks.GroovydocsJar
+import com.vanniktech.maven.publish.tasks.JavadocsJar
+import com.vanniktech.maven.publish.tasks.SourcesJar
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
-import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
@@ -65,9 +70,29 @@ internal class UploadArchivesConfigurer(
       it.configuration = project.configurations.getByName(ARCHIVES_CONFIGURATION)
     }
 
-  override fun addComponent(component: SoftwareComponent) = Unit
+  override fun configureAndroidArtifacts() {
+    val androidSourcesJar = project.tasks.register("androidSourcesJar", AndroidSourcesJar::class.java)
+    addTaskOutput(androidSourcesJar)
 
-  override fun addTaskOutput(taskProvider: TaskProvider<AbstractArchiveTask>) {
+    project.tasks.register("androidJavadocs", AndroidJavadocs::class.java)
+    val androidJavadocsJar = project.tasks.register("androidJavadocsJar", AndroidJavadocsJar::class.java)
+    addTaskOutput(androidJavadocsJar)
+  }
+
+  override fun configureJavaArtifacts() {
+    val sourcesJar = project.tasks.register("sourcesJar", SourcesJar::class.java)
+    addTaskOutput(sourcesJar)
+
+    val javadocsJar = project.tasks.register("javadocsJar", JavadocsJar::class.java)
+    addTaskOutput(javadocsJar)
+
+    if (project.plugins.hasPlugin("groovy")) {
+      val goovydocsJar = project.tasks.register("groovydocJar", GroovydocsJar::class.java)
+      addTaskOutput(goovydocsJar)
+    }
+  }
+
+  private fun addTaskOutput(taskProvider: TaskProvider<out AbstractArchiveTask>) {
     taskProvider.configure { task ->
         project.artifacts.add(ARCHIVES_CONFIGURATION, task)
     }

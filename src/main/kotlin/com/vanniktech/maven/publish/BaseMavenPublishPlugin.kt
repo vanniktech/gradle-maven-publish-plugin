@@ -42,9 +42,9 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       }
 
       if (project.plugins.hasPlugin("com.android.library")) {
-        setupConfigurerForAndroid(project, configurer)
+        configurer.configureAndroidArtifacts()
       } else {
-        setupConfigurerForJava(project, configurer)
+        configurer.configureJavaArtifacts()
       }
 
       NexusConfigurer(project)
@@ -79,10 +79,6 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       }
     }
   }
-
-  protected abstract fun setupConfigurerForAndroid(project: Project, configurer: Configurer)
-
-  protected abstract fun setupConfigurerForJava(project: Project, configurer: Configurer)
 
   protected abstract fun configureMavenDeployer(
     upload: Upload,
