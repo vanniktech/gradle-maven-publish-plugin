@@ -16,7 +16,9 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugins.signing.SigningPlugin
 import java.net.URI
 
-internal class MavenPublishConfigurer(private val project: Project) : Configurer {
+internal class MavenPublishConfigurer(
+  private val project: Project
+) : Configurer {
 
   private val publication: MavenPublication
 
@@ -67,8 +69,10 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
 
     project.signing.apply {
       setRequired(project.isSigningRequired)
-      @Suppress("UnstableApiUsage")
-      sign(publication)
+      if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+        @Suppress("UnstableApiUsage")
+        sign(publication)
+      }
     }
   }
 
@@ -114,8 +118,7 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
     "publish${publication.name.capitalize()}PublicationTo${repository.capitalize()}Repository"
 
   override fun configureAndroidArtifacts() {
-    val extension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
-    publication.from(project.components.getByName(extension.androidVariantToPublish))
+    publication.from(project.components.getByName(project.publishExtension.androidVariantToPublish))
 
     val androidSourcesJar = project.tasks.register("androidSourcesJar", AndroidSourcesJar::class.java)
     addTaskOutput(androidSourcesJar)

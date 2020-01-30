@@ -8,3 +8,6 @@ fun Project.findMandatoryProperty(propertyName: String): String {
 }
 
 fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
+
+val Project.publishExtension: MavenPublishPluginExtension
+  get() = project.extensions.getByType(MavenPublishPluginExtension::class.java)
