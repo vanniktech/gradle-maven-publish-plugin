@@ -21,63 +21,110 @@ apply plugin: "com.vanniktech.maven.publish"
 
 Information: [This plugin is also available on Gradle plugins](https://plugins.gradle.org/plugin/com.vanniktech.maven.publish)
 
-### Snapshots
+Snapshots can be found [here](https://oss.sonatype.org/#nexus-search;quick~gradle-maven-publish-plugin).
 
-Can be found [here](https://oss.sonatype.org/#nexus-search;quick~gradle-maven-publish-plugin). Current one is:
+### Setting properties
 
-```groovy
-classpath 'com.vanniktech:gradle-maven-publish-plugin:0.9.0-SNAPSHOT'
+To configure the coordinates of your published artifacts as well as the POM this plugin 
+uses Gradle properties. It's generally recommended to set them in your `gradle.properties`
+file.
+
+There are 3 required properties:
+```
+GROUP=com.test.mylibrary
+POM_ARTIFACT_ID=mylibrary-runtime
+VERSION_NAME=3.0.5
 ```
 
-## Configuration
+In addition to that there are some optional properties to give more details about your project:
 
-***Uploading:***
+```
+POM_NAME=My Library
+POM_DESCRIPTION=A description of what my library does.
+POM_INCEPTION_YEAR=2020
 
-Those are all the available configurations - shown with default values and their types. More information can be found in the [Documentation of the Extension](src/main/kotlin/com/vanniktech/maven/publish/MavenPublishPluginExtension.kt).
+POM_URL=https://github.com/username/mylibrary/
+POM_SCM_URL=https://github.com/username/mylibrary/
+POM_SCM_CONNECTION=scm:git:git://github.com/username/mylibrary.git
+POM_SCM_DEV_CONNECTION=scm:git:ssh://git@github.com/username/mylibrary.git
+
+POM_LICENCE_NAME=The Apache Software License, Version 2.0
+POM_LICENCE_URL=https://www.apache.org/licenses/LICENSE-2.0.txt
+POM_LICENCE_DIST=repo
+
+POM_DEVELOPER_ID=username
+POM_DEVELOPER_NAME=User Name
+POM_DEVELOPER_URL=https://github.com/username/
+```
+
+This Gradle plugin is using itself to publish any of the updates and sets the Gradle properties in 
+this [gradle.properties](gradle.properties).
+
+In multi module projects you can set most properties in the root `gradle.properties` file and
+then only set the module specific ones in the submodules. For example if you have two modules 
+called `runtime` and `driver` you could only set `POM_ARTIFACT_ID` and `POM_NAME` in 
+`<project-dir>/runtime/gradle.properties` and `<project-dir>/driver/gradle.properties` while sharing 
+the rest by putting them into `<project-dir>/gradle.properties`.
+
+### Where to upload to
+
+Without any further configuration the plugin has two tasks. `uploadArchives` which will upload
+to Sonatype OSS (Maven Central) by default. To publish to the local maven repository on your 
+machine (`~/m2/repository`) there is `installArchives`. 
+
+The username and password for Sonatype OSS can be provided as Gradle properties or environment
+variables called `SONATYPE_NEXUS_USERNAME` and `SONATYPE_NEXUS_PASSWORD` to avoid having to 
+commit them.
+
+It's also possible to modify the two existing tasks or add additional targets in your build files:
 
 ```groovy
 mavenPublish {
   targets {
+    // Modify the existing uploadArchives task
     uploadArchives {
       releaseRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
       snapshotRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
       repositoryUsername = null // This defaults to either the SONATYPE_NEXUS_USERNAME Gradle property or the system environment variable.
       repositoryPassword = null // This defaults to either the SONATYPE_NEXUS_PASSWORD Gradle property or the system environment variable.
-      signing = true // This defaults to true. GPG signing is required by mavenCentral. If you are deploying elsewhere, you can set this to false.
+      signing = true // GPG signing is required by mavenCentral. If you are deploying elsewhere, you can set this to false.
     }
-  }
-}
-```
-
-Once you've configured this and defined the typical pom attributes via Gradle properties you can upload your library using the `uploadArchives` task.
-
-If you need to upload to multiple repositories you can also add additional targets.
-
-```groovy
-mavenPublish {
-  targets {
-    uploadArchives {
+    
+    // Modify the existing installArchives task
+    installArchives {
        // Configure as above.
     }
 
+    // Add a new target, in this case it will create a uploadArchivesInternalRepo task
     internalRepo {
        // Configure as above.
     }
-
-    betaRepo {
-       // Configure as above.
-    }
   }
 }
 ```
 
-This will create `uploadArchivesInternalRepo` and `uploadArchivesBetaRepo` tasks.
+More information can be found in the [Documentation of the Extension](src/main/kotlin/com/vanniktech/maven/publish/MavenPublishPluginExtension.kt)
 
 __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, you need to run the `uploadArchives` task with `--no-daemon`and `--no-parallel` flags:
 
 `./gradlew uploadArchives --no-daemon --no-parallel`
 
-***Releasing:***
+### Signing
+
+The plugin supports setting up all your artifacts to be signed with GPG. Since that is a requirement
+for our default publishing target Maven Central, signing is enabled by default. For that please add the following 
+Gradle properties.
+```groovy
+signing.keyId=12345678
+signing.password=some_password
+signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
+```
+
+It's best to place them inside your home directory, `$HOME/.gradle/gradle.properties`.
+
+To disable signing you can set the `signing = false` on a target (see above).
+
+### Releasing
 
 Once `uploadArchives` is called, and if you're using a Nexus repository, you'll have to make a release. This can be done manually by following the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html).
 
@@ -89,8 +136,8 @@ mavenPublish {
     nexus {
         baseUrl = "https://your_nexus_instance" // defaults to "https://oss.sonatype.org/service/local/"
         groupId = "net.example" // defaults to the GROUP Gradle Property if not set
-        respositoryUserName = "username" // defaults to the SONATYPE_NEXUS_USERNAME Gradle Property if not set
-        respositoryPassword = "password" // defaults to the SONATYPE_NEXUS_PASSWORD Gradle Property if not set
+        respositoryUserName = "username" // defaults to the SONATYPE_NEXUS_USERNAME Gradle Property or the system environment variable
+        respositoryPassword = "password" // defaults to the SONATYPE_NEXUS_PASSWORD Gradle Property or the system environment variable
     }
 }
 ```
@@ -99,22 +146,11 @@ This will create a `closeAndReleaseRepository` task that you can call after `upl
 
 ```
 # prepare your release by assigning a version (remove the -SNAPSHOT suffix)
-./gradlew uploadArchives
+./gradlew uploadArchives --no-daemon --no-parallel
 ./gradlew closeAndReleaseRepository
 ```
 
 It assumes there's only one staging repository active when closeAndReleaseRepository is called. If you have stale staging repositories, you'll have to delete them by logging at https://oss.sonatype.org (or you Nexus instance).
-
-# Sample
-
-This Gradle plugin is using itself to publish any of the updates. It applies a previously released version in the build.gradle just as mentioned above and sets the Gradle properties in this [gradle.properties](gradle.properties).
-
-If you require your binary to be signed with GPG (mavenCentral requires this for instance), please add the following Gradle properties. It's best to place them inside your home directory, `$HOME/.gradle/gradle.properties`.
-```groovy
-signing.keyId=12345678
-signing.password=some_password
-signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
-```
 
 # License
 
