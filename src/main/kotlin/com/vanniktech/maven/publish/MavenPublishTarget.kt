@@ -2,7 +2,6 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.DEFAULT_TARGET
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_TARGET
-import org.gradle.api.artifacts.transform.InputArtifactDependencies
 
 data class MavenPublishTarget(
   internal val name: String,

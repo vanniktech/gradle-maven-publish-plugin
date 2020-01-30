@@ -18,7 +18,6 @@ import org.gradle.plugins.signing.SigningPlugin
 
 internal class UploadArchivesConfigurer(
   private val project: Project,
-  private val targets: Iterable<MavenPublishTarget>,
   private val configureMavenDeployer: Upload.(Project, MavenPublishTarget) -> Unit
 ) : Configurer {
 
