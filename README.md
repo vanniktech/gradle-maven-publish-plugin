@@ -112,7 +112,6 @@ __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, 
 ### Signing
 
 The plugin supports signing all of your artifacts with GPG. This is a requirement when publishing to Maven Central - our default behavior. Signing parameters can be configured via:
-for our default publishing target Maven Central, signing is enabled by default. For that please add the following 
 Gradle properties.
 ```groovy
 signing.keyId=12345678
