@@ -29,7 +29,7 @@ To configure the coordinates of your published artifacts as well as the POM this
 uses Gradle properties. It's generally recommended to set them in your `gradle.properties`
 file.
 
-There are 3 required properties:
+There are three required properties:
 ```
 GROUP=com.test.mylibrary
 POM_ARTIFACT_ID=mylibrary-runtime
