@@ -9,6 +9,7 @@ import com.vanniktech.maven.publish.tasks.GroovydocsJar
 import com.vanniktech.maven.publish.tasks.JavadocsJar
 import com.vanniktech.maven.publish.tasks.SourcesJar
 import org.gradle.api.Project
+import org.gradle.api.publish.Publication
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
@@ -16,18 +17,22 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugins.signing.SigningPlugin
 import java.net.URI
 
-internal class MavenPublishConfigurer(private val project: Project) : Configurer {
-
-  private val publication: MavenPublication
-
-  private val publishTaskProviders = mutableListOf<TaskProvider<*>>()
+internal class MavenPublishConfigurer(
+  private val project: Project,
+  private val targets: Iterable<MavenPublishTarget>
+) : Configurer {
 
   init {
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
     project.plugins.apply(SigningPlugin::class.java)
 
+    configurePublications()
+    configureSigning()
+  }
+
+  private fun configurePublications() {
     val publications = project.publishing.publications
-    publication = publications.create("maven", MavenPublication::class.java) { publication ->
+    publications.create(PUBLICATION_NAME, MavenPublication::class.java) { publication ->
       val publishPom = MavenPublishPom.fromProject(project)
 
       publication.groupId = publishPom.groupId
@@ -64,11 +69,15 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
         }
       }
     }
+  }
 
+  private fun configureSigning() {
     project.signing.apply {
       setRequired(project.isSigningRequired)
-      @Suppress("UnstableApiUsage")
-      sign(publication)
+      if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+        @Suppress("UnstableApiUsage")
+        sign(project.publishing.publications)
+      }
     }
   }
 
@@ -84,12 +93,12 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
       }
     }
 
-    val publishTaskName = publishTaskName(target.repositoryName)
-    publishTaskProviders.add(project.tasks.named(publishTaskName))
-
     // create task that depends on new publishing task for compatibility and easier switching
-    project.tasks.register(target.taskName) {
-      it.dependsOn(project.tasks.named(publishTaskName))
+    project.tasks.register(target.taskName) { task ->
+      project.publishing.publications.all { publication ->
+        val publishTaskName = publishTaskName(publication, target.repositoryName)
+        task.dependsOn(project.tasks.named(publishTaskName))
+      }
     }
   }
 
@@ -110,44 +119,53 @@ internal class MavenPublishConfigurer(private val project: Project) : Configurer
     return URI.create(requireNotNull(url))
   }
 
-  private fun publishTaskName(repository: String) =
+  private fun publishTaskName(publication: Publication, repository: String) =
     "publish${publication.name.capitalize()}PublicationTo${repository.capitalize()}Repository"
 
   override fun configureAndroidArtifacts() {
-    val extension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
-    publication.from(project.components.getByName(extension.androidVariantToPublish))
+    val publication = project.publishing.publications.getByName(PUBLICATION_NAME) as MavenPublication
+
+    publication.from(project.components.getByName(project.publishExtension.androidVariantToPublish))
 
     val androidSourcesJar = project.tasks.register("androidSourcesJar", AndroidSourcesJar::class.java)
-    addTaskOutput(androidSourcesJar)
+    publication.addTaskOutput(androidSourcesJar)
 
     project.tasks.register("androidJavadocs", AndroidJavadocs::class.java)
     val androidJavadocsJar = project.tasks.register("androidJavadocsJar", AndroidJavadocsJar::class.java)
-    addTaskOutput(androidJavadocsJar)
+    publication.addTaskOutput(androidJavadocsJar)
   }
 
   override fun configureJavaArtifacts() {
+    val publication = project.publishing.publications.getByName(PUBLICATION_NAME) as MavenPublication
+
     publication.from(project.components.getByName("java"))
 
     val sourcesJar = project.tasks.register("sourcesJar", SourcesJar::class.java)
-    addTaskOutput(sourcesJar)
+    publication.addTaskOutput(sourcesJar)
 
     val javadocsJar = project.tasks.register("javadocsJar", JavadocsJar::class.java)
-    addTaskOutput(javadocsJar)
+    publication.addTaskOutput(javadocsJar)
 
     if (project.plugins.hasPlugin("groovy")) {
       val goovydocsJar = project.tasks.register("groovydocJar", GroovydocsJar::class.java)
-      addTaskOutput(goovydocsJar)
+      publication.addTaskOutput(goovydocsJar)
     }
   }
 
-  private fun addTaskOutput(taskProvider: TaskProvider<out AbstractArchiveTask>) {
+  private fun MavenPublication.addTaskOutput(taskProvider: TaskProvider<out AbstractArchiveTask>) {
     taskProvider.configure { task ->
-      publication.artifact(task)
+      artifact(task)
     }
-    publishTaskProviders.forEach {
-      it.configure { publishTask ->
+
+    targets.forEach { target ->
+      val publishTaskName = publishTaskName(this, target.repositoryName)
+      project.tasks.named(publishTaskName).configure { publishTask ->
         publishTask.dependsOn(taskProvider)
       }
     }
+  }
+
+  companion object {
+    const val PUBLICATION_NAME = "maven"
   }
 }
