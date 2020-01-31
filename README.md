@@ -36,7 +36,7 @@ POM_ARTIFACT_ID=mylibrary-runtime
 VERSION_NAME=3.0.5
 ```
 
-In addition to that there are some optional properties to give more details about your project:
+In addition, there are some optional properties to give more details about your project:
 
 ```
 POM_NAME=My Library
