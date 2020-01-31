@@ -33,6 +33,7 @@ data class MavenPublishTarget(
    * Whether release artifacts should be signed before uploading to this target.
    * @since 0.7.0
    */
+  @Deprecated("Disabling signing on a target level is not supported anymore. See releaseSigningEnabled for a replacement")
   var signing: Boolean = true
 ) {
 

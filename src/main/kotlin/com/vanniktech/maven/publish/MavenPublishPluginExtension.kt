@@ -14,10 +14,10 @@ open class MavenPublishPluginExtension(project: Project) {
 
   private val defaultTarget = MavenPublishTarget(
       DEFAULT_TARGET,
-      project.findProperty("RELEASE_REPOSITORY_URL") as String? ?: System.getenv("RELEASE_REPOSITORY_URL") ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
-      project.findProperty("SNAPSHOT_REPOSITORY_URL") as String? ?: System.getenv("SNAPSHOT_REPOSITORY_URL") ?: "https://oss.sonatype.org/content/repositories/snapshots/",
-      project.findProperty("SONATYPE_NEXUS_USERNAME") as String? ?: System.getenv("SONATYPE_NEXUS_USERNAME"),
-      project.findProperty("SONATYPE_NEXUS_PASSWORD") as String? ?: System.getenv("SONATYPE_NEXUS_PASSWORD")
+      project.findOptionalProperty("RELEASE_REPOSITORY_URL") ?: System.getenv("RELEASE_REPOSITORY_URL") ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
+      project.findOptionalProperty("SNAPSHOT_REPOSITORY_URL") ?: System.getenv("SNAPSHOT_REPOSITORY_URL") ?: "https://oss.sonatype.org/content/repositories/snapshots/",
+      project.findOptionalProperty("SONATYPE_NEXUS_USERNAME") ?: System.getenv("SONATYPE_NEXUS_USERNAME"),
+      project.findOptionalProperty("SONATYPE_NEXUS_PASSWORD") ?: System.getenv("SONATYPE_NEXUS_PASSWORD")
   )
 
   private val localTarget = MavenPublishTarget(
@@ -45,6 +45,13 @@ open class MavenPublishPluginExtension(project: Project) {
    * @Since 0.9.0
    */
   var androidVariantToPublish: String = "release"
+
+  /**
+   * Whether release artifacts should be signed before getting published.
+   *
+   * @Since 0.9.0
+   */
+  val releaseSigningEnabled: Boolean = project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean() ?: true
 
   /**
    * Allows to promote repositories without connecting to the nexus instance console.

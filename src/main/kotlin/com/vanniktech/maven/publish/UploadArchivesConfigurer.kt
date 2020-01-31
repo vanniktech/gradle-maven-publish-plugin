@@ -14,12 +14,10 @@ import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 
 internal class UploadArchivesConfigurer(
   private val project: Project,
-  private val targets: Iterable<MavenPublishTarget>,
   private val configureMavenDeployer: Upload.(Project, MavenPublishTarget) -> Unit
 ) : Configurer {
 
@@ -31,18 +29,9 @@ internal class UploadArchivesConfigurer(
 
     project.signing.apply {
       setRequired(project.isSigningRequired)
-      sign(project.configurations.getByName(ARCHIVES_CONFIGURATION))
-    }
-    project.tasks.withType(Sign::class.java).all { sign ->
-      sign.onlyIf {
-        val signedTargets = targets.filter { it.signing }
-        sign.logger.info("Targets that should be signed: ${signedTargets.map { it.name }}")
-        signedTargets.any { target ->
-          val task = project.tasks.getByName(target.taskName)
-          project.gradle.taskGraph.hasTask(task).also {
-            sign.logger.info("Task for ${target.name} will be executed: $it")
-          }
-        }
+
+      if (project.isSigningRequired.call() && project.publishExtension.releaseSigningEnabled) {
+        sign(project.configurations.getByName(ARCHIVES_CONFIGURATION))
       }
     }
   }

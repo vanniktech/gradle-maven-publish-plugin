@@ -74,8 +74,10 @@ internal class MavenPublishConfigurer(
   private fun configureSigning() {
     project.signing.apply {
       setRequired(project.isSigningRequired)
-      @Suppress("UnstableApiUsage")
-      sign(project.publishing.publications)
+      if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+        @Suppress("UnstableApiUsage")
+        sign(project.publishing.publications)
+      }
     }
   }
 
@@ -123,8 +125,7 @@ internal class MavenPublishConfigurer(
   override fun configureAndroidArtifacts() {
     val publication = project.publishing.publications.getByName(PUBLICATION_NAME) as MavenPublication
 
-    val extension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
-    publication.from(project.components.getByName(extension.androidVariantToPublish))
+    publication.from(project.components.getByName(project.publishExtension.androidVariantToPublish))
 
     val androidSourcesJar = project.tasks.register("androidSourcesJar", AndroidSourcesJar::class.java)
     publication.addTaskOutput(androidSourcesJar)
