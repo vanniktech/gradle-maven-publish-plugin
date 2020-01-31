@@ -1,6 +1,8 @@
 # gradle-maven-publish-plugin
 
-Gradle plugin that creates an `uploadArchives` task to automatically upload all of your Java, Kotlin or Android libraries to any Maven instance. This plugin is based on [Chris Banes initial implementation](https://github.com/chrisbanes/gradle-mvn-push) and has been enhanced to add Kotlin support and keep up with the latest changes.
+Gradle plugin that creates an `uploadArchives` task to automatically upload all of your Java, Kotlin or Android 
+libraries to any Maven instance. This plugin is based on [Chris Banes initial implementation](https://github.com/chrisbanes/gradle-mvn-push) 
+and has been enhanced to add Kotlin support and keep up with the latest changes.
 
 # Set up
 
@@ -110,7 +112,9 @@ __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, 
 
 ### Signing
 
-The plugin supports signing all of your artifacts with GPG. This is a requirement when publishing to Maven Central - our default behavior. Signing parameters can be configured via:
+The plugin supports signing all of your artifacts with GPG. This is a requirement when publishing to 
+Maven Central - our default behavior. Signing parameters can be configured via:
+
 ```groovy
 signing.keyId=12345678
 signing.password=some_password
@@ -123,7 +127,8 @@ To disable signing you can set the `signing = false` on a target (see above).
 
 ### Releasing
 
-Once `uploadArchives` is called, and if you're using a Nexus repository, you'll have to make a release. This can be done manually by following the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html).
+Once `uploadArchives` is called, and if you're using a Nexus repository, you'll have to make a release. This can 
+be done manually by following the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html).
 
 Alternatively, you can configure the plugin to do so automatically:
 
