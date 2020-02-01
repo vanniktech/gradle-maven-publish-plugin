@@ -25,14 +25,10 @@ internal class UploadArchivesConfigurer(
 
   init {
     project.plugins.apply(MavenPlugin::class.java)
-    project.plugins.apply(SigningPlugin::class.java)
 
-    project.signing.apply {
-      setRequired(project.isSigningRequired)
-
-      if (project.isSigningRequired.call() && project.publishExtension.releaseSigningEnabled) {
-        sign(project.configurations.getByName(ARCHIVES_CONFIGURATION))
-      }
+    if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+      @Suppress("UnstableApiUsage")
+      project.signing.sign(project.configurations.getByName(ARCHIVES_CONFIGURATION))
     }
   }
 

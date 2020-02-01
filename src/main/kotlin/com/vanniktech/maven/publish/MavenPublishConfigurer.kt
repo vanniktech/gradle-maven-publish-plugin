@@ -24,7 +24,6 @@ internal class MavenPublishConfigurer(
 
   init {
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
-    project.plugins.apply(SigningPlugin::class.java)
 
     configurePublications()
     configureSigning()
@@ -72,12 +71,9 @@ internal class MavenPublishConfigurer(
   }
 
   private fun configureSigning() {
-    project.signing.apply {
-      setRequired(project.isSigningRequired)
-      if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
-        @Suppress("UnstableApiUsage")
-        sign(project.publishing.publications)
-      }
+    if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+      @Suppress("UnstableApiUsage")
+      project.signing.sign(project.publishing.publications)
     }
   }
 

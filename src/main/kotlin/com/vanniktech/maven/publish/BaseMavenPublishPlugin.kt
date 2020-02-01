@@ -8,6 +8,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
+import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.util.VersionNumber
 import org.jetbrains.dokka.gradle.DokkaTask
 
@@ -25,6 +26,7 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     p.group = pom.groupId
     p.version = pom.version
 
+    configureSigning(p)
     configureJavadoc(p)
     configureDokka(p)
 
@@ -49,6 +51,11 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
 
       NexusConfigurer(project)
     }
+  }
+
+  private fun configureSigning(project: Project) {
+    project.plugins.apply(SigningPlugin::class.java)
+    project.signing.setRequired(project.isSigningRequired)
   }
 
   private fun configureJavadoc(project: Project) {
