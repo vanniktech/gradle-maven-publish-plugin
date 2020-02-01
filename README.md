@@ -129,7 +129,7 @@ It is possible to disable signing of release artifacts directly in your build sc
                                                        
 ```groovy
 mavenPublish {
- releaseSigningEnabled = false
+  releaseSigningEnabled = false
 }
 ```
 
