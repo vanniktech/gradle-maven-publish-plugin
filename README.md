@@ -112,8 +112,9 @@ __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, 
 
 ### Signing
 
-The plugin supports signing all of your artifacts with GPG. This is a requirement when publishing to 
-Maven Central - our default behavior. Signing parameters can be configured via:
+The plugin supports signing all of your release artifacts with GPG. This is a requirement when publishing to 
+Maven Central - our default behavior. Any version ending in `-SNAPSHOT` will never be signed. Signing parameters 
+can be configured via:
 
 ```groovy
 signing.keyId=12345678
@@ -121,9 +122,23 @@ signing.password=some_password
 signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
 ```
 
-It's best to place them inside your home directory, `$HOME/.gradle/gradle.properties`.
+It's best to place them inside your home directory, `$HOME/.gradle/gradle.properties`. You can find more information
+about these properties in [Gradle's documentaion](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials).
 
-To disable signing you can set the `signing = false` on a target (see above).
+It is possible to disable signing of release artifacts directly in your build scripts (takes precedence):
+                                                       
+```groovy
+mavenPublish {
+  releaseSigningEnabled = false
+}
+```
+
+Alternatively, you can use a Gradle property which is recommended if you only want to sign certain builds
+or only build on certain machines.
+
+```groovy
+RELEASE_SIGNING_ENABLED=false
+```
 
 ### Releasing
 
