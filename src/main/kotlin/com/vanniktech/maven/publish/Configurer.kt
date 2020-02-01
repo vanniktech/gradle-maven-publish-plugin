@@ -7,6 +7,8 @@ internal interface Configurer {
    */
   fun configureTarget(target: MavenPublishTarget)
 
+  fun configureMultiplatformProject()
+
   fun configureAndroidArtifacts()
 
   fun configureJavaArtifacts()

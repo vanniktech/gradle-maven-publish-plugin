@@ -1,0 +1,39 @@
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "com.vanniktech.maven.publish"
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+kotlin {
+    jvm()
+    js("nodeJs")
+    linuxX64("linux")
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.61"
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.61"
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:1.3.61"
+            }
+        }
+        linuxMain {
+            dependencies {
+            }
+        }
+    }
+}
+
+apply from: "maven-publish.gradle"

@@ -43,7 +43,9 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
         configurer.configureTarget(it)
       }
 
-      if (project.plugins.hasPlugin("com.android.library")) {
+      if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+        configurer.configureMultiplatformProject()
+      } else if (project.plugins.hasPlugin("com.android.library")) {
         configurer.configureAndroidArtifacts()
       } else {
         configurer.configureJavaArtifacts()
@@ -75,6 +77,9 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       project.plugins.apply(PLUGIN_DOKKA)
     }
     project.plugins.withId("org.jetbrains.kotlin.android") {
+      project.plugins.apply(PLUGIN_DOKKA)
+    }
+    project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
       project.plugins.apply(PLUGIN_DOKKA)
     }
     project.plugins.withId(PLUGIN_DOKKA) {

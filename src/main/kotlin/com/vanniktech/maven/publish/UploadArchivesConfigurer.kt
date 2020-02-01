@@ -54,6 +54,10 @@ internal class UploadArchivesConfigurer(
       it.configuration = project.configurations.getByName(ARCHIVES_CONFIGURATION)
     }
 
+  override fun configureMultiplatformProject() {
+    throw UnsupportedOperationException("Publishing multiplatform projects not supported in legacy mode")
+  }
+
   override fun configureAndroidArtifacts() {
     val androidSourcesJar = project.tasks.register("androidSourcesJar", AndroidSourcesJar::class.java)
     addTaskOutput(androidSourcesJar)
