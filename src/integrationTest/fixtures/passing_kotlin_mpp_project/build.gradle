@@ -36,20 +36,4 @@ kotlin {
     }
 }
 
-afterEvaluate {
-    dokka {
-        impliedPlatforms = ["common"] // This will force platform tags for all non-common sources e.g. "JVM"
-//        kotlinTasks {
-//            // dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
-//            // use sourceRoot instead (see below)
-//            []
-//        }
-//        sourceRoot {
-//            // assuming there is only a single source dir...
-//            path = kotlin.sourceSets.commonMain.kotlin.srcDirs[0]
-//            platforms = ["common"]
-//        }
-    }
-}
-
 apply from: "maven-publish.gradle"
