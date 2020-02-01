@@ -22,7 +22,7 @@ class MavenPublishPluginIntegrationTest(
 ) {
   companion object {
     const val FIXTURES = "src/integrationTest/fixtures"
-    const val EXPECTED_POM = "expected/test-artifact.pom"
+    const val EXPECTED_DIR = "expected"
 
     const val TEST_GROUP = "com.example"
     const val TEST_VERSION_NAME = "1.0.0"
@@ -41,17 +41,11 @@ class MavenPublishPluginIntegrationTest(
   @get:Rule val testProjectDir: TemporaryFolder = TemporaryFolder()
 
   private lateinit var repoFolder: File
-  private lateinit var artifactFolder: File
 
   @Before fun setUp() {
     repoFolder = testProjectDir.newFolder("repo")
 
     File("$FIXTURES/common").listFiles()?.forEach { it.copyRecursively(testProjectDir.root.resolve(it.name)) }
-
-    val group = TEST_GROUP.replace(".", "/")
-    val artifactId = TEST_POM_ARTIFACT_ID
-    val version = TEST_VERSION_NAME
-    artifactFolder = repoFolder.resolve("$group/$artifactId/$version")
   }
 
   @Test fun generatesArtifactsAndDocumentationOnJavaProject() {
@@ -60,7 +54,8 @@ class MavenPublishPluginIntegrationTest(
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated("jar")
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
   }
 
@@ -71,7 +66,8 @@ class MavenPublishPluginIntegrationTest(
 
     assertExpectedTasksRanSuccessfully(result)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
-    assertExpectedCommonArtifactsGenerated("jar")
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestClass.java", "src/main/java")
   }
@@ -82,7 +78,8 @@ class MavenPublishPluginIntegrationTest(
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated("jar")
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
   }
 
@@ -93,7 +90,8 @@ class MavenPublishPluginIntegrationTest(
 
     assertExpectedTasksRanSuccessfully(result)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
-    assertExpectedCommonArtifactsGenerated("jar")
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestClass.java", "src/main/java")
   }
@@ -104,8 +102,9 @@ class MavenPublishPluginIntegrationTest(
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated("jar")
-    assertArtifactGenerated("$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
+    assertExpectedCommonArtifactsGenerated()
+    assertArtifactGenerated(artifactFileNameWithExtension = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
+    assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.groovy", "src/main/groovy")
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
   }
@@ -116,7 +115,8 @@ class MavenPublishPluginIntegrationTest(
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated("aar")
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "aar")
+    assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestActivity.java", "src/main/java")
   }
 
@@ -127,7 +127,8 @@ class MavenPublishPluginIntegrationTest(
 
     assertExpectedTasksRanSuccessfully(result)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
-    assertExpectedCommonArtifactsGenerated("aar")
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "aar")
+    assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestActivity.kt", "src/main/java")
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestActivity.java", "src/main/java")
   }
@@ -138,7 +139,8 @@ class MavenPublishPluginIntegrationTest(
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated("jar")
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
   }
 
   /**
@@ -146,15 +148,6 @@ class MavenPublishPluginIntegrationTest(
    */
   private fun setupFixture(fixtureName: String) {
     File("$FIXTURES/$fixtureName").copyRecursively(testProjectDir.root, overwrite = true)
-
-    testProjectDir.root.resolve("gradle.properties").appendText("""
-        GROUP=$TEST_GROUP
-        VERSION_NAME=$TEST_VERSION_NAME
-        POM_ARTIFACT_ID=$TEST_POM_ARTIFACT_ID
-
-        test.releaseRepository=$repoFolder
-        test.useLegacyMode=$useLegacyMode
-        """)
   }
 
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
@@ -170,28 +163,41 @@ class MavenPublishPluginIntegrationTest(
    * Makes sure common artifacts are generated (POM, javadoc, sources, etc.),
    * no matter what project type is and which plugins are applied.
    */
-  private fun assertExpectedCommonArtifactsGenerated(artifactExtension: String) {
-    val artifactJar = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME.$artifactExtension"
-    val pomFile = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME.pom"
-    val javadocJar = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-javadoc.jar"
-    val sourcesJar = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-sources.jar"
-    assertArtifactGenerated(artifactJar)
-    assertArtifactGenerated(pomFile)
-    assertArtifactGenerated(javadocJar)
-    assertArtifactGenerated(sourcesJar)
-
-    assertPomContentMatches(pomFile)
+  private fun assertExpectedCommonArtifactsGenerated(
+    artifactId: String = TEST_POM_ARTIFACT_ID,
+    artifactExtension: String = "jar"
+  ) {
+    val artifactFolder = artifactFolder(artifactId)
+    val artifactJar = "$artifactId-$TEST_VERSION_NAME.$artifactExtension"
+    val pomFile = "$artifactId-$TEST_VERSION_NAME.pom"
+    val javadocJar = "$artifactId-$TEST_VERSION_NAME-javadoc.jar"
+    val sourcesJar = "$artifactId-$TEST_VERSION_NAME-sources.jar"
+    assertArtifactGenerated(artifactFolder, artifactJar)
+    assertArtifactGenerated(artifactFolder, pomFile)
+    assertArtifactGenerated(artifactFolder, javadocJar)
+    assertArtifactGenerated(artifactFolder, sourcesJar)
   }
 
-  private fun assertArtifactGenerated(artifactFileNameWithExtension: String) {
+  private fun assertArtifactGenerated(
+    artifactId: String = TEST_POM_ARTIFACT_ID,
+    artifactFileNameWithExtension: String
+  ) {
+    assertArtifactGenerated(artifactFolder(artifactId), artifactFileNameWithExtension)
+  }
+
+  private fun assertArtifactGenerated(
+    artifactFolder: File,
+    artifactFileNameWithExtension: String
+  ) {
     assertThat(artifactFolder.resolve(artifactFileNameWithExtension)).exists()
     assertThat(artifactFolder.resolve("$artifactFileNameWithExtension.asc")).exists()
   }
 
-  private fun assertPomContentMatches(pomFile: String) {
+  private fun assertPomContentMatches(artifactId: String = TEST_POM_ARTIFACT_ID) {
+    val pomFileName = "$artifactId-$TEST_VERSION_NAME.pom"
     // in legacyMode for Android the packaging is written, for all other modes it's currently not written
     // https://github.com/vanniktech/gradle-maven-publish-plugin/issues/82
-    val resolvedPomFile = artifactFolder.resolve(pomFile)
+    val resolvedPomFile = artifactFolder(artifactId).resolve(pomFileName)
     val lines = resolvedPomFile.readLines()
     if (lines.contains("  <packaging>aar</packaging>")) {
       resolvedPomFile.writeText("")
@@ -202,11 +208,17 @@ class MavenPublishPluginIntegrationTest(
         }
       }
     }
-    assertThat(resolvedPomFile).hasSameContentAs(testProjectDir.root.resolve(EXPECTED_POM))
+
+    val expectedPom = testProjectDir.root.resolve(EXPECTED_DIR).resolve(pomFileName)
+    assertThat(resolvedPomFile).hasSameContentAs(expectedPom)
   }
 
-  private fun assertSourceJarContainsFile(file: String, srcRoot: String) {
-    val sourcesJar = ZipFile(artifactFolder.resolve("$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-sources.jar"))
+  private fun assertSourceJarContainsFile(
+    file: String,
+    srcRoot: String,
+    artifactId: String = TEST_POM_ARTIFACT_ID
+  ) {
+    val sourcesJar = ZipFile(artifactFolder().resolve("$artifactId-$TEST_VERSION_NAME-sources.jar"))
     val entry = sourcesJar.getEntry(file)
     val content = sourcesJar.getInputStream(entry)?.reader()?.buffered()?.readText()
 
@@ -217,9 +229,15 @@ class MavenPublishPluginIntegrationTest(
     assertThat(content).isEqualTo(expectedContent)
   }
 
+  private fun artifactFolder(artifactId: String = TEST_POM_ARTIFACT_ID): File {
+    val group = TEST_GROUP.replace(".", "/")
+    val version = TEST_VERSION_NAME
+    return repoFolder.resolve("$group/$artifactId/$version")
+  }
+
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
       .withProjectDir(testProjectDir.root)
-      .withArguments(*commands)
+      .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder", "-Ptest.useLegacyMode=$useLegacyMode")
       .withPluginClasspath()
       .build()
 }
