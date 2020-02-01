@@ -14,7 +14,6 @@ import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.plugins.signing.SigningPlugin
 
 internal class UploadArchivesConfigurer(
   private val project: Project,
@@ -25,14 +24,10 @@ internal class UploadArchivesConfigurer(
 
   init {
     project.plugins.apply(MavenPlugin::class.java)
-    project.plugins.apply(SigningPlugin::class.java)
 
-    project.signing.apply {
-      setRequired(project.isSigningRequired)
-
-      if (project.isSigningRequired.call() && project.publishExtension.releaseSigningEnabled) {
-        sign(project.configurations.getByName(ARCHIVES_CONFIGURATION))
-      }
+    if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+      @Suppress("UnstableApiUsage")
+      project.signing.sign(project.configurations.getByName(ARCHIVES_CONFIGURATION))
     }
   }
 

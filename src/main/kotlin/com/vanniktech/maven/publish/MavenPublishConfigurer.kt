@@ -14,7 +14,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.plugins.signing.SigningPlugin
 import java.net.URI
 
 internal class MavenPublishConfigurer(
@@ -24,7 +23,6 @@ internal class MavenPublishConfigurer(
 
   init {
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
-    project.plugins.apply(SigningPlugin::class.java)
 
     configurePublications()
     configureSigning()
@@ -72,12 +70,9 @@ internal class MavenPublishConfigurer(
   }
 
   private fun configureSigning() {
-    project.signing.apply {
-      setRequired(project.isSigningRequired)
-      if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
-        @Suppress("UnstableApiUsage")
-        sign(project.publishing.publications)
-      }
+    if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+      @Suppress("UnstableApiUsage")
+      project.signing.sign(project.publishing.publications)
     }
   }
 
