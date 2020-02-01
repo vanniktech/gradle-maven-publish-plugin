@@ -4,6 +4,7 @@ import org.assertj.core.api.Java6Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.junit.Assume.assumeFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -131,6 +132,38 @@ class MavenPublishPluginIntegrationTest(
     assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestActivity.kt", "src/main/java")
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestActivity.java", "src/main/java")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnKotlinMppProject() {
+    assumeFalse(useLegacyMode)
+
+    setupFixture("passing_kotlin_mpp_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace")
+
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "module")
+    assertPomContentMatches()
+
+    val metadataArtifactId = "$TEST_POM_ARTIFACT_ID-metadata"
+    assertExpectedCommonArtifactsGenerated(metadataArtifactId, "module")
+    assertArtifactGenerated(metadataArtifactId, "$metadataArtifactId-$TEST_VERSION_NAME.jar")
+    assertPomContentMatches(metadataArtifactId)
+
+    val jvmArtifactId = "$TEST_POM_ARTIFACT_ID-jvm"
+    assertExpectedCommonArtifactsGenerated(jvmArtifactId, "module")
+    assertPomContentMatches(jvmArtifactId)
+
+    val nodejsArtifactId = "$TEST_POM_ARTIFACT_ID-nodejs"
+    assertExpectedCommonArtifactsGenerated(nodejsArtifactId, "module")
+    assertPomContentMatches(nodejsArtifactId)
+
+    val linuxArtifactId = "$TEST_POM_ARTIFACT_ID-linux"
+    assertExpectedCommonArtifactsGenerated(linuxArtifactId, "module")
+    assertArtifactGenerated(linuxArtifactId, "$linuxArtifactId-$TEST_VERSION_NAME.klib")
+    assertPomContentMatches(linuxArtifactId)
   }
 
   @Test fun generatesArtifactsAndDocumentationOnMinimalPomProject() {

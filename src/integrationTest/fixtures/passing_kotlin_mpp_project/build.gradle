@@ -1,0 +1,55 @@
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "com.vanniktech.maven.publish"
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+kotlin {
+    jvm()
+    js("nodeJs")
+    linuxX64("linux")
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.61"
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.61"
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:1.3.61"
+            }
+        }
+        linuxMain {
+            dependencies {
+            }
+        }
+    }
+}
+
+afterEvaluate {
+    dokka {
+        impliedPlatforms = ["common"] // This will force platform tags for all non-common sources e.g. "JVM"
+//        kotlinTasks {
+//            // dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
+//            // use sourceRoot instead (see below)
+//            []
+//        }
+//        sourceRoot {
+//            // assuming there is only a single source dir...
+//            path = kotlin.sourceSets.commonMain.kotlin.srcDirs[0]
+//            platforms = ["common"]
+//        }
+    }
+}
+
+apply from: "maven-publish.gradle"

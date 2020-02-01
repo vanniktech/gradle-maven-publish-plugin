@@ -5,6 +5,7 @@ import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_
 import com.vanniktech.maven.publish.tasks.AndroidJavadocs
 import com.vanniktech.maven.publish.tasks.AndroidJavadocsJar
 import com.vanniktech.maven.publish.tasks.AndroidSourcesJar
+import com.vanniktech.maven.publish.tasks.EmptySourcesJar
 import com.vanniktech.maven.publish.tasks.GroovydocsJar
 import com.vanniktech.maven.publish.tasks.JavadocsJar
 import com.vanniktech.maven.publish.tasks.SourcesJar
@@ -21,49 +22,56 @@ internal class MavenPublishConfigurer(
   private val targets: Iterable<MavenPublishTarget>
 ) : Configurer {
 
+  private val publishPom = MavenPublishPom.fromProject(project)
+
   init {
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
 
-    configurePublications()
+    if (!project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+      configurePublications()
+    }
     configureSigning()
   }
 
   private fun configurePublications() {
     val publications = project.publishing.publications
     publications.create(PUBLICATION_NAME, MavenPublication::class.java) { publication ->
-      val publishPom = MavenPublishPom.fromProject(project)
-
-      publication.groupId = publishPom.groupId
       publication.artifactId = publishPom.artifactId
-      publication.version = publishPom.version
+      configurePom(publication)
+    }
+  }
 
-      @Suppress("UnstableApiUsage")
-      publication.pom { pom ->
-        pom.name.set(publishPom.name)
-        pom.packaging = publishPom.packaging
-        pom.description.set(publishPom.description)
-        pom.url.set(publishPom.url)
+  private fun configurePom(publication: MavenPublication) {
+    publication.groupId = publishPom.groupId
+    publication.version = publishPom.version
 
-        pom.scm {
-          it.url.set(publishPom.scmUrl)
-          it.connection.set(publishPom.scmConnection)
-          it.developerConnection.set(publishPom.scmDeveloperConnection)
+    @Suppress("UnstableApiUsage")
+    publication.pom { pom ->
+
+      pom.name.set(publishPom.name)
+      pom.packaging = publishPom.packaging
+      pom.description.set(publishPom.description)
+      pom.url.set(publishPom.url)
+
+      pom.scm {
+        it.url.set(publishPom.scmUrl)
+        it.connection.set(publishPom.scmConnection)
+        it.developerConnection.set(publishPom.scmDeveloperConnection)
+      }
+
+      pom.licenses { licenses ->
+        licenses.license {
+          it.name.set(publishPom.licenseName)
+          it.url.set(publishPom.licenseUrl)
+          it.distribution.set(publishPom.licenseDistribution)
         }
+      }
 
-        pom.licenses { licenses ->
-          licenses.license {
-            it.name.set(publishPom.licenseName)
-            it.url.set(publishPom.licenseUrl)
-            it.distribution.set(publishPom.licenseDistribution)
-          }
-        }
-
-        pom.developers { developers ->
-          developers.developer {
-            it.id.set(publishPom.developerId)
-            it.name.set(publishPom.developerName)
-            it.url.set(publishPom.developerUrl)
-          }
+      pom.developers { developers ->
+        developers.developer {
+          it.id.set(publishPom.developerId)
+          it.name.set(publishPom.developerName)
+          it.url.set(publishPom.developerUrl)
         }
       }
     }
@@ -116,6 +124,22 @@ internal class MavenPublishConfigurer(
 
   private fun publishTaskName(publication: Publication, repository: String) =
     "publish${publication.name.capitalize()}PublicationTo${repository.capitalize()}Repository"
+
+  override fun configureMultiplatformProject() {
+    // Source jars are only created for platforms, not the common artifact.
+    project.publishing.publications.named("kotlinMultiplatform") {
+      val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)
+      (it as MavenPublication).addTaskOutput(emptySourcesJar)
+    }
+
+    val javadocsJar = project.tasks.register("javadocsJar", JavadocsJar::class.java)
+    project.publishing.publications.withType(MavenPublication::class.java).all {
+        it.artifactId = it.artifactId.replace(project.name, publishPom.artifactId)
+        configurePom(it)
+
+        it.addTaskOutput(javadocsJar)
+    }
+  }
 
   override fun configureAndroidArtifacts() {
     val publication = project.publishing.publications.getByName(PUBLICATION_NAME) as MavenPublication
