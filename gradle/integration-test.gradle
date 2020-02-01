@@ -18,6 +18,10 @@ task integrationTest(type: Test) {
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
   mustRunAfter test
+
+  testLogging {
+    showStandardStreams = true
+  }
 }
 
 tasks.withType(PluginUnderTestMetadata.class).configureEach {
@@ -25,7 +29,3 @@ tasks.withType(PluginUnderTestMetadata.class).configureEach {
 }
 
 check.dependsOn integrationTest
-
-testLogging {
-  showStandardStreams = true
-}
