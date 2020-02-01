@@ -51,7 +51,7 @@ open class MavenPublishPluginExtension(project: Project) {
    *
    * @Since 0.9.0
    */
-  val releaseSigningEnabled: Boolean = project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean() ?: true
+  var releaseSigningEnabled: Boolean = project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean() ?: true
 
   /**
    * Allows to promote repositories without connecting to the nexus instance console.
