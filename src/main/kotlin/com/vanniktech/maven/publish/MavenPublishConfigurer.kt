@@ -14,7 +14,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.plugins.signing.SigningPlugin
 import java.net.URI
 
 internal class MavenPublishConfigurer(

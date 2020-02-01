@@ -14,7 +14,6 @@ import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.plugins.signing.SigningPlugin
 
 internal class UploadArchivesConfigurer(
   private val project: Project,
