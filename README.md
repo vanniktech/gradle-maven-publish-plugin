@@ -133,7 +133,7 @@ mavenPublish {
 }
 ```
 
-Alternatively you can use a Gradle property which is recommended if you only want to sign certain builds
+Alternatively, you can use a Gradle property which is recommended if you only want to sign certain builds
 or only build on certain machines.
 
 ```groovy
