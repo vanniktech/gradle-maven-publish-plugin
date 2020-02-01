@@ -25,3 +25,7 @@ tasks.withType(PluginUnderTestMetadata.class).configureEach {
 }
 
 check.dependsOn integrationTest
+
+testLogging {
+  showStandardStreams = true
+}
