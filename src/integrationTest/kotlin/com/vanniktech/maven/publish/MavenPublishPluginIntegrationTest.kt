@@ -239,6 +239,5 @@ class MavenPublishPluginIntegrationTest(
       .withProjectDir(testProjectDir.root)
       .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder", "-Ptest.useLegacyMode=$useLegacyMode")
       .withPluginClasspath()
-      .forwardOutput()
       .build()
 }
