@@ -2,7 +2,7 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.DEFAULT_TARGET
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_TARGET
-import org.assertj.core.api.Java6Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MavenPublishTargetTest {
