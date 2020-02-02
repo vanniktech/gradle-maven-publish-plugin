@@ -46,7 +46,7 @@ codeQualityTools {
     toolVersion = '0.31.0'
   }
   detekt {
-    toolVersion = '1.0.0-RC14'
+    toolVersion = '1.0.0'
   }
   pmd {
     enabled = false
