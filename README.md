@@ -6,7 +6,7 @@ and has been enhanced to add Kotlin support and keep up with the latest changes.
 
 # Set up
 
-**module/build.gradle**
+### `module/build.gradle`
 
 ```groovy
 buildscript {
@@ -32,7 +32,7 @@ uses Gradle properties. It's generally recommended to set them in your `gradle.p
 file.
 
 There are three required properties:
-```
+```properties
 GROUP=com.test.mylibrary
 POM_ARTIFACT_ID=mylibrary-runtime
 VERSION_NAME=3.0.5
@@ -40,7 +40,7 @@ VERSION_NAME=3.0.5
 
 In addition, there are some optional properties to give more details about your project:
 
-```
+```properties
 POM_NAME=My Library
 POM_DESCRIPTION=A description of what my library does.
 POM_INCEPTION_YEAR=2020
@@ -116,7 +116,7 @@ The plugin supports signing all of your release artifacts with GPG. This is a re
 Maven Central - our default behavior. Any version ending in `-SNAPSHOT` will never be signed. Signing parameters 
 can be configured via:
 
-```groovy
+```properties
 signing.keyId=12345678
 signing.password=some_password
 signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
@@ -161,7 +161,7 @@ mavenPublish {
 
 This will create a `closeAndReleaseRepository` task that you can call after `uploadArchives`:
 
-```
+```shell
 # prepare your release by assigning a version (remove the -SNAPSHOT suffix)
 ./gradlew uploadArchives --no-daemon --no-parallel
 ./gradlew closeAndReleaseRepository
