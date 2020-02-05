@@ -2,7 +2,7 @@ buildscript {
   ext.kotlinVersion = '1.3.31'
   ext.junitVersion = '4.13-beta-3'
   ext.assertjVersion = '3.12.2'
-  ext.dokkaVersion = '0.10.0'
+  ext.dokkaVersion = '0.9.18'
 
   repositories {
     mavenCentral()
@@ -80,6 +80,7 @@ dependencies {
   api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
   implementation "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
+  implementation "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
 
   compileOnly "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
   compileOnly "com.android.tools.build:gradle:3.6.0-rc01"

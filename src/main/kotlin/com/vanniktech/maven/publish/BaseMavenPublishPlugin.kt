@@ -80,7 +80,7 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       project.plugins.apply(PLUGIN_DOKKA)
     }
     project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
-      project.plugins.apply(PLUGIN_DOKKA)
+      // project.plugins.apply(PLUGIN_DOKKA)
     }
     project.plugins.withId(PLUGIN_DOKKA) {
       project.tasks.withType(DokkaTask::class.java).configureEach {
