@@ -7,7 +7,7 @@ internal interface Configurer {
    */
   fun configureTarget(target: MavenPublishTarget)
 
-  fun configureKotlinMultiplatformProject()
+  fun configureKotlinMppProject()
 
   fun configureAndroidArtifacts()
 
