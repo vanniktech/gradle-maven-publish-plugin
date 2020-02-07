@@ -54,7 +54,7 @@ internal class UploadArchivesConfigurer(
       it.configuration = project.configurations.getByName(ARCHIVES_CONFIGURATION)
     }
 
-  override fun configureMultiplatformProject() {
+  override fun configureKotlinMppProject() {
     throw UnsupportedOperationException("Publishing multiplatform projects not supported in legacy mode")
   }
 

@@ -125,7 +125,7 @@ internal class MavenPublishConfigurer(
   private fun publishTaskName(publication: Publication, repository: String) =
     "publish${publication.name.capitalize()}PublicationTo${repository.capitalize()}Repository"
 
-  override fun configureMultiplatformProject() {
+  override fun configureKotlinMppProject() {
     // Source jars are only created for platforms, not the common artifact.
     project.publishing.publications.named("kotlinMultiplatform") {
       val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)

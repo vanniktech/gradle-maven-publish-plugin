@@ -44,7 +44,7 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       }
 
       if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-        configurer.configureMultiplatformProject()
+        configurer.configureKotlinMppProject()
       } else if (project.plugins.hasPlugin("com.android.library")) {
         configurer.configureAndroidArtifacts()
       } else {
