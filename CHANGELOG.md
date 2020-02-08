@@ -1,7 +1,27 @@
 # Change Log
 
-Version 0.9.0 *(In development)*
---------------------------------
+Version 0.9.0 *(2020-02-08)*
+----------------------------
+
+- merge Utils into ProjectExtensions [\#108](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/108) ([gabrielittner](https://github.com/gabrielittner))
+- initial Kotlin Multiplatform support [\#105](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/105) ([gabrielittner](https://github.com/gabrielittner))
+- new signing property outside of targets [\#101](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/101) ([gabrielittner](https://github.com/gabrielittner))
+- fix crash on non String property types [\#94](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/94) ([gabrielittner](https://github.com/gabrielittner))
+- don't write null values to pom [\#89](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/89) ([gabrielittner](https://github.com/gabrielittner))
+- add pom developer url support [\#88](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/88) ([gabrielittner](https://github.com/gabrielittner))
+- forward Gradle test output [\#84](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/84) ([gabrielittner](https://github.com/gabrielittner))
+- initial Android support for maven-publish [\#83](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/83) ([gabrielittner](https://github.com/gabrielittner))
+- rename useMavenPublish to useLegacyMode [\#81](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/81) ([gabrielittner](https://github.com/gabrielittner))
+- More integration tests [\#80](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/80) ([gabrielittner](https://github.com/gabrielittner))
+- let integration tests run with maven publish, enable signing [\#79](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/79) ([gabrielittner](https://github.com/gabrielittner))
+- add tests for Android libraries [\#78](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/78) ([gabrielittner](https://github.com/gabrielittner))
+- fix sources and javadoc tasks not being executed [\#77](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/77) ([gabrielittner](https://github.com/gabrielittner))
+- Nexus release automation [\#63](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/63) ([martinbonnin](https://github.com/martinbonnin))
+- Require GROUP, POM\_ARTIFACT\_ID & VERSION\_NAME to be set and fail on Gradle \< 4.10.1 [\#62](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/62) ([martinbonnin](https://github.com/martinbonnin))
+- Use srcDirs instead of sourceFiles to include Kotlin files to sources jar [\#48](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/48) ([lukaville](https://github.com/lukaville))
+- Switch to task-configuration avoidance [\#46](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/46) ([ZacSweers](https://github.com/ZacSweers))
+
+Huge thanks to [gabrielittner](https://github.com/gabrielittner) for all of his work in this release.
 
 Version 0.8.0 *(2019-02-18)*
 ----------------------------

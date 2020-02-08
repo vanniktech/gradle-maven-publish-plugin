@@ -1,7 +1,7 @@
 # gradle-maven-publish-plugin
 
-Gradle plugin that creates an `uploadArchives` task to automatically upload all of your Java, Kotlin or Android 
-libraries to any Maven instance. This plugin is based on [Chris Banes initial implementation](https://github.com/chrisbanes/gradle-mvn-push) 
+Gradle plugin that creates an `uploadArchives` task to automatically upload all of your Java, Kotlin or Android
+libraries to any Maven instance. This plugin is based on [Chris Banes initial implementation](https://github.com/chrisbanes/gradle-mvn-push)
 and has been enhanced to add Kotlin support and keep up with the latest changes.
 
 # Set up
@@ -14,7 +14,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.8.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.9.0'
   }
 }
 
@@ -27,7 +27,7 @@ Snapshots can be found [here](https://oss.sonatype.org/#nexus-search;quick~gradl
 
 ### Setting properties
 
-To configure the coordinates of your published artifacts as well as the POM this plugin 
+To configure the coordinates of your published artifacts as well as the POM this plugin
 uses Gradle properties. It's generally recommended to set them in your `gradle.properties`
 file.
 
@@ -59,23 +59,23 @@ POM_DEVELOPER_NAME=User Name
 POM_DEVELOPER_URL=https://github.com/username/
 ```
 
-This Gradle plugin is using itself to publish any of the updates and sets the Gradle properties in 
+This Gradle plugin is using itself to publish any of the updates and sets the Gradle properties in
 this [gradle.properties](gradle.properties).
 
 In multi module projects you can set most properties in the root `gradle.properties` file and
-then only set the module specific ones in the submodules. For example if you have two modules 
-called `runtime` and `driver` you could only set `POM_ARTIFACT_ID` and `POM_NAME` in 
-`<project-dir>/runtime/gradle.properties` and `<project-dir>/driver/gradle.properties` while sharing 
+then only set the module specific ones in the submodules. For example if you have two modules
+called `runtime` and `driver` you could only set `POM_ARTIFACT_ID` and `POM_NAME` in
+`<project-dir>/runtime/gradle.properties` and `<project-dir>/driver/gradle.properties` while sharing
 the rest by putting them into `<project-dir>/gradle.properties`.
 
 ### Where to upload to
 
 Without any further configuration the plugin has two tasks. `uploadArchives` which will upload
-to Sonatype OSS (Maven Central) by default. To publish to the local maven repository on your 
-machine (`~/m2/repository`) there is `installArchives`. 
+to Sonatype OSS (Maven Central) by default. To publish to the local maven repository on your
+machine (`~/m2/repository`) there is `installArchives`.
 
 The username and password for Sonatype OSS can be provided as Gradle properties or environment
-variables called `SONATYPE_NEXUS_USERNAME` and `SONATYPE_NEXUS_PASSWORD` to avoid having to 
+variables called `SONATYPE_NEXUS_USERNAME` and `SONATYPE_NEXUS_PASSWORD` to avoid having to
 commit them.
 
 It's also possible to modify the two existing tasks or add additional targets in your build files:
@@ -90,7 +90,7 @@ mavenPublish {
       repositoryUsername = null // This defaults to either the SONATYPE_NEXUS_USERNAME Gradle property or the system environment variable.
       repositoryPassword = null // This defaults to either the SONATYPE_NEXUS_PASSWORD Gradle property or the system environment variable.
     }
-    
+
     // Modify the existing installArchives task
     installArchives {
        // Configure as above.
@@ -112,8 +112,8 @@ __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, 
 
 ### Signing
 
-The plugin supports signing all of your release artifacts with GPG. This is a requirement when publishing to 
-Maven Central - our default behavior. Any version ending in `-SNAPSHOT` will never be signed. Signing parameters 
+The plugin supports signing all of your release artifacts with GPG. This is a requirement when publishing to
+Maven Central - our default behavior. Any version ending in `-SNAPSHOT` will never be signed. Signing parameters
 can be configured via:
 
 ```properties
@@ -126,7 +126,7 @@ It's best to place them inside your home directory, `$HOME/.gradle/gradle.proper
 about these properties in [Gradle's documentaion](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials).
 
 It is possible to disable signing of release artifacts directly in your build scripts (takes precedence):
-                                                       
+
 ```groovy
 mavenPublish {
   releaseSigningEnabled = false
@@ -142,7 +142,7 @@ RELEASE_SIGNING_ENABLED=false
 
 ### Releasing
 
-Once `uploadArchives` is called, and if you're using a Nexus repository, you'll have to make a release. This can 
+Once `uploadArchives` is called, and if you're using a Nexus repository, you'll have to make a release. This can
 be done manually by following the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html).
 
 Alternatively, you can configure the plugin to do so automatically:
