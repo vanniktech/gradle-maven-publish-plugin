@@ -16,7 +16,7 @@ buildscript {
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
     classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.18.0'
     classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.14.0'
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.8.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.9.0'
   }
 }
 
