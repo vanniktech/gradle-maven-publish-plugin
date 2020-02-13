@@ -18,6 +18,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import java.net.URI
 
+@Suppress("TooManyFunctions")
 internal class MavenPublishConfigurer(
   private val project: Project,
   private val targets: Iterable<MavenPublishTarget>
@@ -131,10 +132,9 @@ internal class MavenPublishConfigurer(
   private fun publishTaskName(publication: Publication, repository: String) =
     "publish${publication.name.capitalize()}PublicationTo${repository.capitalize()}Repository"
 
-
   override fun configureGradlePluginProject() {
-    val sourcesJar = project.tasks.register("sourcesJar", SourcesJar::class.java)
-    val javadocsJar = project.tasks.register("javadocsJar", JavadocsJar::class.java)
+    val sourcesJar = project.tasks.register(SOURCES_TASK, SourcesJar::class.java)
+    val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
 
     project.publishing.publications.withType(MavenPublication::class.java).all {
       if (it.name == "pluginMaven") {
@@ -153,7 +153,7 @@ internal class MavenPublishConfigurer(
   }
 
   override fun configureKotlinMppProject() {
-    val javadocsJar = project.tasks.register("javadocsJar", JavadocsJar::class.java)
+    val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
 
     project.publishing.publications.withType(MavenPublication::class.java).all {
       configurePom(it, artifactId = it.artifactId.replace(project.name, publishPom.artifactId))
@@ -185,10 +185,10 @@ internal class MavenPublishConfigurer(
 
     publication.from(project.components.getByName("java"))
 
-    val sourcesJar = project.tasks.register("sourcesJar", SourcesJar::class.java)
+    val sourcesJar = project.tasks.register(SOURCES_TASK, SourcesJar::class.java)
     publication.addTaskOutput(sourcesJar)
 
-    val javadocsJar = project.tasks.register("javadocsJar", JavadocsJar::class.java)
+    val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
     publication.addTaskOutput(javadocsJar)
 
     if (project.plugins.hasPlugin("groovy")) {
@@ -212,5 +212,7 @@ internal class MavenPublishConfigurer(
 
   companion object {
     const val PUBLICATION_NAME = "maven"
+    const val JAVADOC_TASK = "javadocsJar"
+    const val SOURCES_TASK = "sourcesJar"
   }
 }
