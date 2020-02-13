@@ -266,8 +266,7 @@ class MavenPublishPluginIntegrationTest(
         }
       }
     }
-    // Gradle is doing weird things when creating the plugin marker pom
-    val actualLines = resolvedPomFile.readLines().map { it.trimEnd() }
+    val actualLines = resolvedPomFile.readLines()
 
     val expectedLines = testProjectDir.root.resolve(EXPECTED_DIR).resolve(pomFileName).readLines()
     assertThat(actualLines).isEqualTo(expectedLines)
