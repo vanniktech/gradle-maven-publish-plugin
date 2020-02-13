@@ -1,0 +1,21 @@
+plugins {
+    id "java-gradle-plugin"
+    id "com.vanniktech.maven.publish"
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+gradlePlugin {
+    plugins {
+        mavenPublishPlugin {
+            // the id here should be different from the group id and artifact id
+            id = 'com.example.test-plugin'
+            implementationClass = 'com.vanniktech.maven.publish.test.TestPlugin'
+        }
+    }
+}
+
+apply from: "maven-publish.gradle"

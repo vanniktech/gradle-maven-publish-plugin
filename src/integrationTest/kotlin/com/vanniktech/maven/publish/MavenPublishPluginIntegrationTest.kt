@@ -166,6 +166,25 @@ class MavenPublishPluginIntegrationTest(
     assertPomContentMatches(linuxArtifactId)
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnGradlePluginProject() {
+    setupFixture("passing_java_gradle_plugin_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace")
+
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    repoFolder.walk().sorted().forEach { println(it) }
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
+
+    if (!useLegacyMode) {
+      val pluginId = "com.example.test-plugin"
+      val markerArtifactFolder = repoFolder.resolve("${pluginId.replace(".", "/")}/$pluginId.gradle.plugin/$TEST_VERSION_NAME")
+      val pomFile = "$pluginId.gradle.plugin-$TEST_VERSION_NAME.pom"
+      assertArtifactGenerated(markerArtifactFolder, pomFile)
+      assertPomContentMatches(markerArtifactFolder, pomFile)
+    }
+  }
+
   @Test fun generatesArtifactsAndDocumentationOnMinimalPomProject() {
     setupFixture("minimal_pom_project")
 
@@ -227,10 +246,16 @@ class MavenPublishPluginIntegrationTest(
   }
 
   private fun assertPomContentMatches(artifactId: String = TEST_POM_ARTIFACT_ID) {
-    val pomFileName = "$artifactId-$TEST_VERSION_NAME.pom"
+    assertPomContentMatches(artifactFolder(artifactId), "$artifactId-$TEST_VERSION_NAME.pom")
+  }
+
+  private fun assertPomContentMatches(
+    artifactFolder: File,
+    pomFileName: String
+  ) {
+    val resolvedPomFile = artifactFolder.resolve(pomFileName)
     // in legacyMode for Android the packaging is written, for all other modes it's currently not written
     // https://github.com/vanniktech/gradle-maven-publish-plugin/issues/82
-    val resolvedPomFile = artifactFolder(artifactId).resolve(pomFileName)
     val lines = resolvedPomFile.readLines()
     if (lines.contains("  <packaging>aar</packaging>")) {
       resolvedPomFile.writeText("")
@@ -241,9 +266,11 @@ class MavenPublishPluginIntegrationTest(
         }
       }
     }
+    // Gradle is doing weird things when creating the plugin marker pom
+    val actualLines = resolvedPomFile.readLines().map { it.trimEnd() }
 
-    val expectedPom = testProjectDir.root.resolve(EXPECTED_DIR).resolve(pomFileName)
-    assertThat(resolvedPomFile).hasSameContentAs(expectedPom)
+    val expectedLines = testProjectDir.root.resolve(EXPECTED_DIR).resolve(pomFileName).readLines()
+    assertThat(actualLines).isEqualTo(expectedLines)
   }
 
   private fun assertSourceJarContainsFile(

@@ -54,6 +54,10 @@ internal class UploadArchivesConfigurer(
       it.configuration = project.configurations.getByName(ARCHIVES_CONFIGURATION)
     }
 
+  override fun configureGradlePluginProject() {
+    configureJavaArtifacts()
+  }
+
   override fun configureKotlinMppProject() {
     throw UnsupportedOperationException("Publishing multiplatform projects not supported in legacy mode")
   }

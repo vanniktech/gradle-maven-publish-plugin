@@ -15,6 +15,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import java.net.URI
 
 internal class MavenPublishConfigurer(
@@ -27,7 +28,8 @@ internal class MavenPublishConfigurer(
   init {
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
 
-    if (!project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+    if (!project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") &&
+        !project.plugins.hasPlugin("java-gradle-plugin")) {
       configurePublications()
     }
     configureSigning()
@@ -36,13 +38,17 @@ internal class MavenPublishConfigurer(
   private fun configurePublications() {
     val publications = project.publishing.publications
     publications.create(PUBLICATION_NAME, MavenPublication::class.java) { publication ->
-      publication.artifactId = publishPom.artifactId
       configurePom(publication)
     }
   }
 
-  private fun configurePom(publication: MavenPublication) {
-    publication.groupId = publishPom.groupId
+  private fun configurePom(
+    publication: MavenPublication,
+    groupId: String = publishPom.groupId,
+    artifactId: String = publishPom.artifactId
+  ) {
+    publication.groupId = groupId
+    publication.artifactId = artifactId
     publication.version = publishPom.version
 
     @Suppress("UnstableApiUsage")
@@ -125,19 +131,39 @@ internal class MavenPublishConfigurer(
   private fun publishTaskName(publication: Publication, repository: String) =
     "publish${publication.name.capitalize()}PublicationTo${repository.capitalize()}Repository"
 
-  override fun configureKotlinMppProject() {
-    // Source jars are only created for platforms, not the common artifact.
-    project.publishing.publications.named("kotlinMultiplatform") {
-      val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)
-      (it as MavenPublication).addTaskOutput(emptySourcesJar)
-    }
 
+  override fun configureGradlePluginProject() {
+    val sourcesJar = project.tasks.register("sourcesJar", SourcesJar::class.java)
     val javadocsJar = project.tasks.register("javadocsJar", JavadocsJar::class.java)
-    project.publishing.publications.withType(MavenPublication::class.java).all {
-        it.artifactId = it.artifactId.replace(project.name, publishPom.artifactId)
-        configurePom(it)
 
+    project.publishing.publications.withType(MavenPublication::class.java).all {
+      if (it.name == "pluginMaven") {
+        configurePom(it)
         it.addTaskOutput(javadocsJar)
+        it.addTaskOutput(sourcesJar)
+      }
+
+      project.extensions.getByType(GradlePluginDevelopmentExtension::class.java).plugins.forEach { plugin ->
+        if (it.name == "${plugin.name}PluginMarkerMaven") {
+          // keep the current group and artifact ids, they are based on the gradle plugin id
+          configurePom(it, groupId = it.groupId, artifactId = it.artifactId)
+        }
+      }
+    }
+  }
+
+  override fun configureKotlinMppProject() {
+    val javadocsJar = project.tasks.register("javadocsJar", JavadocsJar::class.java)
+
+    project.publishing.publications.withType(MavenPublication::class.java).all {
+      configurePom(it, artifactId = it.artifactId.replace(project.name, publishPom.artifactId))
+      it.addTaskOutput(javadocsJar)
+
+      // Source jars are only created for platforms, not the common artifact.
+      if (it.name == "kotlinMultiplatform") {
+        val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)
+        it.addTaskOutput(emptySourcesJar)
+      }
     }
   }
 
