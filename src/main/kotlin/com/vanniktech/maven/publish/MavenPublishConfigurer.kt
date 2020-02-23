@@ -148,6 +148,12 @@ internal class MavenPublishConfigurer(
         if (it.name == "${plugin.name}PluginMarkerMaven") {
           // keep the current group and artifact ids, they are based on the gradle plugin id
           configurePom(it, groupId = it.groupId, artifactId = it.artifactId)
+          // workaround for https://github.com/gradle/gradle/issues/12259
+          it.pom.withXml { pom ->
+            pom.asNode().appendNode("name", publishPom.name)
+            pom.asNode().appendNode("description", publishPom.description)
+          }
+
           val emptyJavadocsJar = project.tasks.register("emptyJavadocsJar", EmptyJavadocsJar::class.java)
           it.addTaskOutput(emptyJavadocsJar)
           val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)

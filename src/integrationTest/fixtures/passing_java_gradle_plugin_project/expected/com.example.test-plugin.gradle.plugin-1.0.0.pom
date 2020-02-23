@@ -24,6 +24,8 @@
     <developerConnection>scm:git:ssh://git@github.com/vanniktech/gradle-maven-publish-plugin.git</developerConnection>
     <url>https://github.com/vanniktech/gradle-maven-publish-plugin/</url>
   </scm>
+  <name>Gradle Maven Publish Plugin Test Artifact</name>
+  <description>Testing the Gradle Maven Publish Plugin</description>
   <dependencies>
     <dependency>
       <groupId>com.example</groupId>
