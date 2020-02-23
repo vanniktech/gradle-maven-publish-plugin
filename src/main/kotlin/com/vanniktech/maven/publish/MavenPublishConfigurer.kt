@@ -150,8 +150,12 @@ internal class MavenPublishConfigurer(
           configurePom(it, groupId = it.groupId, artifactId = it.artifactId)
           // workaround for https://github.com/gradle/gradle/issues/12259
           it.pom.withXml { pom ->
-            pom.asNode().appendNode("name", publishPom.name)
-            pom.asNode().appendNode("description", publishPom.description)
+            if (pom.asNode().get("name") == null) {
+              pom.asNode().appendNode("name", publishPom.name)
+            }
+            if (pom.asNode().get("description") == null) {
+              pom.asNode().appendNode("description", publishPom.description)
+            }
           }
 
           val emptyJavadocsJar = project.tasks.register("emptyJavadocsJar", EmptyJavadocsJar::class.java)
