@@ -5,6 +5,7 @@ import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_
 import com.vanniktech.maven.publish.tasks.AndroidJavadocs
 import com.vanniktech.maven.publish.tasks.AndroidJavadocsJar
 import com.vanniktech.maven.publish.tasks.AndroidSourcesJar
+import com.vanniktech.maven.publish.tasks.EmptyJavadocsJar
 import com.vanniktech.maven.publish.tasks.EmptySourcesJar
 import com.vanniktech.maven.publish.tasks.GroovydocsJar
 import com.vanniktech.maven.publish.tasks.JavadocsJar
@@ -147,6 +148,10 @@ internal class MavenPublishConfigurer(
         if (it.name == "${plugin.name}PluginMarkerMaven") {
           // keep the current group and artifact ids, they are based on the gradle plugin id
           configurePom(it, groupId = it.groupId, artifactId = it.artifactId)
+          val emptyJavadocsJar = project.tasks.register("emptyJavadocsJar", EmptyJavadocsJar::class.java)
+          it.addTaskOutput(emptyJavadocsJar)
+          val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)
+          it.addTaskOutput(emptySourcesJar)
         }
       }
     }
