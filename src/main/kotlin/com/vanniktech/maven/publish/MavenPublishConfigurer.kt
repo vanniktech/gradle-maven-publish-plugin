@@ -151,10 +151,10 @@ internal class MavenPublishConfigurer(
           configurePom(it, groupId = it.groupId, artifactId = it.artifactId)
           // workaround for https://github.com/gradle/gradle/issues/12259
           it.pom.withXml { pom ->
-            if ((pom.asNode().get("name") as NodeList).isEmpty()) {
+            if ((pom.asNode().get("name") as? NodeList)?.isEmpty() == true) {
               pom.asNode().appendNode("name", publishPom.name)
             }
-            if ((pom.asNode().get("description") as NodeList).isEmpty()) {
+            if ((pom.asNode().get("description") as? NodeList)?.isEmpty() == true) {
               pom.asNode().appendNode("description", publishPom.description)
             }
           }
