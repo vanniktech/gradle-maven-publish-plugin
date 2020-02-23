@@ -148,21 +148,21 @@ class MavenPublishPluginIntegrationTest(
     assertPomContentMatches()
 
     val metadataArtifactId = "$TEST_POM_ARTIFACT_ID-metadata"
-    assertExpectedCommonArtifactsGenerated(metadataArtifactId, "module")
-    assertArtifactGenerated(metadataArtifactId, "$metadataArtifactId-$TEST_VERSION_NAME.jar")
+    assertExpectedCommonArtifactsGenerated("module", metadataArtifactId)
+    assertArtifactGenerated("$metadataArtifactId-$TEST_VERSION_NAME.jar", metadataArtifactId)
     assertPomContentMatches(metadataArtifactId)
 
     val jvmArtifactId = "$TEST_POM_ARTIFACT_ID-jvm"
-    assertExpectedCommonArtifactsGenerated(jvmArtifactId, "module")
+    assertExpectedCommonArtifactsGenerated("module", jvmArtifactId)
     assertPomContentMatches(jvmArtifactId)
 
     val nodejsArtifactId = "$TEST_POM_ARTIFACT_ID-nodejs"
-    assertExpectedCommonArtifactsGenerated(nodejsArtifactId, "module")
+    assertExpectedCommonArtifactsGenerated("module", nodejsArtifactId)
     assertPomContentMatches(nodejsArtifactId)
 
     val linuxArtifactId = "$TEST_POM_ARTIFACT_ID-linux"
-    assertExpectedCommonArtifactsGenerated(linuxArtifactId, "module")
-    assertArtifactGenerated(linuxArtifactId, "$linuxArtifactId-$TEST_VERSION_NAME.klib")
+    assertExpectedCommonArtifactsGenerated("module", linuxArtifactId)
+    assertArtifactGenerated("$linuxArtifactId-$TEST_VERSION_NAME.klib", linuxArtifactId)
     assertPomContentMatches(linuxArtifactId)
   }
 
@@ -178,10 +178,10 @@ class MavenPublishPluginIntegrationTest(
 
     if (!useLegacyMode) {
       val pluginId = "com.example.test-plugin"
-      val markerArtifactFolder = repoFolder.resolve("${pluginId.replace(".", "/")}/$pluginId.gradle.plugin/$TEST_VERSION_NAME")
+      val artifactId = "$pluginId.gradle.plugin"
       val pomFile = "$pluginId.gradle.plugin-$TEST_VERSION_NAME.pom"
-      assertArtifactGenerated(markerArtifactFolder, pomFile)
-      assertPomContentMatches(markerArtifactFolder, pomFile)
+      assertArtifactGenerated(pomFile, artifactId, pluginId)
+      assertPomContentMatches(artifactId, pluginId)
     }
   }
 
@@ -216,43 +216,38 @@ class MavenPublishPluginIntegrationTest(
    * no matter what project type is and which plugins are applied.
    */
   private fun assertExpectedCommonArtifactsGenerated(
+    artifactExtension: String = "jar",
     artifactId: String = TEST_POM_ARTIFACT_ID,
-    artifactExtension: String = "jar"
+    groupId: String = TEST_GROUP
   ) {
-    val artifactFolder = artifactFolder(artifactId)
     val artifactJar = "$artifactId-$TEST_VERSION_NAME.$artifactExtension"
     val pomFile = "$artifactId-$TEST_VERSION_NAME.pom"
     val javadocJar = "$artifactId-$TEST_VERSION_NAME-javadoc.jar"
     val sourcesJar = "$artifactId-$TEST_VERSION_NAME-sources.jar"
-    assertArtifactGenerated(artifactFolder, artifactJar)
-    assertArtifactGenerated(artifactFolder, pomFile)
-    assertArtifactGenerated(artifactFolder, javadocJar)
-    assertArtifactGenerated(artifactFolder, sourcesJar)
+    assertArtifactGenerated(artifactJar, artifactId, groupId)
+    assertArtifactGenerated(pomFile, artifactId, groupId)
+    assertArtifactGenerated(javadocJar, artifactId, groupId)
+    assertArtifactGenerated(sourcesJar, artifactId, groupId)
   }
 
   private fun assertArtifactGenerated(
+    artifactFileNameWithExtension: String,
     artifactId: String = TEST_POM_ARTIFACT_ID,
-    artifactFileNameWithExtension: String
+    groupId: String = TEST_GROUP
   ) {
-    assertArtifactGenerated(artifactFolder(artifactId), artifactFileNameWithExtension)
-  }
+    val artifactFolder = artifactFolder(artifactId, groupId)
 
-  private fun assertArtifactGenerated(
-    artifactFolder: File,
-    artifactFileNameWithExtension: String
-  ) {
     assertThat(artifactFolder.resolve(artifactFileNameWithExtension)).exists()
     assertThat(artifactFolder.resolve("$artifactFileNameWithExtension.asc")).exists()
   }
 
-  private fun assertPomContentMatches(artifactId: String = TEST_POM_ARTIFACT_ID) {
-    assertPomContentMatches(artifactFolder(artifactId), "$artifactId-$TEST_VERSION_NAME.pom")
-  }
-
   private fun assertPomContentMatches(
-    artifactFolder: File,
-    pomFileName: String
+    artifactId: String = TEST_POM_ARTIFACT_ID,
+    groupId: String = TEST_GROUP
   ) {
+    val artifactFolder = artifactFolder(artifactId, groupId)
+    val pomFileName = "$artifactId-$TEST_VERSION_NAME.pom"
+
     val resolvedPomFile = artifactFolder.resolve(pomFileName)
     // in legacyMode for Android the packaging is written, for all other modes it's currently not written
     // https://github.com/vanniktech/gradle-maven-publish-plugin/issues/82
@@ -275,9 +270,11 @@ class MavenPublishPluginIntegrationTest(
   private fun assertSourceJarContainsFile(
     file: String,
     srcRoot: String,
-    artifactId: String = TEST_POM_ARTIFACT_ID
+    artifactId: String = TEST_POM_ARTIFACT_ID,
+    groupId: String = TEST_GROUP
   ) {
-    val sourcesJar = ZipFile(artifactFolder().resolve("$artifactId-$TEST_VERSION_NAME-sources.jar"))
+    val artifactFolder = artifactFolder(artifactId, groupId)
+    val sourcesJar = ZipFile(artifactFolder.resolve("$artifactId-$TEST_VERSION_NAME-sources.jar"))
     val entry = sourcesJar.getEntry(file)
     val content = sourcesJar.getInputStream(entry)?.reader()?.buffered()?.readText()
 
@@ -288,10 +285,10 @@ class MavenPublishPluginIntegrationTest(
     assertThat(content).isEqualTo(expectedContent)
   }
 
-  private fun artifactFolder(artifactId: String = TEST_POM_ARTIFACT_ID): File {
-    val group = TEST_GROUP.replace(".", "/")
+  private fun artifactFolder(artifactId: String, groupId: String): File {
+    val group = groupId.replace(".", "/")
     val version = TEST_VERSION_NAME
-    return repoFolder.resolve("$group/$artifactId/$version")
+    return repoFolder.resolve(group).resolve(artifactId).resolve(version)
   }
 
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
