@@ -10,6 +10,7 @@ import com.vanniktech.maven.publish.tasks.EmptySourcesJar
 import com.vanniktech.maven.publish.tasks.GroovydocsJar
 import com.vanniktech.maven.publish.tasks.JavadocsJar
 import com.vanniktech.maven.publish.tasks.SourcesJar
+import groovy.util.NodeList
 import org.gradle.api.Project
 import org.gradle.api.publish.Publication
 import org.gradle.api.publish.maven.MavenPublication
@@ -150,10 +151,10 @@ internal class MavenPublishConfigurer(
           configurePom(it, groupId = it.groupId, artifactId = it.artifactId)
           // workaround for https://github.com/gradle/gradle/issues/12259
           it.pom.withXml { pom ->
-            if (pom.asNode().get("name") == null) {
+            if ((pom.asNode().get("name") as NodeList).isEmpty()) {
               pom.asNode().appendNode("name", publishPom.name)
             }
-            if (pom.asNode().get("description") == null) {
+            if ((pom.asNode().get("description") as NodeList).isEmpty()) {
               pom.asNode().appendNode("description", publishPom.description)
             }
           }
