@@ -30,11 +30,9 @@ open class MavenPublishPluginExtension(project: Project) {
    * If set to false the new `maven-publish` plugin will be used instead of the soon to be deprecated
    * `maven` plugin.
    *
-   * For Android libraries version 3.6.0 of the Android Gradle Plugin is required in non legacy mode.
-   *
    * @Since 0.9.0
    */
-  var useLegacyMode: Boolean = true
+  var useLegacyMode: Boolean = false
 
   /**
    * The Android library variant that should be published. Projects not using any product flavors, that just want
