@@ -86,6 +86,7 @@ class MavenPublishPluginTest {
     project.plugins.apply(MavenPublishPlugin::class.java)
 
     val extension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
+    extension.useLegacyMode = true
     extension.targets.getByName("uploadArchives").repositoryUsername = "bar"
     extension.targets.getByName("uploadArchives").repositoryPassword = "foo"
 
