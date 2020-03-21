@@ -1,7 +1,7 @@
 package com.vanniktech.maven.publish.test
 
 /**
- * Just an actual test class with Javadoc.
+ * Just a linux actual test class with Javadoc.
  */
 actual class ExpectedTestClass {
   /**
