@@ -154,10 +154,12 @@ class MavenPublishPluginIntegrationTest(
 
     val jvmArtifactId = "$TEST_POM_ARTIFACT_ID-jvm"
     assertExpectedCommonArtifactsGenerated("module", jvmArtifactId)
+    //TODO assertArtifactGenerated("$jvmArtifactId-$TEST_VERSION_NAME.jar", jvmArtifactId)
     assertPomContentMatches(jvmArtifactId)
 
     val nodejsArtifactId = "$TEST_POM_ARTIFACT_ID-nodejs"
     assertExpectedCommonArtifactsGenerated("module", nodejsArtifactId)
+    //TODO assertArtifactGenerated("$nodejsArtifactId-$TEST_VERSION_NAME.jar", nodejsArtifactId)
     assertPomContentMatches(nodejsArtifactId)
 
     val linuxArtifactId = "$TEST_POM_ARTIFACT_ID-linux"
@@ -288,13 +290,15 @@ class MavenPublishPluginIntegrationTest(
     val artifactFolder = artifactFolder(artifactId, groupId, version)
     val sourcesJar = ZipFile(artifactFolder.resolve("$artifactId-$version-sources.jar"))
     val entry = sourcesJar.getEntry(file)
+    assertThat(entry).describedAs(file).isNotNull()
+
     val content = sourcesJar.getInputStream(entry)?.reader()?.buffered()?.readText()
 
     val expected = testProjectDir.root.resolve(srcRoot).resolve(file)
     val expectedContent = expected.readText()
 
-    assertThat(content).isNotBlank()
-    assertThat(content).isEqualTo(expectedContent)
+    assertThat(content).describedAs(file).isNotBlank()
+    assertThat(content).describedAs(file).isEqualTo(expectedContent)
   }
 
   private fun artifactFolder(artifactId: String, groupId: String, version: String): File {
