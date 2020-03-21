@@ -1,0 +1,13 @@
+plugins {
+    id "java"
+    id "com.vanniktech.maven.publish"
+}
+
+group = "com.example2"
+version = "2.0.0"
+
+repositories {
+    mavenCentral()
+}
+
+apply from: "maven-publish.gradle"
