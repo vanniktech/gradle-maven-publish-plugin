@@ -47,7 +47,7 @@ internal class MavenPublishConfigurer(
 
   private fun configurePom(
     publication: MavenPublication,
-    groupId: String = project.group as String, // the plugin initially sets project.group to publishPom.groupId
+    groupId: String = project.group as String, // The plugin initially sets project.group to publishPom.groupId
     artifactId: String = publishPom.artifactId
   ) {
     publication.groupId = groupId
