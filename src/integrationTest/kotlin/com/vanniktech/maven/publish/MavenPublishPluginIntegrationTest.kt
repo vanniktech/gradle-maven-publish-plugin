@@ -197,7 +197,6 @@ class MavenPublishPluginIntegrationTest(
     setupFixture("override_version_group_project")
 
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
-    repoFolder.walk().sorted().forEach { println(it) }
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated(groupId = "com.example2", version = "2.0.0")
