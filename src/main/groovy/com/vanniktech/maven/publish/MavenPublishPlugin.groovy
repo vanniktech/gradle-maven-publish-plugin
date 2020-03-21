@@ -33,9 +33,9 @@ class MavenPublishPlugin extends BaseMavenPublishPlugin {
   private static void configurePom(Project project, MavenPom pom) {
     MavenPublishPom publishPom = MavenPublishPom.fromProject(project)
 
-    pom.groupId = publishPom.groupId
+    pom.groupId = project.group
     pom.artifactId = publishPom.artifactId
-    pom.version = publishPom.version
+    pom.version = project.version
 
     pom.project {
       if (publishPom.name != null) {

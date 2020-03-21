@@ -47,12 +47,12 @@ internal class MavenPublishConfigurer(
 
   private fun configurePom(
     publication: MavenPublication,
-    groupId: String = publishPom.groupId,
+    groupId: String = project.group as String, // The plugin initially sets project.group to publishPom.groupId
     artifactId: String = publishPom.artifactId
   ) {
     publication.groupId = groupId
     publication.artifactId = artifactId
-    publication.version = publishPom.version
+    publication.version = project.version as String // The plugin initially sets project.version to publishPom.version
 
     @Suppress("UnstableApiUsage")
     publication.pom { pom ->
