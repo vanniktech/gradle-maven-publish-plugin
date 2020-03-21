@@ -52,7 +52,7 @@ internal class MavenPublishConfigurer(
   ) {
     publication.groupId = groupId
     publication.artifactId = artifactId
-    publication.version = project.version as String // the plugin initially sets project.version to publishPom.version
+    publication.version = project.version as String // The plugin initially sets project.version to publishPom.version
 
     @Suppress("UnstableApiUsage")
     publication.pom { pom ->
