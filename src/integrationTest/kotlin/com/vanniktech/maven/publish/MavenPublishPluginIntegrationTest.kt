@@ -154,12 +154,12 @@ class MavenPublishPluginIntegrationTest(
 
     val jvmArtifactId = "$TEST_POM_ARTIFACT_ID-jvm"
     assertExpectedCommonArtifactsGenerated("module", jvmArtifactId)
-    //TODO assertArtifactGenerated("$jvmArtifactId-$TEST_VERSION_NAME.jar", jvmArtifactId)
+    // TODO assertArtifactGenerated("$jvmArtifactId-$TEST_VERSION_NAME.jar", jvmArtifactId)
     assertPomContentMatches(jvmArtifactId)
 
     val nodejsArtifactId = "$TEST_POM_ARTIFACT_ID-nodejs"
     assertExpectedCommonArtifactsGenerated("module", nodejsArtifactId)
-    //TODO assertArtifactGenerated("$nodejsArtifactId-$TEST_VERSION_NAME.jar", nodejsArtifactId)
+    // TODO assertArtifactGenerated("$nodejsArtifactId-$TEST_VERSION_NAME.jar", nodejsArtifactId)
     assertPomContentMatches(nodejsArtifactId)
 
     val linuxArtifactId = "$TEST_POM_ARTIFACT_ID-linux"
