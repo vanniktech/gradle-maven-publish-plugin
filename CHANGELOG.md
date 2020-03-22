@@ -1,7 +1,16 @@
 # Change Log
 
-Version 0.10.0 *(In development)*
----------------------------------
+Version 0.10.0 *(2020-03-22)*
+-----------------------------
+
+- update mpp integrationt test [\#124](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/124) ([gabrielittner](https://github.com/gabrielittner))
+- allow to override group and version in build files [\#123](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/123) ([gabrielittner](https://github.com/gabrielittner))
+- disable legacy mode by default [\#120](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/120) ([gabrielittner](https://github.com/gabrielittner))
+- fix plugin marker pom not containing name and description [\#119](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/119) ([gabrielittner](https://github.com/gabrielittner))
+- publish empty source and javadocs jars for plugin marker [\#118](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/118) ([gabrielittner](https://github.com/gabrielittner))
+- directly support java-gradle-plugin projects [\#115](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/115) ([gabrielittner](https://github.com/gabrielittner))
+- Use 0.9.0 for publishing. [\#113](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/113) ([vanniktech](https://github.com/vanniktech))
+- Update some dependencies. [\#107](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/107) ([vanniktech](https://github.com/vanniktech))
 
 Version 0.9.0 *(2020-02-08)*
 ----------------------------
