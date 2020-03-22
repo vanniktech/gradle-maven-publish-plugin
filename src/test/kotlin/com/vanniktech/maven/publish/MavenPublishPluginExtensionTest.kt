@@ -1,6 +1,6 @@
 package com.vanniktech.maven.publish
 
-import org.assertj.core.api.Java6Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assume.assumeTrue
