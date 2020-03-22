@@ -1,5 +1,8 @@
 # Change Log
 
+Version 0.11.0 *(In development)*
+---------------------------------
+
 Version 0.10.0 *(2020-03-22)*
 -----------------------------
 
@@ -11,6 +14,8 @@ Version 0.10.0 *(2020-03-22)*
 - directly support java-gradle-plugin projects [\#115](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/115) ([gabrielittner](https://github.com/gabrielittner))
 - Use 0.9.0 for publishing. [\#113](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/113) ([vanniktech](https://github.com/vanniktech))
 - Update some dependencies. [\#107](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/107) ([vanniktech](https://github.com/vanniktech))
+
+Again, huge thanks to [gabrielittner](https://github.com/gabrielittner) for all of his work in this release.
 
 Version 0.9.0 *(2020-02-08)*
 ----------------------------
