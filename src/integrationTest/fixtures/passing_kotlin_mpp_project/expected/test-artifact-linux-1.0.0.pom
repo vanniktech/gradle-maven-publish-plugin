@@ -9,6 +9,7 @@
   <groupId>com.example</groupId>
   <artifactId>test-artifact-linux</artifactId>
   <version>1.0.0</version>
+  <packaging>klib</packaging>
   <name>Gradle Maven Publish Plugin Test Artifact</name>
   <description>Testing the Gradle Maven Publish Plugin</description>
   <url>https://github.com/vanniktech/gradle-maven-publish-plugin/</url>

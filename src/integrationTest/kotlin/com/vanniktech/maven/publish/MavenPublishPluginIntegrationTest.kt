@@ -180,7 +180,6 @@ class MavenPublishPluginIntegrationTest(
     if (!useLegacyMode) {
       val pluginId = "com.example.test-plugin"
       val artifactId = "$pluginId.gradle.plugin"
-      assertExpectedCommonArtifactsGenerated("pom", artifactId, pluginId)
       assertPomContentMatches(artifactId, pluginId)
     }
   }
