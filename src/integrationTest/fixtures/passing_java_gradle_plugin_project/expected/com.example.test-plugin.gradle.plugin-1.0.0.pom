@@ -4,6 +4,7 @@
   <groupId>com.example.test-plugin</groupId>
   <artifactId>com.example.test-plugin.gradle.plugin</artifactId>
   <version>1.0.0</version>
+  <packaging>pom</packaging>
   <url>https://github.com/vanniktech/gradle-maven-publish-plugin/</url>
   <licenses>
     <license>

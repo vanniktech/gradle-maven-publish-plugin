@@ -5,7 +5,6 @@ import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_
 import com.vanniktech.maven.publish.tasks.AndroidJavadocs
 import com.vanniktech.maven.publish.tasks.AndroidJavadocsJar
 import com.vanniktech.maven.publish.tasks.AndroidSourcesJar
-import com.vanniktech.maven.publish.tasks.EmptyJavadocsJar
 import com.vanniktech.maven.publish.tasks.EmptySourcesJar
 import com.vanniktech.maven.publish.tasks.GroovydocsJar
 import com.vanniktech.maven.publish.tasks.JavadocsJar
@@ -58,7 +57,6 @@ internal class MavenPublishConfigurer(
     publication.pom { pom ->
 
       pom.name.set(publishPom.name)
-      pom.packaging = publishPom.packaging
       pom.description.set(publishPom.description)
       pom.url.set(publishPom.url)
 
@@ -158,11 +156,6 @@ internal class MavenPublishConfigurer(
               pom.asNode().appendNode("description", publishPom.description)
             }
           }
-
-          val emptyJavadocsJar = project.tasks.register("emptyJavadocsJar", EmptyJavadocsJar::class.java)
-          it.addTaskOutput(emptyJavadocsJar)
-          val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)
-          it.addTaskOutput(emptySourcesJar)
         }
       }
     }
