@@ -158,6 +158,9 @@ mavenPublish {
     }
 }
 ```
+The `groupId` set here has to be the group id you have publishing rights to, not necessarily the `groupId`
+of the library you are publishing. When you are publishing a library with `com.example.mylibrary` as 
+it would usually be `com.example`.
 
 This will create a `closeAndReleaseRepository` task that you can call after `uploadArchives`:
 
