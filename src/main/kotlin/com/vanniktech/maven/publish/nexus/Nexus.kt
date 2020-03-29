@@ -34,11 +34,12 @@ class Nexus(username: String, password: String, val groupId: String, baseUrl: St
   }
 
   private fun findStagingRepository(): Repository {
+    val prefix = groupId.replace(".", "")
     val candidateRepositories = getProfileRepositories()
-      ?.filter { it.repositoryId.startsWith(groupId.replace(".", "")) } ?: emptyList()
+      ?.filter { it.repositoryId.startsWith(prefix) } ?: emptyList()
 
     if (candidateRepositories.isEmpty()) {
-      throw IllegalArgumentException("No staging repository find. Did you call ./gradlew uploadArchives ?")
+      throw IllegalArgumentException("No staging repository prefixed with \"$prefix\" found. Mae sure you called ./gradlew uploadArchives and `mavenPublish.nexus.groupId` is set correctly.")
     }
 
     if (candidateRepositories.size > 1) {
