@@ -1,7 +1,14 @@
 # Change Log
 
-Version 0.11.0 *(In development)*
----------------------------------
+Version 0.11.1 *(2020-03-30)*
+-----------------------------
+
+- Pom packaging is not written [\#82](https://github.com/vanniktech/gradle-maven-publish-plugin/issues/82)
+
+Version 0.11.0 *(2020-03-30)*
+-----------------------------
+
+- Actually the same as 0.10.0 since I forgot to pull master before building :/
 
 Version 0.10.0 *(2020-03-22)*
 -----------------------------
