@@ -93,7 +93,7 @@ class Nexus(username: String, password: String, val groupId: String, baseUrl: St
 
       try {
         val repository = service.getRepository(repositoryId).execute().body()
-        if (repository?.type == "closed") {
+        if (repository?.type == "closed" && !repository.transitioning) {
           break
         }
       } catch (e: IOException) {
