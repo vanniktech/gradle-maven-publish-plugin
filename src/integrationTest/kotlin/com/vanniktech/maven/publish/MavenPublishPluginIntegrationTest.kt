@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import org.junit.Assume.assumeFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -18,8 +17,7 @@ import java.util.zip.ZipFile
 @RunWith(Parameterized::class)
 class MavenPublishPluginIntegrationTest(
   private val uploadArchivesTargetTaskName: String,
-  private val mavenPublishTargetTaskName: String,
-  private val useLegacyMode: Boolean
+  private val mavenPublishTargetTaskName: String
 ) {
   companion object {
     const val FIXTURES = "src/integrationTest/fixtures"
@@ -30,12 +28,10 @@ class MavenPublishPluginIntegrationTest(
     const val TEST_POM_ARTIFACT_ID = "test-artifact"
 
     @JvmStatic
-    @Parameters(name = "{0} with legacyMode={2}")
+    @Parameters(name = "{0}")
     fun mavenPublishTargetsToTest() = listOf(
-      arrayOf("installArchives", "publishMavenPublicationToLocalRepository", false),
-      arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository", false),
-      arrayOf("installArchives", "publishMavenPublicationToLocalRepository", true),
-      arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository", true)
+      arrayOf("installArchives", "publishMavenPublicationToLocalRepository"),
+      arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository")
     )
   }
 
@@ -135,8 +131,6 @@ class MavenPublishPluginIntegrationTest(
   }
 
   @Test fun generatesArtifactsAndDocumentationOnKotlinMppProject() {
-    assumeFalse(useLegacyMode)
-
     setupFixture("passing_kotlin_mpp_project")
 
     val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace")
@@ -177,11 +171,9 @@ class MavenPublishPluginIntegrationTest(
     assertExpectedCommonArtifactsGenerated()
     assertPomContentMatches()
 
-    if (!useLegacyMode) {
-      val pluginId = "com.example.test-plugin"
-      val artifactId = "$pluginId.gradle.plugin"
-      assertPomContentMatches(artifactId, pluginId)
-    }
+    val pluginId = "com.example.test-plugin"
+    val artifactId = "$pluginId.gradle.plugin"
+    assertPomContentMatches(artifactId, pluginId)
   }
 
   @Test fun generatesArtifactsAndDocumentationOnMinimalPomProject() {
@@ -213,11 +205,7 @@ class MavenPublishPluginIntegrationTest(
 
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
     assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
-    if (useLegacyMode) {
-      assertThat(result.task(":$mavenPublishTargetTaskName")).isNull()
-    } else {
-      assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
-    }
+    assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
   }
 
   /**
@@ -307,7 +295,7 @@ class MavenPublishPluginIntegrationTest(
 
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
       .withProjectDir(testProjectDir.root)
-      .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder", "-Ptest.useLegacyMode=$useLegacyMode")
+      .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder")
       .withPluginClasspath()
       .build()
 }

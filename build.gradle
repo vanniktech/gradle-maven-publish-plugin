@@ -23,7 +23,6 @@ buildscript {
   }
 }
 
-apply plugin: 'groovy'
 apply plugin: 'java-library'
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
@@ -34,12 +33,6 @@ apply plugin: 'com.vanniktech.android.junit.jacoco'
 apply plugin: "com.vanniktech.maven.publish"
 apply plugin: 'com.gradle.plugin-publish'
 apply from: "gradle/integration-test.gradle"
-
-// Workaround for having both Groovy + Kotlin.
-compileGroovy {
-  dependsOn tasks.getByPath('compileKotlin')
-  classpath += files(compileKotlin.destinationDir)
-}
 
 codeQualityTools {
   ktlint {
@@ -79,7 +72,6 @@ repositories {
 
 dependencies {
   api gradleApi()
-  api localGroovy()
   api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
   implementation "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"

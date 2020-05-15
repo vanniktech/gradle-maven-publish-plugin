@@ -27,14 +27,6 @@ open class MavenPublishPluginExtension(project: Project) {
   )
 
   /**
-   * If set to false the new `maven-publish` plugin will be used instead of the soon to be deprecated
-   * `maven` plugin.
-   *
-   * @Since 0.9.0
-   */
-  var useLegacyMode: Boolean = false
-
-  /**
    * The Android library variant that should be published. Projects not using any product flavors, that just want
    * to publish the release build type can use the default.
    *
