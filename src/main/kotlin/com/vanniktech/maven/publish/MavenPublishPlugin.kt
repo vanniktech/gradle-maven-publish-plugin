@@ -5,6 +5,7 @@ import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.SigningPlugin
@@ -21,6 +22,8 @@ open class MavenPublishPlugin : Plugin<Project> {
       throw IllegalArgumentException("You need gradle version 4.10.1 or higher")
     }
 
+    p.plugins.apply(GradleMavenPublishPlugin::class.java)
+
     val pom = MavenPublishPom.fromProject(p)
     p.group = pom.groupId
     p.version = pom.version
@@ -30,7 +33,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     configureDokka(p)
 
     p.afterEvaluate { project ->
-      val configurer = MavenPublishConfigurer(project, extension.targets)
+      val configurer = MavenPublishConfigurer(p, pom, extension.targets)
 
       extension.targets.all {
         checkNotNull(it.releaseRepositoryUrl) {
@@ -40,14 +43,20 @@ open class MavenPublishPlugin : Plugin<Project> {
       }
 
       configurePublishing(project, configurer)
-
-      NexusConfigurer(project)
     }
+
+    NexusConfigurer(p)
   }
 
   private fun configureSigning(project: Project) {
     project.plugins.apply(SigningPlugin::class.java)
     project.signing.setRequired(project.isSigningRequired)
+    project.afterEvaluate {
+      if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+        @Suppress("UnstableApiUsage")
+        project.signing.sign(project.publishing.publications)
+      }
+    }
   }
 
   private fun configureJavadoc(project: Project) {

@@ -148,12 +148,12 @@ class MavenPublishPluginIntegrationTest(
 
     val jvmArtifactId = "$TEST_POM_ARTIFACT_ID-jvm"
     assertExpectedCommonArtifactsGenerated("module", jvmArtifactId)
-    // TODO assertArtifactGenerated("$jvmArtifactId-$TEST_VERSION_NAME.jar", jvmArtifactId)
+    assertArtifactGenerated("$jvmArtifactId-$TEST_VERSION_NAME.jar", jvmArtifactId)
     assertPomContentMatches(jvmArtifactId)
 
     val nodejsArtifactId = "$TEST_POM_ARTIFACT_ID-nodejs"
     assertExpectedCommonArtifactsGenerated("module", nodejsArtifactId)
-    // TODO assertArtifactGenerated("$nodejsArtifactId-$TEST_VERSION_NAME.jar", nodejsArtifactId)
+    assertArtifactGenerated("$nodejsArtifactId-$TEST_VERSION_NAME.jar", nodejsArtifactId)
     assertPomContentMatches(nodejsArtifactId)
 
     val linuxArtifactId = "$TEST_POM_ARTIFACT_ID-linux"
@@ -249,22 +249,10 @@ class MavenPublishPluginIntegrationTest(
     val pomFileName = "$artifactId-$version.pom"
 
     val resolvedPomFile = artifactFolder.resolve(pomFileName)
-    // in legacyMode for Android the packaging is written, for all other modes it's currently not written
-    // https://github.com/vanniktech/gradle-maven-publish-plugin/issues/82
-    val lines = resolvedPomFile.readLines()
-    if (lines.contains("  <packaging>aar</packaging>")) {
-      resolvedPomFile.writeText("")
-      lines.forEach { line ->
-        if (line != "  <packaging>aar</packaging>") {
-          resolvedPomFile.appendText(line)
-          resolvedPomFile.appendText("\n")
-        }
-      }
-    }
-    val actualLines = resolvedPomFile.readLines()
+    val content = resolvedPomFile.readText()
 
-    val expectedLines = testProjectDir.root.resolve(EXPECTED_DIR).resolve(pomFileName).readLines()
-    assertThat(actualLines).isEqualTo(expectedLines)
+    val expectedContent = testProjectDir.root.resolve(EXPECTED_DIR).resolve(pomFileName).readText()
+    assertThat(content).isEqualToNormalizingWhitespace(expectedContent)
   }
 
   private fun assertSourceJarContainsFile(

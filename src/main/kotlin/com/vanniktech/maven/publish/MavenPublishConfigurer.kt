@@ -9,11 +9,9 @@ import com.vanniktech.maven.publish.tasks.EmptySourcesJar
 import com.vanniktech.maven.publish.tasks.GroovydocsJar
 import com.vanniktech.maven.publish.tasks.JavadocsJar
 import com.vanniktech.maven.publish.tasks.SourcesJar
-import groovy.util.NodeList
 import org.gradle.api.Project
 import org.gradle.api.publish.Publication
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
@@ -22,27 +20,9 @@ import java.net.URI
 @Suppress("TooManyFunctions")
 internal class MavenPublishConfigurer(
   private val project: Project,
+  private val publishPom: MavenPublishPom,
   private val targets: Iterable<MavenPublishTarget>
 ) : Configurer {
-
-  private val publishPom = MavenPublishPom.fromProject(project)
-
-  init {
-    project.plugins.apply(GradleMavenPublishPlugin::class.java)
-
-    if (!project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") &&
-        !project.plugins.hasPlugin("java-gradle-plugin")) {
-      configurePublications()
-    }
-    configureSigning()
-  }
-
-  private fun configurePublications() {
-    val publications = project.publishing.publications
-    publications.create(PUBLICATION_NAME, MavenPublication::class.java) { publication ->
-      configurePom(publication)
-    }
-  }
 
   private fun configurePom(
     publication: MavenPublication,
@@ -81,13 +61,6 @@ internal class MavenPublishConfigurer(
           it.url.set(publishPom.developerUrl)
         }
       }
-    }
-  }
-
-  private fun configureSigning() {
-    if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
-      @Suppress("UnstableApiUsage")
-      project.signing.sign(project.publishing.publications)
     }
   }
 
@@ -147,15 +120,6 @@ internal class MavenPublishConfigurer(
         if (it.name == "${plugin.name}PluginMarkerMaven") {
           // keep the current group and artifact ids, they are based on the gradle plugin id
           configurePom(it, groupId = it.groupId, artifactId = it.artifactId)
-          // workaround for https://github.com/gradle/gradle/issues/12259
-          it.pom.withXml { pom ->
-            if ((pom.asNode().get("name") as? NodeList)?.isEmpty() == true) {
-              pom.asNode().appendNode("name", publishPom.name)
-            }
-            if ((pom.asNode().get("description") as? NodeList)?.isEmpty() == true) {
-              pom.asNode().appendNode("description", publishPom.description)
-            }
-          }
         }
       }
     }
@@ -177,6 +141,11 @@ internal class MavenPublishConfigurer(
   }
 
   override fun configureAndroidArtifacts() {
+    val publications = project.publishing.publications
+    publications.create(PUBLICATION_NAME, MavenPublication::class.java) { publication ->
+      configurePom(publication)
+    }
+
     val publication = project.publishing.publications.getByName(PUBLICATION_NAME) as MavenPublication
 
     publication.from(project.components.getByName(project.publishExtension.androidVariantToPublish))
@@ -190,6 +159,11 @@ internal class MavenPublishConfigurer(
   }
 
   override fun configureJavaArtifacts() {
+    val publications = project.publishing.publications
+    publications.create(PUBLICATION_NAME, MavenPublication::class.java) { publication ->
+      configurePom(publication)
+    }
+
     val publication = project.publishing.publications.getByName(PUBLICATION_NAME) as MavenPublication
 
     publication.from(project.components.getByName("java"))
