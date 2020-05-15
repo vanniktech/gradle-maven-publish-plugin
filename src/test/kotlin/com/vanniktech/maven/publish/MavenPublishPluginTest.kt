@@ -4,13 +4,11 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency.ARCHIVES_CONFIGURATION
 import org.gradle.api.internal.project.DefaultProject
 import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.MavenPlugin
-import org.gradle.api.tasks.Upload
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -32,20 +30,17 @@ class MavenPublishPluginTest {
   @Test fun javaPlugin() {
     project.plugins.apply(JavaPlugin::class.java)
     assert(project)
-    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(2)
   }
 
   @Test fun javaLibraryPlugin() {
     project.plugins.apply(JavaLibraryPlugin::class.java)
     assert(project)
-    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(2)
   }
 
   @Test fun javaLibraryPluginWithGroovy() {
     project.plugins.apply(JavaLibraryPlugin::class.java)
     project.plugins.apply(GroovyPlugin::class.java)
     assert(project)
-    assertThat(project.configurations.getByName(ARCHIVES_CONFIGURATION).artifacts).hasSize(2)
     assertThat(project.tasks.getByName("groovydocJar")).isNotNull()
   }
 
@@ -86,24 +81,20 @@ class MavenPublishPluginTest {
     project.plugins.apply(MavenPublishPlugin::class.java)
 
     val extension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
-    extension.useLegacyMode = true
     extension.targets.getByName("uploadArchives").repositoryUsername = "bar"
     extension.targets.getByName("uploadArchives").repositoryPassword = "foo"
 
     (project as DefaultProject).evaluate()
 
-    assertThat(project.plugins.findPlugin(MavenPlugin::class.java)).isNotNull()
+    assertThat(project.plugins.findPlugin(GradleMavenPublishPlugin::class.java)).isNotNull()
     assertThat(project.plugins.findPlugin(SigningPlugin::class.java)).isNotNull()
     assertThat(project.group).isNotNull()
     assertThat(project.version).isNotNull()
 
-    val uploadArchives = project.tasks.getByName("uploadArchives")
-    assertThat(uploadArchives.description).isEqualTo("Uploads all artifacts belonging to configuration ':archives'")
-    assertThat(uploadArchives.group).isEqualTo("upload")
+    val uploadArchives = project.tasks.findByName("uploadArchives")
+    assertThat(uploadArchives).isNotNull()
 
-    val installArchives = project.tasks.getByName("installArchives") as Upload
-    assertThat(installArchives.description).isEqualTo("Installs the artifacts to the local Maven repository.")
-    assertThat(installArchives.group).isEqualTo("upload")
-    assertThat(installArchives.configuration).isEqualTo(project.configurations.getByName("archives"))
+    val installArchives = project.tasks.findByName("installArchives")
+    assertThat(installArchives).isNotNull()
   }
 }

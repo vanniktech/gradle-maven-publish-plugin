@@ -5,14 +5,13 @@ import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.util.VersionNumber
 import org.jetbrains.dokka.gradle.DokkaTask
 
-internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
+open class MavenPublishPlugin : Plugin<Project> {
 
   override fun apply(p: Project) {
     val extension = p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
@@ -31,10 +30,7 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
     configureDokka(p)
 
     p.afterEvaluate { project ->
-      val configurer = when {
-        extension.useLegacyMode -> UploadArchivesConfigurer(project, ::configureMavenDeployer)
-        else -> MavenPublishConfigurer(project, extension.targets)
-      }
+      val configurer = MavenPublishConfigurer(project, extension.targets)
 
       extension.targets.all {
         checkNotNull(it.releaseRepositoryUrl) {
@@ -97,12 +93,6 @@ internal abstract class BaseMavenPublishPlugin : Plugin<Project> {
       configurer.configureJavaArtifacts()
     }
   }
-
-  protected abstract fun configureMavenDeployer(
-    upload: Upload,
-    project: Project,
-    target: MavenPublishTarget
-  )
 
   companion object {
     const val MINIMUM_GRADLE_MAJOR = 4
