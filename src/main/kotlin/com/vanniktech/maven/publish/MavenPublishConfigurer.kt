@@ -39,6 +39,7 @@ internal class MavenPublishConfigurer(
       pom.name.set(publishPom.name)
       pom.description.set(publishPom.description)
       pom.url.set(publishPom.url)
+      pom.inceptionYear.set(publishPom.inceptionYear)
 
       pom.scm {
         it.url.set(publishPom.scmUrl)

@@ -11,6 +11,7 @@ internal data class MavenPublishPom(
   val packaging: String?,
   val description: String?,
   val url: String?,
+  val inceptionYear: String?,
 
   val scmUrl: String?,
   val scmConnection: String?,
@@ -35,6 +36,7 @@ internal data class MavenPublishPom(
         project.findOptionalProperty("POM_PACKAGING"),
         project.findOptionalProperty("POM_DESCRIPTION"),
         project.findOptionalProperty("POM_URL"),
+        project.findOptionalProperty("POM_INCEPTION_YEAR"),
         project.findOptionalProperty("POM_SCM_URL"),
         project.findOptionalProperty("POM_SCM_CONNECTION"),
         project.findOptionalProperty("POM_SCM_DEV_CONNECTION"),
