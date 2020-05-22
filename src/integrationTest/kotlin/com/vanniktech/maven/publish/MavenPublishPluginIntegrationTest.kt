@@ -138,7 +138,7 @@ class MavenPublishPluginIntegrationTest(
 
     assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(UP_TO_DATE)
     assertThat(result.task(":publish")?.outcome).isEqualTo(UP_TO_DATE)
-    assertThat(result.task(":build")?.outcome).isEqualTo(UP_TO_DATE)
+    assertThat(result.task(":build")?.outcome).isEqualTo(SUCCESS)
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
