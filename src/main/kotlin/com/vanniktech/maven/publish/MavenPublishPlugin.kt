@@ -98,8 +98,10 @@ open class MavenPublishPlugin : Plugin<Project> {
       configurer.configureGradlePluginProject()
     } else if (project.plugins.hasPlugin("com.android.library")) {
       configurer.configureAndroidArtifacts()
-    } else {
+    } else if (project.plugins.hasPlugin("java") || project.plugins.hasPlugin("java-library")) {
       configurer.configureJavaArtifacts()
+    } else {
+      project.logger.warn("No compatible plugin found in project ${project.name} for publishing")
     }
   }
 
