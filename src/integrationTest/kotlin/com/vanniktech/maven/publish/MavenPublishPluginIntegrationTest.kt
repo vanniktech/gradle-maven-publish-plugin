@@ -134,10 +134,11 @@ class MavenPublishPluginIntegrationTest(
   @Test fun doesNotFailOnKotlinJsProject() {
     setupFixture("passing_kotlin_js_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "publish", "build", "--info")
 
-    assertThat(result.task("build")?.outcome).isEqualTo(SUCCESS)
     assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(UP_TO_DATE)
+    assertThat(result.task(":publish")?.outcome).isEqualTo(UP_TO_DATE)
+    assertThat(result.task(":build")?.outcome).isEqualTo(UP_TO_DATE)
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
@@ -319,5 +320,6 @@ class MavenPublishPluginIntegrationTest(
       .withProjectDir(testProjectDir.root)
       .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder")
       .withPluginClasspath()
+    .forwardOutput()
       .build()
 }
