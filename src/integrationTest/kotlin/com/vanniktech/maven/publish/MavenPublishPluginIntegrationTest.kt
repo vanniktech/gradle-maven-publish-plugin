@@ -106,6 +106,30 @@ class MavenPublishPluginIntegrationTest(
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnGroovyProject() {
+    setupFixture("passing_groovy_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated()
+    assertArtifactGenerated(artifactFileNameWithExtension = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
+    assertPomContentMatches()
+    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.groovy", "src/main/groovy")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnKotlinJvmProject() {
+    setupFixture("passing_kotlin_jvm_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
+    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
+  }
+
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
     setupFixture("passing_android_project")
 
