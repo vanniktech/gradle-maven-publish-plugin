@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -128,6 +129,15 @@ class MavenPublishPluginIntegrationTest(
     assertExpectedCommonArtifactsGenerated()
     assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
+  }
+
+  @Test fun doesNotFailOnKotlinJsProject() {
+    setupFixture("passing_kotlin_js_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertThat(result.task("build")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(UP_TO_DATE)
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
