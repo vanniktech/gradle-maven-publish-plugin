@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -104,6 +105,40 @@ class MavenPublishPluginIntegrationTest(
     assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.groovy", "src/main/groovy")
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnGroovyProject() {
+    setupFixture("passing_groovy_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated()
+    assertArtifactGenerated(artifactFileNameWithExtension = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
+    assertPomContentMatches()
+    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.groovy", "src/main/groovy")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnKotlinJvmProject() {
+    setupFixture("passing_kotlin_jvm_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
+    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
+  }
+
+  @Test fun doesNotFailOnKotlinJsProject() {
+    setupFixture("passing_kotlin_js_project")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "publish", "build", "--info")
+
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(UP_TO_DATE)
+    assertThat(result.task(":publish")?.outcome).isEqualTo(UP_TO_DATE)
+    assertThat(result.task(":build")?.outcome).isEqualTo(SUCCESS)
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
@@ -285,5 +320,6 @@ class MavenPublishPluginIntegrationTest(
       .withProjectDir(testProjectDir.root)
       .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder")
       .withPluginClasspath()
+    .forwardOutput()
       .build()
 }
