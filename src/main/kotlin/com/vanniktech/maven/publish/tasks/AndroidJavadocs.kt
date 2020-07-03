@@ -30,6 +30,6 @@ open class AndroidJavadocs : Javadoc() {
     // Append Java 7, Android references and docs.
     val options = options as StandardJavadocDocletOptions
     options.links("http://docs.oracle.com/javase/7/docs/api/")
-    options.linksOffline("https://developer.android.com/reference", "${androidExtension.sdkDirectory}/docs/reference")
+    options.links("https://developer.android.com/reference")
   }
 }
