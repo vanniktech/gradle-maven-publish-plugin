@@ -27,9 +27,9 @@ open class AndroidJavadocs : Javadoc() {
     // We don't need javadoc for internals.
     exclude("**/internal/*")
 
-    // Append Java 7, Android references and docs.
+    // Append Java 8 and Android references
     val options = options as StandardJavadocDocletOptions
-    options.links("http://docs.oracle.com/javase/7/docs/api/")
-    options.linksOffline("https://developer.android.com/reference", "${androidExtension.sdkDirectory}/docs/reference")
+    options.links("https://developer.android.com/reference")
+    options.links("https://docs.oracle.com/javase/8/docs/api/")
   }
 }
