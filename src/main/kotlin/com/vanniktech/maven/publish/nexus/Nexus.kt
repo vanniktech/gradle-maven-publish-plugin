@@ -9,7 +9,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
 import java.lang.IllegalArgumentException
 
-class Nexus(username: String, password: String, val groupId: String, baseUrl: String) {
+class Nexus(username: String, password: String, val stagingProfile: String, baseUrl: String) {
   private val service by lazy {
     val okHttpClient = OkHttpClient.Builder()
       .addInterceptor(NexusOkHttpInterceptor(username, password))
@@ -34,7 +34,7 @@ class Nexus(username: String, password: String, val groupId: String, baseUrl: St
   }
 
   private fun findStagingRepository(): Repository {
-    val prefix = groupId.replace(".", "")
+    val prefix = stagingProfile.replace(".", "")
     val candidateRepositories = getProfileRepositories()
       ?.filter { it.repositoryId.startsWith(prefix) } ?: emptyList()
 
