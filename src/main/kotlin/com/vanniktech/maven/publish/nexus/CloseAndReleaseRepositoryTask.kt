@@ -1,8 +1,5 @@
 package com.vanniktech.maven.publish.nexus
 
-import com.vanniktech.maven.publish.MavenPublishPluginExtension
-import com.vanniktech.maven.publish.findMandatoryProperty
-import com.vanniktech.maven.publish.findOptionalProperty
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 

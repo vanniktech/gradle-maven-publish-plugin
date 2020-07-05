@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish.nexus
 
-import com.vanniktech.maven.publish.findMandatoryProperty
 import com.vanniktech.maven.publish.findOptionalProperty
 import org.gradle.api.Project
 
