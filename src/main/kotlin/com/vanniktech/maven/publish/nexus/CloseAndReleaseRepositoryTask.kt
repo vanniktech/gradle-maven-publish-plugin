@@ -15,6 +15,11 @@ open class CloseAndReleaseRepositoryTask : DefaultTask() {
   fun closeAndReleaseRepository() {
     val baseUrl = nexusOptions.baseUrl
     val stagingProfile = nexusOptions.stagingProfile
+
+    requireNotNull(stagingProfile) {
+      "Please set a value for SONATYPE_STAGING_PROFILE"
+    }
+
     val repositoryUsername = nexusOptions.repositoryUsername
 
     requireNotNull(repositoryUsername) {

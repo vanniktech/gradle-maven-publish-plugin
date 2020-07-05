@@ -17,7 +17,7 @@ class NexusOptions(project: Project) {
    * Defaults to the GROUP Gradle Property.
    * @since 0.9.0
    */
-  var stagingProfile: String =  project.findOptionalProperty("SONATYPE_STAGING_PROFILE") ?: project.findMandatoryProperty("GROUP")
+  var stagingProfile: String? = project.findOptionalProperty("SONATYPE_STAGING_PROFILE") ?: project.findOptionalProperty("GROUP")
 
   /**
    * The username used to access the Nexus REST API.
