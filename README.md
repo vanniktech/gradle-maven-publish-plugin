@@ -152,15 +152,16 @@ mavenPublish {
     // ...
     nexus {
         baseUrl = "https://your_nexus_instance" // defaults to "https://oss.sonatype.org/service/local/"
-        groupId = "net.example" // defaults to the GROUP Gradle Property if not set
+        stagingProfile = "net.example" // defaults to the SONATYPE_STAGING_PROFILE Gradle property or the GROUP Gradle Property if not set
         respositoryUserName = "username" // defaults to the SONATYPE_NEXUS_USERNAME Gradle Property or the system environment variable
         respositoryPassword = "password" // defaults to the SONATYPE_NEXUS_PASSWORD Gradle Property or the system environment variable
     }
 }
 ```
-The `groupId` set here has to be the group id you have publishing rights to, not necessarily the `groupId`
-of the library you are publishing. When you are publishing a library with `com.example.mylibrary` as
-it would usually be `com.example`.
+The `stagingProfile` set here is either the same as your group id or a simpler version of it. When you are publishing a 
+library with `com.example.mylibrary` as group then it would either be the same or just `com.example`. You can find it 
+by looking at your [Sonatype staging profiles](https://oss.sonatype.org/#stagingProfiles) in the name and repo target 
+columns.
 
 This will create a `closeAndReleaseRepository` task that you can call after `uploadArchives`:
 
