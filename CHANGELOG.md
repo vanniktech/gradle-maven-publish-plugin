@@ -1,7 +1,17 @@
 # Change Log
 
-Version 0.12.0 *(In development)*
----------------------------------
+Version 0.12.0 *(2020-07-07)*
+-----------------------------
+
+- only create one closeAndRelease task, add new property for the profile [\#148](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/148) ([gabrielittner](https://github.com/gabrielittner))
+- fix AndroidJavadocs task [\#147](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/147) ([gabrielittner](https://github.com/gabrielittner))
+- don't fail on unknown plugins [\#142](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/142) ([gabrielittner](https://github.com/gabrielittner))
+- Use POM\_INCEPTION\_YEAR gradle property [\#140](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/140) ([benjamin-bader](https://github.com/benjamin-bader))
+- cleanup after legacy was removed [\#136](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/136) ([gabrielittner](https://github.com/gabrielittner))
+- remove legacy mode [\#135](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/135) ([gabrielittner](https://github.com/gabrielittner))
+- wait for transitioning to be false before releasing [\#133](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/133) ([gabrielittner](https://github.com/gabrielittner))
+
+Kudos to [gabrielittner](https://github.com/gabrielittner).
 
 Version 0.11.1 *(2020-03-30)*
 -----------------------------

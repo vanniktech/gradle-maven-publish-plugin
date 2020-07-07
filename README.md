@@ -14,7 +14,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.11.1'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.12.0'
   }
 }
 
@@ -158,9 +158,9 @@ mavenPublish {
     }
 }
 ```
-The `stagingProfile` set here is either the same as your group id or a simpler version of it. When you are publishing a 
-library with `com.example.mylibrary` as group then it would either be the same or just `com.example`. You can find it 
-by looking at your [Sonatype staging profiles](https://oss.sonatype.org/#stagingProfiles) in the name and repo target 
+The `stagingProfile` set here is either the same as your group id or a simpler version of it. When you are publishing a
+library with `com.example.mylibrary` as group then it would either be the same or just `com.example`. You can find it
+by looking at your [Sonatype staging profiles](https://oss.sonatype.org/#stagingProfiles) in the name and repo target
 columns.
 
 This will create a `closeAndReleaseRepository` task that you can call after `uploadArchives`:
