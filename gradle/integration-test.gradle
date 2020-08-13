@@ -2,6 +2,7 @@ sourceSets {
   integrationTest {
     kotlin.srcDirs = ['src/integrationTest/kotlin']
     resources.srcDir file('src/integrationTest/resources')
+    resources.srcDir "$buildDir/pluginUnderTestMetadata"
     compileClasspath += sourceSets.main.output + configurations.testRuntime
     runtimeClasspath += output + compileClasspath
   }
