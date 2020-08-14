@@ -1,10 +1,12 @@
 package com.vanniktech.maven.publish.nexus
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
 open class CloseAndReleaseRepositoryTask : DefaultTask() {
 
+  @Input
   lateinit var nexusOptions: NexusOptions
 
   @SuppressWarnings("unused")
