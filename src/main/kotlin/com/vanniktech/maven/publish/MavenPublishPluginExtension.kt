@@ -47,7 +47,7 @@ open class MavenPublishPluginExtension(project: Project) {
    * Allows to promote repositories without connecting to the nexus instance console.
    * @since 0.9.0
    */
-  var nexusOptions = NexusOptions(project)
+  var nexusOptions = NexusOptions.fromProject(project)
 
   /**
    * Allows to promote repositories without connecting to the nexus instance console.
