@@ -173,27 +173,25 @@ class MavenPublishPluginIntegrationTest(
     assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
 
+    // the general coordinate does not have an actual artifact like a jar or klib
+    // so we are checking the module file twice as a workaround
     assertExpectedCommonArtifactsGenerated(artifactExtension = "module")
     assertPomContentMatches()
 
     val metadataArtifactId = "$TEST_POM_ARTIFACT_ID-metadata"
-    assertExpectedCommonArtifactsGenerated("module", metadataArtifactId)
-    assertArtifactGenerated("$metadataArtifactId-$TEST_VERSION_NAME.jar", metadataArtifactId)
+    assertExpectedCommonArtifactsGenerated(artifactId = metadataArtifactId)
     assertPomContentMatches(metadataArtifactId)
 
     val jvmArtifactId = "$TEST_POM_ARTIFACT_ID-jvm"
-    assertExpectedCommonArtifactsGenerated("module", jvmArtifactId)
-    assertArtifactGenerated("$jvmArtifactId-$TEST_VERSION_NAME.jar", jvmArtifactId)
+    assertExpectedCommonArtifactsGenerated(artifactId = jvmArtifactId)
     assertPomContentMatches(jvmArtifactId)
 
     val nodejsArtifactId = "$TEST_POM_ARTIFACT_ID-nodejs"
-    assertExpectedCommonArtifactsGenerated("module", nodejsArtifactId)
-    assertArtifactGenerated("$nodejsArtifactId-$TEST_VERSION_NAME.jar", nodejsArtifactId)
+    assertExpectedCommonArtifactsGenerated(artifactId = nodejsArtifactId)
     assertPomContentMatches(nodejsArtifactId)
 
     val linuxArtifactId = "$TEST_POM_ARTIFACT_ID-linux"
-    assertExpectedCommonArtifactsGenerated("module", linuxArtifactId)
-    assertArtifactGenerated("$linuxArtifactId-$TEST_VERSION_NAME.klib", linuxArtifactId)
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "klib", artifactId = linuxArtifactId)
     assertPomContentMatches(linuxArtifactId)
   }
 
@@ -255,10 +253,12 @@ class MavenPublishPluginIntegrationTest(
   ) {
     val artifactJar = "$artifactId-$version.$artifactExtension"
     val pomFile = "$artifactId-$version.pom"
+    val moduleFile = "$artifactId-$version.module"
     val javadocJar = "$artifactId-$version-javadoc.jar"
     val sourcesJar = "$artifactId-$version-sources.jar"
     assertArtifactGenerated(artifactJar, artifactId, groupId, version)
     assertArtifactGenerated(pomFile, artifactId, groupId, version)
+    assertArtifactGenerated(moduleFile, artifactId, groupId, version)
     assertArtifactGenerated(javadocJar, artifactId, groupId, version)
     assertArtifactGenerated(sourcesJar, artifactId, groupId, version)
   }
