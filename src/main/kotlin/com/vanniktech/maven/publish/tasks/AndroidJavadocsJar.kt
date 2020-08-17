@@ -1,8 +1,8 @@
 package com.vanniktech.maven.publish.tasks
 
+import com.vanniktech.maven.publish.findDokkaTask
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.dokka.gradle.DokkaTask
 
 @Suppress("UnstableApiUsage")
 open class AndroidJavadocsJar : Jar() {
@@ -11,7 +11,7 @@ open class AndroidJavadocsJar : Jar() {
     archiveClassifier.set("javadoc")
 
     if (project.plugins.hasPlugin("org.jetbrains.dokka")) {
-      val dokkaTask = project.tasks.getByName("dokka") as DokkaTask
+      val dokkaTask = project.findDokkaTask()
       dependsOn(dokkaTask)
       from(dokkaTask.outputDirectory)
     } else {
