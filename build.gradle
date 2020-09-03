@@ -74,9 +74,8 @@ dependencies {
   api gradleApi()
   api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-  implementation "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
-  implementation "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
-
+  compileOnly "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
+  compileOnly "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
   compileOnly "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
   compileOnly "com.android.tools.build:gradle:$agpVersion"
 
@@ -92,6 +91,8 @@ dependencies {
   testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
   testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
   testImplementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+  testImplementation "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
+  testImplementation "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
 
   integrationTestImplementation gradleTestKit()
   integrationTestImplementation "junit:junit:$junitVersion"
