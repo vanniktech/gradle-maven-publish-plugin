@@ -4,13 +4,11 @@ import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.util.VersionNumber
-import org.jetbrains.dokka.gradle.DokkaTask
 
 open class MavenPublishPlugin : Plugin<Project> {
 

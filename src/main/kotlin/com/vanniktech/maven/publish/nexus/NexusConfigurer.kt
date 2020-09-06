@@ -8,6 +8,7 @@ class NexusConfigurer(project: Project) {
   init {
     val mavenPublishPluginExtension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
 
+    @Suppress("SwallowedException")
     try {
       project.rootProject.tasks.named("closeAndReleaseRepository")
     } catch (e: UnknownTaskException) {
