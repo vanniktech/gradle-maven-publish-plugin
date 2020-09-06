@@ -13,11 +13,11 @@ open class AndroidJavadocsJar : Jar() {
     if (project.plugins.hasPlugin("org.jetbrains.dokka")) {
       val dokkaTask = project.findDokkaTask()
       dependsOn(dokkaTask)
-      from(dokkaTask.outputDirectory)
+      from(dokkaTask)
     } else {
       val javadocTask = project.tasks.getByName("androidJavadocs") as Javadoc
       dependsOn(javadocTask)
-      from(javadocTask.destinationDir)
+      from(javadocTask)
     }
   }
 }
