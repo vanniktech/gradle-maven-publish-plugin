@@ -1,7 +1,11 @@
 # Change Log
 
-Version 0.13.0 *(In development)*
----------------------------------
+Version 0.13.0 *(2020-09-07)*
+-----------------------------
+
+- remove setting Dokka outputDirectory [\#160](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/160) ([gabrielittner](https://github.com/gabrielittner))
+- change how closeAndReleaseRepository is created to avoid ClassCastException [\#157](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/157) ([gabrielittner](https://github.com/gabrielittner))
+- Dokka 1.4 compatibility [\#155](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/155) ([gabrielittner](https://github.com/gabrielittner))
 
 Version 0.12.0 *(2020-07-07)*
 -----------------------------
