@@ -10,18 +10,14 @@ import com.vanniktech.maven.publish.tasks.GroovydocsJar
 import com.vanniktech.maven.publish.tasks.JavadocsJar
 import com.vanniktech.maven.publish.tasks.SourcesJar
 import org.gradle.api.Project
-import org.gradle.api.publish.Publication
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import java.net.URI
 
 @Suppress("TooManyFunctions")
 internal class MavenPublishConfigurer(
   private val project: Project,
-  private val publishPom: MavenPublishPom,
-  private val targets: Iterable<MavenPublishTarget>
+  private val publishPom: MavenPublishPom
 ) : Configurer {
 
   private fun configurePom(
@@ -80,7 +76,8 @@ internal class MavenPublishConfigurer(
     // create task that depends on new publishing task for compatibility and easier switching
     project.tasks.register(target.taskName) { task ->
       project.publishing.publications.all { publication ->
-        val publishTaskName = publishTaskName(publication, target.repositoryName)
+        val publishTaskName = "publish${publication.name.capitalize()}Publication" +
+            "To${target.repositoryName.capitalize()}Repository"
         task.dependsOn(project.tasks.named(publishTaskName))
       }
     }
@@ -103,9 +100,6 @@ internal class MavenPublishConfigurer(
     return URI.create(requireNotNull(url))
   }
 
-  private fun publishTaskName(publication: Publication, repository: String) =
-    "publish${publication.name.capitalize()}PublicationTo${repository.capitalize()}Repository"
-
   override fun configureGradlePluginProject() {
     val sourcesJar = project.tasks.register(SOURCES_TASK, SourcesJar::class.java)
     val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
@@ -113,8 +107,8 @@ internal class MavenPublishConfigurer(
     project.publishing.publications.withType(MavenPublication::class.java).all {
       if (it.name == "pluginMaven") {
         configurePom(it)
-        it.addTaskOutput(javadocsJar)
-        it.addTaskOutput(sourcesJar)
+        it.artifact(javadocsJar)
+        it.artifact(sourcesJar)
       }
 
       project.extensions.getByType(GradlePluginDevelopmentExtension::class.java).plugins.forEach { plugin ->
@@ -131,12 +125,12 @@ internal class MavenPublishConfigurer(
 
     project.publishing.publications.withType(MavenPublication::class.java).all {
       configurePom(it, artifactId = it.artifactId.replace(project.name, publishPom.artifactId))
-      it.addTaskOutput(javadocsJar)
+      it.artifact(javadocsJar)
 
       // Source jars are only created for platforms, not the common artifact.
       if (it.name == "kotlinMultiplatform") {
         val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)
-        it.addTaskOutput(emptySourcesJar)
+        it.artifact(emptySourcesJar)
       }
     }
   }
@@ -152,11 +146,11 @@ internal class MavenPublishConfigurer(
     publication.from(project.components.getByName(project.publishExtension.androidVariantToPublish))
 
     val androidSourcesJar = project.tasks.register("androidSourcesJar", AndroidSourcesJar::class.java)
-    publication.addTaskOutput(androidSourcesJar)
+    publication.artifact(androidSourcesJar)
 
     project.tasks.register("androidJavadocs", AndroidJavadocs::class.java)
     val androidJavadocsJar = project.tasks.register("androidJavadocsJar", AndroidJavadocsJar::class.java)
-    publication.addTaskOutput(androidJavadocsJar)
+    publication.artifact(androidJavadocsJar)
   }
 
   override fun configureJavaArtifacts() {
@@ -170,27 +164,14 @@ internal class MavenPublishConfigurer(
     publication.from(project.components.getByName("java"))
 
     val sourcesJar = project.tasks.register(SOURCES_TASK, SourcesJar::class.java)
-    publication.addTaskOutput(sourcesJar)
+    publication.artifact(sourcesJar)
 
     val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
-    publication.addTaskOutput(javadocsJar)
+    publication.artifact(javadocsJar)
 
     if (project.plugins.hasPlugin("groovy")) {
       val goovydocsJar = project.tasks.register("groovydocJar", GroovydocsJar::class.java)
-      publication.addTaskOutput(goovydocsJar)
-    }
-  }
-
-  private fun MavenPublication.addTaskOutput(taskProvider: TaskProvider<out AbstractArchiveTask>) {
-    taskProvider.configure { task ->
-      artifact(task)
-    }
-
-    targets.forEach { target ->
-      val publishTaskName = publishTaskName(this, target.repositoryName)
-      project.tasks.named(publishTaskName).configure { publishTask ->
-        publishTask.dependsOn(taskProvider)
-      }
+      publication.artifact(goovydocsJar)
     }
   }
 
