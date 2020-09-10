@@ -1,13 +1,12 @@
 package com.vanniktech.maven.publish.nexus
 
+import com.vanniktech.maven.publish.nexus.model.Repository
 import com.vanniktech.maven.publish.nexus.model.TransitionRepositoryInput
 import com.vanniktech.maven.publish.nexus.model.TransitionRepositoryInputData
-import com.vanniktech.maven.publish.nexus.model.Repository
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
-import java.lang.IllegalArgumentException
 
 class Nexus(username: String, password: String, val stagingProfile: String, baseUrl: String) {
   private val service by lazy {
@@ -39,7 +38,7 @@ class Nexus(username: String, password: String, val stagingProfile: String, base
       ?.filter { it.repositoryId.startsWith(prefix) } ?: emptyList()
 
     if (candidateRepositories.isEmpty()) {
-      throw IllegalArgumentException("No staging repository prefixed with \"$prefix\" found. Mae sure you called ./gradlew uploadArchives and `mavenPublish.nexus.groupId` is set correctly.")
+      throw IllegalArgumentException("No staging repository prefixed with \"$prefix\" found. Make sure you called ./gradlew uploadArchives and `mavenPublish.nexus.groupId` is set correctly.")
     }
 
     if (candidateRepositories.size > 1) {
