@@ -101,6 +101,12 @@ dependencies {
 
 sourceCompatibility = JavaVersion.VERSION_1_7
 
+signing {
+  if (hasProperty('SIGNING_PRIVATE_KEY')) {
+    useInMemoryPgpKeys(SIGNING_PRIVATE_KEY, "")
+  }
+}
+
 pluginBundle {
   website = POM_URL
   vcsUrl = POM_SCM_URL
