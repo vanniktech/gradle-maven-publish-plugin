@@ -1,5 +1,8 @@
 # gradle-maven-publish-plugin
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.vanniktech/gradle-maven-publish-plugin.svg)](https://plugins.gradle.org/plugin/com.vanniktech.maven.publish)
+[![Build Status](https://github.com/vanniktech/gradle-maven-publish-plugin/workflows/Build/badge.svg)](https://github.com/vanniktech/gradle-maven-publish-plugin/actions?query=workflow%3ABuild)
+
 Gradle plugin that creates an `uploadArchives` task to automatically upload all of your Java, Kotlin or Android
 libraries to any Maven instance. This plugin is based on [Chris Banes initial implementation](https://github.com/chrisbanes/gradle-mvn-push)
 and has been enhanced to add Kotlin support and keep up with the latest changes.
