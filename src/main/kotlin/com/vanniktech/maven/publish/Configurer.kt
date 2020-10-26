@@ -9,6 +9,8 @@ internal interface Configurer {
 
   fun configureKotlinMppProject()
 
+  fun configureKotlinJsProject()
+
   fun configureGradlePluginProject()
 
   fun configureAndroidArtifacts()

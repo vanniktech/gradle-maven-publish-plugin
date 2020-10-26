@@ -11,6 +11,6 @@ object TestClass {
    */
   @Suppress("UnusedPrivateMember")
   fun main(args: Array<String?>?) {
-    System.out.println("Hello World!")
+    println("Hello World!")
   }
 }

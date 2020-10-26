@@ -78,17 +78,15 @@ open class MavenPublishPlugin : Plugin<Project> {
     }
   }
 
+  @Suppress("Detekt.ComplexMethod")
   private fun configurePublishing(project: Project, configurer: Configurer) {
-    if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-      configurer.configureKotlinMppProject()
-    } else if (project.plugins.hasPlugin("java-gradle-plugin")) {
-      configurer.configureGradlePluginProject()
-    } else if (project.plugins.hasPlugin("com.android.library")) {
-      configurer.configureAndroidArtifacts()
-    } else if (project.plugins.hasPlugin("java") || project.plugins.hasPlugin("java-library")) {
-      configurer.configureJavaArtifacts()
-    } else {
-      project.logger.warn("No compatible plugin found in project ${project.name} for publishing")
+    when {
+      project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> configurer.configureKotlinMppProject()
+      project.plugins.hasPlugin("java-gradle-plugin") -> configurer.configureGradlePluginProject()
+      project.plugins.hasPlugin("com.android.library") -> configurer.configureAndroidArtifacts()
+      project.plugins.hasPlugin("java") || project.plugins.hasPlugin("java-library") -> configurer.configureJavaArtifacts()
+      project.plugins.hasPlugin("org.jetbrains.kotlin.js") -> configurer.configureKotlinJsProject()
+      else -> project.logger.warn("No compatible plugin found in project ${project.name} for publishing")
     }
   }
 

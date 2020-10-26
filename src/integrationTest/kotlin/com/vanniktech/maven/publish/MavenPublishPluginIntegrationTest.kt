@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -131,16 +130,6 @@ class MavenPublishPluginIntegrationTest(
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
   }
 
-  @Test fun doesNotFailOnKotlinJsProject() {
-    setupFixture("passing_kotlin_js_project")
-
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "publish", "build", "--info")
-
-    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(UP_TO_DATE)
-    assertThat(result.task(":publish")?.outcome).isEqualTo(UP_TO_DATE)
-    assertThat(result.task(":build")?.outcome).isEqualTo(SUCCESS)
-  }
-
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
     setupFixture("passing_android_project")
 
@@ -193,6 +182,19 @@ class MavenPublishPluginIntegrationTest(
     val linuxArtifactId = "$TEST_POM_ARTIFACT_ID-linux"
     assertExpectedCommonArtifactsGenerated(artifactExtension = "klib", artifactId = linuxArtifactId)
     assertPomContentMatches(linuxArtifactId)
+  }
+
+  @Test
+  fun generatesArtifactsAndDocumentationOnKotlinJsProject() {
+    setupFixture("passing_kotlin_js_project")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace")
+
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+
+    assertExpectedCommonArtifactsGenerated()
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "module")
+    assertPomContentMatches()
   }
 
   @Test fun generatesArtifactsAndDocumentationOnGradlePluginProject() {
