@@ -131,16 +131,6 @@ class MavenPublishPluginIntegrationTest(
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
   }
 
-  @Test fun doesNotFailOnKotlinJsProject() {
-    setupFixture("passing_kotlin_js_project")
-
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "publish", "build", "--info")
-
-    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(UP_TO_DATE)
-    assertThat(result.task(":publish")?.outcome).isEqualTo(UP_TO_DATE)
-    assertThat(result.task(":build")?.outcome).isEqualTo(SUCCESS)
-  }
-
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
     setupFixture("passing_android_project")
 
