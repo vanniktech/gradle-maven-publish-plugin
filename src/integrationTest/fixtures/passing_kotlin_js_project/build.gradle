@@ -23,8 +23,8 @@ dependencies {
 
 dokka {
     kotlinTasks {
-        // dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
-        // use sourceRoot instead (see below)
+        // Dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception.
+        // Use sourceRoot instead as configured below.
         []
     }
     sourceRoot {

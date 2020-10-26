@@ -78,7 +78,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     }
   }
 
-  @Suppress("ComplexMethod")
+  @Suppress("Detekt.ComplexMethod")
   private fun configurePublishing(project: Project, configurer: Configurer) {
     when {
       project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> configurer.configureKotlinMppProject()
