@@ -135,6 +135,19 @@ internal class MavenPublishConfigurer(
     }
   }
 
+  override fun configureKotlinJsProject() {
+    val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
+
+    // Create publication, since Kotlin/JS doesn't provide one by default
+    // https://youtrack.jetbrains.com/issue/KT-41582
+    project.publishing.publications.create("mavenJs", MavenPublication::class.java) {
+      configurePom(it, artifactId = it.artifactId.replace(project.name, publishPom.artifactId))
+      it.from(project.components.getByName("kotlin"))
+      it.artifact(project.tasks.named("kotlinSourcesJar"))
+      it.artifact(javadocsJar)
+    }
+  }
+
   override fun configureAndroidArtifacts() {
     val publications = project.publishing.publications
     publications.create(PUBLICATION_NAME, MavenPublication::class.java) { publication ->

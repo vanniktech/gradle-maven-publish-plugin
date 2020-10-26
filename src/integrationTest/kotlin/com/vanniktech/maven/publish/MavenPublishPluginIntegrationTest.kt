@@ -195,6 +195,19 @@ class MavenPublishPluginIntegrationTest(
     assertPomContentMatches(linuxArtifactId)
   }
 
+  @Test
+  fun generatesArtifactsAndDocumentationOnKotlinJsProject() {
+    setupFixture("passing_kotlin_js_project")
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace")
+
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+
+    assertExpectedCommonArtifactsGenerated()
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "module")
+    assertPomContentMatches()
+  }
+
   @Test fun generatesArtifactsAndDocumentationOnGradlePluginProject() {
     setupFixture("passing_java_gradle_plugin_project")
 
