@@ -25,6 +25,7 @@ dokka {
     kotlinTasks {
         // Dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception.
         // Use sourceRoot instead as configured below.
+        // https://discuss.kotlinlang.org/t/how-to-configure-dokka-for-kotlin-multiplatform/9834
         []
     }
     sourceRoot {
