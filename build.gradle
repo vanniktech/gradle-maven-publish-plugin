@@ -102,8 +102,8 @@ dependencies {
 sourceCompatibility = JavaVersion.VERSION_1_7
 
 signing {
-  if (hasProperty('SIGNING_PRIVATE_KEY')) {
-    useInMemoryPgpKeys(SIGNING_PRIVATE_KEY, "")
+  if (project.hasProperty('SIGNING_PRIVATE_KEY') && project.hasProperty('SIGNING_PASSWORD')) {
+    useInMemoryPgpKeys(project.getProperty('SIGNING_PRIVATE_KEY'), project.getProperty('SIGNING_PASSWORD'))
   }
 }
 
