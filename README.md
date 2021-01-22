@@ -124,6 +124,18 @@ signing.password=some_password
 signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
 ```
 
+another option to sign the artifacts, which is often prefered on a CI system, is:
+
+```groovy
+signing {
+  useInMemoryPgpKeys(findProperty("signingKey"), findProperty("signingPassword"))
+  // Or if you are using a subkey
+  useInMemoryPgpKeys(findProperty("signingKeyId"), findProperty("signingKey"), findProperty("signingPassword"))
+}
+```
+according to the [documentation for the gradle signing plugin](https://docs.gradle.org/6.8.1/userguide/signing_plugin.html).
+Make sure that if you're using this, you set the environment variables `ORG_GRADLE_PROJECT_signingKeyId`, `ORG_GRADLE_PROJECT_signingKey` and `ORG_GRADLE_PROJECT_signingPassword`.
+
 It's best to place them inside your home directory, `$HOME/.gradle/gradle.properties`. You can find more information
 about these properties in [Gradle's documentaion](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials).
 
@@ -172,8 +184,17 @@ This will create a `closeAndReleaseRepository` task that you can call after `upl
 ./gradlew uploadArchives --no-daemon --no-parallel
 ./gradlew closeAndReleaseRepository
 ```
-
 It assumes there's only one staging repository active when closeAndReleaseRepository is called. If you have stale staging repositories, you'll have to delete them by logging at https://oss.sonatype.org (or you Nexus instance).
+
+When releasing more than one library within one repository use:
+```shell
+# prepare your release by assigning a version (remove the -SNAPSHOT suffix)
+./gradlew library1:uploadArchives --no-daemon --no-parallel
+./gradlew closeAndReleaseRepository
+./gradlew library2:uploadArchives --no-daemon --no-parallel
+./gradlew closeAndReleaseRepository
+```
+
 
 # License
 
