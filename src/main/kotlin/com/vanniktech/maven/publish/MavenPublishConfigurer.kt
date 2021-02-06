@@ -129,8 +129,10 @@ internal class MavenPublishConfigurer(
 
       // Source jars are only created for platforms, not the common artifact.
       if (it.name == "kotlinMultiplatform") {
-        val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)
-        it.artifact(emptySourcesJar)
+        if (it.artifacts.find { artifact -> artifact.classifier == "sources" } == null) {
+          val emptySourcesJar = project.tasks.register("emptySourcesJar", EmptySourcesJar::class.java)
+          it.artifact(emptySourcesJar)
+        }
       }
     }
   }

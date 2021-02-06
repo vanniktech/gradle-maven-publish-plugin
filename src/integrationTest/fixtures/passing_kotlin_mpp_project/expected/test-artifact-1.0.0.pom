@@ -10,7 +10,6 @@
   <groupId>com.example</groupId>
   <artifactId>test-artifact</artifactId>
   <version>1.0.0</version>
-  <packaging>pom</packaging>
   <name>Gradle Maven Publish Plugin Test Artifact</name>
   <description>Testing the Gradle Maven Publish Plugin</description>
   <url>https://github.com/vanniktech/gradle-maven-publish-plugin/</url>
