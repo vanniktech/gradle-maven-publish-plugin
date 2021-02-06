@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.legacy.configureTargets
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
@@ -23,24 +24,14 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.plugins.apply(GradleMavenPublishPlugin::class.java)
 
     val pom = MavenPublishPom.fromProject(p)
-    p.group = pom.groupId
-    p.version = pom.version
+    p.configureTargets(extension)
 
     configureSigning(p)
     configureJavadoc(p)
     configureDokka(p)
 
     p.afterEvaluate { project ->
-      val configurer = MavenPublishConfigurer(p, pom)
-
-      extension.targets.all {
-        checkNotNull(it.releaseRepositoryUrl) {
-          "releaseRepositoryUrl of ${it.name} is required to be set"
-        }
-        configurer.configureTarget(it)
-      }
-
-      configurePublishing(project, configurer)
+      configurePublishing(project, pom)
     }
 
     NexusConfigurer(p)
@@ -79,7 +70,8 @@ open class MavenPublishPlugin : Plugin<Project> {
   }
 
   @Suppress("Detekt.ComplexMethod")
-  private fun configurePublishing(project: Project, configurer: MavenPublishConfigurer) {
+  private fun configurePublishing(project: Project, pom: MavenPublishPom) {
+    val configurer = MavenPublishConfigurer(project, pom)
     when {
       project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> configurer.configureKotlinMppProject()
       project.plugins.hasPlugin("java-gradle-plugin") -> configurer.configureGradlePluginProject()

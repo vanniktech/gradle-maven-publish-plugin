@@ -1,7 +1,5 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.DEFAULT_TARGET
-import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_TARGET
 import com.vanniktech.maven.publish.tasks.AndroidJavadocs
 import com.vanniktech.maven.publish.tasks.AndroidJavadocsJar
 import com.vanniktech.maven.publish.tasks.AndroidSourcesJar
@@ -12,7 +10,6 @@ import com.vanniktech.maven.publish.tasks.SourcesJar
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
-import java.net.URI
 
 @Suppress("TooManyFunctions")
 internal class MavenPublishConfigurer(
@@ -59,45 +56,6 @@ internal class MavenPublishConfigurer(
         }
       }
     }
-  }
-
-  fun configureTarget(target: MavenPublishTarget) {
-    project.publishing.repositories.maven { repo ->
-      repo.name = target.repositoryName
-      repo.url = target.repositoryUrl(project.version.toString())
-      if (target.repositoryUsername != null) {
-        repo.credentials {
-          it.username = target.repositoryUsername
-          it.password = target.repositoryPassword
-        }
-      }
-    }
-
-    // create task that depends on new publishing task for compatibility and easier switching
-    project.tasks.register(target.taskName) { task ->
-      project.publishing.publications.all { publication ->
-        val publishTaskName = "publish${publication.name.capitalize()}Publication" +
-            "To${target.repositoryName.capitalize()}Repository"
-        task.dependsOn(project.tasks.named(publishTaskName))
-      }
-    }
-  }
-
-  private val MavenPublishTarget.repositoryName get(): String {
-    return when (name) {
-      DEFAULT_TARGET -> "maven"
-      LOCAL_TARGET -> "local"
-      else -> name
-    }
-  }
-
-  private fun MavenPublishTarget.repositoryUrl(version: String): URI {
-    val url = if (version.endsWith("SNAPSHOT")) {
-      snapshotRepositoryUrl ?: releaseRepositoryUrl
-    } else {
-      releaseRepositoryUrl
-    }
-    return URI.create(requireNotNull(url))
   }
 
   fun configureGradlePluginProject() {

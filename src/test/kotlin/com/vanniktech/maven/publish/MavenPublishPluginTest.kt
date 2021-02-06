@@ -15,6 +15,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 
+@Suppress("deprecation")
 class MavenPublishPluginTest {
 
   private lateinit var project: Project
