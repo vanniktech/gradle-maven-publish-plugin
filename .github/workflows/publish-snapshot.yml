@@ -21,7 +21,7 @@ jobs:
 
       - name: Retrieve version
         run: |
-          echo ::set-env name=VERSION_NAME::$(cat gradle.properties | grep -w "VERSION_NAME" | cut -d'=' -f2)
+          echo "VERSION_NAME=$(cat gradle.properties | grep -w "VERSION_NAME" | cut -d'=' -f2)" >> $GITHUB_ENV
 
       - name: Publish snapshot
         run: ./gradlew uploadArchives --no-daemon --no-parallel
