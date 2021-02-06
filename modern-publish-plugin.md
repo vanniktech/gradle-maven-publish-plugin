@@ -25,11 +25,13 @@ Specific plugins for each supported project type:
 - `com.vanniktech.maven.publish.java`
 - `com.vanniktech.maven.publish.gradle`
 - `com.vanniktech.maven.publish.android`
+- `com.vanniktech.maven.publish.kotlin.jvm`
 - `com.vanniktech.maven.publish.kotlin.js`
 - `com.vanniktech.maven.publish.kotlin.mpp`
 
-There are two reasons for going with individual plugins. 
-
+The main motivation for separating these, is to provide specific APIs for each project
+without running into race conditions when something like `plugins.withId` is used or 
+requiring ordering. Another reason is that it allows us to nicely separate the code. 
 
 On top of that there will be a `com.vanniktech.maven.publish.base` plugin that 
 gets applied by all of these and the existing `com.vanniktech.maven.publish` as 
@@ -48,18 +50,8 @@ mavenPublish {
   # adds the Sonatype release/snapshot repo as targets based on version
   # uses Gradle credentials API for username/password
   # automatically calls signAllPublications()
-  # sets nexus.baseUrl
+  # sets nexus.baseUrl, nexus.respositoryUserName, nexus.respositoryPassword
   publishToMavenCentral()
-
-  # might not be needed as it defaults to the mutable `project.getGroup()`
-  groupId = "com.example"
-  # might not be needed as it defaults to the mutable `project.getGroup()`
-  version = "1.0.0"
-  # Base because their might be multiple artifacts produced by one module.
-  # Without this the arifact id would always be based on `project.getName()`.
-  # Implementation in Kotlin MPP is kind of hacky using replace so it might be
-  # best to just not support it. How do we handle compatibility?
-  baseArtifactId = "library"
 
   # Same API as Gradle's, can probably just use their interfaces/classes
   # Will be applied to all publications
@@ -102,7 +94,7 @@ mavenPublish {
 }
 ```
 
-#### `com.vanniktech.maven.publish.java`
+#### `com.vanniktech.maven.publish.java` & `com.vanniktech.maven.publish.kotlin.jvm`
 
 Meant to be used with `java`, `java-library`, `org.jetbrains.kotlin.jvm`. 
 
@@ -177,11 +169,30 @@ androidPublishCompat {
 Meant to be used with `org.jetbrais.kotlin.js`.
 
 Pure Gradle configuration:
-```
-TODO
+```publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["kotlin"])
+            artifact(project.tasks.named("kotlinSourcesJar"))
+        }
+    }
+}
 ```
 
-TODO
+
+There is no API available to create source and javadoc jars for Kotlin JS
+projects, but there is at least a task for sources. The plugin will provide 
+an API to configure those. These properties/methods can be removed/deprecated once
+Kotlin offers it's own methods and adds multi variant publishing.
+
+```
+androidPublishCompat {
+  androidVariantToPublish = "release"
+  withSourcesJar()
+  withJavadocJar()
+}
+```
+
 
 #### `com.vanniktech.maven.publish.kotlin.mpp`
 
@@ -189,7 +200,7 @@ Meant to be used with `org.jetbrais.kotlin.multiplatform`.
 
 Pure Gradle configuration: n/a
 
-Like `java-gradle-plugin` the Kotlin mpp plugin sets up a publication 
+Like `java-gradle-plugin` the Kotlin MPP plugin sets up a publication 
 automatically. It also adds source jars automatically. This plugin adds
 an API to add javadoc publishing. There still is a `withSourcesJar()` which will
 add empty source jars to all publications missing one, this can be removed once
@@ -206,6 +217,6 @@ kotlinMultiplatformPublishCompat {
 
 - calls `publishToMavenCentral()`
 - sets `groupId`, `version` and `baseArtifactId` based on Gradle properties
-- configures `pom` based on Gradle properties
+- configures `pom` based on Gradle properties (warn about deprecation)
 - applies project type plugin automatically based on other applied plugins
 - calls all API methods of the project type plugin
