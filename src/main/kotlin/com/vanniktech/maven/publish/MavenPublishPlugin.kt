@@ -24,6 +24,8 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.plugins.apply(GradleMavenPublishPlugin::class.java)
 
     val pom = MavenPublishPom.fromProject(p)
+    p.group = pom.groupId
+    p.version = pom.version
     p.configureTargets(extension)
 
     configureSigning(p)
