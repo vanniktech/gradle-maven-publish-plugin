@@ -1,9 +1,12 @@
 package com.vanniktech.maven.publish
 
+import com.android.build.gradle.internal.crash.afterEvaluate
+import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
@@ -23,8 +26,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.plugins.apply(GradleMavenPublishPlugin::class.java)
 
     val pom = MavenPublishPom.fromProject(p)
-    p.group = pom.groupId
-    p.version = pom.version
+    p.setCoordinates(pom)
 
     configureSigning(p)
     configureJavadoc(p)

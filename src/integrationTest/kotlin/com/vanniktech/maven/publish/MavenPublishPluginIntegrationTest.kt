@@ -162,6 +162,8 @@ class MavenPublishPluginIntegrationTest(
     assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
 
+    repoFolder.walkTopDown().forEach { println(it) }
+
     // the general coordinate does not have an actual artifact like a jar or klib
     // so we are checking the module file twice as a workaround
     assertExpectedCommonArtifactsGenerated(artifactExtension = "module")
