@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.legacy.configureTargets
+import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
@@ -24,8 +25,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.plugins.apply(GradleMavenPublishPlugin::class.java)
 
     val pom = MavenPublishPom.fromProject(p)
-    p.group = pom.groupId
-    p.version = pom.version
+    p.setCoordinates(pom)
     p.configureTargets(extension)
 
     configureSigning(p)

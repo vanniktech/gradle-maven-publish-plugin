@@ -53,9 +53,6 @@ codeQualityTools {
   errorProne {
     enabled = false
   }
-  kotlin {
-    allWarningsAsErrors = false
-  }
 }
 
 gradlePlugin {

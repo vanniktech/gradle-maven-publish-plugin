@@ -17,15 +17,7 @@ internal class MavenPublishConfigurer(
   private val publishPom: MavenPublishPom
 ) {
 
-  private fun configurePom(
-    publication: MavenPublication,
-    groupId: String = project.group as String, // The plugin initially sets project.group to publishPom.groupId
-    artifactId: String = publishPom.artifactId
-  ) {
-    publication.groupId = groupId
-    publication.artifactId = artifactId
-    publication.version = project.version as String // The plugin initially sets project.version to publishPom.version
-
+  private fun configurePom(publication: MavenPublication) {
     @Suppress("UnstableApiUsage")
     publication.pom { pom ->
 
@@ -72,7 +64,7 @@ internal class MavenPublishConfigurer(
       project.extensions.getByType(GradlePluginDevelopmentExtension::class.java).plugins.forEach { plugin ->
         if (it.name == "${plugin.name}PluginMarkerMaven") {
           // keep the current group and artifact ids, they are based on the gradle plugin id
-          configurePom(it, groupId = it.groupId, artifactId = it.artifactId)
+          configurePom(it)
         }
       }
     }
@@ -82,7 +74,7 @@ internal class MavenPublishConfigurer(
     val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
 
     project.publishing.publications.withType(MavenPublication::class.java).all {
-      configurePom(it, artifactId = it.artifactId.replace(project.name, publishPom.artifactId))
+      configurePom(it)
       it.artifact(javadocsJar)
 
       // Source jars are only created for platforms, not the common artifact.
@@ -102,7 +94,7 @@ internal class MavenPublishConfigurer(
     // Create publication, since Kotlin/JS doesn't provide one by default.
     // https://youtrack.jetbrains.com/issue/KT-41582
     project.publishing.publications.create("mavenJs", MavenPublication::class.java) {
-      configurePom(it, artifactId = it.artifactId.replace(project.name, publishPom.artifactId))
+      configurePom(it)
       it.from(project.components.getByName("kotlin"))
       it.artifact(project.tasks.named("kotlinSourcesJar"))
       it.artifact(javadocsJar)
