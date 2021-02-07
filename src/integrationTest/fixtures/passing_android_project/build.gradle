@@ -7,10 +7,4 @@ android {
     compileSdkVersion 29
 }
 
-repositories {
-    google()
-    mavenCentral()
-    jcenter()
-}
-
 apply from: "maven-publish.gradle"

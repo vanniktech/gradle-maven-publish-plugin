@@ -11,10 +11,6 @@ sourceSets {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.5.6'
 }

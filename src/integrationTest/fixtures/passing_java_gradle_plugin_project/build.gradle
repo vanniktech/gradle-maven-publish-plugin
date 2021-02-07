@@ -3,11 +3,6 @@ plugins {
     id "com.vanniktech.maven.publish"
 }
 
-repositories {
-    mavenCentral()
-}
-
-
 gradlePlugin {
     plugins {
         mavenPublishPlugin {
