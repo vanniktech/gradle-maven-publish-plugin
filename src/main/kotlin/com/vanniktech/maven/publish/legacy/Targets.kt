@@ -31,6 +31,20 @@ internal fun Project.configureTargets(extension: MavenPublishPluginExtension) {
       "is deprecated. Use the default Gradle APIs to configure additional targets/repositories " +
       "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories")
   }
+  if (findOptionalProperty("SONATYPE_NEXUS_USERNAME") != null) {
+    logger.warn("The property SONATYPE_NEXUS_USERNAME is deprecated. Use mavenCentralRepositoryUsername instead.")
+  }
+  if (System.getenv("SONATYPE_NEXUS_USERNAME") != null) {
+    logger.warn("The env var SONATYPE_NEXUS_USERNAME is deprecated. Use the Gradle property " +
+      "mavenCentralRepositoryUsername or the env var ORG_GRADLE_PROJECT_mavenCentralRepositoryUsername instead.")
+  }
+  if (findOptionalProperty("SONATYPE_NEXUS_PASSWORD") != null) {
+    logger.warn("The property SONATYPE_NEXUS_USERNAME is deprecated. Use mavenCentralRepositoryPassword instead.")
+  }
+  if (System.getenv("SONATYPE_NEXUS_PASSWORD") != null) {
+    logger.warn("The env var SONATYPE_NEXUS_USERNAME is deprecated. Use the Gradle property " +
+      "mavenCentralRepositoryPassword or the env var ORG_GRADLE_PROJECT_mavenCentralRepositoryPassword instead.")
+  }
 
   afterEvaluate {
     extension.targets.all {

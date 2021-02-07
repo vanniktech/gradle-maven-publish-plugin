@@ -17,8 +17,8 @@ open class MavenPublishPluginExtension(project: Project) {
       DEFAULT_TARGET,
       project.findOptionalProperty("RELEASE_REPOSITORY_URL") ?: System.getenv("RELEASE_REPOSITORY_URL") ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
       project.findOptionalProperty("SNAPSHOT_REPOSITORY_URL") ?: System.getenv("SNAPSHOT_REPOSITORY_URL") ?: "https://oss.sonatype.org/content/repositories/snapshots/",
-      project.findOptionalProperty("SONATYPE_NEXUS_USERNAME") ?: System.getenv("SONATYPE_NEXUS_USERNAME"),
-      project.findOptionalProperty("SONATYPE_NEXUS_PASSWORD") ?: System.getenv("SONATYPE_NEXUS_PASSWORD")
+      project.findOptionalProperty("SONATYPE_NEXUS_USERNAME") ?: System.getenv("SONATYPE_NEXUS_USERNAME") ?: project.findOptionalProperty("mavenCentralRepositoryUsername"),
+      project.findOptionalProperty("SONATYPE_NEXUS_PASSWORD") ?: System.getenv("SONATYPE_NEXUS_PASSWORD") ?: project.findOptionalProperty("mavenCentralRepositoryPassword")
   )
 
   @Suppress("deprecation")
