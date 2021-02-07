@@ -13,7 +13,7 @@ internal class Nexus(
   username: String,
   password: String,
   private val stagingProfile: String?,
-  private val stagingRepository: String?
+  private val stagingRepository: String?,
 ) {
   private val service by lazy {
     val okHttpClient = OkHttpClient.Builder()
