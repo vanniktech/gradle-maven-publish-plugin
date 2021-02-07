@@ -4,7 +4,7 @@ import com.vanniktech.maven.publish.MavenPublishPluginExtension
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
 
-class NexusConfigurer(project: Project) {
+internal class NexusConfigurer(project: Project) {
   init {
     val mavenPublishPluginExtension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
 
