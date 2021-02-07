@@ -60,7 +60,7 @@ internal class Nexus(
 
     if (candidateRepositories.size > 1) {
       throw IllegalArgumentException("More than 1 matching staging repository found. You can can explicitly choose " +
-        "one by passing it as an option like this \"./gradlew closeAndReleaseRepository --repository=comexample-123\". " +
+        "one by passing it as an option like this \"./gradlew closeAndReleaseRepository --repository comexample-123\". " +
         "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}")
     }
     return candidateRepositories[0]
