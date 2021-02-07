@@ -1,12 +1,10 @@
 package com.vanniktech.maven.publish
 
-import com.android.build.gradle.internal.crash.afterEvaluate
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
