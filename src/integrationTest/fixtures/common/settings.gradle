@@ -11,7 +11,7 @@ pluginManagement {
                 useModule("com.android.tools.build:gradle:3.6.0")
             }
             if (requested.id.id == "org.jetbrains.kotlin.jvm") {
-                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61")
+                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.30")
             }
         }
     }
