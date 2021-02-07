@@ -8,7 +8,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
 
-class Nexus(username: String, password: String, val stagingProfile: String, baseUrl: String) {
+internal class Nexus(
+  baseUrl: String,
+  username: String,
+  password: String,
+  private val stagingProfile: String?,
+  private val stagingRepository: String?
+) {
   private val service by lazy {
     val okHttpClient = OkHttpClient.Builder()
       .addInterceptor(NexusOkHttpInterceptor(username, password))
@@ -32,17 +38,30 @@ class Nexus(username: String, password: String, val stagingProfile: String, base
     return profileRepositoriesResponse.body()?.data
   }
 
+  @Suppress("ThrowsCount")
   private fun findStagingRepository(): Repository {
-    val prefix = stagingProfile.replace(".", "")
-    val candidateRepositories = getProfileRepositories()
-      ?.filter { it.repositoryId.startsWith(prefix) } ?: emptyList()
+    val allRepositories = getProfileRepositories() ?: emptyList()
+
+    if (allRepositories.isEmpty()) {
+      throw IllegalArgumentException("No staging repository prefixed with. Make sure you called \"./gradlew publish\".")
+    }
+
+    val candidateRepositories = when {
+      stagingRepository != null -> allRepositories.filter { it.repositoryId == stagingRepository }
+      stagingProfile != null -> allRepositories.filter { it.repositoryId.startsWith(stagingProfile.replace(".", "")) }
+      else -> allRepositories
+    }
 
     if (candidateRepositories.isEmpty()) {
-      throw IllegalArgumentException("No staging repository prefixed with \"$prefix\" found. Make sure you called ./gradlew uploadArchives and `mavenPublish.nexus.groupId` is set correctly.")
+      throw IllegalArgumentException("No matching staging repository found. You can can explicitly choose one by " +
+        "passing it as an option like this \"./gradlew closeAndReleaseRepository --repository=comexample-123\". " +
+        "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}")
     }
 
     if (candidateRepositories.size > 1) {
-      throw IllegalArgumentException("You have ${candidateRepositories.size} staging repositories, please login on https://oss.sonatype.org and drop stale repositories. This script only works with one active staging repository at a time.")
+      throw IllegalArgumentException("More than 1 matching staging repository found. You can can explicitly choose " +
+        "one by passing it as an option like this \"./gradlew closeAndReleaseRepository --repository comexample-123\". " +
+        "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}")
     }
     return candidateRepositories[0]
   }

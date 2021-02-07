@@ -4,11 +4,6 @@ plugins {
     id "com.vanniktech.maven.publish"
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-}
-
 kotlin {
     jvm()
     js("nodeJs")
