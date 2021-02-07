@@ -18,7 +18,7 @@ import java.net.URI
 internal class MavenPublishConfigurer(
   private val project: Project,
   private val publishPom: MavenPublishPom
-) : Configurer {
+) {
 
   private fun configurePom(
     publication: MavenPublication,
@@ -61,7 +61,7 @@ internal class MavenPublishConfigurer(
     }
   }
 
-  override fun configureTarget(target: MavenPublishTarget) {
+  fun configureTarget(target: MavenPublishTarget) {
     project.publishing.repositories.maven { repo ->
       repo.name = target.repositoryName
       repo.url = target.repositoryUrl(project.version.toString())
@@ -100,7 +100,7 @@ internal class MavenPublishConfigurer(
     return URI.create(requireNotNull(url))
   }
 
-  override fun configureGradlePluginProject() {
+  fun configureGradlePluginProject() {
     val sourcesJar = project.tasks.register(SOURCES_TASK, SourcesJar::class.java)
     val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
 
@@ -120,7 +120,7 @@ internal class MavenPublishConfigurer(
     }
   }
 
-  override fun configureKotlinMppProject() {
+  fun configureKotlinMppProject() {
     val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
 
     project.publishing.publications.withType(MavenPublication::class.java).all {
@@ -138,7 +138,7 @@ internal class MavenPublishConfigurer(
     }
   }
 
-  override fun configureKotlinJsProject() {
+  fun configureKotlinJsProject() {
     val javadocsJar = project.tasks.register(JAVADOC_TASK, JavadocsJar::class.java)
 
     // Create publication, since Kotlin/JS doesn't provide one by default.
@@ -151,7 +151,7 @@ internal class MavenPublishConfigurer(
     }
   }
 
-  override fun configureAndroidArtifacts() {
+  fun configureAndroidArtifacts() {
     val publications = project.publishing.publications
     publications.create(PUBLICATION_NAME, MavenPublication::class.java) { publication ->
       configurePom(publication)
@@ -169,7 +169,7 @@ internal class MavenPublishConfigurer(
     publication.artifact(androidJavadocsJar)
   }
 
-  override fun configureJavaArtifacts() {
+  fun configureJavaArtifacts() {
     val publications = project.publishing.publications
     publications.create(PUBLICATION_NAME, MavenPublication::class.java) { publication ->
       configurePom(publication)

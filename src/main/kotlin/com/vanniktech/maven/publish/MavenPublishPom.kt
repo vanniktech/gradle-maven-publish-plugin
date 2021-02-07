@@ -29,9 +29,9 @@ internal data class MavenPublishPom(
   internal companion object {
     @JvmStatic
     fun fromProject(project: Project) = MavenPublishPom(
-        project.findMandatoryProperty("GROUP"),
-        project.findMandatoryProperty("POM_ARTIFACT_ID"),
-        project.findMandatoryProperty("VERSION_NAME"),
+        project.findOptionalProperty("GROUP") ?: project.group.toString(),
+        project.findOptionalProperty("POM_ARTIFACT_ID") ?: project.name,
+        project.findOptionalProperty("VERSION_NAME") ?: project.version.toString(),
         project.findOptionalProperty("POM_NAME"),
         project.findOptionalProperty("POM_PACKAGING"),
         project.findOptionalProperty("POM_DESCRIPTION"),

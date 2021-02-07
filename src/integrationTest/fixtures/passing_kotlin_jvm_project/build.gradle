@@ -3,11 +3,6 @@ plugins {
     id "com.vanniktech.maven.publish"
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-}
-
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.61"
 }

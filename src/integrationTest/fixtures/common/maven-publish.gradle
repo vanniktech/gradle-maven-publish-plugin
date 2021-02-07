@@ -1,3 +1,9 @@
+repositories {
+    google()
+    mavenCentral()
+    jcenter()
+}
+
 mavenPublish {
     targets {
         installArchives {
