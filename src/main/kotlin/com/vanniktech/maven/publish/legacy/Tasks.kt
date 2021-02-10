@@ -4,7 +4,7 @@ import org.gradle.api.Project
 
 internal fun Project.configureArchivesTasks() {
   tasks.register("uploadArchives") { task ->
-    val publishTaskName = "publishAllPublicationsToMavenRepository"
+    val publishTaskName = "publishAllPublicationsToMavenCentralRepository"
     task.dependsOn(tasks.named(publishTaskName))
 
     task.doLast {
