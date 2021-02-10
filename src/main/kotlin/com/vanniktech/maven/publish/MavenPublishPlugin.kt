@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.legacy.configureTargets
+import com.vanniktech.maven.publish.legacy.configureArchivesTasks
+import com.vanniktech.maven.publish.legacy.checkProperties
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
@@ -15,7 +16,7 @@ import org.gradle.util.VersionNumber
 open class MavenPublishPlugin : Plugin<Project> {
 
   override fun apply(p: Project) {
-    val extension = p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
+    p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
 
     val gradleVersion = VersionNumber.parse(p.gradle.gradleVersion)
     if (gradleVersion < VersionNumber(MINIMUM_GRADLE_MAJOR, MINIMUM_GRADLE_MINOR, MINIMUM_GRADLE_MICRO, null)) {
@@ -26,7 +27,8 @@ open class MavenPublishPlugin : Plugin<Project> {
 
     val pom = MavenPublishPom.fromProject(p)
     p.setCoordinates(pom)
-    p.configureTargets(extension)
+    p.checkProperties()
+    p.configureArchivesTasks()
 
     configureSigning(p)
     configureJavadoc(p)

@@ -11,23 +11,6 @@ import org.gradle.api.Project
  * @since 0.1.0
  */
 open class MavenPublishPluginExtension(project: Project) {
-
-  @Suppress("deprecation")
-  internal val defaultTarget = MavenPublishTarget(
-      DEFAULT_TARGET,
-      project.findOptionalProperty("RELEASE_REPOSITORY_URL") ?: System.getenv("RELEASE_REPOSITORY_URL") ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
-      project.findOptionalProperty("SNAPSHOT_REPOSITORY_URL") ?: System.getenv("SNAPSHOT_REPOSITORY_URL") ?: "https://oss.sonatype.org/content/repositories/snapshots/",
-      project.findOptionalProperty("SONATYPE_NEXUS_USERNAME") ?: System.getenv("SONATYPE_NEXUS_USERNAME") ?: project.findOptionalProperty("mavenCentralRepositoryUsername"),
-      project.findOptionalProperty("SONATYPE_NEXUS_PASSWORD") ?: System.getenv("SONATYPE_NEXUS_PASSWORD") ?: project.findOptionalProperty("mavenCentralRepositoryPassword")
-  )
-
-  @Suppress("deprecation")
-  internal val localTarget = MavenPublishTarget(
-      LOCAL_TARGET,
-      releaseRepositoryUrl = project.repositories.mavenLocal().url.toASCIIString(),
-      signing = false
-  )
-
   /**
    * The Android library variant that should be published. Projects not using any product flavors, that just want
    * to publish the release build type can use the default.
@@ -57,34 +40,5 @@ open class MavenPublishPluginExtension(project: Project) {
    */
   fun nexus(action: Action<NexusOptions>) {
     action.execute(nexusOptions)
-  }
-
-  /**
-   * Allows to add additional [MavenPublishTargets][MavenPublishTarget] to publish to multiple repositories.
-   * @since 0.7.0
-   * @deprecated Use Gradle publishing API instead https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories
-   */
-  @Deprecated("Use Gradle publishing API instead")
-  @Suppress("DEPRECATION")
-  val targets: NamedDomainObjectContainer<MavenPublishTarget> =
-      project.container(MavenPublishTarget::class.java) { MavenPublishTarget(it) }.apply {
-        add(defaultTarget)
-        add(localTarget)
-      }
-
-  /**
-   * Allows to add additional [MavenPublishTargets][MavenPublishTarget] to publish to multiple repositories.
-   * @since 0.7.0
-   * @deprecated Use Gradle publishing API instead https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories
-   */
-  @Deprecated("Use Gradle publishing API instead")
-  @Suppress("DEPRECATION")
-  fun targets(closure: Closure<*>) {
-    targets.configure(closure)
-  }
-
-  internal companion object {
-    internal const val DEFAULT_TARGET = "uploadArchives"
-    internal const val LOCAL_TARGET = "installArchives"
   }
 }
