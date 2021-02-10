@@ -12,15 +12,17 @@ import org.gradle.api.Project
  */
 open class MavenPublishPluginExtension(project: Project) {
 
-  private val defaultTarget = MavenPublishTarget(
+  @Suppress("deprecation")
+  internal val defaultTarget = MavenPublishTarget(
       DEFAULT_TARGET,
       project.findOptionalProperty("RELEASE_REPOSITORY_URL") ?: System.getenv("RELEASE_REPOSITORY_URL") ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/",
       project.findOptionalProperty("SNAPSHOT_REPOSITORY_URL") ?: System.getenv("SNAPSHOT_REPOSITORY_URL") ?: "https://oss.sonatype.org/content/repositories/snapshots/",
-      project.findOptionalProperty("SONATYPE_NEXUS_USERNAME") ?: System.getenv("SONATYPE_NEXUS_USERNAME"),
-      project.findOptionalProperty("SONATYPE_NEXUS_PASSWORD") ?: System.getenv("SONATYPE_NEXUS_PASSWORD")
+      project.findOptionalProperty("SONATYPE_NEXUS_USERNAME") ?: System.getenv("SONATYPE_NEXUS_USERNAME") ?: project.findOptionalProperty("mavenCentralRepositoryUsername"),
+      project.findOptionalProperty("SONATYPE_NEXUS_PASSWORD") ?: System.getenv("SONATYPE_NEXUS_PASSWORD") ?: project.findOptionalProperty("mavenCentralRepositoryPassword")
   )
 
-  private val localTarget = MavenPublishTarget(
+  @Suppress("deprecation")
+  internal val localTarget = MavenPublishTarget(
       LOCAL_TARGET,
       releaseRepositoryUrl = project.repositories.mavenLocal().url.toASCIIString(),
       signing = false
@@ -60,7 +62,10 @@ open class MavenPublishPluginExtension(project: Project) {
   /**
    * Allows to add additional [MavenPublishTargets][MavenPublishTarget] to publish to multiple repositories.
    * @since 0.7.0
+   * @deprecated Use Gradle publishing API instead https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories
    */
+  @Deprecated("Use Gradle publishing API instead")
+  @Suppress("DEPRECATION")
   val targets: NamedDomainObjectContainer<MavenPublishTarget> =
       project.container(MavenPublishTarget::class.java) { MavenPublishTarget(it) }.apply {
         add(defaultTarget)
@@ -70,7 +75,10 @@ open class MavenPublishPluginExtension(project: Project) {
   /**
    * Allows to add additional [MavenPublishTargets][MavenPublishTarget] to publish to multiple repositories.
    * @since 0.7.0
+   * @deprecated Use Gradle publishing API instead https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories
    */
+  @Deprecated("Use Gradle publishing API instead")
+  @Suppress("DEPRECATION")
   fun targets(closure: Closure<*>) {
     targets.configure(closure)
   }

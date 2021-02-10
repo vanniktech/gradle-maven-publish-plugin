@@ -3,6 +3,7 @@ package com.vanniktech.maven.publish
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.DEFAULT_TARGET
 import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_TARGET
 
+@Deprecated("Use Gradle publishing API instead")
 data class MavenPublishTarget(
   internal val name: String,
   /**
@@ -37,7 +38,7 @@ data class MavenPublishTarget(
   var signing: Boolean = true
 ) {
 
-  val taskName get(): String {
+  internal val taskName get(): String {
     if (name == DEFAULT_TARGET || name == LOCAL_TARGET) {
       return name
     } else {

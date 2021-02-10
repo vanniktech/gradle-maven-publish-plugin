@@ -9,6 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 
+@Suppress("deprecation")
 class MavenPublishPluginExtensionTest {
   @get:Rule val environmentVariables = EnvironmentVariables()
 

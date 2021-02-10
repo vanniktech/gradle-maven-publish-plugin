@@ -5,6 +5,7 @@ import com.vanniktech.maven.publish.MavenPublishPluginExtension.Companion.LOCAL_
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+@Suppress("deprecation")
 class MavenPublishTargetTest {
 
   @Test

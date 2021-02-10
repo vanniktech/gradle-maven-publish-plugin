@@ -44,8 +44,8 @@ data class NexusOptions(
       return NexusOptions(
         OSSRH_API_BASE_URL,
         project.findOptionalProperty("SONATYPE_STAGING_PROFILE") ?: project.findOptionalProperty("GROUP"),
-        project.findOptionalProperty("SONATYPE_NEXUS_USERNAME") ?: System.getenv("SONATYPE_NEXUS_USERNAME"),
-        project.findOptionalProperty("SONATYPE_NEXUS_PASSWORD") ?: System.getenv("SONATYPE_NEXUS_PASSWORD")
+        project.findOptionalProperty("SONATYPE_NEXUS_USERNAME") ?: System.getenv("SONATYPE_NEXUS_USERNAME") ?: project.findOptionalProperty("mavenCentralRepositoryUsername"),
+        project.findOptionalProperty("SONATYPE_NEXUS_PASSWORD") ?: System.getenv("SONATYPE_NEXUS_PASSWORD") ?: project.findOptionalProperty("mavenCentralRepositoryPassword")
       )
     }
   }
