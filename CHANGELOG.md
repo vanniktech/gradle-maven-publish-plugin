@@ -1,7 +1,17 @@
 # Change Log
 
-Version 0.14.0 *(In development)*
+Version 0.15.0 *(In development)*
 ---------------------------------
+
+Version 0.14.0 *(2021-02-10)*
+---------------------------------
+
+- enable publishing Kotlin/JS projects
+- fixed compatibility with Kotlin Multiplatform projects using Kotlin 1.4.30
+- fixed compatibility with Gradle plugin projects using Gradle 6.8
+- make `closeAndReleaseRepository` more flexible in choosing a repository
+- deprecated the `targets` API, check out the README on how to add more repositories
+- minimum supported Gradle version is now 6.6
 
 Version 0.13.0 *(2020-09-07)*
 -----------------------------
