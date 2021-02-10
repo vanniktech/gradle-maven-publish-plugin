@@ -57,7 +57,7 @@ internal fun Project.configureTargets(extension: MavenPublishPluginExtension) {
         logger.warn("Modifying the default ${it.name} target is deprecated. Use " +
           "the default Gradle APIs to configure it as an additional target/repository " +
           "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories")
-      } else if (it.name != DEFAULT_TARGET && it.name != LOCAL_TARGET){
+      } else if (it.name != DEFAULT_TARGET && it.name != LOCAL_TARGET) {
         logger.warn("Adding additional targets through this API is deprecated. Use " +
           "the default Gradle APIs to add additional targets/repositories " +
           "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories")
