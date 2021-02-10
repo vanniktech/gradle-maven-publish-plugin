@@ -1,9 +1,7 @@
 package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.nexus.NexusOptions
-import groovy.lang.Closure
 import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 
 /**

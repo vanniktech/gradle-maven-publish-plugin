@@ -81,10 +81,6 @@ class MavenPublishPluginTest {
   private fun assert(project: Project) {
     project.plugins.apply(MavenPublishPlugin::class.java)
 
-    val extension = project.extensions.getByType(MavenPublishPluginExtension::class.java)
-    extension.targets.getByName("uploadArchives").repositoryUsername = "bar"
-    extension.targets.getByName("uploadArchives").repositoryPassword = "foo"
-
     (project as DefaultProject).evaluate()
 
     assertThat(project.plugins.findPlugin(GradleMavenPublishPlugin::class.java)).isNotNull()
