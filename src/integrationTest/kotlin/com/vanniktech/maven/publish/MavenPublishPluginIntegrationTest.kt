@@ -8,17 +8,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import org.junit.runners.Parameterized.Parameters
 import java.io.File
 import java.util.zip.ZipFile
 
-@RunWith(Parameterized::class)
-class MavenPublishPluginIntegrationTest(
-  private val uploadArchivesTargetTaskName: String,
-  private val mavenPublishTargetTaskName: String
-) {
+class MavenPublishPluginIntegrationTest {
   companion object {
     const val FIXTURES = "src/integrationTest/fixtures"
     const val EXPECTED_DIR = "expected"
@@ -27,12 +20,7 @@ class MavenPublishPluginIntegrationTest(
     const val TEST_VERSION_NAME = "1.0.0"
     const val TEST_POM_ARTIFACT_ID = "test-artifact"
 
-    @JvmStatic
-    @Parameters(name = "{0}")
-    fun mavenPublishTargetsToTest() = listOf(
-      arrayOf("installArchives", "publishMavenPublicationToLocalRepository"),
-      arrayOf("uploadArchives", "publishMavenPublicationToMavenRepository")
-    )
+    const val TEST_TASK = "publishAllPublicationsToTestFolderRepository"
   }
 
   @get:Rule val testProjectDir: TemporaryFolder = TemporaryFolder()
@@ -48,7 +36,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnJavaProject() {
     setupFixture("passing_java_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
@@ -59,7 +47,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnJavaWithKotlinProject() {
     setupFixture("passing_java_with_kotlin_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
@@ -72,7 +60,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryProject() {
     setupFixture("passing_java_library_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
@@ -83,7 +71,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithKotlinProject() {
     setupFixture("passing_java_library_with_kotlin_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
@@ -96,7 +84,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithGroovyProject() {
     setupFixture("passing_java_library_with_groovy_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
@@ -109,7 +97,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnGroovyProject() {
     setupFixture("passing_groovy_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
@@ -121,7 +109,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnKotlinJvmProject() {
     setupFixture("passing_kotlin_jvm_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
@@ -133,7 +121,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
     setupFixture("passing_android_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated(artifactExtension = "aar")
@@ -144,7 +132,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinProject() {
     setupFixture("passing_android_with_kotlin_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
@@ -157,9 +145,9 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnKotlinMppProject() {
     setupFixture("passing_kotlin_mpp_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "--stacktrace")
 
-    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
 
     // the general coordinate does not have an actual artifact like a jar or klib
@@ -187,9 +175,9 @@ class MavenPublishPluginIntegrationTest(
   @Test
   fun generatesArtifactsAndDocumentationOnKotlinJsProject() {
     setupFixture("passing_kotlin_js_project")
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "--stacktrace")
 
-    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
 
     assertExpectedCommonArtifactsGenerated()
@@ -200,9 +188,9 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnGradlePluginProject() {
     setupFixture("passing_java_gradle_plugin_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "--stacktrace")
 
-    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
     assertExpectedCommonArtifactsGenerated()
     assertPomContentMatches()
 
@@ -214,7 +202,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnMinimalPomProject() {
     setupFixture("minimal_pom_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
@@ -224,7 +212,7 @@ class MavenPublishPluginIntegrationTest(
   @Test fun generatesArtifactsAndDocumentationOnOverrideVersionGroupProject() {
     setupFixture("override_version_group_project")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated(groupId = "com.example2", version = "2.0.0")
@@ -239,8 +227,7 @@ class MavenPublishPluginIntegrationTest(
   }
 
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
-    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
-    assertThat(result.task(":$mavenPublishTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
   }
 
   /**

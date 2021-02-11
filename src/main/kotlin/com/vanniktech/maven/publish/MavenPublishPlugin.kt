@@ -1,11 +1,13 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.legacy.configureTargets
+import com.vanniktech.maven.publish.legacy.configureArchivesTasks
+import com.vanniktech.maven.publish.legacy.checkProperties
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
@@ -15,7 +17,7 @@ import org.gradle.util.VersionNumber
 open class MavenPublishPlugin : Plugin<Project> {
 
   override fun apply(p: Project) {
-    val extension = p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
+    p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
 
     val gradleVersion = VersionNumber.parse(p.gradle.gradleVersion)
     if (gradleVersion < VersionNumber(MINIMUM_GRADLE_MAJOR, MINIMUM_GRADLE_MINOR, MINIMUM_GRADLE_MICRO, null)) {
@@ -26,7 +28,20 @@ open class MavenPublishPlugin : Plugin<Project> {
 
     val pom = MavenPublishPom.fromProject(p)
     p.setCoordinates(pom)
-    p.configureTargets(extension)
+    p.checkProperties()
+    p.configureArchivesTasks()
+
+    p.publishing.repositories.maven { repo ->
+      repo.name = "mavenCentral"
+      repo.setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+      repo.credentials(PasswordCredentials::class.java)
+
+      p.afterEvaluate {
+        if (it.version.toString().endsWith("SNAPSHOT")) {
+          repo.setUrl("https://oss.sonatype.org/content/repositories/snapshots/")
+        }
+      }
+    }
 
     configureSigning(p)
     configureJavadoc(p)
