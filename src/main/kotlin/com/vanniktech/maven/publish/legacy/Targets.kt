@@ -12,25 +12,26 @@ import org.gradle.api.Project
 @Suppress("ComplexMethod")
 internal fun Project.configureTargets(extension: MavenPublishPluginExtension) {
   if (findOptionalProperty("RELEASE_REPOSITORY_URL") != null) {
-    logger.warn("Modifying the default repository by setting the RELEASE_REPOSITORY_URL property" +
+    logger.warn("Modifying the default repository by setting the RELEASE_REPOSITORY_URL property " +
       "is deprecated. Use the default Gradle APIs to configure additional targets/repositories " +
       "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories")
   }
   if (findOptionalProperty("SNAPSHOT_REPOSITORY_URL") != null) {
-    logger.warn("Modifying the default repository by setting the SNAPSHOT_REPOSITORY_URL env var" +
+    logger.warn("Modifying the default repository by setting the SNAPSHOT_REPOSITORY_URL env var " +
       "is deprecated. Use the default Gradle APIs to configure additional targets/repositories " +
       "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories")
   }
   if (System.getenv("RELEASE_REPOSITORY_URL") != null) {
-    logger.warn("Modifying the default repository by setting the RELEASE_REPOSITORY_URL property" +
+    logger.warn("Modifying the default repository by setting the RELEASE_REPOSITORY_URL property " +
       "is deprecated. Use the default Gradle APIs to configure additional targets/repositories " +
       "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories")
   }
   if (System.getenv("SNAPSHOT_REPOSITORY_URL") != null) {
-    logger.warn("Modifying the default repository by setting the SNAPSHOT_REPOSITORY_URL env var" +
+    logger.warn("Modifying the default repository by setting the SNAPSHOT_REPOSITORY_URL env var " +
       "is deprecated. Use the default Gradle APIs to configure additional targets/repositories " +
       "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories")
   }
+
   if (findOptionalProperty("SONATYPE_NEXUS_USERNAME") != null) {
     logger.warn("The property SONATYPE_NEXUS_USERNAME is deprecated. Use mavenCentralRepositoryUsername instead.")
   }
@@ -39,10 +40,10 @@ internal fun Project.configureTargets(extension: MavenPublishPluginExtension) {
       "mavenCentralRepositoryUsername or the env var ORG_GRADLE_PROJECT_mavenCentralRepositoryUsername instead.")
   }
   if (findOptionalProperty("SONATYPE_NEXUS_PASSWORD") != null) {
-    logger.warn("The property SONATYPE_NEXUS_USERNAME is deprecated. Use mavenCentralRepositoryPassword instead.")
+    logger.warn("The property SONATYPE_NEXUS_PASSWORD is deprecated. Use mavenCentralRepositoryPassword instead.")
   }
   if (System.getenv("SONATYPE_NEXUS_PASSWORD") != null) {
-    logger.warn("The env var SONATYPE_NEXUS_USERNAME is deprecated. Use the Gradle property " +
+    logger.warn("The env var SONATYPE_NEXUS_PASSWORD is deprecated. Use the Gradle property " +
       "mavenCentralRepositoryPassword or the env var ORG_GRADLE_PROJECT_mavenCentralRepositoryPassword instead.")
   }
 
@@ -56,9 +57,9 @@ internal fun Project.configureTargets(extension: MavenPublishPluginExtension) {
         logger.warn("Modifying the default ${it.name} target is deprecated. Use " +
           "the default Gradle APIs to configure it as an additional target/repository " +
           "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories")
-      } else {
+      } else if (it.name != DEFAULT_TARGET && it.name != LOCAL_TARGET) {
         logger.warn("Adding additional targets through this API is deprecated. Use " +
-          "the default Gradle APIs to add additional targets/repositories" +
+          "the default Gradle APIs to add additional targets/repositories " +
           "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories")
       }
 
