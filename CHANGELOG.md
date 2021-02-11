@@ -3,6 +3,12 @@
 Version 0.15.0 *(In development)*
 ---------------------------------
 
+Version 0.14.1 *(2021-02-11)*
+---------------------------------
+
+- fix false positive deprecation warnings
+- fix typos in deprecation warnings
+
 Version 0.14.0 *(2021-02-10)*
 ---------------------------------
 
