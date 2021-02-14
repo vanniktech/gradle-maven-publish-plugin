@@ -3,6 +3,12 @@
 Version 0.15.0 *(In development)*
 ---------------------------------
 
+Version 0.14.2 *(2021-02-14)*
+---------------------------------
+
+- fix artifact id in Kotlin Multiplatform projects being incorrect 
+- fix `closeAndReleaseRepository` requiring callers to pass `--repository`
+
 Version 0.14.1 *(2021-02-11)*
 ---------------------------------
 

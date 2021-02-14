@@ -14,7 +14,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.14.1'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.14.2'
     // For Kotlin projects, you need to add Dokka.
     classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.x.x'
   }
