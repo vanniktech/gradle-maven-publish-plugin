@@ -19,8 +19,7 @@ open class MavenPublishPlugin : Plugin<Project> {
 
     p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
 
-    val pom = MavenPublishPom.fromProject(p)
-    p.setCoordinates(pom)
+    p.setCoordinates()
     p.checkProperties()
     p.configureArchivesTasks()
 
@@ -41,7 +40,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     configureDokka(p)
 
     p.afterEvaluate { project ->
-      configurePublishing(project, pom)
+      configurePublishing(project)
     }
 
     NexusConfigurer(p)
@@ -80,8 +79,8 @@ open class MavenPublishPlugin : Plugin<Project> {
   }
 
   @Suppress("Detekt.ComplexMethod")
-  private fun configurePublishing(project: Project, pom: MavenPublishPom) {
-    val configurer = MavenPublishConfigurer(project, pom)
+  private fun configurePublishing(project: Project) {
+    val configurer = MavenPublishConfigurer(project)
     when {
       project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> configurer.configureKotlinMppProject()
       project.plugins.hasPlugin("java-gradle-plugin") -> configurer.configureGradlePluginProject()

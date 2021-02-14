@@ -13,38 +13,36 @@ import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 
 @Suppress("TooManyFunctions")
 internal class MavenPublishConfigurer(
-  private val project: Project,
-  private val publishPom: MavenPublishPom
+  private val project: Project
 ) {
 
   private fun configurePom(publication: MavenPublication) {
     @Suppress("UnstableApiUsage")
     publication.pom { pom ->
-
-      pom.name.set(publishPom.name)
-      pom.description.set(publishPom.description)
-      pom.url.set(publishPom.url)
-      pom.inceptionYear.set(publishPom.inceptionYear)
+      pom.name.set(project.findOptionalProperty("POM_NAME"))
+      pom.description.set(project.findOptionalProperty("POM_DESCRIPTION"))
+      pom.url.set(project.findOptionalProperty("POM_URL"))
+      pom.inceptionYear.set(project.findOptionalProperty("POM_INCEPTION_YEAR"))
 
       pom.scm {
-        it.url.set(publishPom.scmUrl)
-        it.connection.set(publishPom.scmConnection)
-        it.developerConnection.set(publishPom.scmDeveloperConnection)
+        it.url.set(project.findOptionalProperty("POM_SCM_URL"))
+        it.connection.set(project.findOptionalProperty("POM_SCM_CONNECTION"))
+        it.developerConnection.set(project.findOptionalProperty("POM_SCM_DEV_CONNECTION"))
       }
 
       pom.licenses { licenses ->
         licenses.license {
-          it.name.set(publishPom.licenseName)
-          it.url.set(publishPom.licenseUrl)
-          it.distribution.set(publishPom.licenseDistribution)
+          it.name.set(project.findOptionalProperty("POM_LICENCE_NAME"))
+          it.url.set(project.findOptionalProperty("POM_LICENCE_URL"))
+          it.distribution.set(project.findOptionalProperty("POM_LICENCE_DIST"))
         }
       }
 
       pom.developers { developers ->
         developers.developer {
-          it.id.set(publishPom.developerId)
-          it.name.set(publishPom.developerName)
-          it.url.set(publishPom.developerUrl)
+          it.id.set(project.findOptionalProperty("POM_DEVELOPER_ID"))
+          it.name.set(project.findOptionalProperty("POM_DEVELOPER_NAME"))
+          it.url.set(project.findOptionalProperty("POM_DEVELOPER_URL"))
         }
       }
     }

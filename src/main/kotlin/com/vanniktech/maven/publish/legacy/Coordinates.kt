@@ -1,16 +1,17 @@
 package com.vanniktech.maven.publish.legacy
 
-import com.vanniktech.maven.publish.MavenPublishPom
 import com.vanniktech.maven.publish.publishing
+import com.vanniktech.maven.publish.findOptionalProperty
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 
-internal fun Project.setCoordinates(pom: MavenPublishPom) {
-  group = pom.groupId
-  version = pom.version
+internal fun Project.setCoordinates() {
+  group = project.findOptionalProperty("GROUP") ?: group
+  version = project.findOptionalProperty("VERSION_NAME") ?: version
 
-  if (pom.artifactId != project.name) {
-    setArtifactId(pom.artifactId)
+  val artifactId = project.findOptionalProperty("POM_ARTIFACT_ID")
+  if (artifactId != null && artifactId != project.name) {
+    setArtifactId(artifactId)
   }
 }
 
