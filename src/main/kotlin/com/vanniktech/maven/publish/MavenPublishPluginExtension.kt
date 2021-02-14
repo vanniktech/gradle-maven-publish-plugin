@@ -9,7 +9,10 @@ import org.gradle.api.Project
  * @since 0.1.0
  */
 @Suppress("UnnecessaryAbstractClass")
-abstract class MavenPublishPluginExtension(project: Project) {
+abstract class MavenPublishPluginExtension(
+  private val project: Project
+) {
+
   /**
    * The Android library variant that should be published. Projects not using any product flavors, that just want
    * to publish the release build type can use the default.
@@ -31,13 +34,7 @@ abstract class MavenPublishPluginExtension(project: Project) {
    * Allows to promote repositories without connecting to the nexus instance console.
    * @since 0.9.0
    */
-  var nexusOptions = NexusOptions.fromProject(project)
-
-  /**
-   * Allows to promote repositories without connecting to the nexus instance console.
-   * @since 0.9.0
-   */
   fun nexus(action: Action<NexusOptions>) {
-    action.execute(nexusOptions)
+    project.baseExtension.nexusOptions(action)
   }
 }

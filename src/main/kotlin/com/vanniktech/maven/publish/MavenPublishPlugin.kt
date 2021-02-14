@@ -6,7 +6,6 @@ import com.vanniktech.maven.publish.legacy.configureMavenCentral
 import com.vanniktech.maven.publish.legacy.configurePom
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
-import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -33,8 +32,6 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.afterEvaluate { project ->
       configurePublishing(project)
     }
-
-    NexusConfigurer(p)
   }
 
   private fun configureSigning(project: Project) {

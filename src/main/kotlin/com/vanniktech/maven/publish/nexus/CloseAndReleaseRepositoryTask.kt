@@ -20,13 +20,15 @@ open class CloseAndReleaseRepositoryTask : DefaultTask() {
   @SuppressWarnings("unused")
   @TaskAction
   fun closeAndReleaseRepository() {
-    val baseUrl = nexusOptions.baseUrl
+    val baseUrl = requireNotNull(nexusOptions.baseUrl) {
+      "Please set a value for nexus.baseUrl"
+    }
     val stagingProfile = nexusOptions.stagingProfile
     val repositoryUsername = requireNotNull(nexusOptions.repositoryUsername) {
-      "Please set a value for SONATYPE_NEXUS_USERNAME"
+      "Please set a value for nexus.repositoryUsername"
     }
     val repositoryPassword = requireNotNull(nexusOptions.repositoryPassword) {
-      "Please set a value for SONATYPE_NEXUS_PASSWORD"
+      "Please set a value for nexus.repositoryPassword"
     }
 
     Nexus(baseUrl, repositoryUsername, repositoryPassword, stagingProfile, stagingRepository).closeAndReleaseRepository()
