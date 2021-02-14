@@ -4,6 +4,10 @@ import com.vanniktech.maven.publish.baseExtension
 import com.vanniktech.maven.publish.findOptionalProperty
 import org.gradle.api.Project
 
+internal fun Project.configureMavenCentral() {
+  baseExtension.publishToMavenCentral()
+}
+
 internal fun Project.configurePom() {
   // without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
   afterEvaluate {
