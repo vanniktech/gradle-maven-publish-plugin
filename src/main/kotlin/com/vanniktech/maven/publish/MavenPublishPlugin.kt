@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.legacy.configureArchivesTasks
 import com.vanniktech.maven.publish.legacy.checkProperties
+import com.vanniktech.maven.publish.legacy.configurePom
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
@@ -20,6 +21,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
 
     p.setCoordinates()
+    p.configurePom()
     p.checkProperties()
     p.configureArchivesTasks()
 
