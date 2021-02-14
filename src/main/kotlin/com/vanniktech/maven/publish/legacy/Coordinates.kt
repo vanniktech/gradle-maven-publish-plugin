@@ -9,12 +9,8 @@ internal fun Project.setCoordinates(pom: MavenPublishPom) {
   group = pom.groupId
   version = pom.version
 
-  setArtifactId(pom.artifactId)
-  afterEvaluate {
-    // the initial setArtifactId runs too early for multiplatform projects
-    if (plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-      setArtifactId(pom.artifactId)
-    }
+  if (pom.artifactId != project.name) {
+    setArtifactId(pom.artifactId)
   }
 }
 
@@ -26,8 +22,22 @@ internal fun Project.setCoordinates(pom: MavenPublishPom) {
 private fun Project.setArtifactId(artifactId: String) {
   publishing.publications.withType(MavenPublication::class.java).configureEach { publication ->
     // skip the plugin marker artifact which has it's own artifact id based on the plugin id
-    if (!publication.name.endsWith("PluginMarkerMaven")) {
-      publication.artifactId = publication.artifactId.replace(this@setArtifactId.name, artifactId)
+    if (publication.name.endsWith("PluginMarkerMaven")) {
+      @Suppress("LabeledExpression")
+      return@configureEach
+    }
+
+    val projectName = name
+    val updatedArtifactId = publication.artifactId.replace(projectName, artifactId)
+    publication.artifactId = updatedArtifactId
+
+    // in Kotlin MPP projects some publications change our manually set artifactId again
+    afterEvaluate {
+      publishing.publications.withType(MavenPublication::class.java).named(publication.name).configure { publication ->
+        if (publication.artifactId != updatedArtifactId) {
+          publication.artifactId = publication.artifactId.replace(projectName, artifactId)
+        }
+      }
     }
   }
 }
