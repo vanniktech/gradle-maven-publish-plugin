@@ -3,6 +3,7 @@ package com.vanniktech.maven.publish
 import com.vanniktech.maven.publish.legacy.configureArchivesTasks
 import com.vanniktech.maven.publish.legacy.checkProperties
 import com.vanniktech.maven.publish.legacy.configurePom
+import com.vanniktech.maven.publish.legacy.configureSigning
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
@@ -11,7 +12,6 @@ import org.gradle.api.Project
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
-import org.gradle.plugins.signing.SigningPlugin
 
 open class MavenPublishPlugin : Plugin<Project> {
 
@@ -23,6 +23,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.setCoordinates()
     p.configurePom()
     p.checkProperties()
+    p.configureSigning()
     p.configureArchivesTasks()
 
     p.gradlePublishing.repositories.maven { repo ->
@@ -37,7 +38,6 @@ open class MavenPublishPlugin : Plugin<Project> {
       }
     }
 
-    configureSigning(p)
     configureJavadoc(p)
     configureDokka(p)
 
@@ -46,17 +46,6 @@ open class MavenPublishPlugin : Plugin<Project> {
     }
 
     NexusConfigurer(p)
-  }
-
-  private fun configureSigning(project: Project) {
-    project.plugins.apply(SigningPlugin::class.java)
-    project.gradleSigning.setRequired(project.isSigningRequired)
-    project.afterEvaluate {
-      if (project.isSigningRequired.call() && project.project.legacyExtension.releaseSigningEnabled) {
-        @Suppress("UnstableApiUsage")
-        project.gradleSigning.sign(project.gradlePublishing.publications)
-      }
-    }
   }
 
   private fun configureJavadoc(project: Project) {
