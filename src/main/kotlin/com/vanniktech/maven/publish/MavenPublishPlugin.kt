@@ -25,7 +25,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.checkProperties()
     p.configureArchivesTasks()
 
-    p.publishing.repositories.maven { repo ->
+    p.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
       repo.setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
       repo.credentials(PasswordCredentials::class.java)
@@ -50,11 +50,11 @@ open class MavenPublishPlugin : Plugin<Project> {
 
   private fun configureSigning(project: Project) {
     project.plugins.apply(SigningPlugin::class.java)
-    project.signing.setRequired(project.isSigningRequired)
+    project.gradleSigning.setRequired(project.isSigningRequired)
     project.afterEvaluate {
-      if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+      if (project.isSigningRequired.call() && project.project.legacyExtension.releaseSigningEnabled) {
         @Suppress("UnstableApiUsage")
-        project.signing.sign(project.publishing.publications)
+        project.gradleSigning.sign(project.gradlePublishing.publications)
       }
     }
   }

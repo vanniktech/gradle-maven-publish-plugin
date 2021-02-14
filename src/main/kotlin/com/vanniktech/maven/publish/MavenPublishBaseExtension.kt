@@ -19,7 +19,7 @@ open class MavenPublishBaseExtension(
    */
   @Incubating
   fun pom(configure: Action<in MavenPom>) {
-    project.publishing.publications.withType(MavenPublication::class.java).configureEach {
+    project.gradlePublishing.publications.withType(MavenPublication::class.java).configureEach {
       it.pom(configure)
     }
   }
