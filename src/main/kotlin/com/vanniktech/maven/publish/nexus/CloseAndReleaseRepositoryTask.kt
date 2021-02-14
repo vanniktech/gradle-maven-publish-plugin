@@ -3,6 +3,7 @@ package com.vanniktech.maven.publish.nexus
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 
@@ -13,6 +14,7 @@ open class CloseAndReleaseRepositoryTask : DefaultTask() {
 
   @Option(option = "repository", description = "Specify which staging repository to close and release.")
   @Input
+  @Optional
   var stagingRepository: String? = null
 
   @SuppressWarnings("unused")
