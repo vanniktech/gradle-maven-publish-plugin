@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -38,12 +37,8 @@ class MavenPublishPluginIntegrationTest(
   @get:Rule val testProjectDir: TemporaryFolder = TemporaryFolder()
 
   private lateinit var repoFolder: File
-
-  @Before fun setUp() {
-    repoFolder = testProjectDir.newFolder("repo")
-
-    File("$FIXTURES/common").listFiles()?.forEach { it.copyRecursively(testProjectDir.root.resolve(it.name)) }
-  }
+  private lateinit var projectFolder: File
+  private lateinit var expectedFolder: File
 
   @Test fun generatesArtifactsAndDocumentationOnJavaProject() {
     setupFixture("passing_java_project")
@@ -184,6 +179,36 @@ class MavenPublishPluginIntegrationTest(
     assertPomContentMatches(linuxArtifactId)
   }
 
+  @Test fun kotlinMppArtifactIdReplacementWorksCorrectly1() {
+    setupFixture("passing_kotlin_mpp_project", "foo")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace", "-PPOM_ARTIFACT_ID=foo-bar")
+
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+
+    assertExpectedCommonArtifactsGenerated(artifactId = "foo-bar", artifactExtension = "module")
+    assertExpectedCommonArtifactsGenerated(artifactId = "foo-bar-metadata")
+    assertExpectedCommonArtifactsGenerated(artifactId = "foo-bar-jvm")
+    assertExpectedCommonArtifactsGenerated(artifactId = "foo-bar-nodejs")
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "klib", artifactId = "foo-bar-linux")
+  }
+
+  @Test fun kotlinMppArtifactIdReplacementWorksCorrectly2() {
+    setupFixture("passing_kotlin_mpp_project", "foo")
+
+    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace", "-PPOM_ARTIFACT_ID=bar-foo")
+
+    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+
+    assertExpectedCommonArtifactsGenerated(artifactId = "bar-foo", artifactExtension = "module")
+    assertExpectedCommonArtifactsGenerated(artifactId = "bar-foo-metadata")
+    assertExpectedCommonArtifactsGenerated(artifactId = "bar-foo-jvm")
+    assertExpectedCommonArtifactsGenerated(artifactId = "bar-foo-nodejs")
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "klib", artifactId = "bar-foo-linux")
+  }
+
   @Test
   fun generatesArtifactsAndDocumentationOnKotlinJsProject() {
     setupFixture("passing_kotlin_js_project")
@@ -234,8 +259,13 @@ class MavenPublishPluginIntegrationTest(
   /**
    * Copies test fixture into temp directory under test.
    */
-  private fun setupFixture(fixtureName: String) {
-    File("$FIXTURES/$fixtureName").copyRecursively(testProjectDir.root, overwrite = true)
+  private fun setupFixture(fixtureName: String, projectName: String = fixtureName) {
+    repoFolder = testProjectDir.newFolder("repo")
+    projectFolder = testProjectDir.newFolder(projectName)
+    expectedFolder = projectFolder.resolve(EXPECTED_DIR)
+
+    File("$FIXTURES/common").copyRecursively(projectFolder)
+    File("$FIXTURES/$fixtureName").copyRecursively(projectFolder, overwrite = true)
   }
 
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
@@ -288,7 +318,7 @@ class MavenPublishPluginIntegrationTest(
     val resolvedPomFile = artifactFolder.resolve(pomFileName)
     val content = resolvedPomFile.readText()
 
-    val expectedContent = testProjectDir.root.resolve(EXPECTED_DIR).resolve(pomFileName).readText()
+    val expectedContent = expectedFolder.resolve(pomFileName).readText()
     assertThat(content).isEqualToNormalizingWhitespace(expectedContent)
   }
 
@@ -306,7 +336,7 @@ class MavenPublishPluginIntegrationTest(
 
     val content = sourcesJar.getInputStream(entry)?.reader()?.buffered()?.readText()
 
-    val expected = testProjectDir.root.resolve(srcRoot).resolve(file)
+    val expected = projectFolder.resolve(srcRoot).resolve(file)
     val expectedContent = expected.readText()
 
     assertThat(content).describedAs(file).isNotBlank()
@@ -319,7 +349,7 @@ class MavenPublishPluginIntegrationTest(
   }
 
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
-      .withProjectDir(testProjectDir.root)
+      .withProjectDir(projectFolder)
       .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder")
       .withPluginClasspath()
     .forwardOutput()
