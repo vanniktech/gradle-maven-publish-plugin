@@ -170,9 +170,9 @@ class MavenPublishPluginIntegrationTest {
   @Test fun kotlinMppArtifactIdReplacementWorksCorrectly1() {
     setupFixture("passing_kotlin_mpp_project", "foo")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace", "-PPOM_ARTIFACT_ID=foo-bar")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "-PPOM_ARTIFACT_ID=foo-bar")
 
-    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
 
     assertExpectedCommonArtifactsGenerated(artifactId = "foo-bar", artifactExtension = "module")
@@ -185,9 +185,9 @@ class MavenPublishPluginIntegrationTest {
   @Test fun kotlinMppArtifactIdReplacementWorksCorrectly2() {
     setupFixture("passing_kotlin_mpp_project", "foo")
 
-    val result = executeGradleCommands(uploadArchivesTargetTaskName, "--info", "--stacktrace", "-PPOM_ARTIFACT_ID=bar-foo")
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "-PPOM_ARTIFACT_ID=bar-foo")
 
-    assertThat(result.task(":$uploadArchivesTargetTaskName")?.outcome).isEqualTo(SUCCESS)
+    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
     assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
 
     assertExpectedCommonArtifactsGenerated(artifactId = "bar-foo", artifactExtension = "module")
