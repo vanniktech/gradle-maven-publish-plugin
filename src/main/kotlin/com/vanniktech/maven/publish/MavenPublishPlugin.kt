@@ -8,23 +8,16 @@ import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.credentials.PasswordCredentials
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.SigningPlugin
-import org.gradle.util.VersionNumber
 
 open class MavenPublishPlugin : Plugin<Project> {
 
   override fun apply(p: Project) {
+    p.plugins.apply(MavenPublishBasePlugin::class.java)
+
     p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
-
-    val gradleVersion = VersionNumber.parse(p.gradle.gradleVersion)
-    if (gradleVersion < VersionNumber(MINIMUM_GRADLE_MAJOR, MINIMUM_GRADLE_MINOR, MINIMUM_GRADLE_MICRO, null)) {
-      throw IllegalArgumentException("You need gradle version 6.6.0 or higher")
-    }
-
-    p.plugins.apply(GradleMavenPublishPlugin::class.java)
 
     val pom = MavenPublishPom.fromProject(p)
     p.setCoordinates(pom)
@@ -100,10 +93,6 @@ open class MavenPublishPlugin : Plugin<Project> {
   }
 
   companion object {
-    const val MINIMUM_GRADLE_MAJOR = 6
-    const val MINIMUM_GRADLE_MINOR = 6
-    const val MINIMUM_GRADLE_MICRO = 0
-
     const val PLUGIN_DOKKA = "org.jetbrains.dokka"
   }
 }
