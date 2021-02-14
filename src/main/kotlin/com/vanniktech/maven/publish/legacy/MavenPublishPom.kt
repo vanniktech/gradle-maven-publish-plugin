@@ -1,5 +1,6 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.legacy
 
+import com.vanniktech.maven.publish.findOptionalProperty
 import org.gradle.api.Project
 
 internal data class MavenPublishPom(

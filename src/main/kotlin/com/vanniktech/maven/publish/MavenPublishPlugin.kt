@@ -1,7 +1,9 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.legacy.MavenPublishPom
 import com.vanniktech.maven.publish.legacy.configureArchivesTasks
 import com.vanniktech.maven.publish.legacy.checkProperties
+import com.vanniktech.maven.publish.legacy.configurePom
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
@@ -21,6 +23,7 @@ open class MavenPublishPlugin : Plugin<Project> {
 
     val pom = MavenPublishPom.fromProject(p)
     p.setCoordinates(pom)
+    p.configurePom(pom)
     p.checkProperties()
     p.configureArchivesTasks()
 
@@ -41,7 +44,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     configureDokka(p)
 
     p.afterEvaluate { project ->
-      configurePublishing(project, pom)
+      configurePublishing(project)
     }
 
     NexusConfigurer(p)
@@ -80,8 +83,8 @@ open class MavenPublishPlugin : Plugin<Project> {
   }
 
   @Suppress("Detekt.ComplexMethod")
-  private fun configurePublishing(project: Project, pom: MavenPublishPom) {
-    val configurer = MavenPublishConfigurer(project, pom)
+  private fun configurePublishing(project: Project) {
+    val configurer = MavenPublishConfigurer(project)
     when {
       project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> configurer.configureKotlinMppProject()
       project.plugins.hasPlugin("java-gradle-plugin") -> configurer.configureGradlePluginProject()

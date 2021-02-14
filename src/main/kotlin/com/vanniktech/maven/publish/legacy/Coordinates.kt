@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish.legacy
 
-import com.vanniktech.maven.publish.MavenPublishPom
 import com.vanniktech.maven.publish.publishing
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication

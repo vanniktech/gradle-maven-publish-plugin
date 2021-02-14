@@ -14,6 +14,8 @@ open class MavenPublishBasePlugin : Plugin<Project> {
     }
 
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
+
+    project.extensions.create("mavenPublishing", MavenPublishBaseExtension::class.java, project)
   }
 
   private companion object {

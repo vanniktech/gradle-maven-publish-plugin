@@ -16,6 +16,9 @@ internal fun Project.findOptionalProperty(propertyName: String) = findProperty(p
 internal inline val Project.publishExtension: MavenPublishPluginExtension
   get() = project.extensions.getByType(MavenPublishPluginExtension::class.java)
 
+internal inline val Project.baseExtension: MavenPublishBaseExtension
+  get() = project.extensions.getByType(MavenPublishBaseExtension::class.java)
+
 internal inline val Project.signing: SigningExtension
   get() = extensions.getByType(SigningExtension::class.java)
 
