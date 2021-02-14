@@ -46,6 +46,7 @@ described above.
 ```
 mavenPublish {
   # applies signing plugin and tells Gradle to sign all publications
+  # if the version ends with -SNASHOT signing will be skipped automatically if credentials are missing
   signAllPublications()
   # adds the Sonatype release/snapshot repo as targets based on version
   # uses Gradle credentials API for username/password
