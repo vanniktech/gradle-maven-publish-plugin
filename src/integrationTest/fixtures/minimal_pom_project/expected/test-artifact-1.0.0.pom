@@ -10,11 +10,4 @@
   <groupId>com.example</groupId>
   <artifactId>test-artifact</artifactId>
   <version>1.0.0</version>
-  <licenses>
-    <license />
-  </licenses>
-  <developers>
-    <developer />
-  </developers>
-  <scm />
 </project>

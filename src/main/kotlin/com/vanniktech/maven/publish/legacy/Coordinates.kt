@@ -1,16 +1,17 @@
 package com.vanniktech.maven.publish.legacy
 
-import com.vanniktech.maven.publish.MavenPublishPom
-import com.vanniktech.maven.publish.publishing
+import com.vanniktech.maven.publish.findOptionalProperty
+import com.vanniktech.maven.publish.gradlePublishing
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 
-internal fun Project.setCoordinates(pom: MavenPublishPom) {
-  group = pom.groupId
-  version = pom.version
+internal fun Project.setCoordinates() {
+  group = project.findOptionalProperty("GROUP") ?: group
+  version = project.findOptionalProperty("VERSION_NAME") ?: version
 
-  if (pom.artifactId != project.name) {
-    setArtifactId(pom.artifactId)
+  val artifactId = project.findOptionalProperty("POM_ARTIFACT_ID")
+  if (artifactId != null && artifactId != project.name) {
+    setArtifactId(artifactId)
   }
 }
 
@@ -20,7 +21,7 @@ internal fun Project.setCoordinates(pom: MavenPublishPom) {
  * replaced instead of just set.
  */
 private fun Project.setArtifactId(artifactId: String) {
-  publishing.publications.withType(MavenPublication::class.java).configureEach { publication ->
+  gradlePublishing.publications.withType(MavenPublication::class.java).configureEach { publication ->
     // skip the plugin marker artifact which has it's own artifact id based on the plugin id
     if (publication.name.endsWith("PluginMarkerMaven")) {
       @Suppress("LabeledExpression")
@@ -33,7 +34,7 @@ private fun Project.setArtifactId(artifactId: String) {
 
     // in Kotlin MPP projects some publications change our manually set artifactId again
     afterEvaluate {
-      publishing.publications.withType(MavenPublication::class.java).named(publication.name).configure { publication ->
+      gradlePublishing.publications.withType(MavenPublication::class.java).named(publication.name).configure { publication ->
         if (publication.artifactId != updatedArtifactId) {
           publication.artifactId = publication.artifactId.replace(projectName, artifactId)
         }

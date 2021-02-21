@@ -6,20 +6,18 @@ import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.util.concurrent.Callable
 
-internal fun Project.findMandatoryProperty(propertyName: String): String {
-  val value = this.findOptionalProperty(propertyName)
-  return requireNotNull(value) { "Please define \"$propertyName\" in your gradle.properties file" }
-}
-
 internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
 
-internal inline val Project.publishExtension: MavenPublishPluginExtension
+internal inline val Project.legacyExtension: MavenPublishPluginExtension
   get() = project.extensions.getByType(MavenPublishPluginExtension::class.java)
 
-internal inline val Project.signing: SigningExtension
+internal inline val Project.baseExtension: MavenPublishBaseExtension
+  get() = project.extensions.getByType(MavenPublishBaseExtension::class.java)
+
+internal inline val Project.gradleSigning: SigningExtension
   get() = extensions.getByType(SigningExtension::class.java)
 
-internal inline val Project.publishing: PublishingExtension
+internal inline val Project.gradlePublishing: PublishingExtension
   get() = extensions.getByType(PublishingExtension::class.java)
 
 internal inline val Project.isSigningRequired: Callable<Boolean>

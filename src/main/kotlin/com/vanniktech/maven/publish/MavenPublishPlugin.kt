@@ -2,36 +2,30 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.legacy.configureArchivesTasks
 import com.vanniktech.maven.publish.legacy.checkProperties
+import com.vanniktech.maven.publish.legacy.configurePom
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.credentials.PasswordCredentials
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.SigningPlugin
-import org.gradle.util.VersionNumber
 
 open class MavenPublishPlugin : Plugin<Project> {
 
   override fun apply(p: Project) {
+    p.plugins.apply(MavenPublishBasePlugin::class.java)
+
     p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
 
-    val gradleVersion = VersionNumber.parse(p.gradle.gradleVersion)
-    if (gradleVersion < VersionNumber(MINIMUM_GRADLE_MAJOR, MINIMUM_GRADLE_MINOR, MINIMUM_GRADLE_MICRO, null)) {
-      throw IllegalArgumentException("You need gradle version 6.6.0 or higher")
-    }
-
-    p.plugins.apply(GradleMavenPublishPlugin::class.java)
-
-    val pom = MavenPublishPom.fromProject(p)
-    p.setCoordinates(pom)
+    p.setCoordinates()
+    p.configurePom()
     p.checkProperties()
     p.configureArchivesTasks()
 
-    p.publishing.repositories.maven { repo ->
+    p.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
       repo.setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
       repo.credentials(PasswordCredentials::class.java)
@@ -48,7 +42,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     configureDokka(p)
 
     p.afterEvaluate { project ->
-      configurePublishing(project, pom)
+      configurePublishing(project)
     }
 
     NexusConfigurer(p)
@@ -56,11 +50,11 @@ open class MavenPublishPlugin : Plugin<Project> {
 
   private fun configureSigning(project: Project) {
     project.plugins.apply(SigningPlugin::class.java)
-    project.signing.setRequired(project.isSigningRequired)
+    project.gradleSigning.setRequired(project.isSigningRequired)
     project.afterEvaluate {
-      if (project.isSigningRequired.call() && project.project.publishExtension.releaseSigningEnabled) {
+      if (project.isSigningRequired.call() && project.project.legacyExtension.releaseSigningEnabled) {
         @Suppress("UnstableApiUsage")
-        project.signing.sign(project.publishing.publications)
+        project.gradleSigning.sign(project.gradlePublishing.publications)
       }
     }
   }
@@ -87,8 +81,8 @@ open class MavenPublishPlugin : Plugin<Project> {
   }
 
   @Suppress("Detekt.ComplexMethod")
-  private fun configurePublishing(project: Project, pom: MavenPublishPom) {
-    val configurer = MavenPublishConfigurer(project, pom)
+  private fun configurePublishing(project: Project) {
+    val configurer = MavenPublishConfigurer(project)
     when {
       project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> configurer.configureKotlinMppProject()
       project.plugins.hasPlugin("java-gradle-plugin") -> configurer.configureGradlePluginProject()
@@ -100,10 +94,6 @@ open class MavenPublishPlugin : Plugin<Project> {
   }
 
   companion object {
-    const val MINIMUM_GRADLE_MAJOR = 6
-    const val MINIMUM_GRADLE_MINOR = 6
-    const val MINIMUM_GRADLE_MICRO = 0
-
     const val PLUGIN_DOKKA = "org.jetbrains.dokka"
   }
 }

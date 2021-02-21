@@ -8,7 +8,8 @@ import org.gradle.api.Project
  * Extension for maven publish plugin.
  * @since 0.1.0
  */
-open class MavenPublishPluginExtension(project: Project) {
+@Suppress("UnnecessaryAbstractClass")
+abstract class MavenPublishPluginExtension(project: Project) {
   /**
    * The Android library variant that should be published. Projects not using any product flavors, that just want
    * to publish the release build type can use the default.

@@ -61,6 +61,10 @@ gradlePlugin {
       id = 'com.vanniktech.maven.publish'
       implementationClass = 'com.vanniktech.maven.publish.MavenPublishPlugin'
     }
+    mavenPublishBasePlugin {
+      id = 'com.vanniktech.maven.publish.base'
+      implementationClass = 'com.vanniktech.maven.publish.MavenPublishBasePlugin'
+    }
   }
 }
 
