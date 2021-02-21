@@ -7,7 +7,7 @@ import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 
 @Incubating
-open class MavenPublishBaseExtension(
+abstract class MavenPublishBaseExtension(
   private val project: Project
 ) {
 
