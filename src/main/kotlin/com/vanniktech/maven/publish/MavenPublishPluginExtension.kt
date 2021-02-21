@@ -8,6 +8,7 @@ import org.gradle.api.Project
  * Extension for maven publish plugin.
  * @since 0.1.0
  */
+@Suppress("UnnecessaryAbstractClass")
 abstract class MavenPublishPluginExtension(project: Project) {
   /**
    * The Android library variant that should be published. Projects not using any product flavors, that just want
