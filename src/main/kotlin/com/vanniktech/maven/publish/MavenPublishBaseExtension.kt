@@ -51,8 +51,10 @@ abstract class MavenPublishBaseExtension(
   }
 
   internal fun nexusOptions(action: Action<NexusOptions>) {
+    var nexusOptions = this.nexusOptions
     if (nexusOptions == null) {
       nexusOptions = NexusOptions(null, null, null, null)
+      this.nexusOptions = nexusOptions
 
       @Suppress("SwallowedException")
       try {
@@ -61,12 +63,12 @@ abstract class MavenPublishBaseExtension(
         project.rootProject.tasks.register("closeAndReleaseRepository", CloseAndReleaseRepositoryTask::class.java) {
           it.description = "Closes and releases an artifacts repository in Nexus"
           it.group = "release"
-          it.nexusOptions = nexusOptions!!
+          it.nexusOptions = nexusOptions
         }
       }
     }
 
-    action.execute(nexusOptions!!)
+    action.execute(nexusOptions)
   }
 
   /**
