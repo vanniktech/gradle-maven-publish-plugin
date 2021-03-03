@@ -140,8 +140,8 @@ mavenPublish {
     nexus {
         baseUrl = "https://your_nexus_instance" // defaults to "https://oss.sonatype.org/service/local/"
         stagingProfile = "net.example" // defaults to the SONATYPE_STAGING_PROFILE Gradle property or the GROUP Gradle Property if not set
-        respositoryUserName = "username" // defaults to the mavenCentralRepositoryUsername Gradle Property
-        respositoryPassword = "password" // defaults to the mavenCentralRepositoryPassword Gradle Property
+        repositoryUsername = "username" // defaults to the mavenCentralRepositoryUsername Gradle Property
+        repositoryPassword = "password" // defaults to the mavenCentralRepositoryPassword Gradle Property
     }
 }
 ```
