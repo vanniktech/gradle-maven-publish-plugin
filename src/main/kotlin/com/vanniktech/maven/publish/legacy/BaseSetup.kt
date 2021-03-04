@@ -1,11 +1,12 @@
 package com.vanniktech.maven.publish.legacy
 
+import com.vanniktech.maven.publish.SonatypeHost
 import com.vanniktech.maven.publish.baseExtension
 import com.vanniktech.maven.publish.findOptionalProperty
 import org.gradle.api.Project
 
 internal fun Project.configureMavenCentral() {
-  baseExtension.publishToMavenCentral()
+  baseExtension.publishToMavenCentral(SonatypeHost.DEFAULT)
 }
 
 internal fun Project.configurePom() {

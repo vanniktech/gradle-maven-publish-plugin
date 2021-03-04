@@ -28,23 +28,33 @@ abstract class MavenPublishBaseExtension(
    * `mavenCentralRepositoryUsername` and `mavenCentralRepositoryPassword`.
    *
    * The `closeAndReleaseRepository` task is automatically configured for Sonatype OSSRH using the same credentials.
+   *
+   * @param host the instance of Sonatype OSSRH to use
+   * @param stagingRepositoryId optional parameter to upload to a specific already created staging repository
    */
   @Incubating
-  fun publishToMavenCentral() {
+  fun publishToMavenCentral(host: SonatypeHost, stagingRepositoryId: String? = null) {
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
-      repo.setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+      if (stagingRepositoryId != null) {
+        repo.setUrl("${host.rootUrl}/service/local/staging/deployByRepositoryId/$stagingRepositoryId/")
+      } else {
+        repo.setUrl("${host.rootUrl}/service/local/staging/deploy/maven2/")
+      }
       repo.credentials(PasswordCredentials::class.java)
 
       project.afterEvaluate {
         if (it.version.toString().endsWith("SNAPSHOT")) {
-          repo.setUrl("https://oss.sonatype.org/content/repositories/snapshots/")
+          if (stagingRepositoryId != null) {
+            throw IllegalArgumentException("Staging repositories are not supported for SNAPSHOT versions.")
+          }
+          repo.setUrl("${host.rootUrl}/content/repositories/snapshots/")
         }
       }
     }
 
     nexusOptions {
-      it.baseUrl = "https://oss.sonatype.org/service/local/"
+      it.baseUrl = "${host.rootUrl}/service/local/"
       it.repositoryUsername = project.findOptionalProperty("mavenCentralRepositoryUsername")
       it.repositoryPassword = project.findOptionalProperty("mavenCentralRepositoryPassword")
     }
