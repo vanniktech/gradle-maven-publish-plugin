@@ -36,7 +36,7 @@ open class AndroidJavadocs : Javadoc() {
     // Workaround for the following error when running on on JDK 9+
     // "The code being documented uses modules but the packages defined in ... are in the unnamed module."
     if (JavaVersion.current() >= JavaVersion.VERSION_1_9) {
-      options.addStringOption("-release", "8");
+      options.addStringOption("-release", "8")
     }
   }
 }
