@@ -5,7 +5,6 @@ import com.vanniktech.maven.publish.nexus.NexusOptions
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
-import org.gradle.api.UnknownTaskException
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
@@ -67,15 +66,8 @@ abstract class MavenPublishBaseExtension(
       nexusOptions = checkNotNull(project.objects.newInstance(NexusOptions::class.java))
       this.nexusOptions = nexusOptions
 
-      @Suppress("SwallowedException")
-      try {
-        project.rootProject.tasks.named("closeAndReleaseRepository")
-      } catch (e: UnknownTaskException) {
-        project.rootProject.tasks.register("closeAndReleaseRepository", CloseAndReleaseRepositoryTask::class.java) {
-          it.description = "Closes and releases an artifacts repository in Nexus"
-          it.group = "release"
-          it.nexusOptions = nexusOptions
-        }
+      project.rootProject.tasks.named("closeAndReleaseRepository", CloseAndReleaseRepositoryTask::class.java) {
+        it.nexusOptions = nexusOptions
       }
     }
 
