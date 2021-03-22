@@ -64,7 +64,7 @@ abstract class MavenPublishBaseExtension(
   internal fun nexusOptions(action: Action<NexusOptions>) {
     var nexusOptions = this.nexusOptions
     if (nexusOptions == null) {
-      nexusOptions = NexusOptions(null, null, null, null)
+      nexusOptions = checkNotNull(project.objects.newInstance(NexusOptions::class.java))
       this.nexusOptions = nexusOptions
 
       @Suppress("SwallowedException")
