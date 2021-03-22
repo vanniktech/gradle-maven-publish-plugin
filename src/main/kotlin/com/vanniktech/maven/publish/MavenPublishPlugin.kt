@@ -4,13 +4,13 @@ import com.vanniktech.maven.publish.legacy.configureArchivesTasks
 import com.vanniktech.maven.publish.legacy.checkProperties
 import com.vanniktech.maven.publish.legacy.configureMavenCentral
 import com.vanniktech.maven.publish.legacy.configurePom
+import com.vanniktech.maven.publish.legacy.configureSigning
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
-import org.gradle.plugins.signing.SigningPlugin
 
 open class MavenPublishPlugin : Plugin<Project> {
 
@@ -23,25 +23,14 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.configurePom()
     p.checkProperties()
     p.configureMavenCentral()
+    p.configureSigning()
     p.configureArchivesTasks()
 
-    configureSigning(p)
     configureJavadoc(p)
     configureDokka(p)
 
     p.afterEvaluate { project ->
       configurePublishing(project)
-    }
-  }
-
-  private fun configureSigning(project: Project) {
-    project.plugins.apply(SigningPlugin::class.java)
-    project.gradleSigning.setRequired(project.isSigningRequired)
-    project.afterEvaluate {
-      if (project.isSigningRequired.call() && project.project.legacyExtension.releaseSigningEnabled) {
-        @Suppress("UnstableApiUsage")
-        project.gradleSigning.sign(project.gradlePublishing.publications)
-      }
     }
   }
 
