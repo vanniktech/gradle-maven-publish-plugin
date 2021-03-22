@@ -2,7 +2,16 @@ package com.vanniktech.maven.publish.legacy
 
 import com.vanniktech.maven.publish.baseExtension
 import com.vanniktech.maven.publish.findOptionalProperty
+import com.vanniktech.maven.publish.legacyExtension
 import org.gradle.api.Project
+
+internal fun Project.configureSigning() {
+  afterEvaluate {
+    if (legacyExtension.releaseSigningEnabled) {
+      baseExtension.signAllPublications()
+    }
+  }
+}
 
 internal fun Project.configurePom() {
   // without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
