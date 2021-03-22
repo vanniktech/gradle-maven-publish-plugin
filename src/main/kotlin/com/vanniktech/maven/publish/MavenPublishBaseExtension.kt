@@ -136,4 +136,20 @@ abstract class MavenPublishBaseExtension(
       it.pom(configure)
     }
   }
+
+  /**
+   * TODO .
+   */
+  @Incubating
+  fun configure(platform: Platform) {
+    val configurer = MavenPublishConfigurer(project)
+    return when (platform) {
+      is JavaLibrary -> configurer.configureJavaArtifacts(platform.sourcesJar, platform.javadocJar)
+      is GradlePlugin -> configurer.configureGradlePluginProject(platform.sourcesJar, platform.javadocJar)
+      is AndroidLibrary -> configurer.configureAndroidArtifacts(platform.variant, platform.sourcesJar, platform.javadocJar)
+      is KotlinMultiplatform -> configurer.configureKotlinMppProject(platform.javadocJar)
+      is KotlinJs -> configurer.configureKotlinJsProject(platform.sourcesJar, platform.javadocJar)
+      is KotlinJvm -> configurer.configureJavaArtifacts(platform.sourcesJar, platform.javadocJar)
+    }
+  }
 }

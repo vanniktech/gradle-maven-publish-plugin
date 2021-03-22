@@ -5,7 +5,6 @@ import com.android.build.gradle.LibraryPlugin
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.Project
 import org.gradle.api.internal.project.DefaultProject
-import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
@@ -36,13 +35,6 @@ class MavenPublishPluginTest {
   @Test fun javaLibraryPlugin() {
     project.plugins.apply(JavaLibraryPlugin::class.java)
     assert(project)
-  }
-
-  @Test fun javaLibraryPluginWithGroovy() {
-    project.plugins.apply(JavaLibraryPlugin::class.java)
-    project.plugins.apply(GroovyPlugin::class.java)
-    assert(project)
-    assertThat(project.tasks.getByName("groovydocJar")).isNotNull()
   }
 
   @Test fun androidLibraryPlugin() {
