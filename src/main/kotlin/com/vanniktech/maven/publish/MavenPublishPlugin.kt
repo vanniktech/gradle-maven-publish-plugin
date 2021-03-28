@@ -2,14 +2,13 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.legacy.configureArchivesTasks
 import com.vanniktech.maven.publish.legacy.checkProperties
+import com.vanniktech.maven.publish.legacy.configureMavenCentral
 import com.vanniktech.maven.publish.legacy.configurePom
 import com.vanniktech.maven.publish.legacy.configureSigning
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.JavaVersion
-import com.vanniktech.maven.publish.nexus.NexusConfigurer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 
@@ -23,20 +22,9 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.setCoordinates()
     p.configurePom()
     p.checkProperties()
+    p.configureMavenCentral()
     p.configureSigning()
     p.configureArchivesTasks()
-
-    p.gradlePublishing.repositories.maven { repo ->
-      repo.name = "mavenCentral"
-      repo.setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-      repo.credentials(PasswordCredentials::class.java)
-
-      p.afterEvaluate {
-        if (it.version.toString().endsWith("SNAPSHOT")) {
-          repo.setUrl("https://oss.sonatype.org/content/repositories/snapshots/")
-        }
-      }
-    }
 
     configureJavadoc(p)
     configureDokka(p)
@@ -44,8 +32,6 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.afterEvaluate { project ->
       configurePublishing(project)
     }
-
-    NexusConfigurer(p)
   }
 
   private fun configureJavadoc(project: Project) {

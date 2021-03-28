@@ -1,17 +1,15 @@
 package com.vanniktech.maven.publish.nexus
 
-import com.vanniktech.maven.publish.findOptionalProperty
 import org.gradle.api.tasks.Input
-import org.gradle.api.Project
 
-data class NexusOptions(
+open class NexusOptions {
   /**
    * Base url of the REST API of the nexus instance you are using.
    * Defaults to OSSRH ("https://oss.sonatype.org/service/local/").
    * @since 0.9.0
    */
   @Input
-  var baseUrl: String,
+  var baseUrl: String? = null
 
   /**
    * The groupId associated with your username.
@@ -19,7 +17,7 @@ data class NexusOptions(
    * @since 0.9.0
    */
   @Input
-  var stagingProfile: String?,
+  var stagingProfile: String? = null
 
   /**
    * The username used to access the Nexus REST API.
@@ -27,7 +25,7 @@ data class NexusOptions(
    * @since 0.9.0
    */
   @Input
-  var repositoryUsername: String?,
+  var repositoryUsername: String? = null
 
   /**
    * The username used to access the Nexus REST API.
@@ -35,18 +33,5 @@ data class NexusOptions(
    * @since 0.9.0
    */
   @Input
-  var repositoryPassword: String?
-) {
-  companion object {
-    private const val OSSRH_API_BASE_URL = "https://oss.sonatype.org/service/local/"
-
-    fun fromProject(project: Project): NexusOptions {
-      return NexusOptions(
-        OSSRH_API_BASE_URL,
-        project.findOptionalProperty("SONATYPE_STAGING_PROFILE") ?: project.findOptionalProperty("GROUP"),
-        project.findOptionalProperty("SONATYPE_NEXUS_USERNAME") ?: System.getenv("SONATYPE_NEXUS_USERNAME") ?: project.findOptionalProperty("mavenCentralRepositoryUsername"),
-        project.findOptionalProperty("SONATYPE_NEXUS_PASSWORD") ?: System.getenv("SONATYPE_NEXUS_PASSWORD") ?: project.findOptionalProperty("mavenCentralRepositoryPassword")
-      )
-    }
-  }
+  var repositoryPassword: String? = null
 }
