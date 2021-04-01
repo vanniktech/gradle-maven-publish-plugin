@@ -27,6 +27,16 @@ Information: [This plugin is also available on Gradle plugins](https://plugins.g
 
 Snapshots can be found [here](https://oss.sonatype.org/#nexus-search;quick~gradle-maven-publish-plugin).
 
+### Variants
+
+By default, the "release" variant will be used for publishing. Optionally, a specific variant can be defined by the plugin extension:
+ 
+```groovy
+mavenPublish {
+  androidVariantToPublish = "demoDebug"  // or use project.property('PUBLISH_VARIANT'), etc.
+}
+```
+
 ### Setting properties
 
 To configure the coordinates of your published artifacts as well as the POM this plugin
