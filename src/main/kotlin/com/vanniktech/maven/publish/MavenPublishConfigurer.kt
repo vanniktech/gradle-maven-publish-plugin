@@ -62,7 +62,11 @@ internal class MavenPublishConfigurer(
 
     val publication = project.gradlePublishing.publications.getByName(PUBLICATION_NAME) as MavenPublication
 
-    publication.from(project.components.getByName(project.legacyExtension.androidVariantToPublish))
+    project.legacyExtension.androidVariantToPublish.let { variant ->
+      project.components.findByName(variant)?.let {
+        publication.from(it)
+      } ?: throw MissingVariantException(variant)
+    }
 
     val androidSourcesJar = project.tasks.register("androidSourcesJar", AndroidSourcesJar::class.java)
     publication.artifact(androidSourcesJar)
@@ -91,6 +95,12 @@ internal class MavenPublishConfigurer(
       publication.artifact(goovydocsJar)
     }
   }
+
+  class MissingVariantException(name: String) : RuntimeException(
+    "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
+    " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
+    " extension object to something that matches the variant that ought to be published."
+  )
 
   companion object {
     const val PUBLICATION_NAME = "maven"
