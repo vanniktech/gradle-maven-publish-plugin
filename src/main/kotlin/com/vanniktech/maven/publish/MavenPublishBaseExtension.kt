@@ -19,6 +19,9 @@ abstract class MavenPublishBaseExtension(
 
   private var nexusOptions: NexusOptions? = null
 
+  private var mavenCentral: Pair<SonatypeHost, String?>? = null
+  private var platform: Platform? = null
+
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
    * automatically create a `publishAllPublicationsToMavenRepository` task as well as include it in the general
@@ -35,6 +38,18 @@ abstract class MavenPublishBaseExtension(
    */
   @Incubating
   fun publishToMavenCentral(host: SonatypeHost, stagingRepositoryId: String? = null) {
+    val mavenCentral = mavenCentral
+    if (mavenCentral != null) {
+      // ignore subsequent calls with the same arguments
+      if (mavenCentral.first == host || mavenCentral.second == stagingRepositoryId) {
+        return
+      }
+
+      throw IllegalArgumentException("Called publishToMavenCentral more than once with different arguments")
+    }
+
+    this.mavenCentral = host to stagingRepositoryId
+
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
       if (stagingRepositoryId != null) {
@@ -143,6 +158,17 @@ abstract class MavenPublishBaseExtension(
    */
   @Incubating
   fun configure(platform: Platform) {
+    if (this.platform != null) {
+      // ignore subsequent calls with the same arguments
+      if (this.platform == platform) {
+        return
+      }
+
+      throw IllegalArgumentException("Called configure(Platform) more than once with different arguments")
+    }
+
+    this.platform = platform
+
     val configurer = MavenPublishConfigurer(project)
     return when (platform) {
       is JavaLibrary -> configurer.configureJavaArtifacts(platform.sourcesJar, platform.javadocJar)
