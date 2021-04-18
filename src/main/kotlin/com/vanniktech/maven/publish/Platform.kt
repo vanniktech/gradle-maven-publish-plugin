@@ -1,7 +1,10 @@
 package com.vanniktech.maven.publish
 
 /**
- * TODO .
+ * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidLibrary] or
+ * [KotlinMultiplatform]. When a platform is configured through [MavenPublishBaseExtension.configure] the plugin
+ * will automatically set up the artifacts that should get published, including javadoc and sources jars depending
+ * on the option.
  */
 sealed class Platform {
   abstract val javadocJar: JavadocJar
@@ -136,11 +139,27 @@ data class KotlinJs(
 ) : Platform()
 
 /**
- * TODO .
+ * Specifies how the javadoc jar should be created.
  */
 sealed class JavadocJar {
+  /**
+   * Do not create a javadoc jar. This option is not compatible with Maven Central.
+   */
   object None : JavadocJar()
+
+  /**
+   * Creates an empty javadoc jar to satisfy maven central requirements.
+   */
   object Empty : JavadocJar()
+
+  /**
+   * Creates a regular javadoc jar using Gradle's default `javadoc` task.
+   */
   object Javadoc : JavadocJar()
+
+  /**
+   * Creates a javadoc jar using Dokka's output. The argument is the name of the dokka task that should be used
+   * for that purpose.
+   */
   data class Dokka(val taskName: String) : JavadocJar()
 }

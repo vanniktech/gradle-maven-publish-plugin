@@ -138,7 +138,8 @@ abstract class MavenPublishBaseExtension(
   }
 
   /**
-   * TODO .
+   * Configures a [Platform] which will automatically set up the artifacts that should get published, including javadoc
+   * and sources jars depending on the option.
    */
   @Incubating
   fun configure(platform: Platform) {

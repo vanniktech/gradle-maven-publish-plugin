@@ -1,5 +1,6 @@
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.dokka"
     id "com.vanniktech.maven.publish"
 }
 
@@ -27,6 +28,30 @@ kotlin {
         linuxMain {
             dependencies {
             }
+        }
+    }
+}
+
+dokka {
+    kotlinTasks {
+        // dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
+        // use sourceRoot instead (see below)
+        []
+    }
+    sourceRoot {
+        path = kotlin.sourceSets.commonMain.kotlin.srcDirs[0]
+        platforms = ["Common"]
+    }
+    if (kotlin.sourceSets.getNames().contains("jvmMain")) {
+        sourceRoot {
+            path = kotlin.sourceSets.jvmMain.kotlin.srcDirs[0]
+            platforms = ["JVM"]
+        }
+    }
+    if (kotlin.sourceSets.getNames().contains("jsMain")) {
+        sourceRoot {
+            path = kotlin.sourceSets.jsMain.kotlin.srcDirs[0]
+            platforms = ["js"]
         }
     }
 }
