@@ -127,6 +127,16 @@ or only build on certain machines.
 RELEASE_SIGNING_ENABLED=false
 ```
 
+### Android Variants
+
+By default, the "release" variant will be used for publishing. Optionally, a specific variant can be defined by the plugin extension:
+
+```groovy
+mavenPublish {
+  androidVariantToPublish = "demoDebug"  // or use project.property('PUBLISH_VARIANT'), etc.
+}
+```
+
 ### Releasing
 
 Once `publish` is called, and if you're using a Nexus repository, you'll have to make a release. This can
