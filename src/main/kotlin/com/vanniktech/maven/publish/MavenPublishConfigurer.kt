@@ -96,7 +96,7 @@ internal class MavenPublishConfigurer(
     }
   }
 
-  class MissingVariantException(name: String) : RuntimeException(
+  internal class MissingVariantException(name: String) : RuntimeException(
     "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
     " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
     " extension object to something that matches the variant that ought to be published."
