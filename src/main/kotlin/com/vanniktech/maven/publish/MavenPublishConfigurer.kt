@@ -57,8 +57,9 @@ internal class MavenPublishConfigurer(
   fun configureAndroidArtifacts(variant: String, sourcesJar: Boolean, javadocJar: JavadocJar) {
     val javadocJarTask = javadocJarTask(javadocJar, android = true)
 
+    val component = project.components.findByName(variant) ?: throw MissingVariantException(variant)
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
-      it.from(project.components.getByName(variant))
+      it.from(component)
       it.withSourcesJar(sourcesJar) { project.androidSourcesJar() }
       it.withJavadocJar(javadocJarTask)
     }
@@ -96,6 +97,12 @@ internal class MavenPublishConfigurer(
       is JavadocJar.Dokka -> project.dokkaJavadocJar(javadocJar)
     }
   }
+
+  internal class MissingVariantException(name: String) : RuntimeException(
+    "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
+    " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
+    " extension object to something that matches the variant that ought to be published."
+  )
 
   companion object {
     const val PUBLICATION_NAME = "maven"
