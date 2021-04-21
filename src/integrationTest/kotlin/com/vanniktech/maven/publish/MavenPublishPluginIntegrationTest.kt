@@ -45,7 +45,6 @@ class MavenPublishPluginIntegrationTest {
     val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
     assertExpectedCommonArtifactsGenerated()
     assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
@@ -69,36 +68,10 @@ class MavenPublishPluginIntegrationTest {
     val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
     assertExpectedCommonArtifactsGenerated()
     assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestClass.java", "src/main/java")
-  }
-
-  @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithGroovyProject() {
-    setupFixture("passing_java_library_with_groovy_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertArtifactGenerated(artifactFileNameWithExtension = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.groovy", "src/main/groovy")
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
-  }
-
-  @Test fun generatesArtifactsAndDocumentationOnGroovyProject() {
-    setupFixture("passing_groovy_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertArtifactGenerated(artifactFileNameWithExtension = "$TEST_POM_ARTIFACT_ID-$TEST_VERSION_NAME-groovydoc.jar")
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.groovy", "src/main/groovy")
   }
 
   @Test fun generatesArtifactsAndDocumentationOnKotlinJvmProject() {
@@ -107,7 +80,17 @@ class MavenPublishPluginIntegrationTest {
     val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
+    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnKotlinJvmWithDokkaProject() {
+    setupFixture("passing_kotlin_jvm_with_dokka_project")
+
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
+
+    assertExpectedTasksRanSuccessfully(result, hasDokka = true)
     assertExpectedCommonArtifactsGenerated()
     assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
@@ -130,7 +113,19 @@ class MavenPublishPluginIntegrationTest {
     val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "aar")
+    assertPomContentMatches()
+    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestActivity.kt", "src/main/java")
+    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestActivity.java", "src/main/java")
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinDokkaProject() {
+    setupFixture("passing_android_with_kotlin_dokka_project")
+
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
+
+    assertExpectedTasksRanSuccessfully(result, hasDokka = true)
+
     assertExpectedCommonArtifactsGenerated(artifactExtension = "aar")
     assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestActivity.kt", "src/main/java")
@@ -142,8 +137,7 @@ class MavenPublishPluginIntegrationTest {
 
     val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "--stacktrace")
 
-    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
-    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    assertExpectedTasksRanSuccessfully(result)
 
     // the general coordinate does not have an actual artifact like a jar or klib
     // so we are checking the module file twice as a workaround
@@ -172,9 +166,7 @@ class MavenPublishPluginIntegrationTest {
 
     val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "-PPOM_ARTIFACT_ID=foo-bar")
 
-    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
-    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
-
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated(artifactId = "foo-bar", artifactExtension = "module")
     assertExpectedCommonArtifactsGenerated(artifactId = "foo-bar-metadata")
     assertExpectedCommonArtifactsGenerated(artifactId = "foo-bar-jvm")
@@ -187,9 +179,7 @@ class MavenPublishPluginIntegrationTest {
 
     val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "-PPOM_ARTIFACT_ID=bar-foo")
 
-    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
-    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
-
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated(artifactId = "bar-foo", artifactExtension = "module")
     assertExpectedCommonArtifactsGenerated(artifactId = "bar-foo-metadata")
     assertExpectedCommonArtifactsGenerated(artifactId = "bar-foo-jvm")
@@ -197,14 +187,41 @@ class MavenPublishPluginIntegrationTest {
     assertExpectedCommonArtifactsGenerated(artifactExtension = "klib", artifactId = "bar-foo-linux")
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnKotlinMppWithDokkaProject() {
+    setupFixture("passing_kotlin_mpp_with_dokka_project")
+
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "--stacktrace")
+
+    assertExpectedTasksRanSuccessfully(result, hasDokka = true)
+
+    // the general coordinate does not have an actual artifact like a jar or klib
+    // so we are checking the module file twice as a workaround
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "module")
+    assertPomContentMatches()
+
+    val metadataArtifactId = "$TEST_POM_ARTIFACT_ID-metadata"
+    assertExpectedCommonArtifactsGenerated(artifactId = metadataArtifactId)
+    assertPomContentMatches(metadataArtifactId)
+
+    val jvmArtifactId = "$TEST_POM_ARTIFACT_ID-jvm"
+    assertExpectedCommonArtifactsGenerated(artifactId = jvmArtifactId)
+    assertPomContentMatches(jvmArtifactId)
+
+    val nodejsArtifactId = "$TEST_POM_ARTIFACT_ID-nodejs"
+    assertExpectedCommonArtifactsGenerated(artifactId = nodejsArtifactId)
+    assertPomContentMatches(nodejsArtifactId)
+
+    val linuxArtifactId = "$TEST_POM_ARTIFACT_ID-linux"
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "klib", artifactId = linuxArtifactId)
+    assertPomContentMatches(linuxArtifactId)
+  }
+
   @Test
   fun generatesArtifactsAndDocumentationOnKotlinJsProject() {
     setupFixture("passing_kotlin_js_project")
     val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace", "--stacktrace")
 
-    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
-    assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
-
+    assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
     assertExpectedCommonArtifactsGenerated(artifactExtension = "module")
     assertPomContentMatches()
@@ -256,8 +273,13 @@ class MavenPublishPluginIntegrationTest {
     File("$FIXTURES/$fixtureName").copyRecursively(projectFolder, overwrite = true)
   }
 
-  private fun assertExpectedTasksRanSuccessfully(result: BuildResult) {
+  private fun assertExpectedTasksRanSuccessfully(result: BuildResult, hasDokka: Boolean = false) {
     assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
+    if (hasDokka) {
+      assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+    } else {
+      assertThat(result.task(":dokka")).isNull()
+    }
   }
 
   /**
