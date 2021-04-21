@@ -19,6 +19,9 @@ abstract class MavenPublishBaseExtension(
 
   private var nexusOptions: NexusOptions? = null
 
+  private var mavenCentral: Pair<SonatypeHost, String?>? = null
+  private var platform: Platform? = null
+
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
    * automatically create a `publishAllPublicationsToMavenRepository` task as well as include it in the general
@@ -35,6 +38,18 @@ abstract class MavenPublishBaseExtension(
    */
   @Incubating
   fun publishToMavenCentral(host: SonatypeHost, stagingRepositoryId: String? = null) {
+    val mavenCentral = mavenCentral
+    if (mavenCentral != null) {
+      // Ignore subsequent calls with the same arguments.
+      if (mavenCentral.first == host || mavenCentral.second == stagingRepositoryId) {
+        return
+      }
+
+      throw IllegalArgumentException("Called publishToMavenCentral more than once with different arguments")
+    }
+
+    this.mavenCentral = host to stagingRepositoryId
+
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
       if (stagingRepositoryId != null) {
@@ -134,6 +149,34 @@ abstract class MavenPublishBaseExtension(
   fun pom(configure: Action<in MavenPom>) {
     project.gradlePublishing.publications.withType(MavenPublication::class.java).configureEach {
       it.pom(configure)
+    }
+  }
+
+  /**
+   * Configures a [Platform] which will automatically set up the artifacts that should get published, including javadoc
+   * and sources jars depending on the option.
+   */
+  @Incubating
+  fun configure(platform: Platform) {
+    if (this.platform != null) {
+      // Ignore subsequent calls with the same arguments.
+      if (this.platform == platform) {
+        return
+      }
+
+      throw IllegalArgumentException("Called configure(Platform) more than once with different arguments")
+    }
+
+    this.platform = platform
+
+    val configurer = MavenPublishConfigurer(project)
+    return when (platform) {
+      is JavaLibrary -> configurer.configureJavaArtifacts(platform.sourcesJar, platform.javadocJar)
+      is GradlePlugin -> configurer.configureGradlePluginProject(platform.sourcesJar, platform.javadocJar)
+      is AndroidLibrary -> configurer.configureAndroidArtifacts(platform.variant, platform.sourcesJar, platform.javadocJar)
+      is KotlinMultiplatform -> configurer.configureKotlinMppProject(platform.javadocJar)
+      is KotlinJs -> configurer.configureKotlinJsProject(platform.sourcesJar, platform.javadocJar)
+      is KotlinJvm -> configurer.configureJavaArtifacts(platform.sourcesJar, platform.javadocJar)
     }
   }
 }

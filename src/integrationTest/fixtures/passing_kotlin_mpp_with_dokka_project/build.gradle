@@ -1,0 +1,59 @@
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.dokka"
+    id "com.vanniktech.maven.publish"
+}
+
+kotlin {
+    jvm()
+    js("nodeJs")
+    linuxX64("linux")
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.61"
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.61"
+            }
+        }
+        nodeJsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:1.3.61"
+            }
+        }
+        linuxMain {
+            dependencies {
+            }
+        }
+    }
+}
+
+dokka {
+    kotlinTasks {
+        // dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
+        // use sourceRoot instead (see below)
+        []
+    }
+    sourceRoot {
+        path = kotlin.sourceSets.commonMain.kotlin.srcDirs[0]
+        platforms = ["Common"]
+    }
+    if (kotlin.sourceSets.getNames().contains("jvmMain")) {
+        sourceRoot {
+            path = kotlin.sourceSets.jvmMain.kotlin.srcDirs[0]
+            platforms = ["JVM"]
+        }
+    }
+    if (kotlin.sourceSets.getNames().contains("jsMain")) {
+        sourceRoot {
+            path = kotlin.sourceSets.jsMain.kotlin.srcDirs[0]
+            platforms = ["js"]
+        }
+    }
+}
+
+apply from: "maven-publish.gradle"

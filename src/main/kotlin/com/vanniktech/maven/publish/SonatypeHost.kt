@@ -10,5 +10,5 @@ enum class SonatypeHost(
   internal val rootUrl: String
 ) {
   DEFAULT("https://oss.sonatype.org"),
-  SO1("https://s01.oss.sonatype.org"),
+  S01("https://s01.oss.sonatype.org"),
 }
