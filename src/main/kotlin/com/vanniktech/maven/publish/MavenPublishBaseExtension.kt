@@ -40,7 +40,7 @@ abstract class MavenPublishBaseExtension(
   fun publishToMavenCentral(host: SonatypeHost, stagingRepositoryId: String? = null) {
     val mavenCentral = mavenCentral
     if (mavenCentral != null) {
-      // ignore subsequent calls with the same arguments
+      // Ignore subsequent calls with the same arguments.
       if (mavenCentral.first == host || mavenCentral.second == stagingRepositoryId) {
         return
       }
@@ -159,7 +159,7 @@ abstract class MavenPublishBaseExtension(
   @Incubating
   fun configure(platform: Platform) {
     if (this.platform != null) {
-      // ignore subsequent calls with the same arguments
+      // Ignore subsequent calls with the same arguments.
       if (this.platform == platform) {
         return
       }

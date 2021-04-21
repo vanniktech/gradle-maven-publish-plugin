@@ -81,7 +81,7 @@ data class AndroidLibrary(
 ) : Platform()
 
 /**
- * To be used for `org.jetbrains.kotlin.multiplatform` projects.  Uses the default publications that gets created by
+ * To be used for `org.jetbrains.kotlin.multiplatform` projects. Uses the default publications that gets created by
  * that plugin, including the automatically created `-sources` jars. Depending on the passed parameters for [javadocJar],
  * `-javadoc` will be added to the publications.
  *
@@ -92,7 +92,7 @@ data class AndroidLibrary(
 data class KotlinMultiplatform(
   override val javadocJar: JavadocJar = JavadocJar.Empty
 ) : Platform() {
-  // automatically added by Kotlin MPP plugin
+  // Automatically added by Kotlin MPP plugin.
   override val sourcesJar = false
 }
 

@@ -32,7 +32,7 @@ internal class MavenPublishConfigurer(
     project.gradlePublishing.publications.withType(MavenPublication::class.java).all {
       it.withJavadocJar(javadocJarTask)
 
-      // On Kotlin versions before 1.4.30 sources jars are only created for platforms, not the common artifact
+      // On Kotlin versions before 1.4.30 sources jars are only created for platforms, not the common artifact.
       if (it.name == "kotlinMultiplatform") {
         val sourceArtifact = it.artifacts.find { artifact -> artifact.classifier == "sources" }
         if (sourceArtifact == null) {
