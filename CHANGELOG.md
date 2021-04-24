@@ -11,6 +11,7 @@ Version 0.15.0 *(2021-04-24)*
   For safety reasons the project will fail when finding these. Use `mavenCentralRepositoryUsername` and `mavenCentralRepositoryPassword` Gradle properties or 
   `ORG_GRADLE_PROJECT_mavenCentralRepositoryUsername` and `ORG_GRADLE_PROJECT_mavenCentralRepositoryPassword` environment variables instead.
 - **BREAKING**: Removed deprecated `targets` API. See README for alternative ways of adding targets.
+- Behavior change: The dokka plugin is not applied by default anymore for Kotlin projects. When it is applied we will still use the dokka tasks to create the javadoc jar.
 - Support for `s01.oss.sonatype.org` by setting `sonatypeHost = "S01"`.
 - Introduce `com.vanniktech.maven.publish.base` plugin. This plugin contains all the functionality of the main plugin, but does not configure anything automatically. 
   Instead, it offers a public API, which is also used by the main plugin to do so yourself. This allows for more flexibility and to publish different project types. 
