@@ -90,7 +90,7 @@ data class AndroidLibrary @JvmOverloads constructor(
  * This does not include javadoc jars because there are no APIs for that available.
  */
 data class KotlinMultiplatform @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty
+  override val javadocJar: JavadocJar = JavadocJar.Empty()
 ) : Platform() {
   // Automatically added by Kotlin MPP plugin.
   override val sourcesJar = false
@@ -113,7 +113,7 @@ data class KotlinMultiplatform @JvmOverloads constructor(
  * This does not include javadoc jars because there are no APIs for that available.
   */
 data class KotlinJvm @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty,
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true
 ) : Platform()
 
@@ -135,7 +135,7 @@ data class KotlinJvm @JvmOverloads constructor(
  */
 
 data class KotlinJs @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty,
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true
 ) : Platform()
 
@@ -146,17 +146,26 @@ sealed class JavadocJar {
   /**
    * Do not create a javadoc jar. This option is not compatible with Maven Central.
    */
-  object None : JavadocJar()
+  class None : JavadocJar() {
+    override fun equals(other: Any?): Boolean = other is None
+    override fun hashCode(): Int = this::class.hashCode()
+  }
 
   /**
    * Creates an empty javadoc jar to satisfy maven central requirements.
    */
-  object Empty : JavadocJar()
+  class Empty : JavadocJar() {
+    override fun equals(other: Any?): Boolean = other is Empty
+    override fun hashCode(): Int = this::class.hashCode()
+  }
 
   /**
    * Creates a regular javadoc jar using Gradle's default `javadoc` task.
    */
-  object Javadoc : JavadocJar()
+  class Javadoc : JavadocJar() {
+    override fun equals(other: Any?): Boolean = other is Javadoc
+    override fun hashCode(): Int = this::class.hashCode()
+  }
 
   /**
    * Creates a javadoc jar using Dokka's output. The argument is the name of the dokka task that should be used

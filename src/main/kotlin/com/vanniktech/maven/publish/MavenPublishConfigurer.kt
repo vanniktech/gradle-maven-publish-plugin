@@ -91,9 +91,9 @@ internal class MavenPublishConfigurer(
 
   private fun javadocJarTask(javadocJar: JavadocJar, android: Boolean = false): TaskProvider<*>? {
     return when (javadocJar) {
-      JavadocJar.None -> null
-      JavadocJar.Empty -> project.emptyJavadocJar()
-      JavadocJar.Javadoc -> project.plainJavadocJar(android)
+      is JavadocJar.None -> null
+      is JavadocJar.Empty -> project.emptyJavadocJar()
+      is JavadocJar.Javadoc -> project.plainJavadocJar(android)
       is JavadocJar.Dokka -> project.dokkaJavadocJar(javadocJar)
     }
   }
