@@ -9,7 +9,7 @@ Version 0.15.0 *(2021-04-24)*
 - **BREAKING**: Removed deprecated `targets` API. See README for alternative ways of adding targets.
 - Support for `s01.oss.sonatype.org` by setting `sonatypeHost = "S01"`.
 - Introduce `com.vanniktech.maven.publish.base` plugin. This plugin contains all the functionality of the main plugin, but does not configure anything automatically. 
-  Instead, it offers a public API which is also used by the main plugin to do so yourself. This allows for more flexibility and to publish project types. 
+  Instead, it offers a public API, which is also used by the main plugin to do so yourself. This allows for more flexibility and to publish different project types. 
   The API is not final yet, but we're happy to receive feedback.
 
 Version 0.14.2 *(2021-02-14)*

@@ -118,9 +118,9 @@ about these properties in [Gradle's documentaion](https://docs.gradle.org/curren
 In case you want to use in memory signing keys, which works great for CI, you can specify them like this instead:
 ```properties
 signingInMemoryKey=exported_ascii_armored_key
-# optional
+# Optional.
 signingInMemoryKeyId=24875D73
-# if key was created with a password
+# If key was created with a password.
 signingInMemoryPassword=secret
 ```
 
@@ -156,7 +156,7 @@ mavenPublish {
 Once `publish` is called, and if you're using a Nexus repository, you'll have to make a release. This can
 be done manually by following the [release steps at sonatype](https://central.sonatype.org/pages/releasing-the-deployment.html).
 
-Alternatively, the plugin will create a `closeAndReleaseRepository` task that you can call after `publish`:
+Additionally, the plugin will create a `closeAndReleaseRepository` task that you can call after `publish`:
 
 ```shell
 # prepare your release by assigning a version (remove the -SNAPSHOT suffix)
@@ -183,11 +183,10 @@ allprojects {
         VERSION = "1.0.3-SNAPSHOT"
         
         mavenPublishing {
-            // alternatively "S01"
             publishToMavenCentral("DEFAULT")
             
-            // will only apply to non snapshot builds
-            // uses credentials as described above, supports both regular and in memory signing
+            // Will only apply to non snapshot builds.
+            // Uses credentials as described above, supports both regular and in memory signing.
             signAllPublications()
             
             pom {
