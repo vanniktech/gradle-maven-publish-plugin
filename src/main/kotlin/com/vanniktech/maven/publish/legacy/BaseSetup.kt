@@ -96,11 +96,11 @@ internal fun Project.configurePlatform() {
 
     when {
       plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") ->
-        baseExtension.configure(KotlinMultiplatform(defaultJavaDocOption() ?: JavadocJar.Empty))
+        baseExtension.configure(KotlinMultiplatform(defaultJavaDocOption() ?: JavadocJar.Empty()))
       plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
         baseExtension.configure(KotlinJvm(defaultJavaDocOption() ?: javadoc()))
       plugins.hasPlugin("org.jetbrains.kotlin.js") ->
-        baseExtension.configure(KotlinJs(defaultJavaDocOption() ?: JavadocJar.Empty))
+        baseExtension.configure(KotlinJs(defaultJavaDocOption() ?: JavadocJar.Empty()))
       plugins.hasPlugin("java-gradle-plugin") ->
         baseExtension.configure(GradlePlugin(defaultJavaDocOption() ?: javadoc()))
       plugins.hasPlugin("com.android.library") -> {
@@ -134,7 +134,7 @@ private fun Project.javadoc(): JavadocJar {
       options.addStringOption("Xdoclint:none", "-quiet")
     }
   }
-  return JavadocJar.Javadoc
+  return JavadocJar.Javadoc()
 }
 
 private fun Project.findDokkaTask(): String {

@@ -32,7 +32,7 @@ sealed class Platform {
  * }
  ```
  */
-data class JavaLibrary(
+data class JavaLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true
 ) : Platform()
@@ -50,7 +50,7 @@ data class JavaLibrary(
  * }
 ```
  */
-data class GradlePlugin(
+data class GradlePlugin @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true
 ) : Platform()
@@ -74,7 +74,7 @@ data class GradlePlugin(
  * ```
  * This does not include javadoc and sources jars because there are no APIs for that available.
  */
-data class AndroidLibrary(
+data class AndroidLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true,
   val variant: String = "release"
@@ -89,8 +89,8 @@ data class AndroidLibrary(
  * `n/a`
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinMultiplatform(
-  override val javadocJar: JavadocJar = JavadocJar.Empty
+data class KotlinMultiplatform @JvmOverloads constructor(
+  override val javadocJar: JavadocJar = JavadocJar.Empty()
 ) : Platform() {
   // Automatically added by Kotlin MPP plugin.
   override val sourcesJar = false
@@ -112,8 +112,8 @@ data class KotlinMultiplatform(
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
   */
-data class KotlinJvm(
-  override val javadocJar: JavadocJar = JavadocJar.Empty,
+data class KotlinJvm @JvmOverloads constructor(
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true
 ) : Platform()
 
@@ -133,8 +133,9 @@ data class KotlinJvm(
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinJs(
-  override val javadocJar: JavadocJar = JavadocJar.Empty,
+
+data class KotlinJs @JvmOverloads constructor(
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true
 ) : Platform()
 
@@ -145,17 +146,26 @@ sealed class JavadocJar {
   /**
    * Do not create a javadoc jar. This option is not compatible with Maven Central.
    */
-  object None : JavadocJar()
+  class None : JavadocJar() {
+    override fun equals(other: Any?): Boolean = other is None
+    override fun hashCode(): Int = this::class.hashCode()
+  }
 
   /**
    * Creates an empty javadoc jar to satisfy maven central requirements.
    */
-  object Empty : JavadocJar()
+  class Empty : JavadocJar() {
+    override fun equals(other: Any?): Boolean = other is Empty
+    override fun hashCode(): Int = this::class.hashCode()
+  }
 
   /**
    * Creates a regular javadoc jar using Gradle's default `javadoc` task.
    */
-  object Javadoc : JavadocJar()
+  class Javadoc : JavadocJar() {
+    override fun equals(other: Any?): Boolean = other is Javadoc
+    override fun hashCode(): Int = this::class.hashCode()
+  }
 
   /**
    * Creates a javadoc jar using Dokka's output. The argument is the name of the dokka task that should be used

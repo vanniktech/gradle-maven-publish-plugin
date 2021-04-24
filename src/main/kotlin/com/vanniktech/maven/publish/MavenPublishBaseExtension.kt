@@ -20,6 +20,7 @@ abstract class MavenPublishBaseExtension(
   private var nexusOptions: NexusOptions? = null
 
   private var mavenCentral: Pair<SonatypeHost, String?>? = null
+  private var signing: Boolean? = null
   private var platform: Platform? = null
 
   /**
@@ -37,6 +38,7 @@ abstract class MavenPublishBaseExtension(
    * @param stagingRepositoryId optional parameter to upload to a specific already created staging repository
    */
   @Incubating
+  @JvmOverloads
   fun publishToMavenCentral(host: SonatypeHost, stagingRepositoryId: String? = null) {
     val mavenCentral = mavenCentral
     if (mavenCentral != null) {
@@ -127,6 +129,14 @@ abstract class MavenPublishBaseExtension(
   // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
   @Incubating
   fun signAllPublications() {
+    val signing = signing
+    if (signing == true) {
+      // ignore subsequent calls with the same arguments
+      return
+    }
+
+    this.signing = true
+
     project.plugins.apply(SigningPlugin::class.java)
     project.gradleSigning.setRequired(project.isSigningRequired)
     project.gradleSigning.sign(project.gradlePublishing.publications)
