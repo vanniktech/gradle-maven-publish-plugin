@@ -32,7 +32,7 @@ sealed class Platform {
  * }
  ```
  */
-data class JavaLibrary(
+data class JavaLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true
 ) : Platform()
@@ -50,7 +50,7 @@ data class JavaLibrary(
  * }
 ```
  */
-data class GradlePlugin(
+data class GradlePlugin @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true
 ) : Platform()
@@ -74,7 +74,7 @@ data class GradlePlugin(
  * ```
  * This does not include javadoc and sources jars because there are no APIs for that available.
  */
-data class AndroidLibrary(
+data class AndroidLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true,
   val variant: String = "release"
@@ -89,7 +89,7 @@ data class AndroidLibrary(
  * `n/a`
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinMultiplatform(
+data class KotlinMultiplatform @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty
 ) : Platform() {
   // Automatically added by Kotlin MPP plugin.
@@ -112,7 +112,7 @@ data class KotlinMultiplatform(
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
   */
-data class KotlinJvm(
+data class KotlinJvm @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty,
   override val sourcesJar: Boolean = true
 ) : Platform()
@@ -133,7 +133,8 @@ data class KotlinJvm(
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinJs(
+
+data class KotlinJs @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty,
   override val sourcesJar: Boolean = true
 ) : Platform()
