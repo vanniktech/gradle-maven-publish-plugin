@@ -27,17 +27,17 @@ internal fun Project.checkProperties() {
       "https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories"
   }
   check(findOptionalProperty("SONATYPE_NEXUS_USERNAME") == null) {
-    "The property SONATYPE_NEXUS_USERNAME was removed. Use mavenCentralRepositoryUsername instead."
+    "The property SONATYPE_NEXUS_USERNAME was removed. Use mavenCentralUsername instead."
   }
   check(System.getenv("SONATYPE_NEXUS_USERNAME") == null) {
     "The env var SONATYPE_NEXUS_USERNAME was removed. Use the Gradle property " +
-      "mavenCentralRepositoryUsername or the env var ORG_GRADLE_PROJECT_mavenCentralRepositoryUsername instead."
+      "mavenCentralUsername or the env var ORG_GRADLE_PROJECT_mavenCentralUsername instead."
   }
   check(findOptionalProperty("SONATYPE_NEXUS_PASSWORD") == null) {
-    "The property SONATYPE_NEXUS_PASSWORD was removed. Use mavenCentralRepositoryPassword instead."
+    "The property SONATYPE_NEXUS_PASSWORD was removed. Use mavenCentralPassword instead."
   }
   check(System.getenv("SONATYPE_NEXUS_PASSWORD") == null) {
     "The env var SONATYPE_NEXUS_PASSWORD was removed. Use the Gradle property " +
-      "mavenCentralRepositoryPassword or the env var ORG_GRADLE_PROJECT_mavenCentralRepositoryPassword instead."
+      "mavenCentralPassword or the env var ORG_GRADLE_PROJECT_mavenCentralPassword instead."
   }
 }

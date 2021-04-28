@@ -30,7 +30,7 @@ abstract class MavenPublishBaseExtension(
    * repository instead.
    *
    * This expects you provide your Sonatype user name and password through Gradle properties called
-   * `mavenCentralRepositoryUsername` and `mavenCentralRepositoryPassword`.
+   * `mavenCentralUsername` and `mavenCentralPassword`.
    *
    * The `closeAndReleaseRepository` task is automatically configured for Sonatype OSSRH using the same credentials.
    *
@@ -73,8 +73,8 @@ abstract class MavenPublishBaseExtension(
 
     nexusOptions {
       it.baseUrl = "${host.rootUrl}/service/local/"
-      it.repositoryUsername = project.findOptionalProperty("mavenCentralRepositoryUsername")
-      it.repositoryPassword = project.findOptionalProperty("mavenCentralRepositoryPassword")
+      it.repositoryUsername = project.findOptionalProperty("mavenCentralUsername")
+      it.repositoryPassword = project.findOptionalProperty("mavenCentralPassword")
     }
   }
 
