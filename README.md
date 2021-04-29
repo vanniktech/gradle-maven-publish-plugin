@@ -78,9 +78,9 @@ allprojects {
 }
 ```
 
-The username and password for Sonatype OSS can be provided as Gradle properties called `mavenCentralRepositoryUsername` 
-and `mavenCentralRepositoryPassword` to avoid having to commit them. You can also supply them as environment variables
-called `ORG_GRADLE_PROJECT_mavenCentralRepositoryUsername` and `ORG_GRADLE_PROJECT_mavenCentralRepositoryPassword`.
+The username and password for Sonatype OSS can be provided as Gradle properties called `mavenCentralUsername`
+and `mavenCentralPassword` to avoid having to commit them. You can also supply them as environment variables
+called `ORG_GRADLE_PROJECT_mavenCentralUsername` and `ORG_GRADLE_PROJECT_mavenCentralPassword`.
 
 
 You can add additional repositories to publish to using the standard Gradle APIs:
