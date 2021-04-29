@@ -144,7 +144,7 @@ abstract class MavenPublishBaseExtension(
     val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
     if (inMemoryKey != null) {
       val inMemoryKeyId = project.findOptionalProperty("signingInMemoryKeyId")
-      val inMemoryKeyPassword = project.findOptionalProperty("signingInMemoryKeyPassword")
+      val inMemoryKeyPassword = project.findOptionalProperty("signingInMemoryKeyPassword") ?: ""
       project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId, inMemoryKey, inMemoryKeyPassword)
     }
   }
