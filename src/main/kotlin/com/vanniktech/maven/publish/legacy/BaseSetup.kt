@@ -14,6 +14,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
+import org.gradle.plugins.signing.SigningPlugin
 import org.jetbrains.dokka.gradle.DokkaTask
 
 internal fun Project.configureMavenCentral() {
@@ -23,6 +24,10 @@ internal fun Project.configureMavenCentral() {
 }
 
 internal fun Project.configureSigning() {
+  // Apply signing immediately. It is also applied by `signAllPublications` but the afterEvaluate means
+  // that it's APIs are not available for consumers without also using afterEvaluate.
+  plugins.apply(SigningPlugin::class.java)
+
   afterEvaluate {
     if (legacyExtension.releaseSigningEnabled) {
       baseExtension.signAllPublications()
