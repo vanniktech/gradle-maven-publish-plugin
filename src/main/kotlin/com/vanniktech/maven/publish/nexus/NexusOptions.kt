@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish.nexus
 
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
 open class NexusOptions {
   /**
@@ -17,6 +18,7 @@ open class NexusOptions {
    * @since 0.9.0
    */
   @Input
+  @Optional
   var stagingProfile: String? = null
 
   /**
