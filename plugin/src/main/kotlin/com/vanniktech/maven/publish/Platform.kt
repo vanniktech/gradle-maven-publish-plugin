@@ -1,5 +1,14 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
+import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.androidSourcesJar
+import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.emptySourcesJar
+import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
+import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
+import org.gradle.api.Project
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.TaskProvider
+
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidLibrary] or
  * [KotlinMultiplatform]. When a platform is configured through [MavenPublishBaseExtension.configure] the plugin
@@ -9,6 +18,8 @@ package com.vanniktech.maven.publish
 sealed class Platform {
   abstract val javadocJar: JavadocJar
   abstract val sourcesJar: Boolean
+
+  internal abstract fun configure(project: Project)
 }
 
 /**
@@ -35,7 +46,16 @@ sealed class Platform {
 data class JavaLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true
-) : Platform()
+) : Platform() {
+
+  override fun configure(project: Project) {
+    project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+      it.from(project.components.getByName("java"))
+      it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
+      it.withJavadocJar { project.javadocJarTask(javadocJar) }
+    }
+  }
+}
 
 /**
  * To be used for `java-gradle-plugin` projects. Uses the default publication that gets created by that plugin.
@@ -53,7 +73,17 @@ data class JavaLibrary @JvmOverloads constructor(
 data class GradlePlugin @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true
-) : Platform()
+) : Platform() {
+
+  override fun configure(project: Project) {
+    project.gradlePublishing.publications.withType(MavenPublication::class.java).all {
+      if (it.name == "pluginMaven") {
+        it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
+        it.withJavadocJar { project.javadocJarTask(javadocJar) }
+      }
+    }
+  }
+}
 
 /**
  * To be used for `com.android.library` projects. Applying this creates a publication for the component of the given
@@ -78,7 +108,19 @@ data class AndroidLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true,
   val variant: String = "release"
-) : Platform()
+) : Platform() {
+
+  override fun configure(project: Project) {
+    project.afterEvaluate {
+      val component = project.components.findByName(variant) ?: throw MissingVariantException(variant)
+      project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+        it.from(component)
+        it.withSourcesJar { project.androidSourcesJar(sourcesJar) }
+        it.withJavadocJar { project.javadocJarTask(javadocJar, android = true) }
+      }
+    }
+  }
+}
 
 /**
  * To be used for `org.jetbrains.kotlin.multiplatform` projects. Uses the default publications that gets created by
@@ -94,6 +136,22 @@ data class KotlinMultiplatform @JvmOverloads constructor(
 ) : Platform() {
   // Automatically added by Kotlin MPP plugin.
   override val sourcesJar = false
+
+  override fun configure(project: Project) {
+    val javadocJarTask = project.javadocJarTask(javadocJar)
+
+    project.gradlePublishing.publications.withType(MavenPublication::class.java).all {
+      it.withJavadocJar { javadocJarTask }
+
+      // On Kotlin versions before 1.4.30 sources jars are only created for platforms, not the common artifact.
+      if (it.name == "kotlinMultiplatform") {
+        val sourceArtifact = it.artifacts.find { artifact -> artifact.classifier == "sources" }
+        if (sourceArtifact == null) {
+          it.withSourcesJar { project.emptySourcesJar() }
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -115,7 +173,18 @@ data class KotlinMultiplatform @JvmOverloads constructor(
 data class KotlinJvm @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true
-) : Platform()
+) : Platform() {
+
+  override fun configure(project: Project) {
+    // Create publication, since Kotlin/JS doesn't provide one by default.
+    // https://youtrack.jetbrains.com/issue/KT-41582
+    project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+      it.from(project.components.getByName("java"))
+      it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
+      it.withJavadocJar { project.javadocJarTask(javadocJar) }
+    }
+  }
+}
 
 /**
  * To be used for `org.jetbrains.kotlin.js` projects. Applying this creates a publication for the component called
@@ -137,7 +206,18 @@ data class KotlinJvm @JvmOverloads constructor(
 data class KotlinJs @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true
-) : Platform()
+) : Platform() {
+
+  override fun configure(project: Project) {
+    // Create publication, since Kotlin/JS doesn't provide one by default.
+    // https://youtrack.jetbrains.com/issue/KT-41582
+    project.gradlePublishing.publications.create("mavenJs", MavenPublication::class.java) {
+      it.from(project.components.getByName("kotlin"))
+      it.withSourcesJar { project.kotlinSourcesJar(sourcesJar) }
+      it.withJavadocJar { project.javadocJarTask(javadocJar) }
+    }
+  }
+}
 
 /**
  * Specifies how the javadoc jar should be created.
@@ -173,3 +253,23 @@ sealed class JavadocJar {
    */
   data class Dokka(val taskName: String) : JavadocJar()
 }
+
+private const val PUBLICATION_NAME = "maven"
+
+private fun MavenPublication.withSourcesJar(factory: () -> TaskProvider<*>) {
+  val task = factory()
+  artifact(task)
+}
+
+private fun MavenPublication.withJavadocJar(factory: () -> TaskProvider<*>?) {
+  val task = factory()
+  if (task != null) {
+    artifact(task)
+  }
+}
+
+private class MissingVariantException(name: String) : RuntimeException(
+  "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
+    " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
+    " extension object to something that matches the variant that ought to be published."
+)
