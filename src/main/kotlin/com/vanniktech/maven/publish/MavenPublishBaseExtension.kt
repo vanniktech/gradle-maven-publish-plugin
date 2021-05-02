@@ -1,11 +1,8 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.nexus.CloseAndReleaseRepositoryTask
-import com.vanniktech.maven.publish.nexus.NexusOptions
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
-import org.gradle.api.UnknownTaskException
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
@@ -16,8 +13,6 @@ import org.gradle.plugins.signing.SigningPlugin
 abstract class MavenPublishBaseExtension(
   private val project: Project
 ) {
-
-  private var nexusOptions: NexusOptions? = null
 
   private var mavenCentral: Pair<SonatypeHost, String?>? = null
   private var signing: Boolean? = null
@@ -71,32 +66,11 @@ abstract class MavenPublishBaseExtension(
       }
     }
 
-    nexusOptions {
-      it.baseUrl = "${host.rootUrl}/service/local/"
-      it.repositoryUsername = project.findOptionalProperty("mavenCentralUsername")
-      it.repositoryPassword = project.findOptionalProperty("mavenCentralPassword")
-    }
-  }
-
-  internal fun nexusOptions(action: Action<NexusOptions>) {
-    var nexusOptions = this.nexusOptions
-    if (nexusOptions == null) {
-      nexusOptions = checkNotNull(project.objects.newInstance(NexusOptions::class.java))
-      this.nexusOptions = nexusOptions
-
-      @Suppress("SwallowedException")
-      try {
-        project.rootProject.tasks.named("closeAndReleaseRepository")
-      } catch (e: UnknownTaskException) {
-        project.rootProject.tasks.register("closeAndReleaseRepository", CloseAndReleaseRepositoryTask::class.java) {
-          it.description = "Closes and releases an artifacts repository in Nexus"
-          it.group = "release"
-          it.nexusOptions = nexusOptions
-        }
-      }
-    }
-
-    action.execute(nexusOptions)
+    project.rootExtension.configureCloseAndReleaseTask(
+      baseUrl = "${host.rootUrl}/service/local/",
+      repositoryUsername = project.findOptionalProperty("mavenCentralUsername"),
+      repositoryPassword = project.findOptionalProperty("mavenCentralPassword")
+    )
   }
 
   /**

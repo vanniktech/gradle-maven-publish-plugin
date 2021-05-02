@@ -3,6 +3,8 @@
 Version 0.16.0 *(In development)*
 ---------------------------------
 
+- The deprecated `nexusOptions` method was removed. `closeAndReleaseRepository` is automatically configured.
+
 Version 0.15.1 *(2021-05-02)*
 ---------------------------------
 
