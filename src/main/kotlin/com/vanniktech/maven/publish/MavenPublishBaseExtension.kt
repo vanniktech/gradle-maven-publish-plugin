@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.nexus.CloseAndReleaseRepositoryTask
 import com.vanniktech.maven.publish.nexus.NexusOptions
+import java.util.concurrent.Callable
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
@@ -138,7 +139,7 @@ abstract class MavenPublishBaseExtension(
     this.signing = true
 
     project.plugins.apply(SigningPlugin::class.java)
-    project.gradleSigning.setRequired(project.isSigningRequired)
+    project.gradleSigning.setRequired(Callable { !project.version.toString().contains("SNAPSHOT") })
     project.gradleSigning.sign(project.gradlePublishing.publications)
 
     val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
