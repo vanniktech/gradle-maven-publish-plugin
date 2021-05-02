@@ -1,8 +1,5 @@
 package com.vanniktech.maven.publish.nexus
 
-import com.vanniktech.maven.publish.nexus.model.TransitionRepositoryInput
-import com.vanniktech.maven.publish.nexus.model.ProfileRepositoriesResponse
-import com.vanniktech.maven.publish.nexus.model.Repository
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET

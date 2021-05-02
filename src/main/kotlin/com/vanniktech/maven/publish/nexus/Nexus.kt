@@ -1,8 +1,5 @@
 package com.vanniktech.maven.publish.nexus
 
-import com.vanniktech.maven.publish.nexus.model.Repository
-import com.vanniktech.maven.publish.nexus.model.TransitionRepositoryInput
-import com.vanniktech.maven.publish.nexus.model.TransitionRepositoryInputData
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
