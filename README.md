@@ -14,7 +14,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.1'
   }
 }
 
@@ -168,7 +168,7 @@ It assumes there's only one staging repository active when closeAndReleaseReposi
 
 # Base plugin
 
-Starting with version 0.15.0 there is a base plugin. This new plugin has the same capabilities as the main 
+Starting with version 0.15.0 there is a base plugin. This new plugin has the same capabilities as the main
 plugin but does not configure anything automatically. In the current stage the APIs are still marked with `@Incubating`
 so they might change.
 
@@ -181,14 +181,14 @@ allprojects {
     plugins.withId("com.vanniktech.maven.publish.base") {
         GROUP = "com.example.project"
         VERSION = "1.0.3-SNAPSHOT"
-        
+
         mavenPublishing {
             publishToMavenCentral("DEFAULT")
-            
+
             // Will only apply to non snapshot builds.
             // Uses credentials as described above, supports both regular and in memory signing.
             signAllPublications()
-            
+
             pom {
                 name = "My Library"
                 description = "A description of what my library does."

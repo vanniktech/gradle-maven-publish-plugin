@@ -3,24 +3,32 @@
 Version 0.16.0 *(In development)*
 ---------------------------------
 
+Version 0.15.1 *(2021-05-02)*
+---------------------------------
+
+- The `closeAndReleaseRepository` task was mistakenly expecting the wrong Gradle properties. The README and changelog also mentioned the wrong properties. The correct ones are `mavenCentralUsername` and `mavenCentralPassword` or for environment variables: `ORG_GRADLE_PROJECT_mavenCentralUsername` and `ORG_GRADLE_PROJECT_mavenCentralPassword`.
+- Fix `signing` not being configurable until `afterEvaluate`
+- Use empty string as in memory signing password when no password is specified
+- Fix `statingProfile` in `nexusOptions` not being optional which causes an error when running `closeAndReleaseRepository`
+
 
 Version 0.15.0 *(2021-04-24)*
 ---------------------------------
 
-- **BREAKING**: Removed support for deprecated `RELEASE_REPOSITORY_URL`, `SNAPSHOT_REPOSITORY_URL`, `SONATYPE_NEXUS_USERNAME`, `SONATYPE_NEXUS_PASSWORD` environment variables and properties. 
-  For safety reasons the project will fail when finding these. Use `mavenCentralRepositoryUsername` and `mavenCentralRepositoryPassword` Gradle properties or 
-  `ORG_GRADLE_PROJECT_mavenCentralRepositoryUsername` and `ORG_GRADLE_PROJECT_mavenCentralRepositoryPassword` environment variables instead.
+- **BREAKING**: Removed support for deprecated `RELEASE_REPOSITORY_URL`, `SNAPSHOT_REPOSITORY_URL`, `SONATYPE_NEXUS_USERNAME`, `SONATYPE_NEXUS_PASSWORD` environment variables and properties.
+  For safety reasons the project will fail when finding these. Use `mavenCentralUsername` and `mavenCentralPassword` Gradle properties or
+  `ORG_GRADLE_PROJECT_mavenCentralUsername` and `ORG_GRADLE_PROJECT_mavenCentralPassword` environment variables instead.
 - **BREAKING**: Removed deprecated `targets` API. See README for alternative ways of adding targets.
 - Behavior change: The dokka plugin is not applied by default anymore for Kotlin projects. When it is applied we will still use the dokka tasks to create the javadoc jar.
 - Support for `s01.oss.sonatype.org` by setting `sonatypeHost = "S01"`.
-- Introduce `com.vanniktech.maven.publish.base` plugin. This plugin contains all the functionality of the main plugin, but does not configure anything automatically. 
-  Instead, it offers a public API, which is also used by the main plugin to do so yourself. This allows for more flexibility and to publish different project types. 
+- Introduce `com.vanniktech.maven.publish.base` plugin. This plugin contains all the functionality of the main plugin, but does not configure anything automatically.
+  Instead, it offers a public API, which is also used by the main plugin to do so yourself. This allows for more flexibility and to publish different project types.
   The API is not final yet, but we're happy to receive feedback.
 
 Version 0.14.2 *(2021-02-14)*
 ---------------------------------
 
-- fix artifact id in Kotlin Multiplatform projects being incorrect 
+- fix artifact id in Kotlin Multiplatform projects being incorrect
 - fix `closeAndReleaseRepository` requiring callers to pass `--repository`
 
 Version 0.14.1 *(2021-02-11)*
