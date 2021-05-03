@@ -11,17 +11,6 @@ import java.io.File
 import java.util.zip.ZipFile
 
 class MavenPublishPluginIntegrationTest {
-  companion object {
-    const val FIXTURES = "src/integrationTest/fixtures"
-    const val EXPECTED_DIR = "expected"
-
-    const val TEST_GROUP = "com.example"
-    const val TEST_VERSION_NAME = "1.0.0"
-    const val TEST_POM_ARTIFACT_ID = "test-artifact"
-
-    const val TEST_TASK = "publishAllPublicationsToTestFolderRepository"
-  }
-
   @get:Rule val testProjectDir: TemporaryFolder = TemporaryFolder()
 
   private lateinit var repoFolder: File
@@ -363,4 +352,15 @@ class MavenPublishPluginIntegrationTest {
       .withPluginClasspath()
     .forwardOutput()
       .build()
+
+  companion object {
+    const val FIXTURES = "src/integrationTest/fixtures"
+    const val EXPECTED_DIR = "expected"
+
+    const val TEST_GROUP = "com.example"
+    const val TEST_VERSION_NAME = "1.0.0"
+    const val TEST_POM_ARTIFACT_ID = "test-artifact"
+
+    const val TEST_TASK = "publishAllPublicationsToTestFolderRepository"
+  }
 }

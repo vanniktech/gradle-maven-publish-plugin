@@ -1,11 +1,11 @@
 buildscript {
-  ext.kotlinVersion = '1.4.30'
-  ext.junitVersion = '4.13'
-  ext.assertjVersion = '3.15.0'
+  ext.kotlinVersion = '1.4.32'
+  ext.junitVersion = '4.13.2'
+  ext.assertjVersion = '3.19.0'
   ext.agpVersion = '3.6.0'
   ext.dokkaVersion = '0.9.18'
-  ext.retrofitVersion = '2.7.1'
-  ext.moshiVersion = '1.11.0'
+  ext.retrofitVersion = '2.9.0'
+  ext.moshiVersion = '1.12.0'
 
   repositories {
     mavenCentral()
@@ -15,11 +15,9 @@ buildscript {
 
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    classpath 'com.gradle.publish:plugin-publish-plugin:0.11.0'
-    classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
-    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.19.0'
-    classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.15.0'
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.12.0'
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.38.0'
+    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.20.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.1'
   }
 }
 
@@ -29,17 +27,15 @@ apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.vanniktech.code.quality.tools'
-apply plugin: 'com.vanniktech.android.junit.jacoco'
 apply plugin: "com.vanniktech.maven.publish"
-apply plugin: 'com.gradle.plugin-publish'
 apply from: "gradle/integration-test.gradle"
 
 codeQualityTools {
   ktlint {
-    toolVersion = '0.31.0'
+    toolVersion = '0.40.0'
   }
   detekt {
-    toolVersion = '1.0.0'
+    toolVersion = '1.16.0'
   }
   pmd {
     enabled = false
@@ -105,28 +101,9 @@ dependencies {
 
 sourceCompatibility = JavaVersion.VERSION_1_7
 
-signing {
-  if (project.hasProperty('SIGNING_PRIVATE_KEY') && project.hasProperty('SIGNING_PASSWORD')) {
-    useInMemoryPgpKeys(project.getProperty('SIGNING_PRIVATE_KEY'), project.getProperty('SIGNING_PASSWORD'))
-  }
-}
-
-pluginBundle {
-  website = POM_URL
-  vcsUrl = POM_SCM_URL
-
-  plugins {
-    mavenPublishPlugin {
-      displayName = POM_NAME
-      tags = ['gradle', 'android', 'kotlin', 'maven', 'publish', 'library']
-      description = POM_DESCRIPTION
-    }
-  }
-}
-
 wrapper {
-  gradleVersion = '5.4.1'
-  distributionType = Wrapper.DistributionType.ALL
+  gradleVersion = '7.0'
+  distributionType = Wrapper.DistributionType.BIN
 }
 
 configurations.all {
