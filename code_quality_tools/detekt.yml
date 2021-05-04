@@ -1,5 +1,3 @@
-failFast: true
-
 potential-bugs:
   UnsafeCast:
     active: false # We know what we're doing.
@@ -7,8 +5,6 @@ potential-bugs:
     active: false # We know what we're doing.
 
 style:
-  TopLevelPropertyNaming:
-    active: false
   MaxLineLength:
     active: false
   DataClassShouldBeImmutable:
@@ -40,4 +36,6 @@ comments:
   UndocumentedPublicFunction:
     active: false
   CommentOverPrivateFunction:
+    active: false
+  UndocumentedPublicProperty:
     active: false

@@ -96,6 +96,7 @@ internal fun Project.configurePom() {
   }
 }
 
+@Suppress("ComplexMethod")
 internal fun Project.configurePlatform() {
   afterEvaluate {
 
