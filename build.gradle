@@ -16,7 +16,7 @@ buildscript {
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.38.0'
-    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.20.0'
+    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.19.0'
     classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.1'
   }
 }
@@ -32,7 +32,7 @@ apply from: "gradle/integration-test.gradle"
 
 codeQualityTools {
   ktlint {
-    toolVersion = '0.40.0'
+    toolVersion = '0.31.0'
   }
   detekt {
     toolVersion = '1.16.0'
@@ -102,7 +102,7 @@ dependencies {
 sourceCompatibility = JavaVersion.VERSION_1_7
 
 wrapper {
-  gradleVersion = '7.0'
+  gradleVersion = '6.8.3'
   distributionType = Wrapper.DistributionType.BIN
 }
 

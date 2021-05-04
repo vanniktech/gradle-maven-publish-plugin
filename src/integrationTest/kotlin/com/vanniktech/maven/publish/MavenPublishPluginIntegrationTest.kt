@@ -347,11 +347,11 @@ class MavenPublishPluginIntegrationTest {
   }
 
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
-      .withProjectDir(projectFolder)
-      .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder")
-      .withPluginClasspath()
+    .withProjectDir(projectFolder)
+    .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder")
+    .withPluginClasspath()
     .forwardOutput()
-      .build()
+    .build()
 
   companion object {
     const val FIXTURES = "src/integrationTest/fixtures"
