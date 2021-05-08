@@ -90,6 +90,8 @@ class MavenPublishPluginTest {
     if (centralEnabled) {
       assertThat(uploadArchives).isNotNull()
     } else {
+      assertThat(project.tasks.findByName("publishAllPublicationsToMavenCentralRepository"))
+        .isNull()
       assertThat(uploadArchives).isNull()
     }
 
