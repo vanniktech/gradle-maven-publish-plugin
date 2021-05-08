@@ -60,6 +60,12 @@ class MavenPublishPluginTest {
     assert(project)
   }
 
+  @Test fun disableAutomaticCentralConfiguration() {
+    project.extensions.extraProperties.set("mavenPublish.automaticallyConfigureMavenCentral", "false")
+    project.plugins.apply("kotlin")
+    assert(project, false)
+  }
+
   private fun prepareAndroidLibraryProject(project: Project) {
     val extension = project.extensions.getByType(LibraryExtension::class.java)
     extension.compileSdkVersion(27)
@@ -70,7 +76,7 @@ class MavenPublishPluginTest {
   }
 
   // This does not assert anything but it's a good start.
-  private fun assert(project: Project) {
+  private fun assert(project: Project, centralEnabled: Boolean = true) {
     project.plugins.apply(MavenPublishPlugin::class.java)
 
     (project as DefaultProject).evaluate()
@@ -81,7 +87,11 @@ class MavenPublishPluginTest {
     assertThat(project.version).isNotNull()
 
     val uploadArchives = project.tasks.findByName("uploadArchives")
-    assertThat(uploadArchives).isNotNull()
+    if (centralEnabled) {
+      assertThat(uploadArchives).isNotNull()
+    } else {
+      assertThat(uploadArchives).isNull()
+    }
 
     val installArchives = project.tasks.findByName("installArchives")
     assertThat(installArchives).isNotNull()
