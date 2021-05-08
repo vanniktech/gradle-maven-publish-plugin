@@ -20,9 +20,15 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.setCoordinates()
     p.configurePom()
     p.checkProperties()
-    p.configureMavenCentral()
+
+    val enableCentral = p.findOptionalProperty("mavenPublish.automaticallyConfigureMavenCentral")
+      ?.toBoolean()
+      ?: true
+    if (enableCentral) {
+      p.configureMavenCentral()
+    }
     p.configureSigning()
-    p.configureArchivesTasks()
+    p.configureArchivesTasks(enableCentral)
     p.configurePlatform()
   }
 }
