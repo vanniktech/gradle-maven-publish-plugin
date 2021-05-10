@@ -19,7 +19,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 internal fun Project.configureMavenCentral() {
   afterEvaluate {
-    baseExtension.publishToMavenCentral(legacyExtension.sonatypeHost)
+    legacyExtension.sonatypeHost?.let { baseExtension.publishToMavenCentral(it) }
   }
 }
 
