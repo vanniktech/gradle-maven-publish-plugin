@@ -96,10 +96,8 @@ internal fun Project.configurePom() {
   }
 }
 
-@Suppress("ComplexMethod")
 internal fun Project.configurePlatform() {
   afterEvaluate {
-
     when {
       plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") ->
         baseExtension.configure(KotlinMultiplatform(defaultJavaDocOption() ?: JavadocJar.Empty()))

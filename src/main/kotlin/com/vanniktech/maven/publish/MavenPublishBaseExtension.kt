@@ -13,7 +13,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningPlugin
 
 @Incubating
-@Suppress("UnnecessaryAbstractClass")
 abstract class MavenPublishBaseExtension(
   private val project: Project
 ) {

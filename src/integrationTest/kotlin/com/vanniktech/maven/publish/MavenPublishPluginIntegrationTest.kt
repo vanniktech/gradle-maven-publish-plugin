@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import java.io.File
+import java.util.zip.ZipFile
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -7,8 +9,6 @@ import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import java.io.File
-import java.util.zip.ZipFile
 
 class MavenPublishPluginIntegrationTest {
   @get:Rule val testProjectDir: TemporaryFolder = TemporaryFolder()

@@ -1,10 +1,10 @@
 package com.vanniktech.maven.publish.tasks
 
 import com.android.build.gradle.LibraryExtension
+import java.io.File
 import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
-import java.io.File
 
 open class AndroidJavadocs : Javadoc() {
 

@@ -32,10 +32,10 @@ apply from: "gradle/integration-test.gradle"
 
 codeQualityTools {
   ktlint {
-    toolVersion = '0.31.0'
+    toolVersion = '0.41.0'
   }
   detekt {
-    toolVersion = '1.16.0'
+    enabled = false
   }
   pmd {
     enabled = false

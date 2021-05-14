@@ -1,7 +1,7 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.legacy.configureArchivesTasks
 import com.vanniktech.maven.publish.legacy.checkProperties
+import com.vanniktech.maven.publish.legacy.configureArchivesTasks
 import com.vanniktech.maven.publish.legacy.configureMavenCentral
 import com.vanniktech.maven.publish.legacy.configurePlatform
 import com.vanniktech.maven.publish.legacy.configurePom

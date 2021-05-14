@@ -4,7 +4,6 @@ package com.vanniktech.maven.publish.legacy
 import com.vanniktech.maven.publish.findOptionalProperty
 import org.gradle.api.Project
 
-@Suppress("ComplexMethod")
 internal fun Project.checkProperties() {
   check(findOptionalProperty("RELEASE_REPOSITORY_URL") == null) {
     "Modifying the default repository by setting the RELEASE_REPOSITORY_URL property " +
