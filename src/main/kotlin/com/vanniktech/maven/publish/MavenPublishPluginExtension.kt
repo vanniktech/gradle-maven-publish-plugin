@@ -21,7 +21,7 @@ abstract class MavenPublishPluginExtension(
    *
    * @Since 0.15.0
    */
-  var sonatypeHost: SonatypeHost = SonatypeHost.DEFAULT
+  var sonatypeHost: SonatypeHost? = SonatypeHost.DEFAULT
 
   /**
    * The Android library variant that should be published. Projects not using any product flavors, that just want
