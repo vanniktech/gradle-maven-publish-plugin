@@ -2,8 +2,8 @@ package com.vanniktech.maven.publish
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.util.VersionNumber
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
+import org.gradle.util.VersionNumber
 
 open class MavenPublishBasePlugin : Plugin<Project> {
 

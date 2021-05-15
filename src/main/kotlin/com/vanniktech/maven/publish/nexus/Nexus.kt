@@ -1,12 +1,9 @@
 package com.vanniktech.maven.publish.nexus
 
-import com.vanniktech.maven.publish.nexus.model.Repository
-import com.vanniktech.maven.publish.nexus.model.TransitionRepositoryInput
-import com.vanniktech.maven.publish.nexus.model.TransitionRepositoryInputData
+import java.io.IOException
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.io.IOException
 
 internal class Nexus(
   baseUrl: String,
@@ -37,7 +34,6 @@ internal class Nexus(
     return profileRepositoriesResponse.body()?.data
   }
 
-  @Suppress("ThrowsCount")
   private fun findStagingRepository(): Repository {
     val allRepositories = getProfileRepositories() ?: emptyList()
 
@@ -52,15 +48,19 @@ internal class Nexus(
     }
 
     if (candidateRepositories.isEmpty()) {
-      throw IllegalArgumentException("No matching staging repository found. You can can explicitly choose one by " +
-        "passing it as an option like this \"./gradlew closeAndReleaseRepository --repository=comexample-123\". " +
-        "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}")
+      throw IllegalArgumentException(
+        "No matching staging repository found. You can can explicitly choose one by " +
+          "passing it as an option like this \"./gradlew closeAndReleaseRepository --repository=comexample-123\". " +
+          "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}"
+      )
     }
 
     if (candidateRepositories.size > 1) {
-      throw IllegalArgumentException("More than 1 matching staging repository found. You can can explicitly choose " +
-        "one by passing it as an option like this \"./gradlew closeAndReleaseRepository --repository comexample-123\". " +
-        "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}")
+      throw IllegalArgumentException(
+        "More than 1 matching staging repository found. You can can explicitly choose " +
+          "one by passing it as an option like this \"./gradlew closeAndReleaseRepository --repository comexample-123\". " +
+          "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}"
+      )
     }
     return candidateRepositories[0]
   }

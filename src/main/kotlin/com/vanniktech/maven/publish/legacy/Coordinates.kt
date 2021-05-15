@@ -24,7 +24,6 @@ private fun Project.setArtifactId(artifactId: String) {
   gradlePublishing.publications.withType(MavenPublication::class.java).configureEach { publication ->
     // skip the plugin marker artifact which has it's own artifact id based on the plugin id
     if (publication.name.endsWith("PluginMarkerMaven")) {
-      @Suppress("LabeledExpression")
       return@configureEach
     }
 

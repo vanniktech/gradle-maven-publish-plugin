@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish
 
+import java.util.concurrent.Callable
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
@@ -9,7 +10,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningPlugin
 
 @Incubating
-@Suppress("UnnecessaryAbstractClass")
 abstract class MavenPublishBaseExtension(
   private val project: Project
 ) {
@@ -112,7 +112,7 @@ abstract class MavenPublishBaseExtension(
     this.signing = true
 
     project.plugins.apply(SigningPlugin::class.java)
-    project.gradleSigning.setRequired(project.isSigningRequired)
+    project.gradleSigning.setRequired(Callable { !project.version.toString().contains("SNAPSHOT") })
     project.gradleSigning.sign(project.gradlePublishing.publications)
 
     val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
@@ -140,7 +140,6 @@ abstract class MavenPublishBaseExtension(
    * Configures the POM through Gradle properties.
    */
   @Incubating
-  @Suppress("ComplexMethod", "LongMethod")
   fun pomFromGradleProperties() {
     if (pomFromProperties == true) {
       // ignore subsequent calls with the same arguments

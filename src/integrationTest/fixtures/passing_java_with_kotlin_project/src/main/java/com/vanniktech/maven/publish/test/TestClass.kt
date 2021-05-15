@@ -9,7 +9,6 @@ object TestClass {
    *
    * @param args Command-line arguments passed to the program.
    */
-  @Suppress("UnusedPrivateMember")
   fun main(args: Array<String?>?) {
     System.out.println("Hello World!")
   }

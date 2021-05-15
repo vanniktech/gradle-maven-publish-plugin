@@ -6,7 +6,6 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 
-@Suppress("UnstableApiUsage")
 open class SourcesJar : Jar() {
 
   init {

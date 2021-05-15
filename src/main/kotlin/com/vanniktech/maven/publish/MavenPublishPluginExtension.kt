@@ -6,7 +6,6 @@ import org.gradle.api.Project
  * Extension for maven publish plugin.
  * @since 0.1.0
  */
-@Suppress("UnnecessaryAbstractClass")
 abstract class MavenPublishPluginExtension(
   private val project: Project
 ) {

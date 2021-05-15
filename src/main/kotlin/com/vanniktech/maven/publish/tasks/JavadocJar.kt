@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 
-@Suppress("UnstableApiUsage")
 open class JavadocJar : Jar() {
 
   init {

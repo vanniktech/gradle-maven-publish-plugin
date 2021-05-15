@@ -4,7 +4,6 @@ import com.vanniktech.maven.publish.nexus.CloseAndReleaseRepositoryTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 
-@Suppress("UnnecessaryAbstractClass")
 internal abstract class MavenPublishRootExtension(
   private val project: Project
 ) {

@@ -111,7 +111,7 @@ data class KotlinMultiplatform @JvmOverloads constructor(
  * }
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
-  */
+ */
 data class KotlinJvm @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true

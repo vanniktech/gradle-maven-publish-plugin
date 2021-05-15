@@ -22,7 +22,6 @@ open class CloseAndReleaseRepositoryTask : DefaultTask() {
   @Optional
   var stagingRepository: String? = null
 
-  @SuppressWarnings("unused")
   @TaskAction
   fun closeAndReleaseRepository() {
     val baseUrl = requireNotNull(baseUrl) {

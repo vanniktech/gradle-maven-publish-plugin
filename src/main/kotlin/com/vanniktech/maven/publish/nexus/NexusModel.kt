@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.nexus.model
+package com.vanniktech.maven.publish.nexus
 
 import com.squareup.moshi.JsonClass
 
