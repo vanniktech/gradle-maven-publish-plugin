@@ -1,12 +1,9 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.nexus.CloseAndReleaseRepositoryTask
-import com.vanniktech.maven.publish.nexus.NexusOptions
 import java.util.concurrent.Callable
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
-import org.gradle.api.UnknownTaskException
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
@@ -17,10 +14,9 @@ abstract class MavenPublishBaseExtension(
   private val project: Project
 ) {
 
-  private var nexusOptions: NexusOptions? = null
-
   private var mavenCentral: Pair<SonatypeHost, String?>? = null
   private var signing: Boolean? = null
+  private var pomFromProperties: Boolean? = null
   private var platform: Platform? = null
 
   /**
@@ -71,32 +67,11 @@ abstract class MavenPublishBaseExtension(
       }
     }
 
-    nexusOptions {
-      it.baseUrl = "${host.rootUrl}/service/local/"
-      it.repositoryUsername = project.findOptionalProperty("mavenCentralUsername")
-      it.repositoryPassword = project.findOptionalProperty("mavenCentralPassword")
-    }
-  }
-
-  internal fun nexusOptions(action: Action<NexusOptions>) {
-    var nexusOptions = this.nexusOptions
-    if (nexusOptions == null) {
-      nexusOptions = checkNotNull(project.objects.newInstance(NexusOptions::class.java))
-      this.nexusOptions = nexusOptions
-
-      @Suppress("SwallowedException")
-      try {
-        project.rootProject.tasks.named("closeAndReleaseRepository")
-      } catch (e: UnknownTaskException) {
-        project.rootProject.tasks.register("closeAndReleaseRepository", CloseAndReleaseRepositoryTask::class.java) {
-          it.description = "Closes and releases an artifacts repository in Nexus"
-          it.group = "release"
-          it.nexusOptions = nexusOptions
-        }
-      }
-    }
-
-    action.execute(nexusOptions)
+    project.rootExtension.configureCloseAndReleaseTask(
+      baseUrl = "${host.rootUrl}/service/local/",
+      repositoryUsername = project.findOptionalProperty("mavenCentralUsername"),
+      repositoryPassword = project.findOptionalProperty("mavenCentralPassword")
+    )
   }
 
   /**
@@ -129,7 +104,6 @@ abstract class MavenPublishBaseExtension(
   // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
   @Incubating
   fun signAllPublications() {
-    val signing = signing
     if (signing == true) {
       // ignore subsequent calls with the same arguments
       return
@@ -159,6 +133,78 @@ abstract class MavenPublishBaseExtension(
   fun pom(configure: Action<in MavenPom>) {
     project.gradlePublishing.publications.withType(MavenPublication::class.java).configureEach {
       it.pom(configure)
+    }
+  }
+
+  /**
+   * Configures the POM through Gradle properties.
+   */
+  @Incubating
+  fun pomFromGradleProperties() {
+    if (pomFromProperties == true) {
+      // ignore subsequent calls with the same arguments
+      return
+    }
+
+    this.pomFromProperties = true
+
+    // without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
+    project.afterEvaluate {
+      pom { pom ->
+        val name = project.findOptionalProperty("POM_NAME")
+        if (name != null) {
+          pom.name.set(name)
+        }
+        val description = project.findOptionalProperty("POM_DESCRIPTION")
+        if (description != null) {
+          pom.description.set(description)
+        }
+        val url = project.findOptionalProperty("POM_URL")
+        if (url != null) {
+          pom.url.set(url)
+        }
+        val inceptionYear = project.findOptionalProperty("POM_INCEPTION_YEAR")
+        if (inceptionYear != null) {
+          pom.inceptionYear.set(inceptionYear)
+        }
+
+        val scmUrl = project.findOptionalProperty("POM_SCM_URL")
+        val scmConnection = project.findOptionalProperty("POM_SCM_CONNECTION")
+        val scmDeveloperConnection = project.findOptionalProperty("POM_SCM_DEV_CONNECTION")
+        if (scmUrl != null || scmConnection != null || scmDeveloperConnection != null) {
+          pom.scm {
+            it.url.set(scmUrl)
+            it.connection.set(scmConnection)
+            it.developerConnection.set(scmDeveloperConnection)
+          }
+        }
+
+        val licenseName = project.findOptionalProperty("POM_LICENCE_NAME")
+        val licenseUrl = project.findOptionalProperty("POM_LICENCE_URL")
+        val licenseDistribution = project.findOptionalProperty("POM_LICENCE_DIST")
+        if (licenseName != null || licenseUrl != null || licenseDistribution != null) {
+          pom.licenses { licenses ->
+            licenses.license {
+              it.name.set(licenseName)
+              it.url.set(licenseUrl)
+              it.distribution.set(licenseDistribution)
+            }
+          }
+        }
+
+        val developerId = project.findOptionalProperty("POM_DEVELOPER_ID")
+        val developerName = project.findOptionalProperty("POM_DEVELOPER_NAME")
+        val developerUrl = project.findOptionalProperty("POM_DEVELOPER_URL")
+        if (developerId != null || developerName != null || developerUrl != null) {
+          pom.developers { developers ->
+            developers.developer {
+              it.id.set(developerId)
+              it.name.set(developerName)
+              it.url.set(developerUrl)
+            }
+          }
+        }
+      }
     }
   }
 

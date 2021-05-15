@@ -1,7 +1,5 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.nexus.NexusOptions
-import org.gradle.api.Action
 import org.gradle.api.Project
 
 /**
@@ -20,7 +18,7 @@ abstract class MavenPublishPluginExtension(
    *
    * @Since 0.15.0
    */
-  var sonatypeHost: SonatypeHost = SonatypeHost.DEFAULT
+  var sonatypeHost: SonatypeHost? = SonatypeHost.DEFAULT
 
   /**
    * The Android library variant that should be published. Projects not using any product flavors, that just want
@@ -38,13 +36,4 @@ abstract class MavenPublishPluginExtension(
    * @Since 0.9.0
    */
   var releaseSigningEnabled: Boolean = project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean() ?: true
-
-  /**
-   * Allows to promote repositories without connecting to the nexus instance console.
-   * @since 0.9.0
-   */
-  @Deprecated("Nexus is configured automatically")
-  fun nexus(action: Action<NexusOptions>) {
-    project.baseExtension.nexusOptions(action)
-  }
 }

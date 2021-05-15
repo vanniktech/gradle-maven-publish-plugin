@@ -9,7 +9,6 @@ internal class Nexus(
   baseUrl: String,
   username: String,
   password: String,
-  private val stagingProfile: String?,
   private val stagingRepository: String?
 ) {
   private val service by lazy {
@@ -42,10 +41,10 @@ internal class Nexus(
       throw IllegalArgumentException("No staging repository prefixed with. Make sure you called \"./gradlew publish\".")
     }
 
-    val candidateRepositories = when {
-      stagingRepository != null -> allRepositories.filter { it.repositoryId == stagingRepository }
-      stagingProfile != null -> allRepositories.filter { it.repositoryId.startsWith(stagingProfile.replace(".", "")) }
-      else -> allRepositories
+    val candidateRepositories = if (stagingRepository != null) {
+      allRepositories.filter { it.repositoryId == stagingRepository }
+    } else {
+      allRepositories
     }
 
     if (candidateRepositories.isEmpty()) {
