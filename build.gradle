@@ -72,10 +72,10 @@ dependencies {
   testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
   testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
   // for non test kit tests
-  testRuntime "com.android.tools.build:gradle:$agpVersion"
-  testRuntime "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-  testRuntime "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
-  testRuntime "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
+  testImplementation "com.android.tools.build:gradle:$agpVersion"
+  testImplementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+  testImplementation "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
+  testImplementation "org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion"
 }
 
 tasks.withType(PluginUnderTestMetadata).configureEach {
