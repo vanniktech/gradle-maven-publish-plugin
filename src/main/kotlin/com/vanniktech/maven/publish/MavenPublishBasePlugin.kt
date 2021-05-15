@@ -13,6 +13,8 @@ open class MavenPublishBasePlugin : Plugin<Project> {
       error("You need Gradle version 6.6.0 or higher")
     }
 
+    project.rootProject.plugins.apply(MavenPublishRootPlugin::class.java)
+
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
 
     project.extensions.create("mavenPublishing", MavenPublishBaseExtension::class.java, project)
