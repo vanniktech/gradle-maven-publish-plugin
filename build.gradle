@@ -16,7 +16,7 @@ buildscript {
   dependencies {
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.38.0'
-    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.19.0'
+    classpath "org.jlleitschuh.gradle:ktlint-gradle:10.0.0"
     classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.1'
   }
 }
@@ -26,29 +26,12 @@ apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'com.vanniktech.code.quality.tools'
+apply plugin: "org.jlleitschuh.gradle.ktlint"
 apply plugin: "com.vanniktech.maven.publish"
 apply from: "gradle/integration-test.gradle"
 
-codeQualityTools {
-  ktlint {
-    toolVersion = '0.41.0'
-  }
-  detekt {
-    enabled = false
-  }
-  pmd {
-    enabled = false
-  }
-  checkstyle {
-    enabled = false
-  }
-  cpd {
-    enabled = false
-  }
-  errorProne {
-    enabled = false
-  }
+ktlint {
+  version = "0.41.0"
 }
 
 gradlePlugin {
@@ -67,7 +50,6 @@ gradlePlugin {
 repositories {
   mavenCentral()
   google()
-  jcenter()
 }
 
 dependencies {
