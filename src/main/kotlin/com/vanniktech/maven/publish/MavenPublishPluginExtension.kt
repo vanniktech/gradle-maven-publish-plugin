@@ -36,4 +36,11 @@ abstract class MavenPublishPluginExtension(
    * @Since 0.9.0
    */
   var releaseSigningEnabled: Boolean = project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean() ?: true
+
+  /**
+   * It is forbidden to add Java 8 and Android references link in the androidJavaDocs task
+   *
+   * @Since 0.16.0
+   */
+  var disableAndroidJavaDocsAddReferencesLinks: Boolean = false
 }

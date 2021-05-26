@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish.tasks
 
 import com.android.build.gradle.LibraryExtension
+import com.vanniktech.maven.publish.legacyExtension
 import java.io.File
 import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.javadoc.Javadoc
@@ -30,8 +31,10 @@ open class AndroidJavadocs : Javadoc() {
 
     // Append Java 8 and Android references
     val options = options as StandardJavadocDocletOptions
-    options.links("https://developer.android.com/reference")
-    options.links("https://docs.oracle.com/javase/8/docs/api/")
+    if (!project.legacyExtension.disableAndroidJavaDocsAddReferencesLinks) {
+      options.links("https://developer.android.com/reference")
+      options.links("https://docs.oracle.com/javase/8/docs/api/")
+    }
 
     // Workaround for the following error when running on on JDK 9+
     // "The code being documented uses modules but the packages defined in ... are in the unnamed module."
