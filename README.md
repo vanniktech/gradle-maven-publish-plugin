@@ -20,6 +20,19 @@ buildscript {
 
 apply plugin: "com.vanniktech.maven.publish"
 ```
+kts syntax:
+```kotlin
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.vanniktech:gradle-maven-publish-plugin:0.15.1")
+    }
+}
+
+apply(plugin = "com.vanniktech.maven.publish")
+```
 
 Snapshots can be found [here](https://oss.sonatype.org/#nexus-search;quick~gradle-maven-publish-plugin).
 
