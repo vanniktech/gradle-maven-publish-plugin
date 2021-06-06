@@ -91,7 +91,7 @@ abstract class MavenPublishBaseExtension(
    * # optional
    * signingInMemoryKeyId=24875D73
    * # if key was created with a password
-   * signingInMemoryPassword=secret
+   * signingInMemoryKeyPassword=secret
    * ```
    * `gpg2 --export-secret-keys --armor KEY_ID` can be used to export they key for this. The exported key is taken
    * without the first line and without the last 2 lines, all line breaks should be removed as well. The in memory

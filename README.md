@@ -121,7 +121,7 @@ signingInMemoryKey=exported_ascii_armored_key
 # Optional.
 signingInMemoryKeyId=24875D73
 # If key was created with a password.
-signingInMemoryPassword=secret
+signingInMemoryKeyPassword=secret
 ```
 
 These properties can also be provided as environment variables by prefixing them with `ORG_GRADLE_PROJECT_`

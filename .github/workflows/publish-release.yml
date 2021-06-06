@@ -25,7 +25,7 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
-          ORG_GRADLE_PROJECT_signingInMemoryPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Publish release
         run: ./gradlew closeAndReleaseRepository --no-daemon --no-parallel
