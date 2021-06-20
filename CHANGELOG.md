@@ -1,6 +1,6 @@
 # Change Log
 
-Version 0.16.0 *(In development)*
+Version 0.16.0 *(2021-06-20)*
 ---------------------------------
 
 - Add `pomFromGradleProperties` API to base plugin. This configures the pom in the same way the regular plugin does.
