@@ -11,6 +11,7 @@ import com.vanniktech.maven.publish.baseExtension
 import com.vanniktech.maven.publish.legacyExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.SigningPlugin
@@ -73,14 +74,29 @@ private fun Project.defaultJavaDocOption(): JavadocJar? {
 private fun Project.javadoc(): JavadocJar {
   tasks.withType(Javadoc::class.java).configureEach {
     val options = it.options as StandardJavadocDocletOptions
-    if (JavaVersion.current().isJava9Compatible) {
+    val javaVersion = javaVersion()
+    if (javaVersion.isJava9Compatible) {
       options.addBooleanOption("html5", true)
     }
-    if (JavaVersion.current().isJava8Compatible) {
+    if (javaVersion.isJava8Compatible) {
       options.addStringOption("Xdoclint:none", "-quiet")
     }
   }
   return JavadocJar.Javadoc()
+}
+
+private fun Project.javaVersion(): JavaVersion {
+  try {
+    val extension = project.extensions.findByType(JavaPluginExtension::class.java)
+    if (extension != null) {
+      val toolchain = extension.toolchain
+      val version = toolchain.languageVersion.forUseAtConfigurationTime().get().asInt()
+      return JavaVersion.toVersion(version)
+    }
+  } catch (t: Throwable) {
+    // ignore failures and fallback to java version in which Gradle is running
+  }
+  return JavaVersion.current()
 }
 
 private fun Project.findDokkaTask(): String {
