@@ -56,12 +56,19 @@ internal class MavenPublishConfigurer(
 
   fun configureAndroidArtifacts(variant: String, sourcesJar: Boolean, javadocJar: JavadocJar) {
     val javadocJarTask = javadocJarTask(javadocJar, android = true)
+    val sourcesJarTask = if (sourcesJar) {
+      project.androidSourcesJar()
+    } else {
+      null
+    }
 
-    val component = project.components.findByName(variant) ?: throw MissingVariantException(variant)
-    project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
-      it.from(component)
-      it.withSourcesJar(sourcesJar) { project.androidSourcesJar() }
-      it.withJavadocJar(javadocJarTask)
+    project.afterEvaluate {
+      val component = project.components.findByName(variant) ?: throw MissingVariantException(variant)
+      project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+        it.from(component)
+        it.withSourcesJar(sourcesJar) { sourcesJarTask!! }
+        it.withJavadocJar(javadocJarTask)
+      }
     }
   }
 
