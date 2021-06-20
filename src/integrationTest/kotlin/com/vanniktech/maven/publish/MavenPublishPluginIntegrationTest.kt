@@ -51,6 +51,17 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithToolchainProject() {
+    setupFixture("passing_java_library_with_toolchain_project")
+
+    val result = executeGradleCommands(TEST_TASK, "--info", "--stacktrace")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
+    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
+  }
+
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithKotlinProject() {
     setupFixture("passing_java_library_with_kotlin_project")
 
