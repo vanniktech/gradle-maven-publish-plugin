@@ -179,9 +179,22 @@ abstract class MavenPublishBaseExtension(
           }
         }
 
-        val licenseName = project.findOptionalProperty("POM_LICENCE_NAME")
-        val licenseUrl = project.findOptionalProperty("POM_LICENCE_URL")
-        val licenseDistribution = project.findOptionalProperty("POM_LICENCE_DIST")
+        val licenceName = project.findOptionalProperty("POM_LICENCE_NAME")
+        val licenceUrl = project.findOptionalProperty("POM_LICENCE_URL")
+        val licenceDistribution = project.findOptionalProperty("POM_LICENCE_DIST")
+        if (licenceName != null || licenceUrl != null || licenceDistribution != null) {
+          pom.licenses { licences ->
+            licences.license {
+              it.name.set(licenceName)
+              it.url.set(licenceUrl)
+              it.distribution.set(licenceDistribution)
+            }
+          }
+        }
+
+        val licenseName = project.findOptionalProperty("POM_LICENSE_NAME")
+        val licenseUrl = project.findOptionalProperty("POM_LICENSE_URL")
+        val licenseDistribution = project.findOptionalProperty("POM_LICENSE_DIST")
         if (licenseName != null || licenseUrl != null || licenseDistribution != null) {
           pom.licenses { licenses ->
             licenses.license {
