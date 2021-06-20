@@ -39,9 +39,9 @@ POM_DESCRIPTION=A description of what my library does.
 POM_INCEPTION_YEAR=2020
 POM_URL=https://github.com/username/mylibrary/
 
-POM_LICENCE_NAME=The Apache Software License, Version 2.0
-POM_LICENCE_URL=https://www.apache.org/licenses/LICENSE-2.0.txt
-POM_LICENCE_DIST=repo
+POM_LICENSE_NAME=The Apache Software License, Version 2.0
+POM_LICENSE_URL=https://www.apache.org/licenses/LICENSE-2.0.txt
+POM_LICENSE_DIST=repo
 
 POM_SCM_URL=https://github.com/username/mylibrary/
 POM_SCM_CONNECTION=scm:git:git://github.com/username/mylibrary.git
