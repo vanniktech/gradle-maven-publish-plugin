@@ -82,6 +82,7 @@ The username and password for Sonatype OSS can be provided as Gradle properties 
 and `mavenCentralPassword` to avoid having to commit them. You can also supply them as environment variables
 called `ORG_GRADLE_PROJECT_mavenCentralUsername` and `ORG_GRADLE_PROJECT_mavenCentralPassword`.
 
+To remove the default repository set `sonatypeHost` to `null`.
 
 You can add additional repositories to publish to using the standard Gradle APIs:
 
@@ -214,6 +215,10 @@ allprojects {
                     developerConnection = "scm:git:ssh://git@github.com/username/mylibrary.git"
                 }
             }
+            
+            // Alternatively to the DSL based POM configuration above you can define them
+            // in Gradle properties
+            pomFromGradleProperties()
         }
     }
 }
