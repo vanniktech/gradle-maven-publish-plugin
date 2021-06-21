@@ -22,7 +22,6 @@ open class MavenPublishPlugin : Plugin<Project> {
     p.checkProperties()
     p.configureMavenCentral()
     p.configureSigning()
-    p.configureArchivesTasks()
     p.configurePlatform()
   }
 }

@@ -79,10 +79,10 @@ class MavenPublishPluginTest {
     assertThat(project.group).isNotNull()
     assertThat(project.version).isNotNull()
 
-    val uploadArchives = project.tasks.findByName("uploadArchives")
+    val uploadArchives = project.tasks.findByName("publish")
     assertThat(uploadArchives).isNotNull()
 
-    val installArchives = project.tasks.findByName("installArchives")
+    val installArchives = project.tasks.findByName("publishToMavenLocal")
     assertThat(installArchives).isNotNull()
   }
 }
