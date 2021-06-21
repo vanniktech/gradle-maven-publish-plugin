@@ -20,7 +20,7 @@ jobs:
           java-version: 1.8
 
       - name: Upload release
-        run: ./gradlew uploadArchives --no-daemon --no-parallel
+        run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-daemon --no-parallel
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
