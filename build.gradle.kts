@@ -89,8 +89,6 @@ dependencies {
   testImplementation("org.jetbrains.dokka:dokka-android-gradle-plugin:${Version.dokka}")
 }
 
-
-
 tasks.withType(PluginUnderTestMetadata::class.java).configureEach {
   // for test kit tests
   pluginClasspath.from(configurations.compileOnly)
@@ -111,7 +109,6 @@ tasks.named("wrapper") {
   gradleVersion = "6.8.3"
   distributionType = Wrapper.DistributionType.BIN
 }
-
 
 configurations.all {
   resolutionStrategy {
