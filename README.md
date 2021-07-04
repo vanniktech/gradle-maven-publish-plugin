@@ -14,7 +14,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.16.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.17.0'
   }
 }
 
@@ -215,7 +215,7 @@ allprojects {
                     developerConnection = "scm:git:ssh://git@github.com/username/mylibrary.git"
                 }
             }
-            
+
             // Alternatively to the DSL based POM configuration above you can define them
             // in Gradle properties
             pomFromGradleProperties()
