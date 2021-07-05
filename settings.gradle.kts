@@ -3,3 +3,4 @@ pluginManagement {
     gradlePluginPortal()
   }
 }
+include(":plugin")
