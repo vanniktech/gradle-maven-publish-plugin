@@ -111,9 +111,11 @@ can be configured via:
 signing.keyId=12345678
 signing.password=some_password
 signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
+mavenCentralUsername=userToken
+mavenCentralPassword=passwordToken
 ```
 
-It's best to place them inside your home directory, `$HOME/.gradle/gradle.properties`. You can find more information
+It's best to place them inside your home directory (for windows %UserProfile%), `$HOME/.gradle/gradle.properties`. You can find more information
 about these properties in [Gradle's documentaion](https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials).
 
 In case you want to use in memory signing keys, which works great for CI, you can specify them like this instead:
