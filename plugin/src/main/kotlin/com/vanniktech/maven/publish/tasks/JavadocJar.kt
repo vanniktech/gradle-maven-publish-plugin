@@ -12,9 +12,18 @@ open class JavadocJar : Jar() {
   }
 
   internal companion object {
-    internal fun Project.emptyJavadocJar(): TaskProvider<*> = tasks.register("emptyJavadocJar", JavadocJar::class.java)
+    internal fun Project.javadocJarTask(javadocJar: JavadocJarOption, android: Boolean = false): TaskProvider<*>? {
+      return when (javadocJar) {
+        is JavadocJarOption.None -> null
+        is JavadocJarOption.Empty -> emptyJavadocJar()
+        is JavadocJarOption.Javadoc -> plainJavadocJar(android)
+        is JavadocJarOption.Dokka -> dokkaJavadocJar(javadocJar)
+      }
+    }
 
-    internal fun Project.plainJavadocJar(android: Boolean): TaskProvider<*> {
+    private fun Project.emptyJavadocJar(): TaskProvider<*> = tasks.register("emptyJavadocJar", JavadocJar::class.java)
+
+    private fun Project.plainJavadocJar(android: Boolean): TaskProvider<*> {
       return if (android) {
         val androidJavadoc = tasks.register("androidJavadoc", AndroidJavadocs::class.java)
         tasks.register("androidJavadocJar", JavadocJar::class.java) {
@@ -30,7 +39,7 @@ open class JavadocJar : Jar() {
       }
     }
 
-    internal fun Project.dokkaJavadocJar(options: JavadocJarOption.Dokka): TaskProvider<*> {
+    private fun Project.dokkaJavadocJar(options: JavadocJarOption.Dokka): TaskProvider<*> {
       return tasks.register("dokkaJavadocJar", JavadocJar::class.java) {
         val task = tasks.named(options.taskName)
         it.dependsOn(task)

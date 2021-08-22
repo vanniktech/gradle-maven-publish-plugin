@@ -15,20 +15,34 @@ open class SourcesJar : Jar() {
   internal companion object {
     internal fun Project.emptySourcesJar(): TaskProvider<*> = tasks.register("emptySourcesJar", SourcesJar::class.java)
 
-    internal fun Project.androidSourcesJar(): TaskProvider<*> {
+    internal fun Project.androidSourcesJar(sourcesJar: Boolean): TaskProvider<*> {
+      if (!sourcesJar) {
+        return emptySourcesJar()
+      }
+
       return tasks.register("androidSourcesJar", SourcesJar::class.java) {
         val androidExtension = extensions.getByType(LibraryExtension::class.java)
         it.from(androidExtension.sourceSets.getByName("main").java.srcDirs)
       }
     }
 
-    internal fun Project.javaSourcesJar(): TaskProvider<*> {
+    internal fun Project.javaSourcesJar(sourcesJar: Boolean): TaskProvider<*> {
+      if (!sourcesJar) {
+        return emptySourcesJar()
+      }
+
       return tasks.register("javaSourcesJar", SourcesJar::class.java) {
         val javaPlugin = convention.getPlugin(JavaPluginConvention::class.java)
         it.from(javaPlugin.sourceSets.getByName("main").allSource)
       }
     }
 
-    internal fun Project.kotlinSourcesJar(): TaskProvider<*> = project.tasks.named("kotlinSourcesJar")
+    internal fun Project.kotlinSourcesJar(sourcesJar: Boolean): TaskProvider<*> {
+      if (!sourcesJar) {
+        return emptySourcesJar()
+      }
+
+      return project.tasks.named("kotlinSourcesJar")
+    }
   }
 }
