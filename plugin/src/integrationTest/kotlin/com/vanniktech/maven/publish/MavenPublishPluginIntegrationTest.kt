@@ -276,9 +276,9 @@ class MavenPublishPluginIntegrationTest {
   private fun assertExpectedTasksRanSuccessfully(result: BuildResult, hasDokka: Boolean = false) {
     assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
     if (hasDokka) {
-      assertThat(result.task(":dokka")?.outcome).isEqualTo(SUCCESS)
+      assertThat(result.task(":dokkaHtml")?.outcome).isEqualTo(SUCCESS)
     } else {
-      assertThat(result.task(":dokka")).isNull()
+      assertThat(result.task(":dokkaHtml")).isNull()
     }
   }
 

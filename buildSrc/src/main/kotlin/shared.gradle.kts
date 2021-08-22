@@ -17,7 +17,8 @@ repositories {
 }
 
 
-java.sourceCompatibility = JavaVersion.VERSION_1_7
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.targetCompatibility = JavaVersion.VERSION_1_8
 
 // Use the kotlin version from the stdlib
 val kotlinVersion = KotlinVersion.CURRENT.toString()
@@ -29,4 +30,3 @@ configurations.all {
     force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
   }
 }
-

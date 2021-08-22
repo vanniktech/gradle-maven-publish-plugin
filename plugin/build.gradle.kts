@@ -21,7 +21,6 @@ dependencies {
   api(kotlin("stdlib"))
 
   compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:${Version.dokka}")
-  compileOnly("org.jetbrains.dokka:dokka-android-gradle-plugin:${Version.dokka}")
   compileOnly(kotlin("gradle-plugin"))
   compileOnly("com.android.tools.build:gradle:${Version.agp}")
 
@@ -39,7 +38,6 @@ dependencies {
   testImplementation("com.android.tools.build:gradle:${Version.agp}")
   testImplementation(kotlin("gradle-plugin"))
   testImplementation("org.jetbrains.dokka:dokka-gradle-plugin:${Version.dokka}")
-  testImplementation("org.jetbrains.dokka:dokka-android-gradle-plugin:${Version.dokka}")
 }
 
 tasks.withType(PluginUnderTestMetadata::class.java).configureEach {
