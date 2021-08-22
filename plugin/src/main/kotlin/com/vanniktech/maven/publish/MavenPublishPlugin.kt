@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.legacy.checkProperties
 import com.vanniktech.maven.publish.legacy.configureMavenCentral
 import com.vanniktech.maven.publish.legacy.configurePlatform
 import com.vanniktech.maven.publish.legacy.configurePom
@@ -18,7 +17,6 @@ open class MavenPublishPlugin : Plugin<Project> {
 
     p.setCoordinates()
     p.configurePom()
-    p.checkProperties()
     p.configureMavenCentral()
     p.configureSigning()
     p.configurePlatform()
