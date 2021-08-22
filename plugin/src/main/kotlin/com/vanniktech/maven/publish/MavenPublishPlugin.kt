@@ -1,24 +1,38 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.legacy.configureMavenCentral
 import com.vanniktech.maven.publish.legacy.configurePlatform
-import com.vanniktech.maven.publish.legacy.configurePom
-import com.vanniktech.maven.publish.legacy.configureSigning
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.plugins.signing.SigningPlugin
 
 open class MavenPublishPlugin : Plugin<Project> {
 
-  override fun apply(p: Project) {
-    p.plugins.apply(MavenPublishBasePlugin::class.java)
+  override fun apply(project: Project) {
+    project.plugins.apply(MavenPublishBasePlugin::class.java)
+    val baseExtension = project.baseExtension
 
-    p.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, p)
+    // Apply signing immediately. It is also applied by `signAllPublications` but the afterEvaluate means
+    // that it's APIs are not available for consumers without also using afterEvaluate.
+    project.plugins.apply(SigningPlugin::class.java)
 
-    p.setCoordinates()
-    p.configurePom()
-    p.configureMavenCentral()
-    p.configureSigning()
-    p.configurePlatform()
+    val extension = project.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, project)
+
+    project.setCoordinates()
+
+    project.afterEvaluate {
+      val sonatypeHost = extension.sonatypeHost
+      if (sonatypeHost != null) {
+        baseExtension.publishToMavenCentral(sonatypeHost)
+      }
+
+      if (extension.releaseSigningEnabled) {
+        baseExtension.signAllPublications()
+      }
+
+      baseExtension.pomFromGradleProperties()
+
+      project.configurePlatform()
+    }
   }
 }
