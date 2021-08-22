@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.legacy.checkProperties
 import com.vanniktech.maven.publish.legacy.configurePlatform
 import com.vanniktech.maven.publish.legacy.setCoordinates
 import org.gradle.api.Plugin
@@ -20,7 +19,6 @@ open class MavenPublishPlugin : Plugin<Project> {
     val extension = project.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, project)
 
     project.setCoordinates()
-    project.checkProperties()
 
     project.afterEvaluate {
       val sonatypeHost = extension.sonatypeHost
