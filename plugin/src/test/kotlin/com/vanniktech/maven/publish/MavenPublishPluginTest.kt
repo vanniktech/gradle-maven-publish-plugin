@@ -1,8 +1,5 @@
 package com.vanniktech.maven.publish
 
-import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.LibraryPlugin
-import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.Project
 import org.gradle.api.internal.project.DefaultProject
