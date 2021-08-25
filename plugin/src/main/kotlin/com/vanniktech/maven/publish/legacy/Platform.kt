@@ -1,13 +1,19 @@
 package com.vanniktech.maven.publish.legacy
 
 import com.vanniktech.maven.publish.AndroidLibrary
+import com.vanniktech.maven.publish.AndroidMultiVariantLibrary
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.GradlePlugin
 import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJs
 import com.vanniktech.maven.publish.KotlinJvm
 import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.androidComponents
 import com.vanniktech.maven.publish.baseExtension
+import com.vanniktech.maven.publish.isAtLeastUsingAndroidGradleVersion
+import com.vanniktech.maven.publish.isAtLeastUsingAndroidGradleVersionAlpha
+import com.vanniktech.maven.publish.isAtLeastUsingAndroidGradleVersionBeta
 import com.vanniktech.maven.publish.legacyExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
@@ -17,6 +23,18 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.jetbrains.dokka.gradle.DokkaTask
 
 internal fun Project.configurePlatform() {
+  afterEvaluate {
+    if (!plugins.hasPlugin("com.android.library")) {
+      configureNotAndroidPlatform()
+    }
+  }
+
+  plugins.withId("com.android.library") {
+    configureAndroidPlatform()
+  }
+}
+
+internal fun Project.configureNotAndroidPlatform() {
   when {
     plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") ->
       baseExtension.configure(KotlinMultiplatform(defaultJavaDocOption() ?: JavadocJar.Empty()))
@@ -26,16 +44,48 @@ internal fun Project.configurePlatform() {
       baseExtension.configure(KotlinJvm(defaultJavaDocOption() ?: javadoc()))
     plugins.hasPlugin("org.jetbrains.kotlin.js") ->
       baseExtension.configure(KotlinJs(defaultJavaDocOption() ?: JavadocJar.Empty()))
-    plugins.hasPlugin("com.android.library") -> {
-      val variant = legacyExtension.androidVariantToPublish
-      baseExtension.configure(AndroidLibrary(defaultJavaDocOption() ?: javadoc(), variant = variant))
-    }
     plugins.hasPlugin("java-library") ->
       baseExtension.configure(JavaLibrary(defaultJavaDocOption() ?: javadoc()))
     plugins.hasPlugin("java") ->
       baseExtension.configure(JavaLibrary(defaultJavaDocOption() ?: javadoc()))
     else -> logger.warn("No compatible plugin found in project $name for publishing")
   }
+}
+
+internal fun Project.configureAndroidPlatform() {
+  if (hasWorkingNewAndroidPublishingApi()) {
+    // afterEvaluate is too late but we can't run this synchronously because we shouldn't call the APIs for
+    // multiplatform projects that use Android
+    androidComponents.finalizeDsl {
+      if (!plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+        val variant = legacyExtension.androidVariantToPublish
+        if (variant != null) {
+          baseExtension.configure(AndroidSingleVariantLibrary(variant))
+        } else {
+          baseExtension.configure(AndroidMultiVariantLibrary())
+        }
+      }
+    }
+  } else {
+    afterEvaluate {
+      // release was the old default value before it was changed to null for AGP 7.1+
+      val variant = legacyExtension.androidVariantToPublish ?: "release"
+      baseExtension.configure(AndroidLibrary(defaultJavaDocOption() ?: javadoc(), variant = variant))
+    }
+  }
+}
+
+private fun Project.hasWorkingNewAndroidPublishingApi(): Boolean {
+  // all 7.3.0 builds are fine
+  if (isAtLeastUsingAndroidGradleVersionAlpha(7, 3, 0, 1)) {
+    return true
+  }
+  // 7.2.0 is fine starting with beta 2
+  if (isAtLeastUsingAndroidGradleVersionAlpha(7, 2, 0, 1)) {
+    return isAtLeastUsingAndroidGradleVersionBeta(7, 2, 0, 2)
+  }
+  // earlier versions are fine starting with 7.1.1
+  return isAtLeastUsingAndroidGradleVersion(7, 1, 1)
 }
 
 private fun Project.defaultJavaDocOption(): JavadocJar? {

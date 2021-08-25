@@ -19,6 +19,7 @@ open class MavenPublishPlugin : Plugin<Project> {
     val extension = project.extensions.create("mavenPublish", MavenPublishPluginExtension::class.java, project)
 
     project.setCoordinates()
+    project.configurePlatform()
 
     project.afterEvaluate {
       val sonatypeHost = extension.sonatypeHost
@@ -31,8 +32,6 @@ open class MavenPublishPlugin : Plugin<Project> {
       }
 
       baseExtension.pomFromGradleProperties()
-
-      project.configurePlatform()
     }
   }
 }
