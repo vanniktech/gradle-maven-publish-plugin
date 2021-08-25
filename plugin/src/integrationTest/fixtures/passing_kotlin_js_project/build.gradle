@@ -3,11 +3,9 @@ plugins {
     id "com.vanniktech.maven.publish"
 }
 
-kotlin() {
-    target {
-        nodejs {
-
-        }
+kotlin {
+    js {
+        nodejs()
     }
 }
 

@@ -6,7 +6,9 @@ plugins {
 
 kotlin {
     jvm()
-    js("nodeJs")
+    js("nodeJs") {
+        nodejs()
+    }
     linuxX64("linux")
 
     sourceSets {

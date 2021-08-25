@@ -20,7 +20,7 @@ open class AndroidJavadocs : Javadoc() {
     }
 
     isFailOnError = true
-    classpath += project.files(androidExtension.getBootClasspath().joinToString(File.pathSeparator))
+    classpath += project.files(androidExtension.bootClasspath.joinToString(File.pathSeparator))
     // Safe to call get() here because we'ved marked this as dependent on the TaskProvider
     classpath += releaseVariantCompileProvider.get().classpath
     classpath += releaseVariantCompileProvider.get().outputs.files
