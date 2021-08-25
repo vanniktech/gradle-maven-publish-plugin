@@ -1,8 +1,5 @@
 package com.vanniktech.maven.publish
 
-import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.LibraryPlugin
-import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.Project
 import org.gradle.api.internal.project.DefaultProject
@@ -36,36 +33,10 @@ class MavenPublishPluginTest {
     assert(project)
   }
 
-  @Test fun androidLibraryPlugin() {
-    project.plugins.apply(LibraryPlugin::class.java)
-
-    prepareAndroidLibraryProject(project)
-
-    assert(project)
-  }
-
-  @Test fun androidLibraryPluginWithKotlinAndroid() {
-    project.plugins.apply(LibraryPlugin::class.java)
-    project.plugins.apply("kotlin-android")
-
-    prepareAndroidLibraryProject(project)
-
-    assert(project)
-  }
-
   @Test fun javaLibraryPluginWithKotlin() {
     project.plugins.apply(JavaLibraryPlugin::class.java)
     project.plugins.apply("kotlin")
     assert(project)
-  }
-
-  private fun prepareAndroidLibraryProject(project: Project) {
-    val extension = project.extensions.getByType(LibraryExtension::class.java)
-    extension.compileSdkVersion(27)
-
-    val manifestFile = File(project.projectDir, "src/main/AndroidManifest.xml")
-    manifestFile.parentFile.mkdirs()
-    manifestFile.writeText("""<manifest package="com.foo.bar"/>""")
   }
 
   // This does not assert anything but it's a good start.
