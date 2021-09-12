@@ -2,7 +2,6 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.androidSourcesJar
-import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.emptySourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
 import org.gradle.api.Project
