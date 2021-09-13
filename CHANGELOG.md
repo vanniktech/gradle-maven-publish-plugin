@@ -1,6 +1,6 @@
 # Change Log
 
-Version 0.18.0 *(2021-09-12)*
+Version 0.18.0 *(2021-09-13)*
 ---------------------------------
 
 - The minimum supported Kotlin version is now `1.4.30`
