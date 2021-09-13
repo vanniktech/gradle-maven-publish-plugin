@@ -20,12 +20,12 @@ internal fun Project.configurePlatform() {
   when {
     plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") ->
       baseExtension.configure(KotlinMultiplatform(defaultJavaDocOption() ?: JavadocJar.Empty()))
+    plugins.hasPlugin("java-gradle-plugin") ->
+      baseExtension.configure(GradlePlugin(defaultJavaDocOption() ?: javadoc()))
     plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
       baseExtension.configure(KotlinJvm(defaultJavaDocOption() ?: javadoc()))
     plugins.hasPlugin("org.jetbrains.kotlin.js") ->
       baseExtension.configure(KotlinJs(defaultJavaDocOption() ?: JavadocJar.Empty()))
-    plugins.hasPlugin("java-gradle-plugin") ->
-      baseExtension.configure(GradlePlugin(defaultJavaDocOption() ?: javadoc()))
     plugins.hasPlugin("com.android.library") -> {
       val variant = legacyExtension.androidVariantToPublish
       baseExtension.configure(AndroidLibrary(defaultJavaDocOption() ?: javadoc(), variant = variant))
