@@ -1,6 +1,6 @@
 plugins {
   id("shared")
-  id("java-gradle-plugin")
+  `java-gradle-plugin`
 }
 
 configure<GradlePluginDevelopmentExtension> {
@@ -57,8 +57,7 @@ sourceSets {
   }
 }
 
-tasks.named("test") {
-  this as Test
+tasks.test {
   testLogging {
     events("passed", "skipped", "failed")
     setExceptionFormat("full")
