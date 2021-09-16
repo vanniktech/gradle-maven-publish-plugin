@@ -1,10 +1,30 @@
 # Change Log
 
-Version 0.16.0 *(In development)*
+Version 0.18.0 *(2021-09-13)*
+---------------------------------
+
+- The minimum supported Kotlin version is now `1.4.30`
+- It's now possible to specify `SONATYPE_HOST` as a Gradle property, e.g.
+  - `SONATYPE_HOST=S01` for `s01.sonatype.org`
+  - `SONATYPE_HOST=` to not add any repository by default
+- Fixed an issue when publishing Kotlin MPP projects with the base plugin
+- Removed checks for presence of properties that aren't used by this plugin anymore
+
+Version 0.17.0 *(2021-07-04)*
+---------------------------------
+
+- Removed the deprecated `uploadArchives` and `installArchives` tasks. Use `publish` and `publishToMavenLocal` instead.
+
+
+Version 0.16.0 *(2021-06-20)*
 ---------------------------------
 
 - Add `pomFromGradleProperties` API to base plugin. This configures the pom in the same way the regular plugin does.
-- The deprecated `nexusOptions` method was removed. `closeAndReleaseRepository` is automatically configured.
+- Add the ability to remove the default `mavenCentral` repository, by setting `sonatypeHost` to `null`
+- Support `POM_LICENSE_NAME`, `POM_LICENSE_URL` and `POM_LICENSE_DIST` properties in addition to `LICENCE` based properties.
+- Fixes an issue in the base plugin that caused an error during configuration of Android projects.
+- Fixes an issue with javadoc tasks when using Java toolchains.
+- The deprecated `nexusOptions` and `nexus {}` methods were removed. `closeAndReleaseRepository` is automatically configured.
 
 
 Version 0.15.1 *(2021-05-02)*

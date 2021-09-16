@@ -1,0 +1,16 @@
+plugins {
+    id "org.jetbrains.kotlin.js"
+    id "com.vanniktech.maven.publish"
+}
+
+kotlin {
+    js {
+        nodejs()
+    }
+}
+
+dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib-js:1.3.72"
+}
+
+apply from: "maven-publish.gradle"

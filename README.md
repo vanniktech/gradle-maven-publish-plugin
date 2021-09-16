@@ -14,7 +14,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.1'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.18.0'
   }
 }
 
@@ -39,9 +39,9 @@ POM_DESCRIPTION=A description of what my library does.
 POM_INCEPTION_YEAR=2020
 POM_URL=https://github.com/username/mylibrary/
 
-POM_LICENCE_NAME=The Apache Software License, Version 2.0
-POM_LICENCE_URL=https://www.apache.org/licenses/LICENSE-2.0.txt
-POM_LICENCE_DIST=repo
+POM_LICENSE_NAME=The Apache Software License, Version 2.0
+POM_LICENSE_URL=https://www.apache.org/licenses/LICENSE-2.0.txt
+POM_LICENSE_DIST=repo
 
 POM_SCM_URL=https://github.com/username/mylibrary/
 POM_SCM_CONNECTION=scm:git:git://github.com/username/mylibrary.git
@@ -82,6 +82,7 @@ The username and password for Sonatype OSS can be provided as Gradle properties 
 and `mavenCentralPassword` to avoid having to commit them. You can also supply them as environment variables
 called `ORG_GRADLE_PROJECT_mavenCentralUsername` and `ORG_GRADLE_PROJECT_mavenCentralPassword`.
 
+To remove the default repository set `sonatypeHost` to `null`.
 
 You can add additional repositories to publish to using the standard Gradle APIs:
 
@@ -121,7 +122,7 @@ signingInMemoryKey=exported_ascii_armored_key
 # Optional.
 signingInMemoryKeyId=24875D73
 # If key was created with a password.
-signingInMemoryPassword=secret
+signingInMemoryKeyPassword=secret
 ```
 
 These properties can also be provided as environment variables by prefixing them with `ORG_GRADLE_PROJECT_`
@@ -214,6 +215,10 @@ allprojects {
                     developerConnection = "scm:git:ssh://git@github.com/username/mylibrary.git"
                 }
             }
+
+            // Alternatively to the DSL based POM configuration above you can define them
+            // in Gradle properties
+            pomFromGradleProperties()
         }
     }
 }

@@ -1,0 +1,34 @@
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.dokka"
+    id "com.vanniktech.maven.publish"
+}
+
+kotlin {
+    jvm()
+    js("nodeJs") {
+        nodejs()
+    }
+    linuxX64("linux")
+
+    sourceSets {
+        commonMain {
+            dependencies {
+            }
+        }
+        jvmMain {
+            dependencies {
+            }
+        }
+        nodeJsMain {
+            dependencies {
+            }
+        }
+        linuxMain {
+            dependencies {
+            }
+        }
+    }
+}
+
+apply from: "maven-publish.gradle"
