@@ -111,8 +111,6 @@ can be configured via:
 signing.keyId=12345678
 signing.password=some_password
 signing.secretKeyRingFile=/Users/yourusername/.gnupg/secring.gpg
-mavenCentralUsername=userToken
-mavenCentralPassword=passwordToken
 ```
 
 It's best to place them inside your home directory (for windows %UserProfile%), `$HOME/.gradle/gradle.properties`. You can find more information
