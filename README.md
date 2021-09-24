@@ -180,8 +180,8 @@ import com.vanniktech.maven.publish.SonatypeHost
 
 allprojects {
     plugins.withId("com.vanniktech.maven.publish.base") {
-        GROUP = "com.example.project"
-        VERSION = "1.0.3-SNAPSHOT"
+        group = "com.example.project"
+        version = "1.0.3-SNAPSHOT"
 
         mavenPublishing {
             publishToMavenCentral("DEFAULT")
