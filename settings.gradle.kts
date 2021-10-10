@@ -4,3 +4,4 @@ pluginManagement {
   }
 }
 include(":plugin")
+include(":nexus")
