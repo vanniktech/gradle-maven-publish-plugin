@@ -28,11 +28,7 @@ dependencies {
   compileOnly(kotlin("gradle-plugin"))
   compileOnly("com.android.tools.build:gradle:${Version.agp}")
 
-  add("kapt", "com.squareup.moshi:moshi-kotlin-codegen:${Version.moshi}")
-
-  implementation("com.squareup.moshi:moshi:${Version.moshi}")
-  implementation("com.squareup.retrofit2:retrofit:${Version.retrofit}")
-  implementation("com.squareup.retrofit2:converter-moshi:${Version.retrofit}")
+  implementation(project(":nexus"))
 
   testImplementation(gradleTestKit())
   testImplementation("junit:junit:${Version.junit}")
