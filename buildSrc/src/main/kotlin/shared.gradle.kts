@@ -2,6 +2,7 @@ plugins {
   id("java-library")
   id("kotlin")
   id("kotlin-kapt")
+  id("com.github.ben-manes.versions")
   id("org.jlleitschuh.gradle.ktlint")
   id("com.vanniktech.maven.publish")
 }
