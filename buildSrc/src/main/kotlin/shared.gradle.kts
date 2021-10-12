@@ -1,5 +1,5 @@
 plugins {
-  id("java-library")
+  `java-library`
   id("kotlin")
   id("kotlin-kapt")
   id("com.github.ben-manes.versions")
@@ -15,7 +15,6 @@ repositories {
   mavenCentral()
   google()
 }
-
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+
 plugins {
   id("shared")
   `java-gradle-plugin`
@@ -40,17 +42,13 @@ dependencies {
   testImplementation("org.jetbrains.dokka:dokka-gradle-plugin:${Version.dokka}")
 }
 
-tasks.withType(PluginUnderTestMetadata::class.java).configureEach {
+tasks.withType<PluginUnderTestMetadata>().configureEach {
   // for test kit tests
   pluginClasspath.from(configurations.compileOnly)
 }
 
-sourceSets {
-  named("test") {
-    this.withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
-      kotlin.srcDirs(listOf("src/integrationTest/kotlin"))
-    }
-  }
+sourceSets["test"].withConvention(KotlinSourceSet::class) {
+  kotlin.srcDirs("src/integrationTest/kotlin")
 }
 
 tasks.test {
