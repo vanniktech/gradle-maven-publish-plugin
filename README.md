@@ -65,7 +65,7 @@ the rest by putting them into `<project-dir>/gradle.properties`.
 
 Without any further configuration the plugin has two tasks. `publish` which will upload
 to Maven Central (through Sonatype OSSRH) by default. To publish to the local maven repository on your
-machine (`~/m2/repository`) there is `publishToMavenLocal`.
+machine (`~/.m2/repository`) there is `publishToMavenLocal`.
 
 In case you are using `s01.oss.sonatype.org` you need to configure that like this:
 ```groovy
