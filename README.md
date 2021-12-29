@@ -254,6 +254,24 @@ mavenPublishing {
 }
 ```
 
+# Only Jar Or Android AAR 
+
+just create module and write build.gradle
+
+```
+configurations.maybeCreate("default")
+artifacts.add("default", file('xxx.aar or xxx.jar'))
+apply plugin: "com.vanniktech.maven.publish"
+
+publishing{
+    publications{
+        maven(MavenPublication) {
+            artifact 'xxx.aar or xxx.jar' 
+        }
+    }
+}
+```
+
 # License
 
 Copyright (C) 2018 Vanniktech - Niklas Baudy
