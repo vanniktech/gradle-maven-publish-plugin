@@ -20,7 +20,7 @@ buildscript {
 
 apply plugin: "com.vanniktech.maven.publish"
 ```
-kts syntax:
+Kotlin syntax:
 ```kotlin
 buildscript {
     repositories {
