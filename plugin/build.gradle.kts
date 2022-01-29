@@ -20,6 +20,13 @@ configure<GradlePluginDevelopmentExtension> {
   }
 }
 
+val integrationTestSourceSet = sourceSets.create("integrationTest") {
+  compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+  runtimeClasspath += output + compileClasspath
+}
+val integrationTestImplementation = configurations.getByName("integrationTestImplementation")
+  .extendsFrom(configurations.getByName("testImplementation"))
+
 dependencies {
   api(gradleApi())
   api(kotlin("stdlib"))
@@ -33,30 +40,28 @@ dependencies {
   testImplementation(gradleTestKit())
   testImplementation("junit:junit:${Version.junit}")
   testImplementation("org.assertj:assertj-core:${Version.assertj}")
-  testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
-  // for non test kit tests
-  testImplementation("com.android.tools.build:gradle:${Version.agp}")
-  testImplementation(kotlin("gradle-plugin"))
-  testImplementation("org.jetbrains.dokka:dokka-gradle-plugin:${Version.dokka}")
 }
 
-tasks.withType(PluginUnderTestMetadata::class.java).configureEach {
-  // for test kit tests
-  pluginClasspath.from(configurations.compileOnly)
-}
+val integrationTest by tasks.registering(Test::class) {
+  dependsOn("publishToMavenLocal", project(":nexus").tasks.named("publishToMavenLocal"))
+  mustRunAfter(tasks.named("test"))
 
-sourceSets {
-  named("test") {
-    this.withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
-      kotlin.srcDirs(listOf("src/integrationTest/kotlin"))
+  description = "Runs the integration tests."
+  group = "verification"
+
+  testClassesDirs = integrationTestSourceSet.output.classesDirs
+  classpath = integrationTestSourceSet.runtimeClasspath
+
+  systemProperty("com.vanniktech.publish.version", version.toString())
+
+  beforeTest(
+    closureOf<TestDescriptor> {
+      logger.lifecycle("Running test: $this")
     }
-  }
+  )
 }
 
-tasks.named("test") {
-  this as Test
-  testLogging {
-    events("passed", "skipped", "failed")
-    setExceptionFormat("full")
-  }
+val check = tasks.named("check")
+check.configure {
+  dependsOn(integrationTest)
 }

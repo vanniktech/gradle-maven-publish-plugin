@@ -1,7 +1,17 @@
-plugins {
-    id "java"
-    id "com.vanniktech.maven.publish"
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+    }
+
+    dependencies {
+        classpath "com.vanniktech:gradle-maven-publish-plugin:${System.getProperty("com.vanniktech.publish.version")}"
+    }
 }
+
+apply plugin: "java"
+apply plugin: "com.vanniktech.maven.publish"
 
 group = "com.example2"
 version = "2.0.0"
