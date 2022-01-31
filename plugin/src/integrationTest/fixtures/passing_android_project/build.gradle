@@ -1,7 +1,18 @@
-plugins {
-    id "com.android.library"
-    id "com.vanniktech.maven.publish"
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+    }
+
+    dependencies {
+       classpath "com.vanniktech:gradle-maven-publish-plugin:${System.getProperty("com.vanniktech.publish.version")}"
+       classpath "com.android.tools.build:gradle:7.0.0"
+    }
 }
+
+apply plugin: "com.android.library"
+apply plugin: "com.vanniktech.maven.publish"
 
 android {
     compileSdkVersion 29

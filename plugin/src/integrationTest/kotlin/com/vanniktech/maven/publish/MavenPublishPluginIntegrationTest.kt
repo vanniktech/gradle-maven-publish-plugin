@@ -279,9 +279,11 @@ class MavenPublishPluginIntegrationTest {
     artifactExtension: String = "jar",
     artifactId: String = TEST_POM_ARTIFACT_ID,
     groupId: String = TEST_GROUP,
-    version: String = TEST_VERSION_NAME
+    version: String = TEST_VERSION_NAME,
+    qualifier: String? = null,
   ) {
-    val artifactJar = "$artifactId-$version.$artifactExtension"
+    val qualifierSuffix = qualifier?.let { "-$it" } ?: ""
+    val artifactJar = "$artifactId-$version$qualifierSuffix.$artifactExtension"
     val pomFile = "$artifactId-$version.pom"
     val moduleFile = "$artifactId-$version.module"
     val javadocJar = "$artifactId-$version-javadoc.jar"
@@ -349,7 +351,6 @@ class MavenPublishPluginIntegrationTest {
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
     .withProjectDir(projectFolder)
     .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder")
-    .withPluginClasspath()
     .forwardOutput()
     .build()
 
