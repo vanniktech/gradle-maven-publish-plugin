@@ -76,7 +76,7 @@ internal fun Project.configureAndroidPlatform() {
 }
 
 private fun Project.hasWorkingNewAndroidPublishingApi(): Boolean {
-  // all 7.3.0 builds are fine
+  // All 7.3.0 builds starting from 7.3.0-alpha01 are fine.
   if (isAtLeastUsingAndroidGradleVersionAlpha(7, 3, 0, 1)) {
     return true
   }
@@ -84,7 +84,7 @@ private fun Project.hasWorkingNewAndroidPublishingApi(): Boolean {
   if (isAtLeastUsingAndroidGradleVersionAlpha(7, 2, 0, 1)) {
     return isAtLeastUsingAndroidGradleVersionBeta(7, 2, 0, 2)
   }
-  // earlier versions are fine starting with 7.1.1
+  // Earlier versions are fine starting with 7.1.1
   return isAtLeastUsingAndroidGradleVersion(7, 1, 1)
 }
 

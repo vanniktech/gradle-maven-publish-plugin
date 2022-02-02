@@ -108,7 +108,7 @@ class MavenPublishPluginIntegrationTest {
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroid71Project() {
-    setupFixture("passing_android_7_1_project")
+    setupFixture("passing_android_7_1_1_project")
 
     val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
@@ -119,7 +119,7 @@ class MavenPublishPluginIntegrationTest {
   }
 
   @Test fun generatesArtifactsAndDocumentationOnAndroid71ReleaseVariantProject() {
-    setupFixture("passing_android_7_1_release_variant_project")
+    setupFixture("passing_android_7_1_1_release_variant_project")
 
     val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 

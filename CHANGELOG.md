@@ -7,7 +7,7 @@ Version 0.18.0 *(2021-09-13)*
 of a library unless `androidVariantToPublish` was set in the DSL. This means that for example both `debug` and `release`
 or all flavors.
 - Deprecated `androidVariantToPublish`. In the future the main plugin will always publish all variants of an Android
-library. If you need to publish only one variant or a subset take a look at the [base plugin](../README.md#base-plugin)
+library. If you need to publish only one variant or a subset take a look at the [base plugin](README.md#base-plugin)
 APIs.
 - Base plugin: Added `AndroidSingleVariantLibrary` and `AndroidMultiVariantLibrary` options that use the new AGP 7.1
 APIs under the hood.

@@ -230,8 +230,8 @@ mavenPublishing {
     //   - JavaLibrary
     //   - GradlePlugin
     //   - AndroidLibrary (deprecated)
-    //   - AndroidSingleVariantLibrary (requires AGP 7.1)
-    //   - AndroidMultiVariantLibrary (requires AGP 7.1)
+    //   - AndroidSingleVariantLibrary (requires AGP 7.1.1)
+    //   - AndroidMultiVariantLibrary (requires AGP 7.1.1)
     //   - KotlinJvm
     //   - KotlinJs
     //   - KotlinMultiplatform

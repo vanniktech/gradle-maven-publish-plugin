@@ -91,7 +91,7 @@ data class GradlePlugin @JvmOverloads constructor(
  * `variant`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
  * be added to the publication.
  *
- * Equivalent Gradle set up (before AGP 7.1):
+ * Equivalent Gradle set up (before AGP 7.1.1):
  * ```
  * afterEvaluate {
  *   publishing {
@@ -189,7 +189,7 @@ data class AndroidSingleVariantLibrary @JvmOverloads constructor(
  * If the [includedBuildTypeValues] and [includedFlavorDimensionsAndValues] parameters are not provided or
  * empty all variants will be published. Otherwise only variants matching those filters will be included.
  *
- * Equivalent Gradle set up (AGP 7.1):
+ * Equivalent Gradle set up (AGP 7.1.1):
  * android {
  *   publishing {
  *    multipleVariants {
@@ -259,7 +259,7 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
  *
  * Equivalent Gradle set up:
  * ```
- * // nothing to configure setup is automatic
+ * // Nothing to configure setup is automatic.
  * ```
  *
  * This does not include javadoc jars because there are no APIs for that available.
