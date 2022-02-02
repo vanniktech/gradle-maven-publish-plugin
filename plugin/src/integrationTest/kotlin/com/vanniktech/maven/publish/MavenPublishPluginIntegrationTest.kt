@@ -107,7 +107,7 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestActivity.java", "src/main/java")
   }
 
-  @Test fun generatesArtifactsAndDocumentationOnAndroid71Project() {
+  @Test fun generatesArtifactsAndDocumentationOnAndroid711Project() {
     setupFixture("passing_android_7_1_1_project")
 
     val result = executeGradleCommands(TEST_TASK, "--stacktrace")
@@ -118,7 +118,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches()
   }
 
-  @Test fun generatesArtifactsAndDocumentationOnAndroid71ReleaseVariantProject() {
+  @Test fun generatesArtifactsAndDocumentationOnAndroid711ReleaseVariantProject() {
     setupFixture("passing_android_7_1_1_release_variant_project")
 
     val result = executeGradleCommands(TEST_TASK, "--stacktrace")
