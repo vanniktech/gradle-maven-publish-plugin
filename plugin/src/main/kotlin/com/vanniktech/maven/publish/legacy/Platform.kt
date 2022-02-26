@@ -1,8 +1,6 @@
 package com.vanniktech.maven.publish.legacy
 
-import com.vanniktech.maven.publish.AndroidLibrary
 import com.vanniktech.maven.publish.AndroidMultiVariantLibrary
-import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.GradlePlugin
 import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
@@ -11,10 +9,6 @@ import com.vanniktech.maven.publish.KotlinJvm
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.androidComponents
 import com.vanniktech.maven.publish.baseExtension
-import com.vanniktech.maven.publish.isAtLeastUsingAndroidGradleVersion
-import com.vanniktech.maven.publish.isAtLeastUsingAndroidGradleVersionAlpha
-import com.vanniktech.maven.publish.isAtLeastUsingAndroidGradleVersionBeta
-import com.vanniktech.maven.publish.legacyExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
@@ -36,7 +30,7 @@ internal fun Project.configurePlatform() {
   }
 }
 
-internal fun Project.configureNotAndroidNotMppPlatform() {
+private fun Project.configureNotAndroidNotMppPlatform() {
   when {
     plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> return // Handled separately.
     plugins.hasPlugin("com.android.library") -> return // Handled separately.
@@ -54,42 +48,14 @@ internal fun Project.configureNotAndroidNotMppPlatform() {
   }
 }
 
-internal fun Project.configureAndroidPlatform() {
-  if (hasWorkingNewAndroidPublishingApi()) {
-    // afterEvaluate is too late, but we can't run this synchronously because we shouldn't call the APIs for
-    // multiplatform projects that use Android
-    androidComponents.finalizeDsl {
-      if (!plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-        val variant = legacyExtension.androidVariantToPublish
-        if (variant != null) {
-          baseExtension.configure(AndroidSingleVariantLibrary(variant))
-        } else {
-          baseExtension.configure(AndroidMultiVariantLibrary())
-        }
-      }
-    }
-  } else {
-    afterEvaluate {
-      if (!plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-        // release was the old default value before it was changed to null for AGP 7.1+
-        val variant = legacyExtension.androidVariantToPublish ?: "release"
-        baseExtension.configure(AndroidLibrary(defaultJavaDocOption() ?: javadoc(), variant = variant))
-      }
+private fun Project.configureAndroidPlatform() {
+  // afterEvaluate is too late but we can't run this synchronously because we shouldn't call the APIs for
+  // multiplatform projects that use Android
+  androidComponents.finalizeDsl {
+    if (!plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+      baseExtension.configure(AndroidMultiVariantLibrary())
     }
   }
-}
-
-private fun Project.hasWorkingNewAndroidPublishingApi(): Boolean {
-  // All 7.3.0 builds starting from 7.3.0-alpha01 are fine.
-  if (isAtLeastUsingAndroidGradleVersionAlpha(7, 3, 0, 1)) {
-    return true
-  }
-  // 7.2.0 is fine starting with beta 2
-  if (isAtLeastUsingAndroidGradleVersionAlpha(7, 2, 0, 1)) {
-    return isAtLeastUsingAndroidGradleVersionBeta(7, 2, 0, 2)
-  }
-  // Earlier versions are fine starting with 7.1.2
-  return isAtLeastUsingAndroidGradleVersion(7, 1, 2)
 }
 
 private fun Project.defaultJavaDocOption(): JavadocJar? {
