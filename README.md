@@ -101,6 +101,7 @@ publishing {
 More information can be found in [Gradle's documentation](https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories)
 
 __Note:__ To prevent looping behavior, especially in Kotlin projects / modules, you need to run the `publish` task with `--no-daemon`and `--no-parallel` flags
+
 ### Signing
 
 The plugin supports signing all of your release artifacts with GPG. This is a requirement when publishing to
@@ -140,16 +141,6 @@ or only build on certain machines.
 
 ```groovy
 RELEASE_SIGNING_ENABLED=false
-```
-
-### Android Variants
-
-By default, the "release" variant will be used for publishing. Optionally, a specific variant can be defined by the plugin extension:
-
-```groovy
-mavenPublish {
-  androidVariantToPublish = "demoDebug"  // or use project.property('PUBLISH_VARIANT'), etc.
-}
 ```
 
 ### Releasing
@@ -234,12 +225,13 @@ import com.vanniktech.maven.publish.JavadocJar
 
 apply plugin: "com.vanniktech.maven.publish.base"
 
-
 mavenPublishing {
     // available options:
     //   - JavaLibrary
     //   - GradlePlugin
-    //   - AndroidLibrary
+    //   - AndroidLibrary (deprecated)
+    //   - AndroidSingleVariantLibrary (requires AGP 7.1.1)
+    //   - AndroidMultiVariantLibrary (requires AGP 7.1.1)
     //   - KotlinJvm
     //   - KotlinJs
     //   - KotlinMultiplatform

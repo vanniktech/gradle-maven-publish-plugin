@@ -52,6 +52,8 @@ val integrationTest by tasks.registering(Test::class) {
   testClassesDirs = integrationTestSourceSet.output.classesDirs
   classpath = integrationTestSourceSet.runtimeClasspath
 
+  testLogging.showStandardStreams = true
+
   systemProperty("com.vanniktech.publish.version", version.toString())
 
   beforeTest(

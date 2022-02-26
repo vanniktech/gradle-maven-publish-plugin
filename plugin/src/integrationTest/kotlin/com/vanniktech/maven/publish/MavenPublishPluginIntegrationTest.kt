@@ -107,6 +107,48 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestActivity.java", "src/main/java")
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnAndroid711Project() {
+    setupFixture("passing_android_7_1_1_project")
+
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated("aar", qualifier = "debug")
+    assertExpectedCommonArtifactsGenerated("aar", qualifier = "release")
+    assertPomContentMatches()
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnAndroid711ReleaseVariantProject() {
+    setupFixture("passing_android_7_1_1_release_variant_project")
+
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated("aar")
+    assertPomContentMatches()
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnAndroidSingleVariantProject() {
+    setupFixture("passing_android_single_variant_project")
+
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated(artifactExtension = "aar")
+    assertPomContentMatches()
+  }
+
+  @Test fun generatesArtifactsAndDocumentationOnAndroidMultiVariantProject() {
+    setupFixture("passing_android_multi_variant_project")
+
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated("aar", qualifier = "debug")
+    assertExpectedCommonArtifactsGenerated("aar", qualifier = "release")
+    assertPomContentMatches()
+  }
+
   @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinProject() {
     setupFixture("passing_android_with_kotlin_project")
 
@@ -286,8 +328,8 @@ class MavenPublishPluginIntegrationTest {
     val artifactJar = "$artifactId-$version$qualifierSuffix.$artifactExtension"
     val pomFile = "$artifactId-$version.pom"
     val moduleFile = "$artifactId-$version.module"
-    val javadocJar = "$artifactId-$version-javadoc.jar"
-    val sourcesJar = "$artifactId-$version-sources.jar"
+    val javadocJar = "$artifactId-$version$qualifierSuffix-javadoc.jar"
+    val sourcesJar = "$artifactId-$version$qualifierSuffix-sources.jar"
     assertArtifactGenerated(artifactJar, artifactId, groupId, version)
     assertArtifactGenerated(pomFile, artifactId, groupId, version)
     assertArtifactGenerated(moduleFile, artifactId, groupId, version)

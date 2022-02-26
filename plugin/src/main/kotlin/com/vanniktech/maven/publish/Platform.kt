@@ -1,9 +1,11 @@
 package com.vanniktech.maven.publish
 
+import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.androidSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
+import java.lang.UnsupportedOperationException
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
@@ -89,13 +91,13 @@ data class GradlePlugin @JvmOverloads constructor(
  * `variant`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
  * be added to the publication.
  *
- * Equivalent Gradle set up:
+ * Equivalent Gradle set up (before AGP 7.1.1):
  * ```
  * afterEvaluate {
  *   publishing {
  *     publications {
  *       create<MavenPublication>("maven") {
- *         from(components["java"])
+ *         from(components["release"])
  *       }
  *     }
  *   }
@@ -103,6 +105,7 @@ data class GradlePlugin @JvmOverloads constructor(
  * ```
  * This does not include javadoc and sources jars because there are no APIs for that available.
  */
+@Deprecated("Use AndroidSingleVariantLibrary or AndroidMultiVariantLibrary instead")
 data class AndroidLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true,
@@ -122,12 +125,143 @@ data class AndroidLibrary @JvmOverloads constructor(
 }
 
 /**
+ * To be used for `com.android.library` projects. Applying this creates a publication for the component of the given
+ * `variant`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
+ * be added to the publication.
+ *
+ * Equivalent Gradle set up:
+ * ```
+ * android {
+ *   publishing {
+ *    singleVariant("variant") {
+ *      withSourcesJar()
+ *      withJavadocJar()
+ *    }
+ *   }
+ * }
+ *
+ * afterEvaluate {
+ *   publishing {
+ *     publications {
+ *       create<MavenPublication>("variant") {
+ *         from(components["variant"])
+ *       }
+ *     }
+ *   }
+ * }
+ *```
+ */
+data class AndroidSingleVariantLibrary @JvmOverloads constructor(
+  val variant: String = "release",
+  override val sourcesJar: Boolean = true,
+  val publishJavadocJar: Boolean = true,
+) : Platform() {
+
+  override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
+
+  override fun configure(project: Project) {
+    val library = project.extensions.findByType(LibraryExtension::class.java)!!
+    library.publishing {
+      singleVariant(variant) {
+        if (sourcesJar) {
+          withSourcesJar()
+        }
+        if (publishJavadocJar) {
+          withJavadocJar()
+        }
+      }
+    }
+
+    project.afterEvaluate {
+      val component = project.components.findByName(variant) ?: throw MissingVariantException(variant)
+      project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+        it.from(component)
+      }
+    }
+  }
+}
+
+/**
+ * To be used for `com.android.library` projects. Applying this creates a publication for the component of the given
+ * variants. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
+ * be added to the publication.
+ *
+ * If the [includedBuildTypeValues] and [includedFlavorDimensionsAndValues] parameters are not provided or
+ * empty all variants will be published. Otherwise only variants matching those filters will be included.
+ *
+ * Equivalent Gradle set up (AGP 7.1.1):
+ * android {
+ *   publishing {
+ *    multipleVariants {
+ *      allVariants() // or calls to includeBuildTypeValues and includeFlavorDimensionAndValues
+ *      withSourcesJar()
+ *      withJavadocJar()
+ *    }
+ *   }
+ * }
+ *
+ * afterEvaluate {
+ *   publishing {
+ *     publications {
+ *       create<MavenPublication>("default") {
+ *         from(components["default"])
+ *       }
+ *     }
+ *   }
+ * }
+ */
+data class AndroidMultiVariantLibrary @JvmOverloads constructor(
+  override val sourcesJar: Boolean = true,
+  val publishJavadocJar: Boolean = true,
+  val includedBuildTypeValues: Set<String> = emptySet(),
+  val includedFlavorDimensionsAndValues: Map<String, Set<String>> = emptyMap(),
+) : Platform() {
+
+  override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
+
+  override fun configure(project: Project) {
+    val library = project.extensions.findByType(LibraryExtension::class.java)!!
+    library.publishing {
+      multipleVariants(PUBLICATION_NAME) {
+        if (includedBuildTypeValues.isEmpty() && includedFlavorDimensionsAndValues.isEmpty()) {
+          allVariants()
+        } else {
+          if (includedBuildTypeValues.isNotEmpty()) {
+            includeBuildTypeValues(*includedBuildTypeValues.toTypedArray())
+          }
+          includedFlavorDimensionsAndValues.forEach { dimension, flavors ->
+            includeFlavorDimensionAndValues(dimension, *flavors.toTypedArray())
+          }
+        }
+
+        if (sourcesJar) {
+          withSourcesJar()
+        }
+        if (publishJavadocJar) {
+          withJavadocJar()
+        }
+      }
+    }
+
+    project.afterEvaluate {
+      val component = project.components.findByName(PUBLICATION_NAME) ?: throw MissingVariantException(PUBLICATION_NAME)
+      project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+        it.from(component)
+      }
+    }
+  }
+}
+
+/**
  * To be used for `org.jetbrains.kotlin.multiplatform` projects. Uses the default publications that gets created by
  * that plugin, including the automatically created `-sources` jars. Depending on the passed parameters for [javadocJar],
  * `-javadoc` will be added to the publications.
  *
  * Equivalent Gradle set up:
- * `n/a`
+ * ```
+ * // Nothing to configure setup is automatic.
+ * ```
+ *
  * This does not include javadoc jars because there are no APIs for that available.
  */
 data class KotlinMultiplatform @JvmOverloads constructor(

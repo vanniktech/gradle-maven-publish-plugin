@@ -1,0 +1,9 @@
+rootProject.name = "test-artifact"
+
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+    }
+}

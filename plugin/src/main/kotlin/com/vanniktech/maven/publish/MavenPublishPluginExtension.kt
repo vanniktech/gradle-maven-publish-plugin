@@ -24,11 +24,13 @@ abstract class MavenPublishPluginExtension(
    * The Android library variant that should be published. Projects not using any product flavors, that just want
    * to publish the release build type can use the default.
    *
-   * This is **not supported** in legacy mode.
-   *
    * @Since 0.9.0
    */
-  var androidVariantToPublish: String = "release"
+  @Deprecated(
+    "All variants will be published by default. If you need to publish a single variant library " +
+      "use AndroidSingleVariantLibrary on the base plugin"
+  )
+  var androidVariantToPublish: String? = null
 
   /**
    * Whether release artifacts should be signed before getting published.
