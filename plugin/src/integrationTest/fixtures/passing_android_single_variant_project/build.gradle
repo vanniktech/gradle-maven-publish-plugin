@@ -9,7 +9,7 @@ buildscript {
 
     dependencies {
         classpath "com.vanniktech:gradle-maven-publish-plugin:${System.getProperty("com.vanniktech.publish.version")}"
-        classpath "com.android.tools.build:gradle:7.3.0-alpha01"
+        classpath "com.android.tools.build:gradle:7.1.2"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.6.10"
     }
 }

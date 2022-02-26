@@ -84,8 +84,8 @@ private fun Project.hasWorkingNewAndroidPublishingApi(): Boolean {
   if (isAtLeastUsingAndroidGradleVersionAlpha(7, 2, 0, 1)) {
     return isAtLeastUsingAndroidGradleVersionBeta(7, 2, 0, 2)
   }
-  // Earlier versions are fine starting with 7.1.1
-  return isAtLeastUsingAndroidGradleVersion(7, 1, 1)
+  // Earlier versions are fine starting with 7.1.2
+  return isAtLeastUsingAndroidGradleVersion(7, 1, 2)
 }
 
 private fun Project.defaultJavaDocOption(): JavadocJar? {
