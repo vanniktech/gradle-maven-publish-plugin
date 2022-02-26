@@ -1,6 +1,6 @@
 # Change Log
 
-Version 0.18.0 *(2021-09-13)*
+Version 0.19.0 *(2022-02-26)*
 ---------------------------------
 
 - **Behavior Change:** When using version 7.1.0 or newer of the Android Gradle Plugin we will now publish all variants
@@ -12,6 +12,7 @@ APIs.
 - Base plugin: Added `AndroidSingleVariantLibrary` and `AndroidMultiVariantLibrary` options that use the new AGP 7.1
 APIs under the hood.
 - Base plugin: Deprecated `AndroidLibrary` option in favor of the above
+- The integration with Sonatype Nexus has been extracted into it's own artifact and is available as `com.vanniktech:nexus:<version>`
 
 
 Version 0.18.0 *(2021-09-13)*
