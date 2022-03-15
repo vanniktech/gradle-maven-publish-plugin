@@ -7,7 +7,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 internal class Nexus(
   baseUrl: String,
-  username: String,
+  private val username: String,
   password: String,
   private val stagingRepository: String?
 ) {
@@ -38,7 +38,7 @@ internal class Nexus(
     val allRepositories = getProfileRepositories() ?: emptyList()
 
     if (allRepositories.isEmpty()) {
-      throw IllegalArgumentException("No staging repository prefixed with. Make sure you called \"./gradlew publish\".")
+      throw IllegalArgumentException("No staging repositories found in account ${username}. Make sure you called \"./gradlew publish\".")
     }
 
     val candidateRepositories = if (stagingRepository != null) {
