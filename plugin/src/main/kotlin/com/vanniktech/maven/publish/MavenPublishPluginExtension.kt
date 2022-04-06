@@ -18,6 +18,7 @@ abstract class MavenPublishPluginExtension(
    *
    * @Since 0.15.0
    */
+  @Deprecated("Set the SONATYPE_HOST Gradle property or call mavenPublishing { publishToMavenCentral(\"<VALUE>\") } instead")
   var sonatypeHost: SonatypeHost? = defaultSonatypeHost()
 
   /**
@@ -37,10 +38,19 @@ abstract class MavenPublishPluginExtension(
    *
    * @Since 0.9.0
    */
+  @Deprecated("Set the RELEASE_SIGNING_ENABLED Gradle property or call mavenPublishing { signAllPublications() } instead")
   var releaseSigningEnabled: Boolean = project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean() ?: true
 
+  internal fun sonatypeHostProperty(): String? {
+    return project.findOptionalProperty("SONATYPE_HOST")
+  }
+
+  internal fun releaseSigningProperty(): Boolean? {
+    return project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean()
+  }
+
   private fun defaultSonatypeHost(): SonatypeHost? {
-    val property = project.findOptionalProperty("SONATYPE_HOST")
+    val property = sonatypeHostProperty()
     if (property != null) {
       return if (property.isBlank()) {
         null
