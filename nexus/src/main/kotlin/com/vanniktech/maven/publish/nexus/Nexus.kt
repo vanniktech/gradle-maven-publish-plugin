@@ -28,7 +28,7 @@ internal class Nexus(
     val profileRepositoriesResponse = service.getProfileRepositories().execute()
 
     if (!profileRepositoriesResponse.isSuccessful) {
-      throw IOException("Cannot get profileRepositories: ${profileRepositoriesResponse.errorBody()?.string()}")
+      throw IOException("Cannot get profileRepositories for account $username: ${profileRepositoriesResponse.errorBody()?.string()}")
     }
 
     return profileRepositoriesResponse.body()?.data
@@ -38,7 +38,7 @@ internal class Nexus(
     val allRepositories = getProfileRepositories() ?: emptyList()
 
     if (allRepositories.isEmpty()) {
-      throw IllegalArgumentException("No staging repositories found in account ${username}. Make sure you called \"./gradlew publish\".")
+      throw IllegalArgumentException("No staging repositories found in account $username. Make sure you called \"./gradlew publish\".")
     }
 
     val candidateRepositories = if (stagingRepository != null) {
@@ -49,7 +49,7 @@ internal class Nexus(
 
     if (candidateRepositories.isEmpty()) {
       throw IllegalArgumentException(
-        "No matching staging repository found. You can can explicitly choose one by " +
+        "No matching staging repository found in account $username. You can can explicitly choose one by " +
           "passing it as an option like this \"./gradlew closeAndReleaseRepository --repository=comexample-123\". " +
           "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}"
       )
@@ -57,7 +57,7 @@ internal class Nexus(
 
     if (candidateRepositories.size > 1) {
       throw IllegalArgumentException(
-        "More than 1 matching staging repository found. You can can explicitly choose " +
+        "More than 1 matching staging repository found in account $username. You can can explicitly choose " +
           "one by passing it as an option like this \"./gradlew closeAndReleaseRepository --repository comexample-123\". " +
           "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}"
       )
