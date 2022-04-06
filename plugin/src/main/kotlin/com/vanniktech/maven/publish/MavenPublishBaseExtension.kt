@@ -14,8 +14,8 @@ abstract class MavenPublishBaseExtension(
   private val project: Project
 ) {
 
-  internal var mavenCentral: Pair<SonatypeHost, String?>? = null
-  internal var signing: Boolean? = null
+  private var mavenCentral: Pair<SonatypeHost, String?>? = null
+  private var signing: Boolean? = null
   private var pomFromProperties: Boolean? = null
   private var platform: Platform? = null
 
