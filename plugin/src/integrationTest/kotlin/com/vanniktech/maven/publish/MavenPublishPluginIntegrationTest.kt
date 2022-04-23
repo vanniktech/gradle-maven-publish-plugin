@@ -282,6 +282,16 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches()
   }
 
+  @Test fun generatesArtifactsAndDocumentationOnFullPomProject() {
+    setupFixture("full_pom_project")
+
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
+
+    assertExpectedTasksRanSuccessfully(result)
+    assertExpectedCommonArtifactsGenerated()
+    assertPomContentMatches()
+  }
+
   @Test fun generatesArtifactsAndDocumentationOnOverrideVersionGroupProject() {
     setupFixture("override_version_group_project")
 

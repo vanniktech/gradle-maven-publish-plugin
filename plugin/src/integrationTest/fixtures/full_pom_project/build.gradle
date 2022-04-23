@@ -1,0 +1,22 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+    }
+
+    dependencies {
+        classpath "com.vanniktech:gradle-maven-publish-plugin:${System.getProperty("com.vanniktech.publish.version")}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "org.jetbrains.kotlin.jvm"
+apply plugin: "com.vanniktech.maven.publish"
+
+apply from: "maven-publish.gradle"
+
+dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
+}

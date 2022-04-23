@@ -168,6 +168,15 @@ abstract class MavenPublishBaseExtension(
           pom.inceptionYear.set(inceptionYear)
         }
 
+        val issueManagementSystem = project.findOptionalProperty("POM_ISSUE_SYSTEM")
+        val issueManagementUrl = project.findOptionalProperty("POM_ISSUE_URL")
+        if (issueManagementSystem != null || issueManagementUrl != null) {
+          pom.issueManagement {
+            it.system.set(issueManagementSystem)
+            it.url.set(issueManagementUrl)
+          }
+        }
+
         val scmUrl = project.findOptionalProperty("POM_SCM_URL")
         val scmConnection = project.findOptionalProperty("POM_SCM_CONNECTION")
         val scmDeveloperConnection = project.findOptionalProperty("POM_SCM_DEV_CONNECTION")
@@ -208,12 +217,14 @@ abstract class MavenPublishBaseExtension(
         val developerId = project.findOptionalProperty("POM_DEVELOPER_ID")
         val developerName = project.findOptionalProperty("POM_DEVELOPER_NAME")
         val developerUrl = project.findOptionalProperty("POM_DEVELOPER_URL")
+        val developerEmail = project.findOptionalProperty("POM_DEVELOPER_EMAIL")
         if (developerId != null || developerName != null || developerUrl != null) {
           pom.developers { developers ->
             developers.developer {
               it.id.set(developerId)
               it.name.set(developerName)
               it.url.set(developerUrl)
+              it.email.set(developerEmail)
             }
           }
         }
