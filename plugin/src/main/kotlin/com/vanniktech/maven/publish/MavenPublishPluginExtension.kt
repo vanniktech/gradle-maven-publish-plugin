@@ -39,7 +39,7 @@ abstract class MavenPublishPluginExtension(
    * @Since 0.9.0
    */
   @Deprecated("Set the RELEASE_SIGNING_ENABLED Gradle property or call mavenPublishing { signAllPublications() } instead")
-  var releaseSigningEnabled: Boolean = project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean() ?: true
+  var releaseSigningEnabled: Boolean = releaseSigningProperty() ?: true
 
   internal fun sonatypeHostProperty(): String? {
     return project.findOptionalProperty("SONATYPE_HOST")
