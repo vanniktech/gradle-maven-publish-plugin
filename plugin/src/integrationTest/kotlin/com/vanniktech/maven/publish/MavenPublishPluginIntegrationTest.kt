@@ -177,7 +177,7 @@ class MavenPublishPluginIntegrationTest {
   @Test fun generatesArtifactsAndDocumentationOnKotlinMppProject() {
     setupFixture("passing_kotlin_mpp_project")
 
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace", "--stacktrace")
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
 
@@ -226,7 +226,7 @@ class MavenPublishPluginIntegrationTest {
   @Test fun generatesArtifactsAndDocumentationOnKotlinMppWithDokkaProject() {
     setupFixture("passing_kotlin_mpp_with_dokka_project")
 
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace", "--stacktrace")
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result, hasDokka = true)
 
@@ -251,7 +251,7 @@ class MavenPublishPluginIntegrationTest {
   @Test fun generatesArtifactsAndDocumentationOnKotlinMppWithAndroidDokkaProject() {
     setupFixture("passing_kotlin_mpp_with_android_dokka_project")
 
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace", "--stacktrace")
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result, hasDokka = true)
 
@@ -286,7 +286,7 @@ class MavenPublishPluginIntegrationTest {
   @Test
   fun generatesArtifactsAndDocumentationOnKotlinJsProject() {
     setupFixture("passing_kotlin_js_project")
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace", "--stacktrace")
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated()
@@ -296,7 +296,7 @@ class MavenPublishPluginIntegrationTest {
   @Test fun generatesArtifactsAndDocumentationOnGradlePluginProject() {
     setupFixture("passing_java_gradle_plugin_project")
 
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace", "--stacktrace")
+    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
     assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
     assertExpectedCommonArtifactsGenerated()
@@ -438,6 +438,7 @@ class MavenPublishPluginIntegrationTest {
   private fun executeGradleCommands(vararg commands: String) = GradleRunner.create()
     .withProjectDir(projectFolder)
     .withArguments(*commands, "-Ptest.releaseRepository=$repoFolder")
+    .withDebug(true)
     .forwardOutput()
     .build()
 
