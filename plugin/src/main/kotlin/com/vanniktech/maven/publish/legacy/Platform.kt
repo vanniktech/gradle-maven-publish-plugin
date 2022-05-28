@@ -38,8 +38,8 @@ internal fun Project.configurePlatform() {
 
 internal fun Project.configureNotAndroidNotMppPlatform() {
   when {
-    plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> return // handled separately
-    plugins.hasPlugin("com.android.library") -> return // handled separately
+    plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> return // Handled separately.
+    plugins.hasPlugin("com.android.library") -> return // Handled separately.
     plugins.hasPlugin("java-gradle-plugin") ->
       baseExtension.configure(GradlePlugin(defaultJavaDocOption() ?: javadoc()))
     plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
