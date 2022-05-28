@@ -258,8 +258,6 @@ class MavenPublishPluginIntegrationTest {
     assertExpectedCommonArtifactsGenerated()
     assertPomContentMatches()
 
-    repoFolder.walkTopDown().forEach { println(it.path) }
-
     val androidArtifactId = "$TEST_POM_ARTIFACT_ID-android"
     assertExpectedCommonArtifactsGenerated(artifactId = androidArtifactId, artifactExtension = "aar")
     // TODO dependency sorting is unstable - the other variants only have 1 and are enough to see that the pom is correct
