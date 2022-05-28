@@ -23,21 +23,23 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.jetbrains.dokka.gradle.DokkaTask
 
 internal fun Project.configurePlatform() {
-  afterEvaluate {
-    if (!plugins.hasPlugin("com.android.library")) {
-      configureNotAndroidPlatform()
-    }
+  plugins.withId("org.jetbrains.kotlin.multiplatform") {
+    baseExtension.configure(KotlinMultiplatform(defaultJavaDocOption() ?: JavadocJar.Empty()))
   }
 
   plugins.withId("com.android.library") {
     configureAndroidPlatform()
   }
+
+  afterEvaluate {
+    configureNotAndroidNotMppPlatform()
+  }
 }
 
-internal fun Project.configureNotAndroidPlatform() {
+internal fun Project.configureNotAndroidNotMppPlatform() {
   when {
-    plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") ->
-      baseExtension.configure(KotlinMultiplatform(defaultJavaDocOption() ?: JavadocJar.Empty()))
+    plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> return // Handled separately.
+    plugins.hasPlugin("com.android.library") -> return // Handled separately.
     plugins.hasPlugin("java-gradle-plugin") ->
       baseExtension.configure(GradlePlugin(defaultJavaDocOption() ?: javadoc()))
     plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->

@@ -1,0 +1,56 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+    }
+
+    dependencies {
+        classpath "com.vanniktech:gradle-maven-publish-plugin:${System.getProperty("com.vanniktech.publish.version")}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+        classpath "com.android.tools.build:gradle:7.1.2"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.6.10"
+    }
+}
+
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.multiplatform"
+apply plugin: "org.jetbrains.dokka"
+apply plugin: "com.vanniktech.maven.publish"
+
+android {
+  compileSdkVersion = 31
+  namespace = "com.test"
+}
+
+kotlin {
+    jvm()
+    js("nodeJs") {
+        nodejs()
+    }
+    linuxX64("linux")
+    android {
+      publishLibraryVariants("release", "debug")
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+            }
+        }
+        jvmMain {
+            dependencies {
+            }
+        }
+        nodeJsMain {
+            dependencies {
+            }
+        }
+        linuxMain {
+            dependencies {
+            }
+        }
+    }
+}
+
+apply from: "maven-publish.gradle"
