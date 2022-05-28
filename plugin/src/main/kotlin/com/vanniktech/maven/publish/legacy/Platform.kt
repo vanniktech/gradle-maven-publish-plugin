@@ -54,7 +54,7 @@ internal fun Project.configureNotAndroidPlatform() {
 
 internal fun Project.configureAndroidPlatform() {
   if (hasWorkingNewAndroidPublishingApi()) {
-    // afterEvaluate is too late but we can't run this synchronously because we shouldn't call the APIs for
+    // afterEvaluate is too late, but we can't run this synchronously because we shouldn't call the APIs for
     // multiplatform projects that use Android
     androidComponents.finalizeDsl {
       if (!plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
@@ -68,9 +68,11 @@ internal fun Project.configureAndroidPlatform() {
     }
   } else {
     afterEvaluate {
-      // release was the old default value before it was changed to null for AGP 7.1+
-      val variant = legacyExtension.androidVariantToPublish ?: "release"
-      baseExtension.configure(AndroidLibrary(defaultJavaDocOption() ?: javadoc(), variant = variant))
+      if (!plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+        // release was the old default value before it was changed to null for AGP 7.1+
+        val variant = legacyExtension.androidVariantToPublish ?: "release"
+        baseExtension.configure(AndroidLibrary(defaultJavaDocOption() ?: javadoc(), variant = variant))
+      }
     }
   }
 }
