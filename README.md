@@ -30,6 +30,9 @@ uses Gradle properties. It's generally recommended to set them in your `gradle.p
 file.
 
 ```properties
+SONATYPE_HOST=DEFAULT
+RELEASE_SIGNING_ENABLED=true
+
 GROUP=com.test.mylibrary
 POM_ARTIFACT_ID=mylibrary-runtime
 VERSION_NAME=3.0.5
@@ -67,22 +70,19 @@ Without any further configuration the plugin has two tasks. `publish` which will
 to Maven Central (through Sonatype OSSRH) by default. To publish to the local maven repository on your
 machine (`~/.m2/repository`) there is `publishToMavenLocal`.
 
-In case you are using `s01.oss.sonatype.org` you need to configure that like this:
-```groovy
-allprojects {
-    plugins.withId("com.vanniktech.maven.publish") {
-        mavenPublish {
-            sonatypeHost = "S01"
-        }
-    }
-}
+In case you are using `s01.oss.sonatype.org` you need to change the `SONATYPE_HOST` property like this:
+```properties
+SONATYPE_HOST=S01
 ```
 
 The username and password for Sonatype OSS can be provided as Gradle properties called `mavenCentralUsername`
 and `mavenCentralPassword` to avoid having to commit them. You can also supply them as environment variables
 called `ORG_GRADLE_PROJECT_mavenCentralUsername` and `ORG_GRADLE_PROJECT_mavenCentralPassword`.
 
-To remove the default repository set `sonatypeHost` to `null`.
+To remove the default repository set `SONATYPE_HOST` to an empty string.
+```properties
+SONATYPE_HOST=
+```
 
 You can add additional repositories to publish to using the standard Gradle APIs:
 
@@ -128,16 +128,7 @@ signingInMemoryKeyPassword=secret
 
 These properties can also be provided as environment variables by prefixing them with `ORG_GRADLE_PROJECT_`
 
-It is possible to disable signing of release artifacts directly in your build scripts (takes precedence):
-
-```groovy
-mavenPublish {
-  releaseSigningEnabled = false
-}
-```
-
-Alternatively, you can use a Gradle property which is recommended if you only want to sign certain builds
-or only build on certain machines.
+It is possible to disable signing of release artifacts by adjusting your gradle.properties like this:
 
 ```groovy
 RELEASE_SIGNING_ENABLED=false

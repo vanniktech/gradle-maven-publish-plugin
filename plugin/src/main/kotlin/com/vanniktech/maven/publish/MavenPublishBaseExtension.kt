@@ -14,8 +14,8 @@ abstract class MavenPublishBaseExtension(
   private val project: Project
 ) {
 
-  private var mavenCentral: Pair<SonatypeHost, String?>? = null
-  private var signing: Boolean? = null
+  internal var mavenCentral: Pair<SonatypeHost, String?>? = null
+  internal var signing: Boolean? = null
   private var pomFromProperties: Boolean? = null
   private var platform: Platform? = null
 
@@ -33,9 +33,8 @@ abstract class MavenPublishBaseExtension(
    * @param host the instance of Sonatype OSSRH to use
    * @param stagingRepositoryId optional parameter to upload to a specific already created staging repository
    */
-  @Incubating
   @JvmOverloads
-  fun publishToMavenCentral(host: SonatypeHost, stagingRepositoryId: String? = null) {
+  fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT, stagingRepositoryId: String? = null) {
     val mavenCentral = mavenCentral
     if (mavenCentral != null) {
       // Ignore subsequent calls with the same arguments.
@@ -102,7 +101,6 @@ abstract class MavenPublishBaseExtension(
    * can be found in the [Gradle documentation](https://docs.gradle.org/current/userguide/signing_plugin.html)
    */
   // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
-  @Incubating
   fun signAllPublications() {
     if (signing == true) {
       // ignore subsequent calls with the same arguments
