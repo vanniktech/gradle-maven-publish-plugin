@@ -52,7 +52,7 @@ Added support to set the following pom values through properties (thanks to @jar
 
 - resolved an issue in Kotlin Multiplatform projects that apply `com.android.library` that caused no sources jars to be published
 - resolved an issue in Kotlin Multiplatform projects that apply `com.android.library` using AGP versions before 7.1.2 that caused the project to be published as a pure Android library
-
+- fixed and improved error messages for `closeAndReleaseRepository`
 
 Version 0.19.0 *(2022-02-26)*
 ---------------------------------
