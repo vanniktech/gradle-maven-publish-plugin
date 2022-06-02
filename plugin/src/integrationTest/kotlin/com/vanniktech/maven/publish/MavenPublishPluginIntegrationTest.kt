@@ -134,23 +134,9 @@ class MavenPublishPluginIntegrationTest {
     val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated(artifactExtension = "aar")
+    assertExpectedCommonArtifactsGenerated("aar", qualifier = "debug")
+    assertExpectedCommonArtifactsGenerated("aar", qualifier = "release")
     assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestActivity.kt", "src/main/java")
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestActivity.java", "src/main/java")
-  }
-
-  @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinDokkaProject() {
-    setupFixture("passing_android_with_kotlin_dokka_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result, hasDokka = true)
-
-    assertExpectedCommonArtifactsGenerated(artifactExtension = "aar")
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestActivity.kt", "src/main/java")
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestActivity.java", "src/main/java")
   }
 
   @Test fun generatesArtifactsAndDocumentationOnKotlinMppProject() {
