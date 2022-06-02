@@ -9,14 +9,14 @@ In the next release after this the `com.vanniktech.maven.publish` will stop addi
 publishing target and will not enable GPG signing by default. If you are curretly relying on this behavior the plugin
 will print a warning during configuration phase. To continue publishing to maven central and signing artifacts either
 add this to your build files:
-```
+```gradle
 mavenPublishing {
-    publishToMavenCentral() // use publishToMavenCentral("S01") for publishing through s01.sonatype.org
-    enableReleaseSigning()
+  publishToMavenCentral() // use publishToMavenCentral("S01") for publishing through s01.sonatype.org
+  enableReleaseSigning()
 }
 ```
 or the following to your `gradle.properties`:
-```
+```gradle
 SONATYPE_HOST=DEFAULT
 # SONATYPE_HOST=S01 for publishing through s01.sonatype.org
 RELEASE_SIGNING_ENABLED=true
@@ -29,7 +29,7 @@ The base plugin is unaffected by these changes because it already has this behav
 The old `mavenPublish` extension has been deprecated.
 
 If you were using it to set `sonatypeHost` to `S01` use 
-```
+```gradle
 mavenPublishing {
   publishToMavenCentral("S01")
 }
