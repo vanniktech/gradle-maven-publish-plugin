@@ -11,14 +11,14 @@ will print a warning during configuration phase. To continue publishing to maven
 add this to your build files:
 ```gradle
 mavenPublishing {
-  publishToMavenCentral() // use publishToMavenCentral("S01") for publishing through s01.sonatype.org
+  publishToMavenCentral() // use publishToMavenCentral("S01") for publishing through s01.oss.sonatype.org
   enableReleaseSigning()
 }
 ```
 or the following to your `gradle.properties`:
 ```gradle
 SONATYPE_HOST=DEFAULT
-# SONATYPE_HOST=S01 for publishing through s01.sonatype.org
+# SONATYPE_HOST=S01 for publishing through s01.oss.sonatype.org
 RELEASE_SIGNING_ENABLED=true
 ```
 
