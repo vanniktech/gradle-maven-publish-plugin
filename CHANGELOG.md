@@ -1,5 +1,59 @@
 # Change Log
 
+Version 0.20.0 *(2022-06-02)*
+---------------------------------
+
+**Upcoming behavior change**
+
+In the next release after this the `com.vanniktech.maven.publish` will stop adding Maven Central (Sonatype OSS) as a 
+publishing target and will not enable GPG signing by default. If you are curretly relying on this behavior the plugin
+will print a warning during configuration phase. To continue publishing to maven central and signing artifacts either
+add this to your build files:
+```gradle
+mavenPublishing {
+  publishToMavenCentral() // use publishToMavenCentral("S01") for publishing through s01.sonatype.org
+  enableReleaseSigning()
+}
+```
+or the following to your `gradle.properties`:
+```gradle
+SONATYPE_HOST=DEFAULT
+# SONATYPE_HOST=S01 for publishing through s01.sonatype.org
+RELEASE_SIGNING_ENABLED=true
+```
+
+The base plugin is unaffected by these changes because it already has this behavior.
+
+**Deprecation**
+
+The old `mavenPublish` extension has been deprecated.
+
+If you were using it to set `sonatypeHost` to `S01` use 
+```gradle
+mavenPublishing {
+  publishToMavenCentral("S01")
+}
+```
+instead or add `SONATYPE_HOST=S01` to your gradle.properties.
+
+If `sonatypeHost` was used to disable adding Maven Central as a publishing target add `SONATYPE_HOST=` until 0.21.0 is out and this becomes the default behavior.
+
+If you set `releaseSigningEnabled` to false add `RELEASE_SIGNING_ENABLED=false` to your gradle.properties until 0.21.0 is out and this becomes the default behavior.
+
+
+**New**
+
+Added support to set the following pom values through properties (thanks to @jaredsburrows for the contribution)
+- `POM_ISSUE_SYSTEM` sets `issueManagement.system`
+- `POM_ISSUE_URL` sets `issueManagement.url`
+- `POM_DEVELOPER_EMAIL` sets `developer.email`
+
+**Fixed**
+
+- resolved an issue in Kotlin Multiplatform projects that apply `com.android.library` that caused no sources jars to be published
+- resolved an issue in Kotlin Multiplatform projects that apply `com.android.library` using AGP versions before 7.1.2 that caused the project to be published as a pure Android library
+- fixed and improved error messages for `closeAndReleaseRepository`
+
 Version 0.19.0 *(2022-02-26)*
 ---------------------------------
 
