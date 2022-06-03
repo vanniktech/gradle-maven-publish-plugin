@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish.tasks
 
-import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.TaskProvider
@@ -13,18 +12,7 @@ open class SourcesJar : Jar() {
   }
 
   internal companion object {
-    internal fun Project.emptySourcesJar(): TaskProvider<*> = tasks.register("emptySourcesJar", SourcesJar::class.java)
-
-    internal fun Project.androidSourcesJar(sourcesJar: Boolean): TaskProvider<*> {
-      if (!sourcesJar) {
-        return emptySourcesJar()
-      }
-
-      return tasks.register("androidSourcesJar", SourcesJar::class.java) {
-        val androidExtension = extensions.getByType(LibraryExtension::class.java)
-        it.from(androidExtension.sourceSets.getByName("main").java.srcDirs)
-      }
-    }
+    private fun Project.emptySourcesJar(): TaskProvider<*> = tasks.register("emptySourcesJar", SourcesJar::class.java)
 
     internal fun Project.javaSourcesJar(sourcesJar: Boolean): TaskProvider<*> {
       if (!sourcesJar) {

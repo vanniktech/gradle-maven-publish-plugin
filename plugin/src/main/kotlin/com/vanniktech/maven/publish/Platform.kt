@@ -2,7 +2,6 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
-import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.androidSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
 import java.lang.UnsupportedOperationException
@@ -11,7 +10,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 
 /**
- * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidLibrary] or
+ * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
  * [KotlinMultiplatform]. When a platform is configured through [MavenPublishBaseExtension.configure] the plugin
  * will automatically set up the artifacts that should get published, including javadoc and sources jars depending
  * on the option.
@@ -81,44 +80,6 @@ data class GradlePlugin @JvmOverloads constructor(
       if (it.name == "pluginMaven") {
         it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
         it.withJavadocJar { project.javadocJarTask(javadocJar) }
-      }
-    }
-  }
-}
-
-/**
- * To be used for `com.android.library` projects. Applying this creates a publication for the component of the given
- * `variant`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
- * be added to the publication.
- *
- * Equivalent Gradle set up (before AGP 7.1.1):
- * ```
- * afterEvaluate {
- *   publishing {
- *     publications {
- *       create<MavenPublication>("maven") {
- *         from(components["release"])
- *       }
- *     }
- *   }
- * }
- * ```
- * This does not include javadoc and sources jars because there are no APIs for that available.
- */
-@Deprecated("Use AndroidSingleVariantLibrary or AndroidMultiVariantLibrary instead")
-data class AndroidLibrary @JvmOverloads constructor(
-  override val javadocJar: JavadocJar,
-  override val sourcesJar: Boolean = true,
-  val variant: String = "release"
-) : Platform() {
-
-  override fun configure(project: Project) {
-    project.afterEvaluate {
-      val component = project.components.findByName(variant) ?: throw MissingVariantException(variant)
-      project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
-        it.from(component)
-        it.withSourcesJar { project.androidSourcesJar(sourcesJar) }
-        it.withJavadocJar { project.javadocJarTask(javadocJar, android = true) }
       }
     }
   }
@@ -229,7 +190,7 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
           if (includedBuildTypeValues.isNotEmpty()) {
             includeBuildTypeValues(*includedBuildTypeValues.toTypedArray())
           }
-          includedFlavorDimensionsAndValues.forEach { dimension, flavors ->
+          includedFlavorDimensionsAndValues.forEach { (dimension, flavors) ->
             includeFlavorDimensionAndValues(dimension, *flavors.toTypedArray())
           }
         }
