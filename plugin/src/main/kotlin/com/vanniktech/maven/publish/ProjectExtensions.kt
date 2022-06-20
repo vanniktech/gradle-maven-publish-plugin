@@ -8,9 +8,6 @@ import org.gradle.plugins.signing.SigningExtension
 
 internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
 
-internal inline val Project.legacyExtension: MavenPublishPluginExtension
-  get() = extensions.getByType(MavenPublishPluginExtension::class.java)
-
 internal inline val Project.baseExtension: MavenPublishBaseExtension
   get() = extensions.getByType(MavenPublishBaseExtension::class.java)
 
