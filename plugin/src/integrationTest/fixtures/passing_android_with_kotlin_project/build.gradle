@@ -22,7 +22,7 @@ android {
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
 }
 
 apply from: "maven-publish.gradle"
