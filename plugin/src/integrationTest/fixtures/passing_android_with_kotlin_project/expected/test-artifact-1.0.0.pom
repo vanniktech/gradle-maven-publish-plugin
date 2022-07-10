@@ -10,7 +10,7 @@
   <groupId>com.example</groupId>
   <artifactId>test-artifact</artifactId>
   <version>1.0.0</version>
-  <packaging>pom</packaging>
+  <packaging>aar</packaging>
   <name>Gradle Maven Publish Plugin Test Artifact</name>
   <description>Testing the Gradle Maven Publish Plugin</description>
   <url>https://github.com/vanniktech/gradle-maven-publish-plugin/</url>
@@ -40,7 +40,6 @@
       <artifactId>kotlin-stdlib-jdk8</artifactId>
       <version>1.6.10</version>
       <scope>compile</scope>
-      <optional>true</optional>
     </dependency>
   </dependencies>
 </project>

@@ -75,7 +75,8 @@ private fun Project.configurePlatform() {
     // multiplatform projects that use Android
     androidComponents.finalizeDsl {
       if (!plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-        baseExtension.configure(AndroidMultiVariantLibrary())
+        val variant = project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release"
+        baseExtension.configure(AndroidSingleVariantLibrary(variant))
       }
     }
   }
@@ -126,7 +127,7 @@ private fun Project.javaVersion(): JavaVersion {
     val extension = project.extensions.findByType(JavaPluginExtension::class.java)
     if (extension != null) {
       val toolchain = extension.toolchain
-      val version = toolchain.languageVersion.forUseAtConfigurationTime().get().asInt()
+      val version = toolchain.languageVersion.get().asInt()
       return JavaVersion.toVersion(version)
     }
   } catch (t: Throwable) {

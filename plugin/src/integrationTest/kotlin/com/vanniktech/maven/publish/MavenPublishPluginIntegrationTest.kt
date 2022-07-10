@@ -102,8 +102,7 @@ class MavenPublishPluginIntegrationTest {
     val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated("aar", qualifier = "debug")
-    assertExpectedCommonArtifactsGenerated("aar", qualifier = "release")
+    assertExpectedCommonArtifactsGenerated("aar")
     assertPomContentMatches()
   }
 
@@ -134,8 +133,7 @@ class MavenPublishPluginIntegrationTest {
     val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
     assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated("aar", qualifier = "debug")
-    assertExpectedCommonArtifactsGenerated("aar", qualifier = "release")
+    assertExpectedCommonArtifactsGenerated("aar")
     assertPomContentMatches()
   }
 
