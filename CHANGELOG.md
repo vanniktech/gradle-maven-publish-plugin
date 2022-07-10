@@ -39,7 +39,7 @@ Unless another variant is specified by setting the `ANDROID_VARIANT_TO_PUBLISH`
 Gradle property the `release` variant will be published.
 
 To continue publishing multi variant libraries you can use the
-[base plugin](https://issuetracker.google.com/issues/197636221).
+[base plugin](https://github.com/vanniktech/gradle-maven-publish-plugin#base-plugin).
 
 **Removals**
 
