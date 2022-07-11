@@ -18,7 +18,7 @@ or add this to your Groovy build files:
 mavenPublishing {
   publishToMavenCentral()
   // publishToMavenCentral("S01") for publishing through s01.oss.sonatype.org
-  enableReleaseSigning()
+  signAllPublications()
 }
 ```
 or the following to your kts build files:
@@ -26,7 +26,7 @@ or the following to your kts build files:
 mavenPublishing {
   publishToMavenCentral()
   // publishToMavenCentral(SonatypeHost.S01) for publishing through s01.oss.sonatype.org
-  enableReleaseSigning()
+  signAllPublications()
 }
 ```
 
@@ -62,7 +62,7 @@ add this to your build files:
 ```gradle
 mavenPublishing {
   publishToMavenCentral() // use publishToMavenCentral("S01") for publishing through s01.oss.sonatype.org
-  enableReleaseSigning()
+  signAllPublications()
 }
 ```
 or the following to your `gradle.properties`:
