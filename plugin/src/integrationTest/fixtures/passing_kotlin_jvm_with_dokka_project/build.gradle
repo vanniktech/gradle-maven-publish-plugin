@@ -7,7 +7,7 @@ buildscript {
 
     dependencies {
         classpath "com.vanniktech:gradle-maven-publish-plugin:${System.getProperty("com.vanniktech.publish.version")}"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.6.10"
     }
 }
@@ -17,7 +17,7 @@ apply plugin: "org.jetbrains.dokka"
 apply plugin: "com.vanniktech.maven.publish"
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
 }
 
 apply from: "maven-publish.gradle"
