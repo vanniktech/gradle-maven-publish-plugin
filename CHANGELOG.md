@@ -1,30 +1,33 @@
 # Change Log
 
-Version 0.21.0 *(UNRELEASED)*
+Version 0.21.0 *(2022-07-11)*
 ---------------------------------
 
 **Behavior changes**
 
 The `com.vanniktech.maven.publish` stops adding Maven Central (Sonatype OSS) as a
-publishing target and will not enable GPG signing by default. To continue publishing to maven central and signing artifacts either add this to your Groovy build files:
-```gradle
-mavenPublishing {
-  publishToMavenCentral() // use publishToMavenCentral("S01") for publishing through s01.oss.sonatype.org
-  enableReleaseSigning()
-}
-```
-the following to your kts build files:
-```kotlin
-mavenPublishing {
-  publishToMavenCentral() // use publishToMavenCentral(SonatypeHost.S01) for publishing through s01.oss.sonatype.org
-  enableReleaseSigning()
-}
-```
-or the following to your `gradle.properties`:
+publishing target and will not enable GPG signing by default. To continue publishing to maven central and signing artifacts either add the following to your `gradle.properties`:
 ```properties
 SONATYPE_HOST=DEFAULT
 # SONATYPE_HOST=S01 for publishing through s01.oss.sonatype.org
 RELEASE_SIGNING_ENABLED=true
+```
+
+or add this to your Groovy build files:
+```gradle
+mavenPublishing {
+  publishToMavenCentral()
+  // publishToMavenCentral("S01") for publishing through s01.oss.sonatype.org
+  enableReleaseSigning()
+}
+```
+or the following to your kts build files:
+```kotlin
+mavenPublishing {
+  publishToMavenCentral()
+  // publishToMavenCentral(SonatypeHost.S01) for publishing through s01.oss.sonatype.org
+  enableReleaseSigning()
+}
 ```
 
 The base plugin is unaffected by these changes because it already has this behavior.
