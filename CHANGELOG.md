@@ -1,12 +1,59 @@
 # Change Log
 
+Version 0.21.0 *(UNRELEASED)*
+---------------------------------
+
+**Behavior changes**
+
+The `com.vanniktech.maven.publish` stops adding Maven Central (Sonatype OSS) as a
+publishing target and will not enable GPG signing by default. To continue publishing to maven central and signing artifacts either add this to your Groovy build files:
+```gradle
+mavenPublishing {
+  publishToMavenCentral() // use publishToMavenCentral("S01") for publishing through s01.oss.sonatype.org
+  enableReleaseSigning()
+}
+```
+the following to your kts build files:
+```kotlin
+mavenPublishing {
+  publishToMavenCentral() // use publishToMavenCentral(SonatypeHost.S01) for publishing through s01.oss.sonatype.org
+  enableReleaseSigning()
+}
+```
+or the following to your `gradle.properties`:
+```properties
+SONATYPE_HOST=DEFAULT
+# SONATYPE_HOST=S01 for publishing through s01.oss.sonatype.org
+RELEASE_SIGNING_ENABLED=true
+```
+
+The base plugin is unaffected by these changes because it already has this behavior.
+
+**Android variant publishing**
+
+Since version 0.19.0 the plugin was publishing a multi variant library by
+default for Android projects. Due to [a bug in Android Studio](https://issuetracker.google.com/issues/197636221)
+that will cause it to not find the sources for libraries published this way the
+plugin will temporarily revert to publishing single variant libraries again.
+Unless another variant is specified by setting the `ANDROID_VARIANT_TO_PUBLISH`
+Gradle property the `release` variant will be published.
+
+To continue publishing multi variant libraries you can use the
+[base plugin](https://github.com/vanniktech/gradle-maven-publish-plugin#base-plugin).
+
+**Removals**
+
+The deprecated `mavenPublish` extension has been removed. Take a look at the
+changelog for 0.20.0 for replacements.
+
+
 Version 0.20.0 *(2022-06-02)*
 ---------------------------------
 
 **Upcoming behavior change**
 
-In the next release after this the `com.vanniktech.maven.publish` will stop adding Maven Central (Sonatype OSS) as a 
-publishing target and will not enable GPG signing by default. If you are curretly relying on this behavior the plugin
+In the next release after this the `com.vanniktech.maven.publish` will stop adding Maven Central (Sonatype OSS) as a
+publishing target and will not enable GPG signing by default. If you are currently relying on this behavior the plugin
 will print a warning during configuration phase. To continue publishing to maven central and signing artifacts either
 add this to your build files:
 ```gradle
@@ -28,7 +75,7 @@ The base plugin is unaffected by these changes because it already has this behav
 
 The old `mavenPublish` extension has been deprecated.
 
-If you were using it to set `sonatypeHost` to `S01` use 
+If you were using it to set `sonatypeHost` to `S01` use
 ```gradle
 mavenPublishing {
   publishToMavenCentral("S01")
