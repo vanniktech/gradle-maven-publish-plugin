@@ -3,6 +3,9 @@
 Version 0.21.0 *(2022-07-11)*
 ---------------------------------
 
+Minimum supported Gradle version is now 7.2.0
+Minimum supported Android Gradle Plugin versiobn is now 7.1.2, 7.2.0-beta02, 7.3.0-alpha01 or newer")
+
 **Behavior changes**
 
 The `com.vanniktech.maven.publish` stops adding Maven Central (Sonatype OSS) as a
