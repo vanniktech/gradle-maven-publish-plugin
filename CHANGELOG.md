@@ -4,7 +4,8 @@ Version 0.21.0 *(2022-07-11)*
 ---------------------------------
 
 Minimum supported Gradle version is now 7.2.0
-Minimum supported Android Gradle Plugin versiobn is now 7.1.2, 7.2.0-beta02, 7.3.0-alpha01 or newer")
+
+Minimum supported Android Gradle Plugin versions are now 7.1.2, 7.2.0-beta02 and 7.3.0-alpha01
 
 **Behavior changes**
 
