@@ -4,10 +4,10 @@ import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
-import java.lang.UnsupportedOperationException
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.jvm.tasks.Jar
 
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
@@ -226,16 +226,23 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
  * This does not include javadoc jars because there are no APIs for that available.
  */
 data class KotlinMultiplatform @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty()
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val sourcesJar: Boolean = true
 ) : Platform() {
-  // Automatically added by Kotlin MPP plugin.
-  override val sourcesJar = false
-
   override fun configure(project: Project) {
     val javadocJarTask = project.javadocJarTask(javadocJar)
 
     project.gradlePublishing.publications.withType(MavenPublication::class.java).all {
       it.withJavadocJar { javadocJarTask }
+    }
+
+    // Sources are automatically added by Kotlin MPP plugin.
+    if (!sourcesJar) {
+      project.tasks.withType(Jar::class.java).all {
+        if (it.archiveClassifier.get() == "sources") {
+          it.isEnabled = false
+        }
+      }
     }
   }
 }
