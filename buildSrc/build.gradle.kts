@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
   implementation(kotlin("gradle-plugin"))
-  implementation("org.jlleitschuh.gradle:ktlint-gradle:10.3.0")
+  implementation("org.jlleitschuh.gradle:ktlint-gradle:11.0.0")
   implementation("com.vanniktech:gradle-maven-publish-plugin:0.21.0")
 }
 
