@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-  api(gradleApi())
   add("kapt", "com.squareup.moshi:moshi-kotlin-codegen:${Version.moshi}")
 
   implementation("com.squareup.moshi:moshi:${Version.moshi}")

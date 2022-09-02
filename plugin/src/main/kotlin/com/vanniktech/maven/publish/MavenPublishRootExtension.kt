@@ -1,26 +1,27 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.nexus.CloseAndReleaseRepositoryTask
+import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask
+import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerCloseAndReleaseRepository
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 
 internal abstract class MavenPublishRootExtension(
   private val project: Project
 ) {
 
-  private var closeAndReleaseTask: TaskProvider<CloseAndReleaseRepositoryTask>? = null
+  private var closeAndReleaseTask: TaskProvider<CloseAndReleaseSonatypeRepositoryTask>? = null
 
-  internal fun configureCloseAndReleaseTask(baseUrl: String, repositoryUsername: String?, repositoryPassword: String?) {
+  internal fun configureCloseAndReleaseTask(
+    baseUrl: Provider<String>,
+    repositoryUsername: Provider<String>,
+    repositoryPassword: Provider<String>,
+  ) {
     if (closeAndReleaseTask != null) {
       return
     }
 
-    closeAndReleaseTask = project.tasks.register("closeAndReleaseRepository", CloseAndReleaseRepositoryTask::class.java) {
-      it.description = "Closes and releases an artifacts repository in Nexus"
-      it.group = "release"
-      it.baseUrl = baseUrl
-      it.repositoryUsername = repositoryUsername
-      it.repositoryPassword = repositoryPassword
-    }
+    closeAndReleaseTask = project.tasks
+      .registerCloseAndReleaseRepository(baseUrl, repositoryUsername, repositoryPassword)
   }
 }
