@@ -21,6 +21,17 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
     password = parameters.repositoryPassword.get(),
   )
 
+  // should only be accessed from CreateSonatypeRepositoryTask
+  // for all other use cases use MavenPublishBaseExtension
+  // the id of the staging repository that was created during this build
+  var stagingRepositoryId: String? = null
+    set(value) {
+      if (field != null) {
+        throw IllegalStateException("stagingRepositoryId was already set")
+      }
+      field = value
+    }
+
   // should only be accessed from CloseAndReleaseSonatypeRepositoryTask
   // indicates whether we already closed a staging repository to avoid doing it more than once in a build
   var repositoryClosed: Boolean = false

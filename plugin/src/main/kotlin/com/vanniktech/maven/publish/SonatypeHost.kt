@@ -25,12 +25,7 @@ enum class SonatypeHost(
       }
       "$rootUrl/content/repositories/snapshots/"
     } else {
-      val id = stagingRepositoryId.orNull
-      if (id != null) {
-        "$rootUrl/service/local/staging/deployByRepositoryId/$id/"
-      } else {
-        "$rootUrl/service/local/staging/deploy/maven2/"
-      }
+      "$rootUrl/service/local/staging/deployByRepositoryId/${stagingRepositoryId.get()}/"
     }
   }
 }
