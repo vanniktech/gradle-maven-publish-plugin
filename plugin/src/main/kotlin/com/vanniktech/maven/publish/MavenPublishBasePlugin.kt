@@ -18,8 +18,6 @@ open class MavenPublishBasePlugin : Plugin<Project> {
       }
     }
 
-    project.rootProject.plugins.apply(MavenPublishRootPlugin::class.java)
-
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
 
     project.extensions.create("mavenPublishing", MavenPublishBaseExtension::class.java, project)
@@ -39,6 +37,6 @@ open class MavenPublishBasePlugin : Plugin<Project> {
   }
 
   private companion object {
-    val MIN_GRADLE_VERSION = VersionNumber.parse("7.2.0")
+    val MIN_GRADLE_VERSION: VersionNumber = VersionNumber.parse("7.2.0")
   }
 }

@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerCloseAndReleaseRepository
+import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import java.util.concurrent.Callable
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -11,8 +13,8 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningPlugin
 
 @Incubating
-abstract class MavenPublishBaseExtension(
-  private val project: Project
+abstract class MavenPublishBaseExtension internal constructor(
+  private val project: Project,
 ) {
 
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
@@ -42,17 +44,21 @@ abstract class MavenPublishBaseExtension(
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
 
+    val buildService = project.gradle
+      .sharedServices
+      .registerSonatypeRepositoryBuildService(
+        sonatypeHost = sonatypeHost,
+        repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
+        repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
+      )
+
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
       repo.setUrl(sonatypeHost.map { it.publishingUrl(project.versionIsSnapshot, stagingRepositoryId) })
       repo.credentials(PasswordCredentials::class.java)
     }
 
-    project.rootExtension.configureCloseAndReleaseTask(
-      baseUrl = sonatypeHost.map { it.apiBaseUrl() },
-      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
-      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
-    )
+    project.tasks.registerCloseAndReleaseRepository(buildService)
   }
 
   /**
