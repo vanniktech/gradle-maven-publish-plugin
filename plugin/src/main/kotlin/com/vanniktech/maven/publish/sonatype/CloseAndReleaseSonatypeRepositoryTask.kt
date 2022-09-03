@@ -32,9 +32,11 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask : DefaultTask() {
 
     val manualStagingRepositoryId = this.manualStagingRepositoryId
     if (manualStagingRepositoryId != null) {
-      service.nexus.closeAndReleaseRepositoryById(manualStagingRepositoryId)
+      service.nexus.closeStagingRepository(manualStagingRepositoryId)
+      service.nexus.releaseStagingRepository(manualStagingRepositoryId)
     } else {
-      service.nexus.closeAndReleaseCurrentRepository()
+      val id = service.nexus.closeCurrentStagingRepository()
+      service.nexus.releaseStagingRepository(id)
     }
 
     service.repositoryClosed = true

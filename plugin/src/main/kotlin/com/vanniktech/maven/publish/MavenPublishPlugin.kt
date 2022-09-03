@@ -18,8 +18,9 @@ open class MavenPublishPlugin : Plugin<Project> {
     project.setCoordinates()
 
     val sonatypeHost = project.findOptionalProperty("SONATYPE_HOST")
-    if (sonatypeHost != null && sonatypeHost.isNotBlank()) {
-      baseExtension.publishToMavenCentral(SonatypeHost.valueOf(sonatypeHost))
+    if (!sonatypeHost.isNullOrBlank()) {
+      val automaticRelease = project.findOptionalProperty("SONATYPE_AUTOMATIC_RELEASE").toBoolean()
+      baseExtension.publishToMavenCentral(SonatypeHost.valueOf(sonatypeHost), automaticRelease)
     }
     val releaseSigning = project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean()
     if (releaseSigning == true) {
