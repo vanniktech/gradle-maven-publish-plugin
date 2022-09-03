@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import org.gradle.api.provider.Provider
+
 /**
  * Describes the various hosts for Sonatype OSSRH. Depending on when a user signed up with Sonatype
  * they have to use different hosts.
@@ -11,7 +13,7 @@ enum class SonatypeHost(
 ) {
   DEFAULT("https://oss.sonatype.org"),
   S01("https://s01.oss.sonatype.org");
-  
+
   internal fun apiBaseUrl(): String {
     return "$rootUrl/service/local/"
   }
