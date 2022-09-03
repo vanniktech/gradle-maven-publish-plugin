@@ -20,7 +20,7 @@ open class CloseAndReleaseRepositoryTask : DefaultTask() {
   @Option(option = "repository", description = "Specify which staging repository to close and release.")
   @Input
   @Optional
-  var stagingRepository: String? = null
+  var manualStagingRepositoryId: String? = null
 
   @TaskAction
   fun closeAndReleaseRepository() {
@@ -34,6 +34,17 @@ open class CloseAndReleaseRepositoryTask : DefaultTask() {
       "Please set a value for nexus.repositoryPassword"
     }
 
-    Nexus(baseUrl, repositoryUsername, repositoryPassword, stagingRepository).closeAndReleaseRepository()
+    val nexus = Nexus(
+      baseUrl = baseUrl,
+      username = repositoryUsername,
+      password = repositoryPassword,
+    )
+
+    val manualStagingRepositoryId = this.manualStagingRepositoryId
+    if (manualStagingRepositoryId != null) {
+      nexus.closeAndReleaseRepositoryById(manualStagingRepositoryId)
+    } else {
+      nexus.closeAndReleaseCurrentRepository()
+    }
   }
 }

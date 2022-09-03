@@ -5,11 +5,10 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-internal class Nexus(
+class Nexus(
   baseUrl: String,
   private val username: String,
   password: String,
-  private val stagingRepository: String?
 ) {
   private val service by lazy {
     val okHttpClient = OkHttpClient.Builder()
@@ -38,16 +37,6 @@ internal class Nexus(
     val allRepositories = getProfileRepositories() ?: emptyList()
 
     if (allRepositories.isEmpty()) {
-      throw IllegalArgumentException("No staging repositories found in account $username. Make sure you called \"./gradlew publish\".")
-    }
-
-    val candidateRepositories = if (stagingRepository != null) {
-      allRepositories.filter { it.repositoryId == stagingRepository }
-    } else {
-      allRepositories
-    }
-
-    if (candidateRepositories.isEmpty()) {
       throw IllegalArgumentException(
         "No matching staging repository found in account $username. You can can explicitly choose one by " +
           "passing it as an option like this \"./gradlew closeAndReleaseRepository --repository=comexample-123\". " +
@@ -55,18 +44,33 @@ internal class Nexus(
       )
     }
 
-    if (candidateRepositories.size > 1) {
+    if (allRepositories.size > 1) {
       throw IllegalArgumentException(
         "More than 1 matching staging repository found in account $username. You can can explicitly choose " +
           "one by passing it as an option like this \"./gradlew closeAndReleaseRepository --repository comexample-123\". " +
           "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}"
       )
     }
-    return candidateRepositories[0]
+    return allRepositories[0]
   }
 
-  fun findAndCloseStagingRepository(): String {
-    val stagingRepository = findStagingRepository()
+  private fun getStagingRepository(repositoryId: String): Repository {
+    val repositoryResponse = service.getRepository(repositoryId).execute()
+
+    if (!repositoryResponse.isSuccessful) {
+      throw IOException("Cannot get repository with id $repositoryId for account $username: ${repositoryResponse.errorBody()?.string()}")
+    }
+
+    val repository = repositoryResponse.body()
+
+    if (repository == null) {
+      throw IOException("Could not get repository with id $repositoryId for account $username")
+    }
+
+    return repository
+  }
+
+  private fun closeStagingRepository(stagingRepository: Repository): String {
     val repositoryId = stagingRepository.repositoryId
 
     if (stagingRepository.type != "open") {
@@ -109,8 +113,8 @@ internal class Nexus(
       Thread.sleep(CLOSE_WAIT_INTERVAL_MILLIS)
 
       try {
-        val repository = service.getRepository(repositoryId).execute().body()
-        if (repository?.type == "closed" && !repository.transitioning) {
+        val repository = getStagingRepository(repositoryId)
+        if (repository.type == "closed" && !repository.transitioning) {
           break
         }
       } catch (e: IOException) {
@@ -119,7 +123,7 @@ internal class Nexus(
     }
   }
 
-  fun releaseStagingRepository(repositoryId: String) {
+  private fun releaseStagingRepository(repositoryId: String) {
     println("Releasing repository: $repositoryId")
     val response = service.releaseRepository(
       TransitionRepositoryInput(
@@ -137,9 +141,19 @@ internal class Nexus(
     println("Repository $repositoryId released")
   }
 
-  fun closeAndReleaseRepository() {
-    val repositoryId = findAndCloseStagingRepository()
-    releaseStagingRepository(repositoryId)
+  private fun closeAndReleaseRepository(stagingRepository: Repository) {
+    closeStagingRepository(stagingRepository)
+    releaseStagingRepository(stagingRepository.repositoryId)
+  }
+
+  fun closeAndReleaseCurrentRepository() {
+    val stagingRepository = findStagingRepository()
+    closeAndReleaseRepository(stagingRepository)
+  }
+
+  fun closeAndReleaseRepositoryById(repositoryId: String) {
+    val stagingRepository = getStagingRepository(repositoryId)
+    closeAndReleaseRepository(stagingRepository)
   }
 
   companion object {
