@@ -1,6 +1,8 @@
 package com.vanniktech.maven.publish.nexus
 
 import java.io.IOException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -13,6 +15,9 @@ class Nexus(
   private val service by lazy {
     val okHttpClient = OkHttpClient.Builder()
       .addInterceptor(NexusOkHttpInterceptor(username, password))
+      .connectTimeout(60, TimeUnit.SECONDS)
+      .readTimeout(60, TimeUnit.SECONDS)
+      .writeTimeout(60, TimeUnit.SECONDS)
       .build()
     val retrofit = Retrofit.Builder()
       .addConverterFactory(MoshiConverterFactory.create())
@@ -178,6 +183,8 @@ class Nexus(
           break
         }
       } catch (e: IOException) {
+        System.err.println("Exception trying to get repository status: ${e.message}")
+      } catch (e: TimeoutException) {
         System.err.println("Exception trying to get repository status: ${e.message}")
       }
     }
