@@ -49,9 +49,9 @@ abstract class MavenPublishBaseExtension(
     }
 
     project.rootExtension.configureCloseAndReleaseTask(
-      baseUrl = "${host.rootUrl}/service/local/",
-      repositoryUsername = project.findOptionalProperty("mavenCentralUsername"),
-      repositoryPassword = project.findOptionalProperty("mavenCentralPassword")
+      baseUrl = sonatypeHost.map { it.apiBaseUrl() },
+      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
+      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
     )
   }
 
