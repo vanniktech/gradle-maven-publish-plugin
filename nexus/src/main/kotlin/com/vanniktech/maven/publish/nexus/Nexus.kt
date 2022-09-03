@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish.nexus
 
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -14,6 +15,9 @@ internal class Nexus(
   private val service by lazy {
     val okHttpClient = OkHttpClient.Builder()
       .addInterceptor(NexusOkHttpInterceptor(username, password))
+      .connectTimeout(30, TimeUnit.SECONDS)
+      .readTimeout(30, TimeUnit.SECONDS)
+      .writeTimeout(30, TimeUnit.SECONDS)
       .build()
     val retrofit = Retrofit.Builder()
       .addConverterFactory(MoshiConverterFactory.create())
