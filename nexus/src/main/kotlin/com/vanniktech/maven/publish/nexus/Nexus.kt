@@ -23,6 +23,66 @@ class Nexus(
     retrofit.create(NexusService::class.java)
   }
 
+  private fun getProfiles(): List<StagingProfile>? {
+    val stagingProfilesResponse = service.getStagingProfiles().execute()
+
+    if (!stagingProfilesResponse.isSuccessful) {
+      throw IOException("Cannot get stagingProfiles for account $username: ${stagingProfilesResponse.errorBody()?.string()}")
+    }
+
+    return stagingProfilesResponse.body()?.data
+  }
+
+  private fun findStagingProfile(group: String): StagingProfile {
+    val allProfiles = getProfiles() ?: emptyList()
+
+    if (allProfiles.isEmpty()) {
+      throw IllegalArgumentException("No staging profiles found in account $username. Make sure you called \"./gradlew publish\".")
+    }
+
+    val candidateProfiles = allProfiles.filter { group == it.name || group.startsWith(it.name) }
+
+    if (candidateProfiles.isEmpty()) {
+      throw IllegalArgumentException(
+        "No matching staging profile found in account $username. It is expected that the account contains a staging " +
+          "profile that matches or is the start of $group." +
+          "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}"
+      )
+    }
+
+    if (candidateProfiles.size > 1) {
+      throw IllegalArgumentException(
+        "More than 1 matching staging profile found in account $username. " +
+          "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}"
+      )
+    }
+
+    return candidateProfiles[0]
+  }
+
+  private fun createStagingRepository(group: String, profile: StagingProfile): String {
+    println("Creating repository in profile: ${profile.name}")
+
+    val response = service.createRepository(profile.id, CreateRepositoryInput(CreateRepositoryInputData("Repository for $group"))).execute()
+    if (!response.isSuccessful) {
+      throw IOException("Cannot create repository: ${response.errorBody()?.string()}")
+    }
+
+    val id = response.body()?.data?.stagedRepositoryId
+    if (id == null) {
+      throw IOException("Did not receive created repository")
+    }
+
+    println("Created staging repository $id")
+
+    return id
+  }
+
+  fun createRepositoryForGroup(group: String): String {
+    val profile = findStagingProfile(group)
+    return createStagingRepository(group, profile)
+  }
+
   private fun getProfileRepositories(): List<Repository>? {
     val profileRepositoriesResponse = service.getProfileRepositories().execute()
 

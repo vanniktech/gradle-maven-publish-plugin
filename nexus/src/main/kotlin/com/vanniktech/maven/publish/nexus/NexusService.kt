@@ -11,6 +11,16 @@ import retrofit2.http.Path
  * -Nexus CORE API: https://repository.sonatype.org/nexus-restlet1x-plugin/default/docs/index.html
  */
 internal interface NexusService {
+
+  @GET("staging/profiles")
+  fun getStagingProfiles(): Call<StagingProfilesResponse>
+
+  @POST("staging/profiles/{profileId}/start")
+  fun createRepository(
+    @Path("profileId") stagingProfileId: String,
+    @Body input: CreateRepositoryInput
+  ): Call<CreateRepositoryResponse>
+
   @GET("staging/profile_repositories")
   fun getProfileRepositories(): Call<ProfileRepositoriesResponse>
 
