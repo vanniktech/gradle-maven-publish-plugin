@@ -16,10 +16,14 @@ abstract class MavenPublishBaseExtension(
 ) {
 
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
-  private val stagingRepositoryId: Property<String> = project.objects.property(String::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val platform: Property<Platform> = project.objects.property(Platform::class.java)
+
+  // will be set by the task to create the staging repository
+  private val stagingRepositoryId: Property<String> = project.objects.property(String::class.java).apply {
+    finalizeValueOnRead()
+  }
 
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
@@ -33,29 +37,18 @@ abstract class MavenPublishBaseExtension(
    * The `closeAndReleaseRepository` task is automatically configured for Sonatype OSSRH using the same credentials.
    *
    * @param host the instance of Sonatype OSSRH to use
-   * @param stagingRepositoryId optional parameter to upload to a specific already created staging repository
    */
-  @JvmOverloads
-  fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT, stagingRepositoryId: String? = null) {
+  fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT) {
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
-    this.stagingRepositoryId.set(stagingRepositoryId)
-    this.stagingRepositoryId.finalizeValueOnRead()
 
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
-      if (stagingRepositoryId != null) {
-        repo.setUrl("${host.rootUrl}/service/local/staging/deployByRepositoryId/$stagingRepositoryId/")
-      } else {
-        repo.setUrl("${host.rootUrl}/service/local/staging/deploy/maven2/")
-      }
+      repo.setUrl("${host.rootUrl}/service/local/staging/deploy/maven2/")
       repo.credentials(PasswordCredentials::class.java)
 
       project.afterEvaluate {
         if (it.version.toString().endsWith("SNAPSHOT")) {
-          if (stagingRepositoryId != null) {
-            throw IllegalArgumentException("Staging repositories are not supported for SNAPSHOT versions.")
-          }
           repo.setUrl("${host.rootUrl}/content/repositories/snapshots/")
         }
       }
