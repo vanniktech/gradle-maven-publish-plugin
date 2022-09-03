@@ -44,14 +44,8 @@ abstract class MavenPublishBaseExtension(
 
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
-      repo.setUrl("${host.rootUrl}/service/local/staging/deploy/maven2/")
+      repo.setUrl(sonatypeHost.map { it.publishingUrl(project.versionIsSnapshot, stagingRepositoryId) })
       repo.credentials(PasswordCredentials::class.java)
-
-      project.afterEvaluate {
-        if (it.version.toString().endsWith("SNAPSHOT")) {
-          repo.setUrl("${host.rootUrl}/content/repositories/snapshots/")
-        }
-      }
     }
 
     project.rootExtension.configureCloseAndReleaseTask(
@@ -94,7 +88,7 @@ abstract class MavenPublishBaseExtension(
     signing.finalizeValue()
 
     project.plugins.apply(SigningPlugin::class.java)
-    project.gradleSigning.setRequired(Callable { !project.version.toString().contains("SNAPSHOT") })
+    project.gradleSigning.setRequired(Callable { !project.versionIsSnapshot })
     project.gradleSigning.sign(project.gradlePublishing.publications)
 
     val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
