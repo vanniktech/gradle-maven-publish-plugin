@@ -5,6 +5,7 @@ import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.credentials.PasswordCredentials
+import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningPlugin
@@ -14,10 +15,11 @@ abstract class MavenPublishBaseExtension(
   private val project: Project
 ) {
 
-  private var mavenCentral: Pair<SonatypeHost, String?>? = null
-  private var signing: Boolean? = null
-  private var pomFromProperties: Boolean? = null
-  private var platform: Platform? = null
+  private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
+  private val stagingRepositoryId: Property<String> = project.objects.property(String::class.java)
+  private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
+  private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
+  private val platform: Property<Platform> = project.objects.property(Platform::class.java)
 
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
@@ -35,17 +37,10 @@ abstract class MavenPublishBaseExtension(
    */
   @JvmOverloads
   fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT, stagingRepositoryId: String? = null) {
-    val mavenCentral = mavenCentral
-    if (mavenCentral != null) {
-      // Ignore subsequent calls with the same arguments.
-      if (mavenCentral.first == host || mavenCentral.second == stagingRepositoryId) {
-        return
-      }
-
-      throw IllegalArgumentException("Called publishToMavenCentral more than once with different arguments")
-    }
-
-    this.mavenCentral = host to stagingRepositoryId
+    sonatypeHost.set(host)
+    sonatypeHost.finalizeValue()
+    this.stagingRepositoryId.set(stagingRepositoryId)
+    this.stagingRepositoryId.finalizeValueOnRead()
 
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
@@ -102,12 +97,8 @@ abstract class MavenPublishBaseExtension(
    */
   // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
   fun signAllPublications() {
-    if (signing == true) {
-      // ignore subsequent calls with the same arguments
-      return
-    }
-
-    this.signing = true
+    signing.set(true)
+    signing.finalizeValue()
 
     project.plugins.apply(SigningPlugin::class.java)
     project.gradleSigning.setRequired(Callable { !project.version.toString().contains("SNAPSHOT") })
@@ -139,12 +130,8 @@ abstract class MavenPublishBaseExtension(
    */
   @Incubating
   fun pomFromGradleProperties() {
-    if (pomFromProperties == true) {
-      // ignore subsequent calls with the same arguments
-      return
-    }
-
-    this.pomFromProperties = true
+    pomFromProperties.set(true)
+    pomFromProperties.finalizeValue()
 
     // without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
     project.afterEvaluate {
@@ -236,16 +223,8 @@ abstract class MavenPublishBaseExtension(
    */
   @Incubating
   fun configure(platform: Platform) {
-    if (this.platform != null) {
-      // Ignore subsequent calls with the same arguments.
-      if (this.platform == platform) {
-        return
-      }
-
-      throw IllegalArgumentException("Called configure(Platform) more than once with different arguments")
-    }
-
-    this.platform = platform
+    this.platform.set(platform)
+    this.platform.finalizeValue()
 
     platform.configure(project)
   }
