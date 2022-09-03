@@ -13,7 +13,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningPlugin
 
 @Incubating
-abstract class MavenPublishBaseExtension internal constructor(
+abstract class MavenPublishBaseExtension(
   private val project: Project,
 ) {
 
