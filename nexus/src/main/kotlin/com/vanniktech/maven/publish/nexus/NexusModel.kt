@@ -21,7 +21,12 @@ internal data class CreatedRepository(val stagedRepositoryId: String)
 internal data class CreateRepositoryResponse(val data: CreatedRepository)
 
 @JsonClass(generateAdapter = true)
-internal data class Repository(val repositoryId: String, val transitioning: Boolean, val type: String)
+internal data class Repository(
+  val repositoryId: String,
+  val transitioning: Boolean,
+  val type: String,
+  val notifications: Int
+)
 
 @JsonClass(generateAdapter = true)
 internal data class ProfileRepositoriesResponse(val data: List<Repository>)
