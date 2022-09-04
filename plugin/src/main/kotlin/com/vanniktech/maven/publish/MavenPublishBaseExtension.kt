@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerCloseAndReleaseRepository
+import com.vanniktech.maven.publish.sonatype.CreateSonatypeRepositoryTask.Companion.registerCreateRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import java.util.concurrent.Callable
 import org.gradle.api.Action
@@ -21,11 +22,6 @@ abstract class MavenPublishBaseExtension(
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val platform: Property<Platform> = project.objects.property(Platform::class.java)
-
-  // will be set by the task to create the staging repository
-  private val stagingRepositoryId: Property<String> = project.objects.property(String::class.java).apply {
-    finalizeValueOnRead()
-  }
 
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
@@ -52,10 +48,23 @@ abstract class MavenPublishBaseExtension(
         repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       )
 
+    val groupId = project.provider { project.group.toString() }
+    val versionIsSnapshot = project.provider { project.versionIsSnapshot }
+    val createRepository = project.tasks.registerCreateRepository(groupId, versionIsSnapshot, buildService)
+    val stagingRepositoryId = createRepository.flatMap { it.stagingRepositoryId }
+
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
       repo.setUrl(sonatypeHost.map { it.publishingUrl(project.versionIsSnapshot, stagingRepositoryId) })
       repo.credentials(PasswordCredentials::class.java)
+    }
+
+    project.gradlePublishing.publications.withType(MavenPublication::class.java).all { publication ->
+      project.afterEvaluate {
+        project.tasks.named("publish${publication.name.capitalize()}PublicationToMavenCentralRepository") {
+          it.dependsOn(createRepository)
+        }
+      }
     }
 
     project.tasks.registerCloseAndReleaseRepository(buildService)
