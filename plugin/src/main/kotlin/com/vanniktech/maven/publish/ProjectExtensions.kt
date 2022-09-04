@@ -14,9 +14,6 @@ internal val Project.versionIsSnapshot: Boolean
 internal inline val Project.baseExtension: MavenPublishBaseExtension
   get() = extensions.getByType(MavenPublishBaseExtension::class.java)
 
-internal inline val Project.rootExtension: MavenPublishRootExtension
-  get() = rootProject.extensions.getByType(MavenPublishRootExtension::class.java)
-
 internal inline val Project.gradleSigning: SigningExtension
   get() = extensions.getByType(SigningExtension::class.java)
 
