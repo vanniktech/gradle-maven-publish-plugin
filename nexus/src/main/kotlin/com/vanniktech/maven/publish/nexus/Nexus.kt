@@ -3,12 +3,13 @@ package com.vanniktech.maven.publish.nexus
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 class Nexus(
-  baseUrl: String,
+  private val baseUrl: String,
   private val username: String,
   password: String,
 ) {
@@ -177,15 +178,22 @@ class Nexus(
 
       Thread.sleep(CLOSE_WAIT_INTERVAL_MILLIS)
 
-      try {
-        val repository = getStagingRepository(repositoryId)
-        if (repository.type == "closed" && !repository.transitioning) {
-          break
-        }
+      val repository = try {
+        getStagingRepository(repositoryId)
       } catch (e: IOException) {
         System.err.println("Exception trying to get repository status: ${e.message}")
+        null
       } catch (e: TimeoutException) {
         System.err.println("Exception trying to get repository status: ${e.message}")
+        null
+      }
+
+      if (repository?.type == "closed" && !repository.transitioning) {
+        break
+      }
+      if (repository?.type == "open" && !repository.transitioning && repository.notifications > 0) {
+        val url = baseUrl.toHttpUrl().newBuilder("/#stagingRepositories").toString()
+        throw IOException("Closing the repository failed. ${repository.notifications} messages are available on $url")
       }
     }
   }
