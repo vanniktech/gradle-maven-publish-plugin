@@ -30,7 +30,7 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
 
     val service = this.buildService.get()
 
-    // if repository was already create in this build this is a no-op
+    // if repository was already created in this build this is a no-op
     val currentStagingRepositoryId = service.stagingRepositoryId
     if (currentStagingRepositoryId != null) {
       stagingRepositoryId.set(currentStagingRepositoryId)
