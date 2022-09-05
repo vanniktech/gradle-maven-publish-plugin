@@ -11,8 +11,11 @@ import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.configurationcache.extensions.serviceOf
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 
 @Incubating
@@ -69,11 +72,9 @@ abstract class MavenPublishBaseExtension(
       repo.credentials(PasswordCredentials::class.java)
     }
 
-    project.gradlePublishing.publications.withType(MavenPublication::class.java).all { publication ->
-      project.afterEvaluate {
-        project.tasks.named("publish${publication.name.capitalize()}PublicationToMavenCentralRepository") {
-          it.dependsOn(createRepository)
-        }
+    project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
+      if (publishTask.name.endsWith("ToMavenCentralRepository")) {
+        publishTask.dependsOn(createRepository)
       }
     }
 
@@ -114,13 +115,26 @@ abstract class MavenPublishBaseExtension(
 
     project.plugins.apply(SigningPlugin::class.java)
     project.gradleSigning.setRequired(Callable { !project.versionIsSnapshot })
-    project.gradleSigning.sign(project.gradlePublishing.publications)
 
     val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
     if (inMemoryKey != null) {
       val inMemoryKeyId = project.findOptionalProperty("signingInMemoryKeyId")
       val inMemoryKeyPassword = project.findOptionalProperty("signingInMemoryKeyPassword") ?: ""
       project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId, inMemoryKey, inMemoryKeyPassword)
+    }
+
+    // TODO: replace with the following line after https://github.com/gradle/gradle/issues/21857 is fixed
+    //  project.gradleSigning.sign(project.gradlePublishing.publications)
+    project.gradlePublishing.publications.withType(MavenPublication::class.java).all { publication ->
+      val task = project.tasks.findByName("sign${publication.name.capitalize()}Publication")
+      if (task == null) {
+        project.gradleSigning.sign(publication)
+      }
+    }
+
+    // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
+    project.tasks.withType(AbstractPublishToMaven::class.java) { publishTask ->
+      publishTask.dependsOn(project.tasks.withType(Sign::class.java))
     }
   }
 
