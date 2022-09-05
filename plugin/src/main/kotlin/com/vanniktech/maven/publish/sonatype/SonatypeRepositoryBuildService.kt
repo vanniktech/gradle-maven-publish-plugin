@@ -19,11 +19,13 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
     val automaticRelease: Property<Boolean>
   }
 
-  val nexus = Nexus(
-    baseUrl = parameters.sonatypeHost.get().apiBaseUrl(),
-    username = parameters.repositoryUsername.get(),
-    password = parameters.repositoryPassword.get(),
-  )
+  val nexus by lazy {
+    Nexus(
+      baseUrl = parameters.sonatypeHost.get().apiBaseUrl(),
+      username = parameters.repositoryUsername.get(),
+      password = parameters.repositoryPassword.get(),
+    )
+  }
 
   // should only be accessed from CreateSonatypeRepositoryTask
   // for all other use cases use MavenPublishBaseExtension
