@@ -32,4 +32,7 @@ internal interface NexusService {
 
   @POST("staging/bulk/promote")
   fun releaseRepository(@Body input: TransitionRepositoryInput): Call<Unit>
+
+  @POST("staging/bulk/drop")
+  fun dropRepository(@Body input: TransitionRepositoryInput): Call<Unit>
 }

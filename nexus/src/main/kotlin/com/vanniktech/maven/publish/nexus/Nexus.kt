@@ -235,6 +235,20 @@ class Nexus(
     println("Repository $repositoryId released")
   }
 
+  fun dropStagingRepository(repositoryId: String) {
+    val response = service.dropRepository(
+      TransitionRepositoryInput(
+        TransitionRepositoryInputData(
+          stagedRepositoryIds = listOf(repositoryId)
+        )
+      )
+    ).execute()
+
+    if (!response.isSuccessful) {
+      throw IOException("Cannot drop repository: ${response.errorBody()?.string()}")
+    }
+  }
+
   companion object {
     private const val PROGRESS_1 = "\u2839"
     private const val PROGRESS_2 = "\u2838"
