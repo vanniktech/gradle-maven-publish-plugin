@@ -200,8 +200,26 @@ class Nexus(
         break
       }
       if (repository?.type == "open" && !repository.transitioning && repository.notifications > 0) {
-        val url = baseUrl.toHttpUrl().newBuilder("/#stagingRepositories").toString()
-        throw IOException("Closing the repository failed. ${repository.notifications} messages are available on $url")
+        val properties = try {
+          val response = service.getRepositoryActivity(repositoryId).execute()
+          if (response.isSuccessful) {
+            response.body()?.find { it.name == "close" }
+              ?.events?.find { it.name == "ruleFailed" }
+              ?.properties?.filter { it.name == "failureMessage" }
+          } else {
+            emptyList()
+          }
+        } catch (_: IOException) {
+          emptyList()
+        }
+
+        if (properties.isNullOrEmpty()) {
+          val url = baseUrl.toHttpUrl().newBuilder("/#stagingRepositories").toString()
+          throw IOException("Closing the repository failed. ${repository.notifications} messages are available on $url")
+        } else {
+          val message = properties.joinToString("\n") { it.value }
+          throw IOException("Closing the repository failed with the following errors:\n$message")
+        }
       }
     }
   }

@@ -27,6 +27,9 @@ internal interface NexusService {
   @GET("staging/repository/{repositoryId}")
   fun getRepository(@Path("repositoryId") repositoryId: String): Call<Repository>
 
+  @GET("staging/repository/{repositoryId}/activity")
+  fun getRepositoryActivity(@Path("repositoryId") repositoryId: String): Call<List<RepositoryActivity>>
+
   @POST("staging/bulk/close")
   fun closeRepository(@Body input: TransitionRepositoryInput): Call<Unit>
 
