@@ -3,12 +3,13 @@ package com.vanniktech.maven.publish.nexus
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 class Nexus(
-  baseUrl: String,
+  private val baseUrl: String,
   private val username: String,
   password: String,
 ) {
@@ -135,8 +136,17 @@ class Nexus(
     return repository
   }
 
-  private fun closeStagingRepository(stagingRepository: Repository): String {
+  private fun closeStagingRepository(stagingRepository: Repository) {
     val repositoryId = stagingRepository.repositoryId
+
+    if (stagingRepository.type == "closed") {
+      if (stagingRepository.transitioning) {
+        waitForClose(stagingRepository.repositoryId)
+      } else {
+        println("Repository $repositoryId already closed")
+      }
+      return
+    }
 
     if (stagingRepository.type != "open") {
       throw IllegalArgumentException("Repository $repositoryId is of type '${stagingRepository.type}' and not 'open'")
@@ -149,8 +159,7 @@ class Nexus(
     }
 
     waitForClose(repositoryId)
-
-    return repositoryId
+    println("Repository $repositoryId closed")
   }
 
   private fun waitForClose(repositoryId: String) {
@@ -177,20 +186,38 @@ class Nexus(
 
       Thread.sleep(CLOSE_WAIT_INTERVAL_MILLIS)
 
-      try {
-        val repository = getStagingRepository(repositoryId)
-        if (repository.type == "closed" && !repository.transitioning) {
-          break
-        }
+      val repository = try {
+        getStagingRepository(repositoryId)
       } catch (e: IOException) {
         System.err.println("Exception trying to get repository status: ${e.message}")
+        null
       } catch (e: TimeoutException) {
         System.err.println("Exception trying to get repository status: ${e.message}")
+        null
+      }
+
+      if (repository?.type == "closed" && !repository.transitioning) {
+        break
+      }
+      if (repository?.type == "open" && !repository.transitioning && repository.notifications > 0) {
+        val url = baseUrl.toHttpUrl().newBuilder("/#stagingRepositories").toString()
+        throw IOException("Closing the repository failed. ${repository.notifications} messages are available on $url")
       }
     }
   }
 
-  private fun releaseStagingRepository(repositoryId: String) {
+  fun closeCurrentStagingRepository(): String {
+    val stagingRepository = findStagingRepository()
+    closeStagingRepository(stagingRepository)
+    return stagingRepository.repositoryId
+  }
+
+  fun closeStagingRepository(repositoryId: String) {
+    val stagingRepository = getStagingRepository(repositoryId)
+    closeStagingRepository(stagingRepository)
+  }
+
+  fun releaseStagingRepository(repositoryId: String) {
     println("Releasing repository: $repositoryId")
     val response = service.releaseRepository(
       TransitionRepositoryInput(
@@ -206,21 +233,6 @@ class Nexus(
     }
 
     println("Repository $repositoryId released")
-  }
-
-  private fun closeAndReleaseRepository(stagingRepository: Repository) {
-    closeStagingRepository(stagingRepository)
-    releaseStagingRepository(stagingRepository.repositoryId)
-  }
-
-  fun closeAndReleaseCurrentRepository() {
-    val stagingRepository = findStagingRepository()
-    closeAndReleaseRepository(stagingRepository)
-  }
-
-  fun closeAndReleaseRepositoryById(repositoryId: String) {
-    val stagingRepository = getStagingRepository(repositoryId)
-    closeAndReleaseRepository(stagingRepository)
   }
 
   companion object {

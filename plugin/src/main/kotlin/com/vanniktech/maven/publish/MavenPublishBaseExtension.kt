@@ -1,5 +1,8 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerCloseAndReleaseRepository
+import com.vanniktech.maven.publish.sonatype.CreateSonatypeRepositoryTask.Companion.registerCreateRepository
+import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import java.util.concurrent.Callable
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -8,11 +11,16 @@ import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.build.event.BuildEventsListenerRegistry
+import org.gradle.configurationcache.extensions.serviceOf
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 
 @Incubating
 abstract class MavenPublishBaseExtension(
-  private val project: Project
+  private val project: Project,
 ) {
 
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
@@ -20,27 +28,43 @@ abstract class MavenPublishBaseExtension(
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val platform: Property<Platform> = project.objects.property(Platform::class.java)
 
-  // will be set by the task to create the staging repository
-  private val stagingRepositoryId: Property<String> = project.objects.property(String::class.java).apply {
-    finalizeValueOnRead()
-  }
-
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
-   * automatically create a `publishAllPublicationsToMavenRepository` task as well as include it in the general
-   * `publish` task. If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
+   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
+   * `publish` task. As part of running publish the plugin will automatically create a staging repostory on Sonatype
+   * to which all artifacts will be published. At the end of the build this staging repository will be automatically
+   * closed. When the [automaticRelease] parameter is `true` the staging repository will also be released
+   * automatically afterwards.
+   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
    * repository instead.
    *
-   * This expects you provide your Sonatype user name and password through Gradle properties called
+   * This expects you provide your Sonatype username and password through Gradle properties called
    * `mavenCentralUsername` and `mavenCentralPassword`.
    *
    * The `closeAndReleaseRepository` task is automatically configured for Sonatype OSSRH using the same credentials.
    *
    * @param host the instance of Sonatype OSSRH to use
+   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
    */
-  fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT) {
+  @JvmOverloads
+  fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT, automaticRelease: Boolean = false) {
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
+
+    val buildService = project.gradle
+      .sharedServices
+      .registerSonatypeRepositoryBuildService(
+        sonatypeHost = sonatypeHost,
+        repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
+        repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
+        automaticRelease = automaticRelease,
+      )
+    project.serviceOf<BuildEventsListenerRegistry>().onTaskCompletion(buildService)
+
+    val groupId = project.provider { project.group.toString() }
+    val versionIsSnapshot = project.provider { project.versionIsSnapshot }
+    val createRepository = project.tasks.registerCreateRepository(groupId, versionIsSnapshot, buildService)
+    val stagingRepositoryId = createRepository.flatMap { it.stagingRepositoryId }
 
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
@@ -48,11 +72,13 @@ abstract class MavenPublishBaseExtension(
       repo.credentials(PasswordCredentials::class.java)
     }
 
-    project.rootExtension.configureCloseAndReleaseTask(
-      baseUrl = sonatypeHost.map { it.apiBaseUrl() },
-      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
-      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
-    )
+    project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
+      if (publishTask.name.endsWith("ToMavenCentralRepository")) {
+        publishTask.dependsOn(createRepository)
+      }
+    }
+
+    project.tasks.registerCloseAndReleaseRepository(buildService)
   }
 
   /**
@@ -89,13 +115,26 @@ abstract class MavenPublishBaseExtension(
 
     project.plugins.apply(SigningPlugin::class.java)
     project.gradleSigning.setRequired(Callable { !project.versionIsSnapshot })
-    project.gradleSigning.sign(project.gradlePublishing.publications)
 
     val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
     if (inMemoryKey != null) {
       val inMemoryKeyId = project.findOptionalProperty("signingInMemoryKeyId")
       val inMemoryKeyPassword = project.findOptionalProperty("signingInMemoryKeyPassword") ?: ""
       project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId, inMemoryKey, inMemoryKeyPassword)
+    }
+
+    // TODO: replace with the following line after https://github.com/gradle/gradle/issues/21857 is fixed
+    //  project.gradleSigning.sign(project.gradlePublishing.publications)
+    project.gradlePublishing.publications.withType(MavenPublication::class.java).all { publication ->
+      val task = project.tasks.findByName("sign${publication.name.capitalize()}Publication")
+      if (task == null) {
+        project.gradleSigning.sign(publication)
+      }
+    }
+
+    // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
+    project.tasks.withType(AbstractPublishToMaven::class.java) { publishTask ->
+      publishTask.dependsOn(project.tasks.withType(Sign::class.java))
     }
   }
 
