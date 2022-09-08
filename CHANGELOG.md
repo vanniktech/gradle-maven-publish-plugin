@@ -22,7 +22,8 @@ mavenPublishing {
 - when closing the repository fails the plugin will fail the build immediately instead of timing out
 - when closing the repository fails the plugin will try to print the error messages from Nexus
 - increased timeouts for calls to the Sonatype Nexus APIs
-
+- fixed incompatibility with the `com.gradle.plugin-publish` plugin
+- added wokaround for Kotlin multiplatform builds reporting disabled build optimizations
 
 Version 0.21.0 *(2022-07-11)*
 ---------------------------------
