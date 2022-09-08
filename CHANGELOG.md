@@ -1,5 +1,29 @@
 # Change Log
 
+Version 0.22.0 *(unreleased)*
+---------------------------------
+
+- **NEW**: When publishing to maven central by setting `SONATYPE_HOST` or calling `publishToMavenCentral(...)` the plugin will now explicitly create a staging repository on Sonatype. This avoids issues where a single build would create multiple repositories
+- The above change means that the plugin supports parallel builds and it is not neccessary anymore to use `--no-parallel` and `--no-daemon` together with `publish`
+- **NEW**: When publishing with the `publish` or `publishAllPublicationsToMavenCentralRepository` tasks the plugin will automatically close the staging repository at the end of the build if it was successful.
+- **NEW**: Option to also automatically release the staging repository after closing was susccessful
+```
+SONATYPE_HOST=default # or S01
+SONATYPE_AUTOMATIC_RELEASE=true
+```
+or 
+```
+mavenPublishing {
+  publishToMavenCentral("DEFAULT", true)
+  // or publishToMavenCentral("S01", true)
+}
+```
+- in case the option above is enabled, the `closeAndReleaseRepository` task is not needed anymore
+- when closing the repository fails the plugin will fail the build immediately instead of timing out
+- when closing the repository fails the plugin will try to print the error messages from Nexus
+- increased timeouts for calls to the Sonatype Nexus APIs
+
+
 Version 0.21.0 *(2022-07-11)*
 ---------------------------------
 
