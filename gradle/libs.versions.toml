@@ -6,7 +6,7 @@ retrofit = "2.9.0"
 [libraries]
 okhttp = "com.squareup.okhttp3:okhttp:4.10.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.6.10"
-assertj = "org.assertj:assertj-core:3.19.0"
+assertj = "org.assertj:assertj-core:3.23.1"
 junit = "junit:junit:4.13.2"
 
 android-plugin = "com.android.tools.build:gradle:7.1.0"
