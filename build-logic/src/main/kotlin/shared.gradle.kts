@@ -1,3 +1,7 @@
+import org.gradle.accessors.dm.LibrariesForLibs
+
+val libs = the<LibrariesForLibs>()
+
 plugins {
   id("java-library")
   id("kotlin")
@@ -15,17 +19,16 @@ repositories {
   google()
 }
 
-
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8
-
-// Use the kotlin version from the stdlib
-val kotlinVersion = KotlinVersion.CURRENT.toString()
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 configurations.all {
+  // Pin the kotlin version
   resolutionStrategy {
-    force("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    force("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    force(libs.kotlin.stdlib)
+    force(libs.kotlin.stdlib.jdk8)
+    force(libs.kotlin.reflect)
   }
 }
