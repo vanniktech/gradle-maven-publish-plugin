@@ -3,6 +3,8 @@ package com.vanniktech.maven.publish.sonatype
 import com.vanniktech.maven.publish.SonatypeHost
 import com.vanniktech.maven.publish.nexus.Nexus
 import java.io.IOException
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -13,6 +15,9 @@ import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 
 internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRepositoryBuildService.Params>, AutoCloseable, OperationCompletionListener {
+
+  private val logger: Logger = Logging.getLogger(SonatypeRepositoryBuildService::class.java)
+
   internal interface Params : BuildServiceParameters {
     val sonatypeHost: Property<SonatypeHost>
     val repositoryUsername: Property<String>
@@ -62,7 +67,9 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
       } else {
         try {
           nexus.dropStagingRepository(stagingRepositoryId)
-        } catch (_: IOException) {}
+        } catch (e: IOException) {
+          logger.info("Failed to drop staging repository $stagingRepositoryId", e)
+        }
       }
     }
   }
