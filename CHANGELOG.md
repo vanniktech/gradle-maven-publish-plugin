@@ -1,6 +1,6 @@
 # Change Log
 
-Version 0.22.0 *(unreleased)*
+Version 0.22.0 *(2022-09-09)*
 ---------------------------------
 
 - **NEW**: When publishing to maven central by setting `SONATYPE_HOST` or calling `publishToMavenCentral(...)` the plugin will now explicitly create a staging repository on Sonatype. This avoids issues where a single build would create multiple repositories
