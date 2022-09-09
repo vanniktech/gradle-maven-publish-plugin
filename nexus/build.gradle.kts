@@ -3,10 +3,10 @@ plugins {
 }
 
 dependencies {
-  add("kapt", "com.squareup.moshi:moshi-kotlin-codegen:${Version.moshi}")
+  kapt(libs.moshi.codegen)
 
-  implementation("com.squareup.okhttp3:okhttp:${Version.okhttp}")
-  implementation("com.squareup.moshi:moshi:${Version.moshi}")
-  implementation("com.squareup.retrofit2:retrofit:${Version.retrofit}")
-  implementation("com.squareup.retrofit2:converter-moshi:${Version.retrofit}")
+  implementation(libs.okhttp)
+  implementation(libs.moshi)
+  implementation(libs.retrofit)
+  implementation(libs.retrofit.converter.moshi)
 }

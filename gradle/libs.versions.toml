@@ -1,0 +1,25 @@
+[versions]
+kotlin = "1.6.10"
+moshi = "1.13.0"
+retrofit = "2.9.0"
+
+[libraries]
+okhttp = "com.squareup.okhttp3:okhttp:4.10.0"
+dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.6.10"
+assertj = "org.assertj:assertj-core:3.19.0"
+junit = "junit:junit:4.13.2"
+
+android-plugin = "com.android.tools.build:gradle:7.1.0"
+ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:11.0.0"
+maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.21.0"
+
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
+moshi = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
+moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
+
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }

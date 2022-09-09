@@ -3,7 +3,7 @@ plugins {
   id("java-gradle-plugin")
 }
 
-configure<GradlePluginDevelopmentExtension> {
+gradlePlugin {
   plugins {
     create("mavenPublishPlugin") {
       id = "com.vanniktech.maven.publish"
@@ -21,30 +21,33 @@ configure<GradlePluginDevelopmentExtension> {
 }
 
 val integrationTestSourceSet = sourceSets.create("integrationTest") {
-  compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+  compileClasspath += sourceSets["main"].output + configurations.testRuntimeClasspath
   runtimeClasspath += output + compileClasspath
 }
 val integrationTestImplementation = configurations.getByName("integrationTestImplementation")
-  .extendsFrom(configurations.getByName("testImplementation"))
+  .extendsFrom(configurations.testImplementation.get())
 
 dependencies {
   api(gradleApi())
-  api(kotlin("stdlib"))
+  api(libs.kotlin.stdlib)
 
-  compileOnly("org.jetbrains.dokka:dokka-gradle-plugin:${Version.dokka}")
-  compileOnly(kotlin("gradle-plugin"))
-  compileOnly("com.android.tools.build:gradle:${Version.agp}")
+  compileOnly(libs.dokka)
+  compileOnly(libs.kotlin.plugin)
+  compileOnly(libs.android.plugin)
 
-  implementation(project(":nexus"))
+  implementation(projects.nexus)
 
   testImplementation(gradleTestKit())
-  testImplementation("junit:junit:${Version.junit}")
-  testImplementation("org.assertj:assertj-core:${Version.assertj}")
+  testImplementation(libs.junit)
+  testImplementation(libs.assertj)
 }
 
 val integrationTest by tasks.registering(Test::class) {
-  dependsOn("publishToMavenLocal", project(":nexus").tasks.named("publishToMavenLocal"))
-  mustRunAfter(tasks.named("test"))
+  dependsOn(
+    tasks.publishToMavenLocal,
+    projects.nexus.dependencyProject.tasks.publishToMavenLocal
+  )
+  mustRunAfter(tasks.test)
 
   description = "Runs the integration tests."
   group = "verification"
@@ -63,7 +66,6 @@ val integrationTest by tasks.registering(Test::class) {
   )
 }
 
-val check = tasks.named("check")
-check.configure {
+tasks.check {
   dependsOn(integrationTest)
 }

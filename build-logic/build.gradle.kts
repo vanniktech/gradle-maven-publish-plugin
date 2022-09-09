@@ -1,16 +1,9 @@
-plugins {
-  kotlin("jvm").version("1.4.32")
-  `kotlin-dsl`
-}
+plugins { `kotlin-dsl` }
 
 dependencies {
-  implementation(kotlin("gradle-plugin"))
-  implementation("org.jlleitschuh.gradle:ktlint-gradle:11.0.0")
-  implementation("com.vanniktech:gradle-maven-publish-plugin:0.21.0")
-}
-
-repositories {
-  mavenCentral()
-  google()
-  gradlePluginPortal()
+  implementation(libs.kotlin.plugin)
+  implementation(libs.ktlint.plugin)
+  implementation(libs.maven.publish.plugin)
+  // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
+  implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
