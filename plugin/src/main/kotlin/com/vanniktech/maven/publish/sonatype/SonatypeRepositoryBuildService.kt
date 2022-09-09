@@ -2,16 +2,22 @@ package com.vanniktech.maven.publish.sonatype
 
 import com.vanniktech.maven.publish.SonatypeHost
 import com.vanniktech.maven.publish.nexus.Nexus
+import java.io.IOException
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.services.BuildServiceRegistry
+import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
-import org.gradle.tooling.events.task.TaskFailureResult
 
 internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRepositoryBuildService.Params>, AutoCloseable, OperationCompletionListener {
+
+  private val logger: Logger = Logging.getLogger(SonatypeRepositoryBuildService::class.java)
+
   internal interface Params : BuildServiceParameters {
     val sonatypeHost: Property<SonatypeHost>
     val repositoryUsername: Property<String>
@@ -42,24 +48,28 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
   // indicates whether we already closed a staging repository to avoid doing it more than once in a build
   var repositoryClosed: Boolean = false
 
-  var buildHasFailure: Boolean = false
+  private var buildIsSuccess: Boolean = true
 
   override fun onFinish(event: FinishEvent) {
-    if (event.result is TaskFailureResult) {
-      buildHasFailure = true
+    if (event.result is FailureResult) {
+      buildIsSuccess = false
     }
   }
 
   override fun close() {
-    if (buildHasFailure) {
-      return
-    }
-
     val stagingRepositoryId = this.stagingRepositoryId
     if (stagingRepositoryId != null) {
-      nexus.closeStagingRepository(stagingRepositoryId)
-      if (parameters.automaticRelease.get()) {
-        nexus.releaseStagingRepository(stagingRepositoryId)
+      if (buildIsSuccess) {
+        nexus.closeStagingRepository(stagingRepositoryId)
+        if (parameters.automaticRelease.get()) {
+          nexus.releaseStagingRepository(stagingRepositoryId)
+        }
+      } else {
+        try {
+          nexus.dropStagingRepository(stagingRepositoryId)
+        } catch (e: IOException) {
+          logger.info("Failed to drop staging repository $stagingRepositoryId", e)
+        }
       }
     }
   }
