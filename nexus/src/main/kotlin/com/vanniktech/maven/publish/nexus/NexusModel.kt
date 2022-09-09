@@ -29,6 +29,15 @@ internal data class Repository(
 )
 
 @JsonClass(generateAdapter = true)
+internal data class RepositoryEventProperty(val name: String, val value: String)
+
+@JsonClass(generateAdapter = true)
+internal data class RepositoryEvent(val name: String, val properties: List<RepositoryEventProperty>)
+
+@JsonClass(generateAdapter = true)
+internal data class RepositoryActivity(val name: String, val events: List<RepositoryEvent>)
+
+@JsonClass(generateAdapter = true)
 internal data class ProfileRepositoriesResponse(val data: List<Repository>)
 
 @JsonClass(generateAdapter = true)
