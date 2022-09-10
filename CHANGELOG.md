@@ -8,7 +8,7 @@ Version 0.22.0 *(2022-09-09)*
 - **NEW**: When publishing with the `publish` or `publishAllPublicationsToMavenCentralRepository` tasks the plugin will automatically close the staging repository at the end of the build if it was successful.
 - **NEW**: Option to also automatically release the staging repository after closing was susccessful
 ```
-SONATYPE_HOST=default # or S01
+SONATYPE_HOST=DEFAULT # or S01
 SONATYPE_AUTOMATIC_RELEASE=true
 ```
 or 
