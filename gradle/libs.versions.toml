@@ -11,7 +11,7 @@ junit = "junit:junit:4.13.2"
 
 android-plugin = "com.android.tools.build:gradle:7.2.2"
 ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:11.0.0"
-maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.21.0"
+maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.22.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
