@@ -100,8 +100,6 @@ publishing {
 
 More information can be found in [Gradle's documentation](https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:repositories)
 
-__Note:__ To prevent looping behavior, especially in Kotlin projects / modules, you need to run the `publish` task with `--no-daemon`and `--no-parallel` flags
-
 ### Signing
 
 The plugin supports signing all of your release artifacts with GPG. This is a requirement when publishing to
