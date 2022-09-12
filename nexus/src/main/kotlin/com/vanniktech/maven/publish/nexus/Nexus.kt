@@ -74,10 +74,7 @@ class Nexus(
       throw IOException("Cannot create repository: ${response.errorBody()?.string()}")
     }
 
-    val id = response.body()?.data?.stagedRepositoryId
-    if (id == null) {
-      throw IOException("Did not receive created repository")
-    }
+    val id = response.body()?.data?.stagedRepositoryId ?: throw IOException("Did not receive created repository")
 
     println("Created staging repository $id")
 
@@ -127,13 +124,8 @@ class Nexus(
       throw IOException("Cannot get repository with id $repositoryId for account $username: ${repositoryResponse.errorBody()?.string()}")
     }
 
-    val repository = repositoryResponse.body()
-
-    if (repository == null) {
-      throw IOException("Could not get repository with id $repositoryId for account $username")
-    }
-
-    return repository
+    return repositoryResponse.body()
+      ?: throw IOException("Could not get repository with id $repositoryId for account $username")
   }
 
   private fun closeStagingRepository(stagingRepository: Repository) {
