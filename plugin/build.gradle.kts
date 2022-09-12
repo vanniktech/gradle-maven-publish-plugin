@@ -24,7 +24,7 @@ val integrationTestSourceSet = sourceSets.create("integrationTest") {
   compileClasspath += sourceSets["main"].output + configurations.testRuntimeClasspath
   runtimeClasspath += output + compileClasspath
 }
-val integrationTestImplementation = configurations.getByName("integrationTestImplementation")
+val integrationTestImplementation = configurations["integrationTestImplementation"]
   .extendsFrom(configurations.testImplementation.get())
 
 dependencies {
