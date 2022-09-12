@@ -24,5 +24,7 @@ jobs:
           distribution: 'zulu'
           java-version: ${{ matrix.java_version }}
 
+      - uses: gradle/gradle-build-action@v2
+
       - name: Build with Gradle
         run: ./gradlew build --stacktrace

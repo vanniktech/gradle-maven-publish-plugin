@@ -21,6 +21,8 @@ jobs:
           distribution: 'zulu'
           java-version: 11
 
+      - uses: gradle/gradle-build-action@v2
+
       - name: Retrieve version
         run: |
           echo "VERSION_NAME=$(cat gradle.properties | grep -w "VERSION_NAME" | cut -d'=' -f2)" >> $GITHUB_ENV
