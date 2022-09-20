@@ -133,7 +133,7 @@ abstract class MavenPublishBaseExtension(
     }
 
     // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
-    project.tasks.withType(AbstractPublishToMaven::class.java) { publishTask ->
+    project.tasks.withType(AbstractPublishToMaven::class.java).configureEach { publishTask ->
       publishTask.dependsOn(project.tasks.withType(Sign::class.java))
     }
   }
