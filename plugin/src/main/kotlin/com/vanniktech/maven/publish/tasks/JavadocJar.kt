@@ -4,6 +4,7 @@ import com.vanniktech.maven.publish.JavadocJar as JavadocJarOption
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.dokka.gradle.DokkaTask
 
 open class JavadocJar : Jar() {
 
@@ -17,7 +18,7 @@ open class JavadocJar : Jar() {
         is JavadocJarOption.None -> null
         is JavadocJarOption.Empty -> emptyJavadocJar()
         is JavadocJarOption.Javadoc -> plainJavadocJar()
-        is JavadocJarOption.Dokka -> dokkaJavadocJar(javadocJar)
+        is JavadocJarOption.Dokka -> dokkaJavadocJar()
       }
     }
 
@@ -31,11 +32,20 @@ open class JavadocJar : Jar() {
       }
     }
 
-    private fun Project.dokkaJavadocJar(options: JavadocJarOption.Dokka): TaskProvider<*> {
+    private fun Project.dokkaJavadocJar(): TaskProvider<*> {
       return tasks.register("dokkaJavadocJar", JavadocJar::class.java) {
-        val task = tasks.named(options.taskName)
+        val task = provider { findDokkaTask() }
         it.dependsOn(task)
         it.from(task)
+      }
+    }
+
+    private fun Project.findDokkaTask(): String {
+      val tasks = project.tasks.withType(DokkaTask::class.java)
+      return if (tasks.size == 1) {
+        tasks.first().name
+      } else {
+        tasks.findByName("dokkaHtml")?.name ?: "dokka"
       }
     }
   }
