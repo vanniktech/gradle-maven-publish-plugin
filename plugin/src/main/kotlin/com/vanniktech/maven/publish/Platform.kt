@@ -241,8 +241,8 @@ data class KotlinMultiplatform @JvmOverloads constructor(
 }
 
 /**
- * To be used for `org.jetbrains.kotlin.js` projects. Applying this creates a publication for the component called
- * `kotlin`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will be
+ * To be used for `org.jetbrains.kotlin.jvm` projects. Applying this creates a publication for the component called
+ * `java`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will be
  * added to the publication.
  *
  * Equivalent Gradle set up:
@@ -250,7 +250,7 @@ data class KotlinMultiplatform @JvmOverloads constructor(
  * publications {
  *   create<MavenPublication>("maven") {
  *     from(components["java"])
- *     artifact(project.tasks.named("kotlinSourcesJar"))
+ *     artifact(project.tasks.named("javaSourcesJar"))
  *   }
  * }
  * ```
@@ -280,7 +280,7 @@ data class KotlinJvm @JvmOverloads constructor(
  * Equivalent Gradle set up:
  * ```
  * publications {
- *   create<MavenPublication>("maven") {
+ *   create<MavenPublication>("mavenJs") {
  *     from(components["kotlin"])
  *     artifact(project.tasks.named("kotlinSourcesJar"))
  *   }
