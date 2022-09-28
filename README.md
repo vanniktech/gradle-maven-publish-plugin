@@ -66,9 +66,37 @@ the rest by putting them into `<project-dir>/gradle.properties`.
 
 ### Where to upload to
 
-Without any further configuration the plugin has two tasks. `publish` which will upload
-to Maven Central (through Sonatype OSSRH) by default. To publish to the local maven repository on your
-machine (`~/.m2/repository`) there is `publishToMavenLocal`.
+Without any further configuration `publishToMavenLocal` will publish the local maven repository on your
+machine (`~/.m2/repository`). Versions before 0.22.0 you could deploy to Maven Central using 
+`./gradlew publish --no-daemon --no-parallel` but since 0.22.0 the 
+`com.vanniktech.maven.publish` plugin stops adding Maven Central as a
+publishing target and will not enable GPG signing by default.
+
+To publish to Maven Central (Sonatype OSS) either add the following to your `gradle.properties`:
+```properties
+SONATYPE_HOST=DEFAULT
+# SONATYPE_HOST=S01 for publishing through s01.oss.sonatype.org
+RELEASE_SIGNING_ENABLED=true
+```
+
+or add this to your Groovy build files:
+```gradle
+mavenPublishing {
+  publishToMavenCentral()
+  // publishToMavenCentral("S01") for publishing through s01.oss.sonatype.org
+  signAllPublications()
+}
+```
+or the following to your kts build files:
+```kotlin
+mavenPublishing {
+  publishToMavenCentral()
+  // publishToMavenCentral(SonatypeHost.S01) for publishing through s01.oss.sonatype.org
+  signAllPublications()
+}
+```
+
+
 
 In case you are using `s01.oss.sonatype.org` you need to change the `SONATYPE_HOST` property like this:
 ```properties
