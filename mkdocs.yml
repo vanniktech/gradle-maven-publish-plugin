@@ -1,0 +1,44 @@
+site_name: gradle-maven-publish-plugin
+site_url: https://vanniktech.github.io/gradle-maven-publish-plugin/
+repo_name: gradle-maven-publish-plugin
+repo_url: https://github.com/vanniktech/gradle-maven-publish-plugin
+site_description: "gradle-maven-publish-plugin"
+site_author: Niklas Baudy
+remote_branch: gh-pages
+
+copyright: 'Copyright (C) 2018 Vanniktech - Niklas Baudy'
+
+theme:
+  name: 'material'
+  palette:
+    primary: 'cyan'
+    accent: 'purple'
+  features:
+    - content.tabs.link
+
+nav:
+  - 'index.md'
+  - 'central.md'
+  - 'other.md'
+  - 'base.md'
+
+markdown_extensions:
+  - smarty
+  - codehilite:
+      guess_lang: false
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tilde
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
