@@ -4,8 +4,8 @@ import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
-import java.lang.UnsupportedOperationException
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 
@@ -337,7 +337,15 @@ sealed class JavadocJar {
    * Creates a javadoc jar using Dokka's output. The argument is the name of the dokka task that should be used
    * for that purpose.
    */
-  data class Dokka(val taskName: String) : JavadocJar()
+  class Dokka private constructor(
+    internal val taskName: Any
+  ) : JavadocJar() {
+    constructor(taskName: String) : this(taskName as Any)
+    constructor(taskName: Provider<String>) : this(taskName as Any)
+
+    override fun equals(other: Any?): Boolean = other is Dokka && taskName == other.taskName
+    override fun hashCode(): Int = taskName.hashCode()
+  }
 }
 
 private const val PUBLICATION_NAME = "maven"

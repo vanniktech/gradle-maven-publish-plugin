@@ -103,7 +103,7 @@ private fun Project.configurePlatform() {
 
 private fun Project.defaultJavaDocOption(): JavadocJar? {
   return if (plugins.hasPlugin("org.jetbrains.dokka") || plugins.hasPlugin("org.jetbrains.dokka-android")) {
-    JavadocJar.Dokka(findDokkaTask())
+    JavadocJar.Dokka(provider { findDokkaTask() })
   } else {
     null
   }

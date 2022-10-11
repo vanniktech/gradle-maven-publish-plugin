@@ -17,7 +17,7 @@ open class JavadocJar : Jar() {
         is JavadocJarOption.None -> null
         is JavadocJarOption.Empty -> emptyJavadocJar()
         is JavadocJarOption.Javadoc -> plainJavadocJar()
-        is JavadocJarOption.Dokka -> dokkaJavadocJar(javadocJar)
+        is JavadocJarOption.Dokka -> dokkaJavadocJar(javadocJar.taskName)
       }
     }
 
@@ -31,11 +31,10 @@ open class JavadocJar : Jar() {
       }
     }
 
-    private fun Project.dokkaJavadocJar(options: JavadocJarOption.Dokka): TaskProvider<*> {
+    private fun Project.dokkaJavadocJar(taskName: Any): TaskProvider<*> {
       return tasks.register("dokkaJavadocJar", JavadocJar::class.java) {
-        val task = tasks.named(options.taskName)
-        it.dependsOn(task)
-        it.from(task)
+        it.dependsOn(taskName)
+        it.from(taskName)
       }
     }
   }
