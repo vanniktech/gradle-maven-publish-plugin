@@ -7,6 +7,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
+import org.jetbrains.dokka.gradle.DokkaTask
 
 open class MavenPublishPlugin : Plugin<Project> {
 
@@ -102,7 +103,7 @@ private fun Project.configurePlatform() {
 
 private fun Project.defaultJavaDocOption(): JavadocJar? {
   return if (plugins.hasPlugin("org.jetbrains.dokka") || plugins.hasPlugin("org.jetbrains.dokka-android")) {
-    JavadocJar.Dokka
+    JavadocJar.Dokka(provider { findDokkaTask() })
   } else {
     null
   }
@@ -134,4 +135,13 @@ private fun Project.javaVersion(): JavaVersion {
     // ignore failures and fallback to java version in which Gradle is running
   }
   return JavaVersion.current()
+}
+
+private fun Project.findDokkaTask(): String {
+  val tasks = project.tasks.withType(DokkaTask::class.java)
+  return if (tasks.size == 1) {
+    tasks.first().name
+  } else {
+    tasks.findByName("dokkaHtml")?.name ?: "dokka"
+  }
 }
