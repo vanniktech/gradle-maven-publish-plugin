@@ -3,7 +3,7 @@ name: Publish Docs
 on:
   push:
     branches:
-      - master
+      - docs
 
 jobs:
   deploy:
@@ -25,10 +25,16 @@ jobs:
       - name: Copy docs
         run: |
           cp README.md docs/index.md
+          
+          
+      - name: Build MkDocs
+        run: mkdocs build
 
-      - name: Deploy MkDocs
-        run: |
-          git fetch origin gh-pages:gh-pages
-          mkdocs gh-deploy --force
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
