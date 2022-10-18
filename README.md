@@ -4,9 +4,33 @@ Gradle plugin that creates a `publish` task to automatically upload all of your 
 libraries to any Maven instance. This plugin is based on [Chris Banes initial implementation](https://github.com/chrisbanes/gradle-mvn-push)
 and has been enhanced to add Kotlin support and keep up with the latest changes.
 
-TODO add advantages of the plugin https://github.com/vanniktech/gradle-maven-publish-plugin/issues/332
+# Setup
 
-TODO link to website for setup
+- [Publishing open source projects to Maven Central](docs/central.md)
+- [Publishing to other Maven repositories](docs/other.md)
+
+# Advantages over `maven-publish`
+
+Gradle ships with the `maven-publish` and many other plugins like the Android Gradle Plugin or the Kotlin Multiplatform
+plugin directly integrate with, so why should you use this plugin?
+
+- **No need to know how publishing works for different project types**. AGP provides an API to configure publishing,
+  `java-library` too, Kotlin Multiplatform does most things automatically but not everything. This plugin configures
+  as much as possible on its  own.
+- **A unified for all kinds of projects**. Some parts require manual configuration and for those we provide an API
+  that works regardless of whether this is a Gradle plugin, an Android library or a Kotlin Multiplatform project. This
+  is especially useful for projects that combine multiple of these.
+- **Maven central integration**. The plugin makes it easy to configure publishing to Maven Central with dedicated
+  APIs to set it up and configure everything that is required. It also avoids issues like having multiple staging
+  repositories on Sonatype OSS and supports automatic releasing without requiring any interaction with the web
+  interface.
+- **In memory GPG signing keys**. Easily sign artifacts on CI by simply setting the required environment variables,
+  no extra setup required.
+- **Gradle property based config**. Easily configure the plugin with Gradle properties that will apply to all
+  subprojects
+
+There is also a [base plugin](docs/base.md) which removes any automatic configuration and allows for a more manual
+configuration of what should be published.
 
 # License
 

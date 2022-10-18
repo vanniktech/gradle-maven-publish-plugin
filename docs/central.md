@@ -228,6 +228,7 @@ lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEpr64iB9b6YRkWil3EODiiLd9JS3V...9pip+B1QLwEdL
 ## Publishing
 
 The publishing process for Maven Central consists of several steps
+
 1. A staging repository is created on Sonatype OSS
 2. The artifacts are uploaded to this staging repository
 3. The staging repository is closed

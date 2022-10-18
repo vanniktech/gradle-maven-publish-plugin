@@ -1,10 +1,8 @@
-site_name: gradle-maven-publish-plugin
+site_name: Gradle Maven Publish Plugin
 site_url: https://vanniktech.github.io/gradle-maven-publish-plugin/
 repo_name: gradle-maven-publish-plugin
 repo_url: https://github.com/vanniktech/gradle-maven-publish-plugin
-site_description: "gradle-maven-publish-plugin"
 site_author: Niklas Baudy
-remote_branch: gh-pages
 
 copyright: 'Copyright (C) 2018 Vanniktech - Niklas Baudy'
 
