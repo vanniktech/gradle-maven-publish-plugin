@@ -14,3 +14,6 @@ local.properties
 *.iml
 
 *.DS_Store
+
+# file is copied automatically based on the readme
+docs/index.md
