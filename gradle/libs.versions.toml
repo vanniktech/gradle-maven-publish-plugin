@@ -9,7 +9,7 @@ dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.7.20"
 assertj = "org.assertj:assertj-core:3.23.1"
 junit = "junit:junit:4.13.2"
 
-android-plugin = "com.android.tools.build:gradle:7.3.0"
+android-plugin = "com.android.tools.build:gradle:7.3.1"
 ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:11.0.0"
 maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.22.0"
 
