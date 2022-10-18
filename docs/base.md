@@ -61,11 +61,12 @@ For projects using the `com.android.library` plugin. This will publish all varia
 
     ```groovy
     mavenPublishing {
-      // TODO describe parameters
+      // the first parameter represennts whether to publish a sources jar
+      // the second whether to publish a javadoc jar
       configure(new AndroidMultiVariantLibrary(true, true))
-      // or
+      // or to limit which build types to include
       configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"]))
-      // or
+      // or to limit which flavors to include, the map key is a flavor dimension, the set contains the flavors
       configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"], ["store": ["google", "samsung"]]))
     }
     ```
@@ -112,7 +113,9 @@ the specified variant instead of publishing all of them.
 
     ```groovy
     mavenPublishing {
-      // TODO describe parameters
+      // the first parameter represennts which variant is published
+      // the second whether to publish a sources jar
+      // the third whether to publish a javadoc jar
       configure(new AndroidSingleVariantLibrary("release", true, true))
     }
     ```
@@ -140,7 +143,11 @@ For projects using the `java-library` plugin.
 
     ```groovy
     mavenPublishing {
-      // TODO describe parameters
+      // the first parameter configures the -javadoc artifact, possible values:
+      // - `JavadocJar.None()` don't publish this artifact
+      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Javadoc()` to publish standard javadocs
+      // the second whether to publish a sources jar
       configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
     }
     ```
@@ -169,7 +176,11 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
 
     ```groovy
     mavenPublishing {
-      // TODO describe parameters
+      // the first parameter configures the -javadoc artifact, possible values:
+      // - `JavadocJar.None()` don't publish this artifact
+      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+      // the second whether to publish a sources jar
       configure(new KotlinJvm(new JavadocJar.Dokka("dokkaHtml"), true))
     }
     ```
@@ -182,7 +193,6 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
         // - `JavadocJar.Empty()` publish an emprt jar
-        // - `JavadocJar.Javadoc()` to publish standard javadocs
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Dokka("dokkaHtml"),
         // whether to publish a sources jar
@@ -199,7 +209,11 @@ For projects using the `org.jetbrains.kotlin.js` plugin.
 
     ```groovy
     mavenPublishing {
-      // TODO describe parameters
+      // the first parameter configures the -javadoc artifact, possible values:
+      // - `JavadocJar.None()` don't publish this artifact
+      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+      // the second whether to publish a sources jar
       configure(new KotlinJs(new JavadocJar.Dokka("dokkaHtml"), true))
     }
     ```
@@ -228,7 +242,10 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
 
     ```groovy
     mavenPublishing {
-      // TODO describe parameters
+      // the parameter configures the -javadoc artifact, possible values:
+      // - `JavadocJar.None()` don't publish this artifact
+      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
       // sources publishing is always enabled by the Kotlin Multiplatform plugin
       configure(new KotlinMultiplatform(new JavadocJar.Dokka("dokkaHtml")))
     }
@@ -258,7 +275,11 @@ For projects using the `java-gradle-plugin` plugin.
 
     ```groovy
     mavenPublishing {
-      // TODO describe parameters
+      // the first parameter configures the -javadoc artifact, possible values:
+      // - `JavadocJar.None()` don't publish this artifact
+      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Javadoc()` to publish standard javadocs
+      // the second whether to publish a sources jar
       configure(new GradlePlugin(new JavadocJar.Javadoc(), true))
     }
     ```
