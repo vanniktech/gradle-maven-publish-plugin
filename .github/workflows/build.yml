@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        java_version: [11]
+        java_version: [11, 17]
 
     steps:
       - name: Checkout
