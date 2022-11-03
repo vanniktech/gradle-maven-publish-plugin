@@ -43,10 +43,12 @@ This can be done through either the DSL or by setting Gradle properties.
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.SonatypeHost
+
     mavenPublishing {
-      publishToMavenCentral("DEFAULT")
+      publishToMavenCentral(SonatypeHost.DEFAULT)
       // or when publishing to https://s01.oss.sonatype.org
-      publishToMavenCentral("S01")
+      publishToMavenCentral(SonatypeHost.S01)
 
       signAllPublications()
     }
@@ -55,6 +57,8 @@ This can be done through either the DSL or by setting Gradle properties.
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.SonatypeHost
+
     mavenPublishing {
       publishToMavenCentral(SonatypeHost.DEFAULT)
       // or when publishing to https://s01.oss.sonatype.org
@@ -250,16 +254,20 @@ by adding an extra parameter in the DSL or setting a Gradle property
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.SonatypeHost
+
     mavenPublishing {
-      publishToMavenCentral("DEFAULT", true)
+      publishToMavenCentral(SonatypeHost.DEFAULT, true)
       // or when publishing to https://s01.oss.sonatype.org
-      publishToMavenCentral("S01", true)
+      publishToMavenCentral(SonatypeHost.S01, true)
     }
     ```
 
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.SonatypeHost
+
     mavenPublishing {
       publishToMavenCentral(SonatypeHost.DEFAULT, true)
       // or when publishing to https://s01.oss.sonatype.org
