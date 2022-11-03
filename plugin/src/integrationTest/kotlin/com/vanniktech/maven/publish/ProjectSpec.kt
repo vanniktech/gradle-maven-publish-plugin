@@ -10,7 +10,7 @@ data class ProjectSpec(
   val version: String,
   val properties: Map<String, String>,
   val sourceFiles: List<Pair<String, String>>,
-  val buildFileExtra: String = ""
+  val buildFileExtra: String = "",
 )
 
 data class PluginSpec(

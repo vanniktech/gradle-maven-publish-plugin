@@ -26,11 +26,6 @@ enum class AgpVersion(
     minGradleVersion = GradleVersion.GRADLE_7_2,
     firstUnsupportedGradleVersion = GradleVersion.GRADLE_8_0,
   ),
-  // AGP_7_2(
-  //   value = "7.2.2",
-  //   minGradleVersion = GradleVersion.GRADLE_7_3,
-  //   maxGradleVersion = GradleVersion.GRADLE_7_6,
-  // ),
   AGP_7_3(
     value = "7.3.1",
     minGradleVersion = GradleVersion.GRADLE_7_4,
@@ -46,15 +41,11 @@ enum class AgpVersion(
 }
 
 enum class KotlinVersion(val value: String) {
-  // KT_1_5("1.5.32"),
-  // KT_1_6("1.6.21"),
   KT_1_7("1.7.20"),
 }
 
 enum class GradleVersion(val value: String) {
   GRADLE_7_2("7.2"),
-  // GRADLE_7_3("7.3.3"),
-  // GRADLE_7_4("7.4.2"),
   GRADLE_7_5("7.5.1"),
   GRADLE_7_6("7.6-milestone-1"),
   GRADLE_8_0("8.0-milestone-1"),
