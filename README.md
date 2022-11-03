@@ -6,8 +6,8 @@ and has been enhanced to add Kotlin support and keep up with the latest changes.
 
 # Setup
 
-- [Publishing open source projects to Maven Central](docs/central.md)
-- [Publishing to other Maven repositories](docs/other.md)
+- [Publishing open source projects to Maven Central](https://vanniktech.github.io/gradle-maven-publish-plugin/central/)
+- [Publishing to other Maven repositories](https://vanniktech.github.io/gradle-maven-publish-plugin/other/)
 
 # Advantages over `maven-publish`
 
@@ -29,7 +29,7 @@ plugin directly integrate with, so why should you use this plugin?
 - **Gradle property based config**. Easily configure the plugin with Gradle properties that will apply to all
   subprojects
 
-There is also a [base plugin](docs/base.md) which removes any automatic configuration and allows for a more manual
+There is also a [base plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/base/) which removes any automatic configuration and allows for a more manual
 configuration of what should be published.
 
 # License

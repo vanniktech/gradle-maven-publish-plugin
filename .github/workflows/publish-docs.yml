@@ -34,8 +34,6 @@ jobs:
       - name: Copy docs
         run: |
           cp README.md docs/index.md
-          # Fix relative paths
-          sed -i 's/docs\///' docs/index.md
           # Update page time
           sed -i 's/# gradle-maven-publish-plugin/# Overview/' docs/index.md
 
