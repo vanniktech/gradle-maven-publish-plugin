@@ -17,6 +17,7 @@ class MavenPublishPluginIntegrationTest {
   private lateinit var projectFolder: File
   private lateinit var expectedFolder: File
 
+  // migrated
   @Test fun generatesArtifactsAndDocumentationOnJavaProject() {
     setupFixture("passing_java_project")
 
@@ -28,6 +29,7 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
   }
 
+  // migrated (kotlin-jvm covers this)
   @Test fun generatesArtifactsAndDocumentationOnJavaWithKotlinProject() {
     setupFixture("passing_java_with_kotlin_project")
 
@@ -40,6 +42,7 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestClass.java", "src/main/java")
   }
 
+  // migrated
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryProject() {
     setupFixture("passing_java_library_project")
 
@@ -51,6 +54,7 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
   }
 
+  // migrated
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithToolchainProject() {
     setupFixture("passing_java_library_with_toolchain_project")
 
@@ -62,6 +66,7 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
   }
 
+  // migrated (kotlin-jvm covers this)
   @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithKotlinProject() {
     setupFixture("passing_java_library_with_kotlin_project")
 
@@ -74,6 +79,7 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestClass.java", "src/main/java")
   }
 
+  // migrated
   @Test fun generatesArtifactsAndDocumentationOnKotlinJvmProject() {
     setupFixture("passing_kotlin_jvm_project")
 
@@ -85,6 +91,7 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
   }
 
+  // TODO
   @Test fun generatesArtifactsAndDocumentationOnKotlinJvmWithDokkaProject() {
     setupFixture("passing_kotlin_jvm_with_dokka_project")
 
@@ -96,6 +103,7 @@ class MavenPublishPluginIntegrationTest {
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
   }
 
+  // migrated
   @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
     setupFixture("passing_android_project")
 
@@ -106,6 +114,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches()
   }
 
+  // TODO
   @Test fun generatesArtifactsAndDocumentationOnAndroidSingleVariantProject() {
     setupFixture("passing_android_single_variant_project")
 
@@ -116,6 +125,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches()
   }
 
+  // TODO
   @Test fun generatesArtifactsAndDocumentationOnAndroidMultiVariantProject() {
     setupFixture("passing_android_multi_variant_project")
 
@@ -127,6 +137,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches()
   }
 
+  // migrated
   @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinProject() {
     setupFixture("passing_android_with_kotlin_project")
 
@@ -137,6 +148,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches()
   }
 
+  // TODO
   @Test fun generatesArtifactsAndDocumentationOnKotlinMppProject() {
     setupFixture("passing_kotlin_mpp_project")
 
@@ -162,6 +174,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches(linuxArtifactId)
   }
 
+  // TODO
   @Test fun kotlinMppArtifactIdReplacementWorksCorrectly1() {
     setupFixture("passing_kotlin_mpp_project", "foo")
 
@@ -174,6 +187,7 @@ class MavenPublishPluginIntegrationTest {
     assertExpectedCommonArtifactsGenerated(artifactExtension = "klib", artifactId = "foo-bar-linux")
   }
 
+  // TODO
   @Test fun kotlinMppArtifactIdReplacementWorksCorrectly2() {
     setupFixture("passing_kotlin_mpp_project", "foo")
 
@@ -186,6 +200,7 @@ class MavenPublishPluginIntegrationTest {
     assertExpectedCommonArtifactsGenerated(artifactExtension = "klib", artifactId = "bar-foo-linux")
   }
 
+  // TODO
   @Test fun generatesArtifactsAndDocumentationOnKotlinMppWithDokkaProject() {
     setupFixture("passing_kotlin_mpp_with_dokka_project")
 
@@ -211,6 +226,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches(linuxArtifactId)
   }
 
+  // TODO
   @Test fun generatesArtifactsAndDocumentationOnKotlinMppWithAndroidDokkaProject() {
     setupFixture("passing_kotlin_mpp_with_android_dokka_project")
 
@@ -246,6 +262,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches(linuxArtifactId)
   }
 
+  // migrated
   @Test
   fun generatesArtifactsAndDocumentationOnKotlinJsProject() {
     setupFixture("passing_kotlin_js_project")
@@ -256,6 +273,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches()
   }
 
+  // TODO
   @Test fun generatesArtifactsAndDocumentationOnGradlePluginProject() {
     setupFixture("passing_java_gradle_plugin_project")
 
@@ -270,6 +288,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches(artifactId, pluginId)
   }
 
+  // TODO
   @Test fun generatesArtifactsAndDocumentationOnMinimalPomProject() {
     setupFixture("minimal_pom_project")
 
@@ -280,6 +299,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches()
   }
 
+  // migrated (all tests cover this)
   @Test fun generatesArtifactsAndDocumentationOnFullPomProject() {
     setupFixture("full_pom_project")
 
@@ -290,6 +310,7 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches()
   }
 
+  // TODO
   @Test fun generatesArtifactsAndDocumentationOnOverrideVersionGroupProject() {
     setupFixture("override_version_group_project")
 

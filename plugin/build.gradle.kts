@@ -38,7 +38,15 @@ dependencies {
   implementation(projects.nexus)
 
   testImplementation(gradleTestKit())
-  testImplementation(libs.junit)
+  testImplementation(libs.junit.jupiter)
+  testImplementation(libs.testParameterInjector)
+  testImplementation(libs.truth)
+  testImplementation(libs.truth.java8)
+  testImplementation(libs.truth.testKit)
+
+  // TODO remove after all old integration tests were migrated
+  testCompileOnly(libs.junit)
+  testRuntimeOnly(libs.junit.vintage)
   testImplementation(libs.assertj)
 }
 
@@ -55,7 +63,10 @@ val integrationTest by tasks.registering(Test::class) {
   testClassesDirs = integrationTestSourceSet.output.classesDirs
   classpath = integrationTestSourceSet.runtimeClasspath
 
+  useJUnitPlatform()
   testLogging.showStandardStreams = true
+  maxHeapSize = "1g"
+  jvmArgs("--add-opens", "java.base/java.util=ALL-UNNAMED")
 
   systemProperty("com.vanniktech.publish.version", version.toString())
 
