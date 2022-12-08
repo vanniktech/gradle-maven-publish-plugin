@@ -4,12 +4,13 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: JDK ${{ matrix.java_version }}
+    name: JDK ${{ matrix.java_version }}, Config ${{ matrix.test_config_method }}
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         java_version: [11, 17]
+        test_config_method: ["DSL", "PROPERTIES"]
 
     steps:
       - name: Checkout
@@ -27,4 +28,4 @@ jobs:
       - uses: gradle/gradle-build-action@v2
 
       - name: Build with Gradle
-        run: ./gradlew build --stacktrace
+        run: ./gradlew build --stacktrace -DtestConfigMethod=${{ matrix.test_config_method }}

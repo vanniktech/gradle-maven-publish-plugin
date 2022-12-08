@@ -66,10 +66,11 @@ val integrationTest by tasks.registering(Test::class) {
 
   useJUnitPlatform()
   testLogging.showStandardStreams = true
-  maxHeapSize = "1g"
+  maxHeapSize = "2g"
   jvmArgs("--add-opens", "java.base/java.util=ALL-UNNAMED")
 
   systemProperty("com.vanniktech.publish.version", version.toString())
+  systemProperty("testConfigMethod", System.getProperty("testConfigMethod", "DSL"))
 
   beforeTest(
     closureOf<TestDescriptor> {

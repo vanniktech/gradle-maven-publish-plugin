@@ -72,7 +72,7 @@ private fun Project.configurePlatform() {
   }
 
   plugins.withId("com.android.library") {
-    // afterEvaluate is too late but we can't run this synchronously because we shouldn't call the APIs for
+    // afterEvaluate is too late, but we can't run this synchronously because we shouldn't call the APIs for
     // multiplatform projects that use Android
     androidComponents.finalizeDsl {
       if (!plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {

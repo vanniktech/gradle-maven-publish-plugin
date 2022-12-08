@@ -21,33 +21,43 @@ enum class AgpVersion(
   val minGradleVersion: GradleVersion,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
+  // minimum supported
   AGP_7_1(
     value = "7.1.2",
     minGradleVersion = GradleVersion.GRADLE_7_2,
     firstUnsupportedGradleVersion = GradleVersion.GRADLE_8_0,
   ),
+  // stable
   AGP_7_3(
     value = "7.3.1",
     minGradleVersion = GradleVersion.GRADLE_7_4,
   ),
+  // beta channel
   AGP_7_4(
     value = "7.4.0-rc01",
     minGradleVersion = GradleVersion.GRADLE_7_5,
   ),
+  // canary channel
   AGP_8_0(
     value = "8.0.0-alpha09",
-    minGradleVersion = GradleVersion.GRADLE_7_6,
+    minGradleVersion = GradleVersion.GRADLE_8_0,
   ),
 }
 
 enum class KotlinVersion(val value: String) {
+  // stable
   KT_1_7("1.7.20"),
+  // preview
+  KT_1_8("1.8.0-RC2"),
 }
 
 enum class GradleVersion(val value: String) {
+  // minimum supported
   GRADLE_7_2("7.2"),
+  // stable
   GRADLE_7_6("7.6"),
-  GRADLE_8_0("8.0-milestone-1"),
+  // preview
+  GRADLE_8_0("8.0-milestone-6"),
   ;
 
   companion object {

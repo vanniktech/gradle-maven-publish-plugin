@@ -12,8 +12,7 @@ class MavenPublishPluginIntegrationTest2 {
   @TempDir
   lateinit var testProjectDir: Path
 
-  @TestParameter
-  lateinit var config: TestOptions.Config
+  private val config: TestOptions.Config = TestOptions.Config.valueOf(System.getProperty("testConfigMethod"))
 
   @TestParameter
   lateinit var signing: TestOptions.Signing
@@ -118,11 +117,11 @@ class MavenPublishPluginIntegrationTest2 {
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isSignedIfNeeded()
+    assertThat(result).artifact("klib").exists()
+    assertThat(result).artifact("klib").isSignedIfNeeded()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSignedIfNeeded()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJs(kotlinVersion))
+    assertThat(result).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion))
     assertThat(result).module().exists()
     assertThat(result).module().isSignedIfNeeded()
     assertThat(result).sourcesJar().exists()
