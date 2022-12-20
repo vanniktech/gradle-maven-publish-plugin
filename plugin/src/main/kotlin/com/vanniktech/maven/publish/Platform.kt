@@ -76,11 +76,9 @@ data class GradlePlugin @JvmOverloads constructor(
 ) : Platform() {
 
   override fun configure(project: Project) {
-    project.gradlePublishing.publications.withType(MavenPublication::class.java).all {
-      if (it.name == "pluginMaven") {
-        it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
-        it.withJavadocJar { project.javadocJarTask(javadocJar) }
-      }
+    project.mavenPublicationsWithoutPluginMarker {
+      it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
+      it.withJavadocJar { project.javadocJarTask(javadocJar) }
     }
   }
 }
@@ -234,7 +232,7 @@ data class KotlinMultiplatform @JvmOverloads constructor(
   override fun configure(project: Project) {
     val javadocJarTask = project.javadocJarTask(javadocJar)
 
-    project.gradlePublishing.publications.withType(MavenPublication::class.java).all {
+    project.mavenPublications {
       it.withJavadocJar { javadocJarTask }
     }
   }

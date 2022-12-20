@@ -10,13 +10,13 @@ import org.gradle.api.Project
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
-import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
+import org.gradle.util.GradleVersion
 
 @Incubating
 abstract class MavenPublishBaseExtension(
@@ -123,12 +123,12 @@ abstract class MavenPublishBaseExtension(
       project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId, inMemoryKey, inMemoryKeyPassword)
     }
 
-    // TODO: replace with the following line after https://github.com/gradle/gradle/issues/21857 is fixed
-    //  project.gradleSigning.sign(project.gradlePublishing.publications)
-    project.gradlePublishing.publications.withType(MavenPublication::class.java).all { publication ->
-      val task = project.tasks.findByName("sign${publication.name.capitalize()}Publication")
-      if (task == null) {
-        project.gradleSigning.sign(publication)
+    if (GradleVersion.current() < GradleVersion.version("8.0")) {
+      project.mavenPublications { publication ->
+        val task = project.tasks.findByName("sign${publication.name.capitalize()}Publication")
+        if (task == null) {
+          project.gradleSigning.sign(publication)
+        }
       }
     }
 
@@ -146,7 +146,7 @@ abstract class MavenPublishBaseExtension(
    */
   @Incubating
   fun pom(configure: Action<in MavenPom>) {
-    project.gradlePublishing.publications.withType(MavenPublication::class.java).configureEach {
+    project.mavenPublications {
       it.pom(configure)
     }
   }
