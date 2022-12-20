@@ -10,9 +10,6 @@ import org.gradle.plugins.signing.SigningExtension
 
 internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
 
-internal val Project.versionIsSnapshot: Boolean
-  get() = version.toString().endsWith("-SNAPSHOT")
-
 internal inline val Project.baseExtension: MavenPublishBaseExtension
   get() = extensions.getByType(MavenPublishBaseExtension::class.java)
 

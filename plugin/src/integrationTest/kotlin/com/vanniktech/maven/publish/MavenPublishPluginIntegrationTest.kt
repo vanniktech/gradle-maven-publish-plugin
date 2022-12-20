@@ -181,17 +181,6 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches(artifactId, pluginId)
   }
 
-  // TODO
-  @Test fun generatesArtifactsAndDocumentationOnOverrideVersionGroupProject() {
-    setupFixture("override_version_group_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated(groupId = "com.example2", version = "2.0.0")
-    assertPomContentMatches(groupId = "com.example2", version = "2.0.0")
-  }
-
   /**
    * Copies test fixture into temp directory under test.
    */

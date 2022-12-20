@@ -235,6 +235,7 @@ class MavenPublishPluginIntegrationTest2 {
   fun groupAndVersionFromProjectProject() {
     val project = javaProjectSpec().copy(
       group = null,
+      artifactId = null,
       version = null,
       buildFileExtra = """
         group = "com.example.test2"
@@ -245,6 +246,8 @@ class MavenPublishPluginIntegrationTest2 {
 
     val resultSpec = project.copy(
       group = "com.example.test2",
+      // the project name is used as default value for the artifact id
+      artifactId = "default-root-project-name",
       version = "3.2.1",
     )
     val actualResult = result.copy(projectSpec = resultSpec)
