@@ -8,13 +8,19 @@ import com.google.common.truth.Fact.simpleFact
 import com.google.common.truth.FailureMetadata
 import com.google.common.truth.Subject
 import com.google.common.truth.Truth.assertAbout
+import com.google.common.truth.Truth.assertThat
 import com.vanniktech.maven.publish.ArtifactSubject.Companion.artifact
+import com.vanniktech.maven.publish.PomSubject.Companion.pomSubject
 import com.vanniktech.maven.publish.SourcesJarSubject.Companion.sourcesJarSubject
+import java.io.StringWriter
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 import kotlin.io.path.name
 import kotlin.io.path.readText
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer
 
 class ProjectResultSubject private constructor(
   failureMetadata: FailureMetadata,
@@ -25,10 +31,8 @@ class ProjectResultSubject private constructor(
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ProjectResultSubject, ProjectResult> =
       Factory { metadata, actual -> ProjectResultSubject(metadata, actual) }
 
-    @JvmStatic
     fun projectResult() = BUILD_RESULT_SUBJECT_FACTORY
 
-    @JvmStatic
     fun assertThat(actual: ProjectResult): ProjectResultSubject {
       return assertAbout(projectResult()).that(actual)
     }
@@ -70,8 +74,8 @@ class ProjectResultSubject private constructor(
       .that(artifactPath("-$qualifier-javadoc", "jar") to result)
   }
 
-  fun pom(): ArtifactSubject {
-    return check("pom").about(artifact())
+  fun pom(): PomSubject {
+    return check("pom").about(pomSubject())
       .that(artifactPath("", "pom") to result)
   }
 
@@ -101,7 +105,6 @@ open class ArtifactSubject internal constructor(
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ArtifactSubject, Pair<Path, ProjectResult>> =
       Factory { metadata, actual -> ArtifactSubject(metadata, actual.first) }
 
-    @JvmStatic
     fun artifact() = BUILD_RESULT_SUBJECT_FACTORY
   }
 
@@ -129,7 +132,6 @@ class SourcesJarSubject private constructor(
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<SourcesJarSubject, Pair<Path, ProjectResult>> =
       Factory { metadata, actual -> SourcesJarSubject(metadata, actual.first, actual.second) }
 
-    @JvmStatic
     fun sourcesJarSubject() = BUILD_RESULT_SUBJECT_FACTORY
   }
 
@@ -174,5 +176,37 @@ class SourcesJarSubject private constructor(
     if (facts.isNotEmpty()) {
       failWithoutActual(facts.first(), *facts.drop(1).toTypedArray())
     }
+  }
+}
+
+class PomSubject private constructor(
+  failureMetadata: FailureMetadata,
+  private val artifact: Path,
+  private val result: ProjectResult,
+) : ArtifactSubject(failureMetadata, artifact) {
+
+  companion object {
+    private val BUILD_RESULT_SUBJECT_FACTORY: Factory<PomSubject, Pair<Path, ProjectResult>> =
+      Factory { metadata, actual -> PomSubject(metadata, actual.first, actual.second) }
+
+    fun pomSubject() = BUILD_RESULT_SUBJECT_FACTORY
+  }
+
+  fun matchesExpectedPom(vararg dependencies: PomDependency) {
+    matchesExpectedPom(null, *dependencies)
+  }
+
+  fun matchesExpectedPom(packaging: String?, vararg dependencies: PomDependency) {
+    val pomWriter = MavenXpp3Writer()
+
+    val actualModel = MavenXpp3Reader().read(artifact.inputStream())
+    val actualWriter = StringWriter()
+    pomWriter.write(actualWriter, actualModel)
+
+    val expectedModel = createPom(result.projectSpec.group, result.projectSpec.artifactId, result.projectSpec.version, packaging, dependencies.toList())
+    val expectedWriter = StringWriter()
+    pomWriter.write(expectedWriter, expectedModel)
+
+    assertThat(actualWriter.toString()).isEqualTo(expectedWriter.toString())
   }
 }
