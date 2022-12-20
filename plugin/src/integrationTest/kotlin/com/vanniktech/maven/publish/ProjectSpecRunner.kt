@@ -128,7 +128,7 @@ private fun ProjectSpec.writeSettingFile(path: Path, options: TestOptions) {
   val rootProjectName = if (options.config == TestOptions.Config.DSL) {
     artifactId
   } else {
-    "default-root-project-name"
+    defaultProjectName
   }
   path.writeText(
     """

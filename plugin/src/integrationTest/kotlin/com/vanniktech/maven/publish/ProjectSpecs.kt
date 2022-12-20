@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import java.nio.file.Paths
+
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
 val kotlinJvmPlugin = PluginSpec("org.jetbrains.kotlin.jvm")
@@ -7,6 +9,8 @@ val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
 val kotlinJsPlugin = PluginSpec("org.jetbrains.kotlin.js")
 val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
+
+val fixtures = Paths.get("src/integrationTest/fixtures2").toAbsolutePath()
 
 val defaultProperties = mapOf(
   "POM_NAME" to "Gradle Maven Publish Plugin Test Artifact",

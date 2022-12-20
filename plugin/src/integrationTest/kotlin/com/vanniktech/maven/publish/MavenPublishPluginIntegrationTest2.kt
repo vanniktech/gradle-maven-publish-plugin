@@ -5,7 +5,6 @@ import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 import java.nio.file.Path
-import java.nio.file.Paths
 import org.junit.jupiter.api.io.TempDir
 
 class MavenPublishPluginIntegrationTest2 {
@@ -408,9 +407,5 @@ class MavenPublishPluginIntegrationTest2 {
     if (signing != TestOptions.Signing.NO_SIGNING) {
       isSigned()
     }
-  }
-
-  companion object {
-    private val fixtures = Paths.get("src/integrationTest/fixtures2").toAbsolutePath()
   }
 }
