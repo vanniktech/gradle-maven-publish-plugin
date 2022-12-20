@@ -132,6 +132,203 @@ class MavenPublishPluginIntegrationTest2 {
   }
 
   @TestParameterInjectorTest
+  fun kotlinMultiplatformProject(@TestParameter kotlinVersion: KotlinVersion) {
+    val project = kotlinMultiplatformProjectSpec(kotlinVersion)
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSignedIfNeeded()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSignedIfNeeded()
+    assertThat(result).pom().matchesExpectedPom(
+      kotlinStdlibCommon(kotlinVersion).copy(scope = "runtime"),
+    )
+    assertThat(result).module().exists()
+    assertThat(result).module().isSignedIfNeeded()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSignedIfNeeded()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSignedIfNeeded()
+
+    val jvmResult = result.withArtifactIdSuffix("jvm")
+    assertThat(jvmResult).outcome().succeeded()
+    assertThat(jvmResult).artifact("jar").exists()
+    assertThat(jvmResult).artifact("jar").isSignedIfNeeded()
+    assertThat(jvmResult).pom().exists()
+    assertThat(jvmResult).pom().isSignedIfNeeded()
+    assertThat(jvmResult).pom().matchesExpectedPom(
+      kotlinStdlibJdk(kotlinVersion),
+      kotlinStdlibCommon(kotlinVersion),
+    )
+    assertThat(jvmResult).module().exists()
+    assertThat(jvmResult).module().isSignedIfNeeded()
+    assertThat(jvmResult).sourcesJar().exists()
+    assertThat(jvmResult).sourcesJar().isSignedIfNeeded()
+    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
+    assertThat(jvmResult).javadocJar().exists()
+    assertThat(jvmResult).javadocJar().isSignedIfNeeded()
+
+    val linuxResult = result.withArtifactIdSuffix("linux")
+    assertThat(linuxResult).outcome().succeeded()
+    assertThat(linuxResult).artifact("klib").exists()
+    assertThat(linuxResult).artifact("klib").isSignedIfNeeded()
+    assertThat(linuxResult).pom().exists()
+    assertThat(linuxResult).pom().isSignedIfNeeded()
+    assertThat(linuxResult).pom().matchesExpectedPom(
+      "klib",
+      kotlinStdlibCommon(kotlinVersion)
+    )
+    assertThat(linuxResult).module().exists()
+    assertThat(linuxResult).module().isSignedIfNeeded()
+    assertThat(linuxResult).sourcesJar().exists()
+    assertThat(linuxResult).sourcesJar().isSignedIfNeeded()
+    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxMain")
+    assertThat(linuxResult).javadocJar().exists()
+    assertThat(linuxResult).javadocJar().isSignedIfNeeded()
+
+    val nodejsResult = result.withArtifactIdSuffix("nodejs")
+    assertThat(nodejsResult).outcome().succeeded()
+    assertThat(nodejsResult).artifact("klib").exists()
+    assertThat(nodejsResult).artifact("klib").isSignedIfNeeded()
+    assertThat(nodejsResult).pom().exists()
+    assertThat(nodejsResult).pom().isSignedIfNeeded()
+    assertThat(nodejsResult).pom().matchesExpectedPom(
+      "klib",
+      kotlinStdlibJs(kotlinVersion),
+      kotlinStdlibCommon(kotlinVersion),
+    )
+    assertThat(nodejsResult).module().exists()
+    assertThat(nodejsResult).module().isSignedIfNeeded()
+    assertThat(nodejsResult).sourcesJar().exists()
+    assertThat(nodejsResult).sourcesJar().isSignedIfNeeded()
+    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
+    assertThat(nodejsResult).javadocJar().exists()
+    assertThat(nodejsResult).javadocJar().isSignedIfNeeded()
+  }
+
+  @TestParameterInjectorTest
+  fun kotlinMultiplatformWithAndroidLibraryProject(
+    @TestParameter agpVersion: AgpVersion,
+    @TestParameter kotlinVersion: KotlinVersion,
+  ) {
+    agpVersion.assumeSupportedGradleVersion()
+
+    val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSignedIfNeeded()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSignedIfNeeded()
+    assertThat(result).pom().matchesExpectedPom(
+      kotlinStdlibCommon(kotlinVersion).copy(scope = "runtime"),
+    )
+    assertThat(result).module().exists()
+    assertThat(result).module().isSignedIfNeeded()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSignedIfNeeded()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSignedIfNeeded()
+
+    val jvmResult = result.withArtifactIdSuffix("jvm")
+    assertThat(jvmResult).outcome().succeeded()
+    assertThat(jvmResult).artifact("jar").exists()
+    assertThat(jvmResult).artifact("jar").isSignedIfNeeded()
+    assertThat(jvmResult).pom().exists()
+    assertThat(jvmResult).pom().isSignedIfNeeded()
+    assertThat(jvmResult).pom().matchesExpectedPom(
+      kotlinStdlibJdk(kotlinVersion),
+      kotlinStdlibCommon(kotlinVersion),
+    )
+    assertThat(jvmResult).module().exists()
+    assertThat(jvmResult).module().isSignedIfNeeded()
+    assertThat(jvmResult).sourcesJar().exists()
+    assertThat(jvmResult).sourcesJar().isSignedIfNeeded()
+    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
+    assertThat(jvmResult).javadocJar().exists()
+    assertThat(jvmResult).javadocJar().isSignedIfNeeded()
+
+    val linuxResult = result.withArtifactIdSuffix("linux")
+    assertThat(linuxResult).outcome().succeeded()
+    assertThat(linuxResult).artifact("klib").exists()
+    assertThat(linuxResult).artifact("klib").isSignedIfNeeded()
+    assertThat(linuxResult).pom().exists()
+    assertThat(linuxResult).pom().isSignedIfNeeded()
+    assertThat(linuxResult).pom().matchesExpectedPom(
+      "klib",
+      kotlinStdlibCommon(kotlinVersion)
+    )
+    assertThat(linuxResult).module().exists()
+    assertThat(linuxResult).module().isSignedIfNeeded()
+    assertThat(linuxResult).sourcesJar().exists()
+    assertThat(linuxResult).sourcesJar().isSignedIfNeeded()
+    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxMain")
+    assertThat(linuxResult).javadocJar().exists()
+    assertThat(linuxResult).javadocJar().isSignedIfNeeded()
+
+    val nodejsResult = result.withArtifactIdSuffix("nodejs")
+    assertThat(nodejsResult).outcome().succeeded()
+    assertThat(nodejsResult).artifact("klib").exists()
+    assertThat(nodejsResult).artifact("klib").isSignedIfNeeded()
+    assertThat(nodejsResult).pom().exists()
+    assertThat(nodejsResult).pom().isSignedIfNeeded()
+    assertThat(nodejsResult).pom().matchesExpectedPom(
+      "klib",
+      kotlinStdlibJs(kotlinVersion),
+      kotlinStdlibCommon(kotlinVersion),
+    )
+    assertThat(nodejsResult).module().exists()
+    assertThat(nodejsResult).module().isSignedIfNeeded()
+    assertThat(nodejsResult).sourcesJar().exists()
+    assertThat(nodejsResult).sourcesJar().isSignedIfNeeded()
+    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
+    assertThat(nodejsResult).javadocJar().exists()
+    assertThat(nodejsResult).javadocJar().isSignedIfNeeded()
+
+    val androidReleaseResult = result.withArtifactIdSuffix("android")
+    assertThat(androidReleaseResult).outcome().succeeded()
+    assertThat(androidReleaseResult).artifact("aar").exists()
+    assertThat(androidReleaseResult).artifact("aar").isSignedIfNeeded()
+    assertThat(androidReleaseResult).pom().exists()
+    assertThat(androidReleaseResult).pom().isSignedIfNeeded()
+    assertThat(androidReleaseResult).pom().matchesExpectedPom(
+      "aar",
+      kotlinStdlibJdk(kotlinVersion),
+      kotlinStdlibCommon(kotlinVersion),
+    )
+    assertThat(androidReleaseResult).module().exists()
+    assertThat(androidReleaseResult).module().isSignedIfNeeded()
+    assertThat(androidReleaseResult).sourcesJar().exists()
+    assertThat(androidReleaseResult).sourcesJar().isSignedIfNeeded()
+    assertThat(androidReleaseResult).sourcesJar().containsSourceSetFiles("commonMain", "androidMain", "androidRelease")
+    assertThat(androidReleaseResult).javadocJar().exists()
+    assertThat(androidReleaseResult).javadocJar().isSignedIfNeeded()
+
+    val androidDebugResult = result.withArtifactIdSuffix("android-debug")
+    assertThat(androidDebugResult).outcome().succeeded()
+    assertThat(androidDebugResult).artifact("aar").exists()
+    assertThat(androidDebugResult).artifact("aar").isSignedIfNeeded()
+    assertThat(androidDebugResult).pom().exists()
+    assertThat(androidDebugResult).pom().isSignedIfNeeded()
+    assertThat(androidDebugResult).pom().matchesExpectedPom(
+      "aar",
+      kotlinStdlibJdk(kotlinVersion),
+      kotlinStdlibCommon(kotlinVersion),
+    )
+    assertThat(androidDebugResult).module().exists()
+    assertThat(androidDebugResult).module().isSignedIfNeeded()
+    assertThat(androidDebugResult).sourcesJar().exists()
+    assertThat(androidDebugResult).sourcesJar().isSignedIfNeeded()
+    assertThat(androidDebugResult).sourcesJar().containsSourceSetFiles("commonMain", "androidMain", "androidDebug")
+    assertThat(androidDebugResult).javadocJar().exists()
+    assertThat(androidDebugResult).javadocJar().isSignedIfNeeded()
+  }
+
+  @TestParameterInjectorTest
   fun androidLibraryProject(@TestParameter agpVersion: AgpVersion) {
     agpVersion.assumeSupportedGradleVersion()
 

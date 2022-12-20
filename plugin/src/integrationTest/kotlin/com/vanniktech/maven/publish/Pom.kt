@@ -8,6 +8,7 @@ import org.apache.maven.model.Scm
 
 data class PomDependency(val groupId: String, val artifactId: String, val version: String, val scope: String)
 
+fun kotlinStdlibCommon(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-common", version.value, "compile")
 fun kotlinStdlibJdk(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-jdk8", version.value, "compile")
 fun kotlinStdlibJs(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", version.value, "compile")
 

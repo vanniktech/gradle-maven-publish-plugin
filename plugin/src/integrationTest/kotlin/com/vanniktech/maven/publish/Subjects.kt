@@ -140,6 +140,10 @@ class SourcesJarSubject private constructor(
     containsSourceFiles(result.projectSpec.sourceFiles)
   }
 
+  fun containsSourceSetFiles(vararg sourceSets: String) {
+    containsSourceFiles(result.projectSpec.sourceFiles.filter { sourceSets.contains(it.sourceSet) })
+  }
+
   private fun containsSourceFiles(sourceFiles: List<SourceFile>) {
     val zip = ZipFile(artifact.toFile())
     val zipFiles = zip.entries()

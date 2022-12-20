@@ -24,7 +24,12 @@ data class ProjectResult(
   val projectSpec: ProjectSpec,
   val project: Path,
   val repo: Path,
-)
+) {
+  fun withArtifactIdSuffix(suffix: String): ProjectResult {
+    val updatedSpec = projectSpec.copy(artifactId = "${projectSpec.artifactId}-$suffix")
+    return copy(projectSpec = updatedSpec)
+  }
+}
 
 data class SourceFile(
   val sourceSet: String,
