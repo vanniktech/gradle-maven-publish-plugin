@@ -151,8 +151,8 @@ class SourcesJarSubject private constructor(
 
     sourceFiles.forEach { sourceFile ->
       // fallback is a workaround for KotlinJs creating a main folder inside the jar
-      val entry = zipFiles.find { it.name == sourceFile.file } ?:
-          zipFiles.find { it.name == "${sourceFile.sourceSet}/${sourceFile.file}" }
+      val entry = zipFiles.find { it.name == sourceFile.file }
+        ?: zipFiles.find { it.name == "${sourceFile.sourceSet}/${sourceFile.file}" }
       if (entry == null) {
         missingFiles.add("${sourceFile.sourceSet}/${sourceFile.file}")
       } else {
