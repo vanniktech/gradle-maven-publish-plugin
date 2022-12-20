@@ -73,40 +73,49 @@ private fun ProjectSpec.pluginsBlock() = buildString {
 
 private fun ProjectSpec.publishingBlock(options: TestOptions): String {
   return if (options.config == TestOptions.Config.DSL) {
-    """
-      group = "$group"
-      version = "$version"
+    listOfNotNull(
+      """
+       group = "$group"
+       version = "$version"
 
-      mavenPublishing {
-        ${if (options.signing != TestOptions.Signing.NO_SIGNING) "signAllPublications()" else ""}
-
-        pom {
-          name = "${properties["POM_NAME"]}"
-          description = "${properties["POM_DESCRIPTION"]}"
-          inceptionYear = "${properties["POM_INCEPTION_YEAR"]}"
-          url = "${properties["POM_URL"]}"
-          licenses {
-            license {
-              name = "${properties["POM_LICENCE_NAME"]}"
-              url = "${properties["POM_LICENCE_URL"]}"
-              distribution = "${properties["POM_LICENCE_DIST"]}"
+       mavenPublishing {
+         ${if (options.signing != TestOptions.Signing.NO_SIGNING) "signAllPublications()" else ""}
+         pom {
+      """,
+      "    name = \"${properties["POM_NAME"]}\"".takeIf { properties.containsKey("POM_NAME") },
+      "    description = \"${properties["POM_DESCRIPTION"]}\"".takeIf { properties.containsKey("POM_DESCRIPTION") },
+      "    inceptionYear = \"${properties["POM_INCEPTION_YEAR"]}\"".takeIf { properties.containsKey("POM_INCEPTION_YEAR") },
+      "    url = \"${properties["POM_URL"]}\"".takeIf { properties.containsKey("POM_URL") },
+      """
+            licenses {
+              license {
+                name = "${properties["POM_LICENCE_NAME"]}"
+                url = "${properties["POM_LICENCE_URL"]}"
+                distribution = "${properties["POM_LICENCE_DIST"]}"
+              }
             }
-          }
-          developers {
-            developer {
-              id = "${properties["POM_DEVELOPER_ID"]}"
-              name = "${properties["POM_DEVELOPER_NAME"]}"
-              url = "${properties["POM_DEVELOPER_URL"]}"
+      """.trimIndent().takeIf { properties.containsKey("POM_LICENCE_NAME") },
+      """
+            developers {
+              developer {
+                id = "${properties["POM_DEVELOPER_ID"]}"
+                name = "${properties["POM_DEVELOPER_NAME"]}"
+                url = "${properties["POM_DEVELOPER_URL"]}"
+              }
             }
-          }
-          scm {
-            url = "${properties["POM_SCM_URL"]}"
-            connection = "${properties["POM_SCM_CONNECTION"]}"
-            developerConnection = "${properties["POM_SCM_DEV_CONNECTION"]}"
-          }
-        }
-      }
-    """.trimIndent()
+      """.trimIndent().takeIf { properties.containsKey("POM_DEVELOPER_ID") },
+      """
+            scm {
+              url = "${properties["POM_SCM_URL"]}"
+              connection = "${properties["POM_SCM_CONNECTION"]}"
+              developerConnection = "${properties["POM_SCM_DEV_CONNECTION"]}"
+            }
+      """.trimIndent().takeIf { properties.containsKey("POM_SCM_URL") },
+      """
+         }
+       }
+      """.trimIndent(),
+    ).joinToString(separator = "\n")
   } else {
     """
       mavenPublishing {
