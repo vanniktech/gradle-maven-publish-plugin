@@ -17,80 +17,6 @@ class MavenPublishPluginIntegrationTest {
   private lateinit var projectFolder: File
   private lateinit var expectedFolder: File
 
-  // migrated
-  @Test fun generatesArtifactsAndDocumentationOnJavaProject() {
-    setupFixture("passing_java_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
-  }
-
-  // migrated (kotlin-jvm covers this)
-  @Test fun generatesArtifactsAndDocumentationOnJavaWithKotlinProject() {
-    setupFixture("passing_java_with_kotlin_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestClass.java", "src/main/java")
-  }
-
-  // migrated
-  @Test fun generatesArtifactsAndDocumentationOnJavaLibraryProject() {
-    setupFixture("passing_java_library_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
-  }
-
-  // migrated
-  @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithToolchainProject() {
-    setupFixture("passing_java_library_with_toolchain_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.java", "src/main/java")
-  }
-
-  // migrated (kotlin-jvm covers this)
-  @Test fun generatesArtifactsAndDocumentationOnJavaLibraryWithKotlinProject() {
-    setupFixture("passing_java_library_with_kotlin_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/JavaTestClass.java", "src/main/java")
-  }
-
-  // migrated
-  @Test fun generatesArtifactsAndDocumentationOnKotlinJvmProject() {
-    setupFixture("passing_kotlin_jvm_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
-  }
-
   // TODO
   @Test fun generatesArtifactsAndDocumentationOnKotlinJvmWithDokkaProject() {
     setupFixture("passing_kotlin_jvm_with_dokka_project")
@@ -101,17 +27,6 @@ class MavenPublishPluginIntegrationTest {
     assertExpectedCommonArtifactsGenerated()
     assertPomContentMatches()
     assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
-  }
-
-  // migrated
-  @Test fun generatesArtifactsAndDocumentationOnAndroidProject() {
-    setupFixture("passing_android_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated("aar")
-    assertPomContentMatches()
   }
 
   // TODO
@@ -134,17 +49,6 @@ class MavenPublishPluginIntegrationTest {
     assertExpectedTasksRanSuccessfully(result)
     assertExpectedCommonArtifactsGenerated("aar", qualifier = "debug")
     assertExpectedCommonArtifactsGenerated("aar", qualifier = "release")
-    assertPomContentMatches()
-  }
-
-  // migrated
-  @Test fun generatesArtifactsAndDocumentationOnAndroidWithKotlinProject() {
-    setupFixture("passing_android_with_kotlin_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated("aar")
     assertPomContentMatches()
   }
 
@@ -262,17 +166,6 @@ class MavenPublishPluginIntegrationTest {
     assertPomContentMatches(linuxArtifactId)
   }
 
-  // migrated
-  @Test
-  fun generatesArtifactsAndDocumentationOnKotlinJsProject() {
-    setupFixture("passing_kotlin_js_project")
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-  }
-
   // TODO
   @Test fun generatesArtifactsAndDocumentationOnGradlePluginProject() {
     setupFixture("passing_java_gradle_plugin_project")
@@ -291,17 +184,6 @@ class MavenPublishPluginIntegrationTest {
   // TODO
   @Test fun generatesArtifactsAndDocumentationOnMinimalPomProject() {
     setupFixture("minimal_pom_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-  }
-
-  // migrated (all tests cover this)
-  @Test fun generatesArtifactsAndDocumentationOnFullPomProject() {
-    setupFixture("full_pom_project")
 
     val result = executeGradleCommands(TEST_TASK, "--stacktrace")
 
