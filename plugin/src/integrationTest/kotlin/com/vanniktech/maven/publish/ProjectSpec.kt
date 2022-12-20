@@ -9,7 +9,7 @@ data class ProjectSpec(
   val artifactId: String,
   val version: String,
   val properties: Map<String, String>,
-  val sourceFiles: List<Pair<String, String>>,
+  val sourceFiles: List<SourceFile>,
   val buildFileExtra: String = "",
 )
 
@@ -25,3 +25,13 @@ data class ProjectResult(
   val project: Path,
   val repo: Path,
 )
+
+data class SourceFile(
+  val sourceSet: String,
+  val sourceSetFolder: String,
+  val file: String,
+) {
+  fun resolveIn(root: Path): Path {
+    return root.resolve("src/$sourceSet/$sourceSetFolder/$file")
+  }
+}

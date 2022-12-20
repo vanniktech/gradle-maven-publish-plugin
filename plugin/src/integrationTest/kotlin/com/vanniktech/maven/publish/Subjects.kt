@@ -136,6 +136,10 @@ class SourcesJarSubject private constructor(
   }
 
   fun containsAllSourceFiles() {
+    containsSourceFiles(result.projectSpec.sourceFiles)
+  }
+
+  private fun containsSourceFiles(sourceFiles: List<SourceFile>) {
     val zip = ZipFile(artifact.toFile())
     val zipFiles = zip.entries()
       .toList()
@@ -145,18 +149,19 @@ class SourcesJarSubject private constructor(
     val missingFiles = mutableListOf<String>()
     val notMatchingFiles = mutableListOf<Fact>()
 
-    result.projectSpec.sourceFiles.forEach { (sourceRoot, file) ->
+    sourceFiles.forEach { sourceFile ->
       // fallback is a workaround for KotlinJs creating a main folder inside the jar
-      val entry = zipFiles.find { it.name == file } ?: zipFiles.find { it.name == "main/$file" }
+      val entry = zipFiles.find { it.name == sourceFile.file } ?:
+          zipFiles.find { it.name == "${sourceFile.sourceSet}/${sourceFile.file}" }
       if (entry == null) {
-        missingFiles.add(file)
+        missingFiles.add("${sourceFile.sourceSet}/${sourceFile.file}")
       } else {
         zipFiles.remove(entry)
 
         val content = zip.getInputStream(entry)?.reader()?.buffered()?.readText()
-        val expectedContent = result.project.resolve(sourceRoot).resolve(file).readText()
+        val expectedContent = sourceFile.resolveIn(result.project).readText()
         if (content != expectedContent) {
-          notMatchingFiles += fact("expected $file to equal", expectedContent)
+          notMatchingFiles += fact("expected ${sourceFile.file} to equal", expectedContent)
           notMatchingFiles += fact("but was", content)
         }
       }

@@ -192,7 +192,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
 
 private fun ProjectSpec.writeSourceFiles(fixtures: Path, target: Path) {
   sourceFiles.forEach {
-    Files.createDirectories(target.resolve(it.first).resolve(it.second).parent)
-    Files.copy(fixtures.resolve(it.first).resolve(it.second), target.resolve(it.first).resolve(it.second))
+    Files.createDirectories(it.resolveIn(target).parent)
+    Files.copy(it.resolveIn(fixtures), it.resolveIn(target))
   }
 }
