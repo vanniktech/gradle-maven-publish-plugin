@@ -31,10 +31,8 @@ class ProjectResultSubject private constructor(
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ProjectResultSubject, ProjectResult> =
       Factory { metadata, actual -> ProjectResultSubject(metadata, actual) }
 
-    @JvmStatic
     fun projectResult() = BUILD_RESULT_SUBJECT_FACTORY
 
-    @JvmStatic
     fun assertThat(actual: ProjectResult): ProjectResultSubject {
       return assertAbout(projectResult()).that(actual)
     }
@@ -107,7 +105,6 @@ open class ArtifactSubject internal constructor(
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ArtifactSubject, Pair<Path, ProjectResult>> =
       Factory { metadata, actual -> ArtifactSubject(metadata, actual.first) }
 
-    @JvmStatic
     fun artifact() = BUILD_RESULT_SUBJECT_FACTORY
   }
 
@@ -135,7 +132,6 @@ class SourcesJarSubject private constructor(
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<SourcesJarSubject, Pair<Path, ProjectResult>> =
       Factory { metadata, actual -> SourcesJarSubject(metadata, actual.first, actual.second) }
 
-    @JvmStatic
     fun sourcesJarSubject() = BUILD_RESULT_SUBJECT_FACTORY
   }
 
@@ -193,7 +189,6 @@ class PomSubject private constructor(
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<PomSubject, Pair<Path, ProjectResult>> =
       Factory { metadata, actual -> PomSubject(metadata, actual.first, actual.second) }
 
-    @JvmStatic
     fun pomSubject() = BUILD_RESULT_SUBJECT_FACTORY
   }
 
