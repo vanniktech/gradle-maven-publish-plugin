@@ -75,7 +75,7 @@ fun kotlinJsProjectSpec(version: KotlinVersion) = ProjectSpec(
   ),
   buildFileExtra = """
     kotlin {
-        js {
+        js("IR") {
             nodejs()
         }
     }
@@ -114,6 +114,14 @@ fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: Kotli
     plugins = plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value),
     sourceFiles = plainAndroidProject.sourceFiles + listOf(
       "src/main/kotlin" to "com/vanniktech/maven/publish/test/KotlinTestClass.kt"
-    )
+    ),
+    buildFileExtra = plainAndroidProject.buildFileExtra + """
+
+      kotlin {
+          jvmToolchain {
+              languageVersion.set(JavaLanguageVersion.of("8"))
+          }
+      }
+    """.trimIndent()
   )
 }
