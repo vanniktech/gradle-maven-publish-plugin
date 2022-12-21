@@ -146,10 +146,10 @@ abstract class MavenPublishBaseExtension(
    */
   @Incubating
   fun pom(configure: Action<in MavenPom>) {
-    project.mavenPublications {
+    project.mavenPublications { publication ->
       // without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
       project.afterEvaluate {
-        pom(configure)
+        publication.pom(configure)
       }
     }
   }
