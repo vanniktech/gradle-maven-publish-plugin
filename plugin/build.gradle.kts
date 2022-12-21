@@ -70,11 +70,11 @@ val integrationTest by tasks.registering(Test::class) {
   jvmArgs("--add-opens", "java.base/java.util=ALL-UNNAMED")
 
   systemProperty("com.vanniktech.publish.version", version.toString())
-  systemProperty("testConfigMethod", System.getProperty("testConfigMethod", "DSL"))
+  systemProperty("testConfigMethod", System.getProperty("testConfigMethod"))
 
   beforeTest(
     closureOf<TestDescriptor> {
-      logger.lifecycle("Running test: $this")
+      logger.lifecycle("Running test: ${this.className} ${this.displayName}")
     }
   )
 }
