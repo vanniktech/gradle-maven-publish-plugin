@@ -158,6 +158,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
   path.writeText(
     buildString {
       appendLine("org.gradle.vfs.watch=false")
+      appendLine("kotlin.mpp.androidSourceSetLayoutVersion1.nowarn=true")
       appendLine()
 
       if (options.config == TestOptions.Config.PROPERTIES) {
