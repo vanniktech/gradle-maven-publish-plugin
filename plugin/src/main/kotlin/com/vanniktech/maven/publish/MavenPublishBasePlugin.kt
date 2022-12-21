@@ -36,6 +36,6 @@ open class MavenPublishBasePlugin : Plugin<Project> {
   }
 
   private companion object {
-    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("7.2")
+    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("7.3")
   }
 }

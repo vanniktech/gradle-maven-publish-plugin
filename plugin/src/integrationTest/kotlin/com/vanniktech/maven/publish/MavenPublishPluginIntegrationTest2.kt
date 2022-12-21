@@ -64,6 +64,36 @@ class MavenPublishPluginIntegrationTest2 {
   }
 
   @TestParameterInjectorTest
+  fun javaGradlePluginProject() {
+    val project = javaGradlePluginProjectSpec()
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSignedIfNeeded()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSignedIfNeeded()
+    assertThat(result).pom().matchesExpectedPom()
+    assertThat(result).module().exists()
+    assertThat(result).module().isSignedIfNeeded()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSignedIfNeeded()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSignedIfNeeded()
+
+    val pluginId = "com.example.test-plugin"
+    val pluginMarkerSpec = project.copy(group = pluginId, artifactId = "$pluginId.gradle.plugin")
+    val pluginMarkerResult = result.copy(projectSpec = pluginMarkerSpec)
+    assertThat(pluginMarkerResult).pom().exists()
+    assertThat(pluginMarkerResult).pom().isSignedIfNeeded()
+    assertThat(pluginMarkerResult).pom().matchesExpectedPom(
+      "pom",
+      PomDependency("com.example", "test-artifact", "1.0.0", null)
+    )
+  }
+
+  @TestParameterInjectorTest
   fun javaLibraryWithToolchainProject() {
     val project = javaLibraryProjectSpec().copy(
       buildFileExtra = """
