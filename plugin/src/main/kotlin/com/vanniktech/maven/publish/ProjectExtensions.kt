@@ -2,8 +2,10 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.variant.AndroidComponentsExtension
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningExtension
 
 internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
@@ -22,6 +24,18 @@ internal inline val Project.gradlePublishing: PublishingExtension
 
 internal inline val Project.androidComponents: AndroidComponentsExtension<*, *, *>
   get() = extensions.getByType(AndroidComponentsExtension::class.java)
+
+internal fun Project.mavenPublications(action: Action<MavenPublication>) {
+  gradlePublishing.publications.withType(MavenPublication::class.java).configureEach(action)
+}
+
+internal fun Project.mavenPublicationsWithoutPluginMarker(action: Action<MavenPublication>) {
+  mavenPublications {
+    if (!it.name.endsWith("PluginMarkerMaven")) {
+      action.execute(it)
+    }
+  }
+}
 
 internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, patch: Int): Boolean {
   return try {

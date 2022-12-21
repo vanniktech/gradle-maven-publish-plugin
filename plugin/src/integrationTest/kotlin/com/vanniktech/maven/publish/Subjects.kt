@@ -19,6 +19,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 import kotlin.io.path.name
 import kotlin.io.path.readText
+import org.apache.maven.model.Model
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer
 
@@ -198,17 +199,31 @@ class PomSubject private constructor(
   }
 
   fun matchesExpectedPom(vararg dependencies: PomDependency) {
-    matchesExpectedPom(null, *dependencies)
+    matchesExpectedPom(dependencies = dependencies.toList())
   }
 
-  fun matchesExpectedPom(packaging: String?, vararg dependencies: PomDependency) {
+  fun matchesExpectedPom(packaging: String, vararg dependencies: PomDependency) {
+    matchesExpectedPom(packaging, dependencies.toList())
+  }
+
+  fun matchesExpectedPom(
+    packaging: String? = null,
+    dependencies: List<PomDependency> = emptyList(),
+    modelFactory: (String, String, String, String?, List<PomDependency>) -> Model = ::createPom,
+  ) {
     val pomWriter = MavenXpp3Writer()
 
     val actualModel = MavenXpp3Reader().read(artifact.inputStream())
     val actualWriter = StringWriter()
     pomWriter.write(actualWriter, actualModel)
 
-    val expectedModel = createPom(result.projectSpec.group, result.projectSpec.artifactId, result.projectSpec.version, packaging, dependencies.toList())
+    val expectedModel = modelFactory(
+      result.projectSpec.group,
+      result.projectSpec.artifactId,
+      result.projectSpec.version,
+      packaging,
+      dependencies.toList()
+    )
     val expectedWriter = StringWriter()
     pomWriter.write(expectedWriter, expectedModel)
 
