@@ -200,6 +200,38 @@ class MavenPublishPluginIntegrationTest2 {
     assertThat(result).javadocJar().isSignedIfNeeded()
   }
 
+  @TestParameterInjectorTest
+  fun groupAndVersionFromProjectProject() {
+    val project = javaProjectSpec().copy(
+      group = null,
+      version = null,
+      buildFileExtra = """
+        group = "com.example.test2"
+        version = "3.2.1"
+      """.trimIndent()
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    val resultSpec = project.copy(
+      group = "com.example.test2",
+      version = "3.2.1",
+    )
+    val actualResult = result.copy(projectSpec = resultSpec)
+    assertThat(actualResult).outcome().succeeded()
+    assertThat(actualResult).artifact("jar").exists()
+    assertThat(actualResult).artifact("jar").isSignedIfNeeded()
+    assertThat(actualResult).pom().exists()
+    assertThat(actualResult).pom().isSignedIfNeeded()
+    assertThat(actualResult).pom().matchesExpectedPom()
+    assertThat(actualResult).module().exists()
+    assertThat(actualResult).module().isSignedIfNeeded()
+    assertThat(actualResult).sourcesJar().exists()
+    assertThat(actualResult).sourcesJar().isSignedIfNeeded()
+    assertThat(actualResult).sourcesJar().containsAllSourceFiles()
+    assertThat(actualResult).javadocJar().exists()
+    assertThat(actualResult).javadocJar().isSignedIfNeeded()
+  }
+
   private fun AgpVersion.assumeSupportedGradleVersion() {
     assume().that(gradleVersion).isAtLeast(minGradleVersion)
     if (firstUnsupportedGradleVersion != null) {

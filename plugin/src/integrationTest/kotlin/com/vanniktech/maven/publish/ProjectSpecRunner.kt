@@ -161,9 +161,15 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
       appendLine()
 
       if (options.config == TestOptions.Config.PROPERTIES) {
-        appendLine("GROUP=$group")
-        appendLine("POM_ARTIFACT_ID=$artifactId")
-        appendLine("VERSION_NAME=$version")
+        if (group != null) {
+          appendLine("GROUP=$group")
+        }
+        if (artifactId != null) {
+          appendLine("POM_ARTIFACT_ID=$artifactId")
+        }
+        if (version != null) {
+          appendLine("VERSION_NAME=$version")
+        }
         appendLine()
 
         properties.forEach {

@@ -90,9 +90,9 @@ class ProjectResultSubject private constructor(
     extension: String,
   ): Path = with(result.projectSpec) {
     return result.repo
-      .resolve(group.replace(".", "/"))
-      .resolve(artifactId)
-      .resolve(version)
+      .resolve(group!!.replace(".", "/"))
+      .resolve(artifactId!!)
+      .resolve(version!!)
       .resolve("$artifactId-$version$suffix.$extension")
   }
 }
@@ -218,9 +218,9 @@ class PomSubject private constructor(
     pomWriter.write(actualWriter, actualModel)
 
     val expectedModel = modelFactory(
-      result.projectSpec.group,
-      result.projectSpec.artifactId,
-      result.projectSpec.version,
+      result.projectSpec.group!!,
+      result.projectSpec.artifactId!!,
+      result.projectSpec.version!!,
       packaging,
       dependencies.toList()
     )
