@@ -178,6 +178,28 @@ class MavenPublishPluginIntegrationTest2 {
     assertThat(result).javadocJar().isSignedIfNeeded()
   }
 
+  @TestParameterInjectorTest
+  fun minimalPomProject() {
+    val project = javaProjectSpec().copy(
+      properties = emptyMap()
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSignedIfNeeded()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSignedIfNeeded()
+    assertThat(result).pom().matchesExpectedPom(modelFactory = ::createMinimalPom)
+    assertThat(result).module().exists()
+    assertThat(result).module().isSignedIfNeeded()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSignedIfNeeded()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSignedIfNeeded()
+  }
+
   private fun AgpVersion.assumeSupportedGradleVersion() {
     assume().that(gradleVersion).isAtLeast(minGradleVersion)
     if (firstUnsupportedGradleVersion != null) {

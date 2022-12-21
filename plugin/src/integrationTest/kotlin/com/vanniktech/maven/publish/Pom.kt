@@ -18,15 +18,8 @@ fun createPom(
   packaging: String?,
   dependencies: List<PomDependency>,
 ): Model {
-  val model = Model()
-  model.modelVersion = "4.0.0"
-  model.modelEncoding = "UTF-8"
-  model.groupId = groupId
-  model.artifactId = artifactId
-  model.version = version
-  if (packaging != null) {
-    model.packaging = packaging
-  }
+  val model = createMinimalPom(groupId, artifactId, version, packaging, dependencies)
+
   model.name = "Gradle Maven Publish Plugin Test Artifact"
   model.description = "Testing the Gradle Maven Publish Plugin"
   model.url = "https://github.com/vanniktech/gradle-maven-publish-plugin/"
@@ -49,6 +42,26 @@ fun createPom(
     connection = "scm:git:git://github.com/vanniktech/gradle-maven-publish-plugin.git"
     developerConnection = "scm:git:ssh://git@github.com/vanniktech/gradle-maven-publish-plugin.git"
     url = "https://github.com/vanniktech/gradle-maven-publish-plugin/"
+  }
+
+  return model
+}
+
+fun createMinimalPom(
+  groupId: String,
+  artifactId: String,
+  version: String,
+  packaging: String?,
+  dependencies: List<PomDependency>,
+): Model {
+  val model = Model()
+  model.modelVersion = "4.0.0"
+  model.modelEncoding = "UTF-8"
+  model.groupId = groupId
+  model.artifactId = artifactId
+  model.version = version
+  if (packaging != null) {
+    model.packaging = packaging
   }
   dependencies.forEach {
     model.addDependency(

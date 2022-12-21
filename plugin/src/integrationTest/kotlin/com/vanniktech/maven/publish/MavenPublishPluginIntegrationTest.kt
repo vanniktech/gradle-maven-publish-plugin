@@ -182,17 +182,6 @@ class MavenPublishPluginIntegrationTest {
   }
 
   // TODO
-  @Test fun generatesArtifactsAndDocumentationOnMinimalPomProject() {
-    setupFixture("minimal_pom_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-  }
-
-  // TODO
   @Test fun generatesArtifactsAndDocumentationOnOverrideVersionGroupProject() {
     setupFixture("override_version_group_project")
 
