@@ -3,6 +3,7 @@ package com.vanniktech.maven.publish
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
 val kotlinJvmPlugin = PluginSpec("org.jetbrains.kotlin.jvm")
+val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
 val kotlinJsPlugin = PluginSpec("org.jetbrains.kotlin.js")
 val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
@@ -34,7 +35,9 @@ fun javaProjectSpec() = ProjectSpec(
   artifactId = "test-artifact",
   version = "1.0.0",
   properties = defaultProperties,
-  sourceFiles = listOf("src/main/java" to "com/vanniktech/maven/publish/test/JavaTestClass.java")
+  sourceFiles = listOf(
+    SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
+  )
 )
 
 fun javaLibraryProjectSpec() = ProjectSpec(
@@ -45,7 +48,9 @@ fun javaLibraryProjectSpec() = ProjectSpec(
   artifactId = "test-artifact",
   version = "1.0.0",
   properties = defaultProperties,
-  sourceFiles = listOf("src/main/java" to "com/vanniktech/maven/publish/test/JavaTestClass.java")
+  sourceFiles = listOf(
+    SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
+  )
 )
 
 fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
@@ -57,8 +62,8 @@ fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
   version = "1.0.0",
   properties = defaultProperties,
   sourceFiles = listOf(
-    "src/main/java" to "com/vanniktech/maven/publish/test/JavaTestClass.java",
-    "src/main/kotlin" to "com/vanniktech/maven/publish/test/KotlinTestClass.kt",
+    SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
+    SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
   )
 )
 
@@ -71,7 +76,7 @@ fun kotlinJsProjectSpec(version: KotlinVersion) = ProjectSpec(
   version = "1.0.0",
   properties = defaultProperties,
   sourceFiles = listOf(
-    "src/main/kotlin" to "com/vanniktech/maven/publish/test/KotlinTestClass.kt",
+    SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
   ),
   buildFileExtra = """
     kotlin {
@@ -91,7 +96,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   version = "1.0.0",
   properties = defaultProperties,
   sourceFiles = listOf(
-    "src/main/java" to "com/vanniktech/maven/publish/test/JavaTestClass.java",
+    SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   ),
   buildFileExtra = """
     android {
@@ -113,7 +118,7 @@ fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: Kotli
   return plainAndroidProject.copy(
     plugins = plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value),
     sourceFiles = plainAndroidProject.sourceFiles + listOf(
-      "src/main/kotlin" to "com/vanniktech/maven/publish/test/KotlinTestClass.kt"
+      SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt")
     ),
     buildFileExtra = plainAndroidProject.buildFileExtra + """
 
