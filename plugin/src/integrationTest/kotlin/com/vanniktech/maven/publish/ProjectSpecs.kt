@@ -155,6 +155,10 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
           android {
             publishLibraryVariants("release", "debug")
           }
+
+          jvmToolchain {
+              languageVersion.set(JavaLanguageVersion.of("8"))
+          }
         }
     """.trimIndent()
   )
