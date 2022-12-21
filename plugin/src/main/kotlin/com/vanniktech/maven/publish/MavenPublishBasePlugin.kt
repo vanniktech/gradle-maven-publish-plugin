@@ -3,14 +3,13 @@ package com.vanniktech.maven.publish
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
-import org.gradle.util.VersionNumber
+import org.gradle.util.GradleVersion
 
 open class MavenPublishBasePlugin : Plugin<Project> {
 
   override fun apply(project: Project) {
-    val gradleVersion = VersionNumber.parse(project.gradle.gradleVersion)
-    if (gradleVersion < MIN_GRADLE_VERSION) {
-      error("You need Gradle version 7.2.0 or higher")
+    if (GradleVersion.current() < MIN_GRADLE_VERSION) {
+      error("You need Gradle version $MIN_GRADLE_VERSION or higher, was ${GradleVersion.current()}")
     }
     project.plugins.withId("com.android.library") {
       if (!project.hasWorkingNewAndroidPublishingApi()) {
@@ -37,6 +36,6 @@ open class MavenPublishBasePlugin : Plugin<Project> {
   }
 
   private companion object {
-    val MIN_GRADLE_VERSION: VersionNumber = VersionNumber.parse("7.2.0")
+    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("7.2")
   }
 }
