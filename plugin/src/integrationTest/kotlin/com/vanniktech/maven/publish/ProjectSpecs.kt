@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
+val javaGradlePluginPlugin = PluginSpec("java-gradle-plugin")
 val kotlinJvmPlugin = PluginSpec("org.jetbrains.kotlin.jvm")
 val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
 val kotlinJsPlugin = PluginSpec("org.jetbrains.kotlin.js")
@@ -51,6 +52,30 @@ fun javaLibraryProjectSpec() = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   )
+)
+
+fun javaGradlePluginProjectSpec() = ProjectSpec(
+  plugins = listOf(
+    javaGradlePluginPlugin,
+  ),
+  group = "com.example",
+  artifactId = "test-artifact",
+  version = "1.0.0",
+  properties = defaultProperties,
+  sourceFiles = listOf(
+    SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
+  ),
+  buildFileExtra = """
+    gradlePlugin {
+        plugins {
+            mavenPublishPlugin {
+                // the id here should be different from the group id and artifact id
+                id = 'com.example.test-plugin'
+                implementationClass = 'com.vanniktech.maven.publish.test.TestPlugin'
+            }
+        }
+    }
+  """.trimIndent()
 )
 
 fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
