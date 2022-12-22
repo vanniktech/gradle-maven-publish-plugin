@@ -12,7 +12,8 @@ class MavenPublishPluginIntegrationTest2 {
   @TempDir
   lateinit var testProjectDir: Path
 
-  private val config: TestOptions.Config = TestOptions.Config.valueOf(System.getProperty("testConfigMethod"))
+  @TestParameter(valuesProvider = TestOptionsConfigProvider::class)
+  lateinit var config: TestOptions.Config
 
   @TestParameter
   lateinit var signing: TestOptions.Signing
