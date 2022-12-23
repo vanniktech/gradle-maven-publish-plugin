@@ -11,7 +11,8 @@ class MavenPublishPluginIntegrationTest2 {
   @TempDir
   lateinit var testProjectDir: Path
 
-  private val config: TestOptions.Config = TestOptions.Config.valueOf(System.getProperty("testConfigMethod"))
+  @TestParameter(valuesProvider = TestOptionsConfigProvider::class)
+  lateinit var config: TestOptions.Config
 
   @TestParameter
   lateinit var signing: TestOptions.Signing
@@ -60,6 +61,36 @@ class MavenPublishPluginIntegrationTest2 {
     assertThat(result).sourcesJar().containsAllSourceFiles()
     assertThat(result).javadocJar().exists()
     assertThat(result).javadocJar().isSignedIfNeeded()
+  }
+
+  @TestParameterInjectorTest
+  fun javaGradlePluginProject() {
+    val project = javaGradlePluginProjectSpec()
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSignedIfNeeded()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSignedIfNeeded()
+    assertThat(result).pom().matchesExpectedPom()
+    assertThat(result).module().exists()
+    assertThat(result).module().isSignedIfNeeded()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSignedIfNeeded()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSignedIfNeeded()
+
+    val pluginId = "com.example.test-plugin"
+    val pluginMarkerSpec = project.copy(group = pluginId, artifactId = "$pluginId.gradle.plugin")
+    val pluginMarkerResult = result.copy(projectSpec = pluginMarkerSpec)
+    assertThat(pluginMarkerResult).pom().exists()
+    assertThat(pluginMarkerResult).pom().isSignedIfNeeded()
+    assertThat(pluginMarkerResult).pom().matchesExpectedPom(
+      "pom",
+      PomDependency("com.example", "test-artifact", "1.0.0", null)
+    )
   }
 
   @TestParameterInjectorTest
@@ -394,6 +425,38 @@ class MavenPublishPluginIntegrationTest2 {
     assertThat(result).sourcesJar().containsAllSourceFiles()
     assertThat(result).javadocJar().exists()
     assertThat(result).javadocJar().isSignedIfNeeded()
+  }
+
+  @TestParameterInjectorTest
+  fun groupAndVersionFromProjectProject() {
+    val project = javaProjectSpec().copy(
+      group = null,
+      version = null,
+      buildFileExtra = """
+        group = "com.example.test2"
+        version = "3.2.1"
+      """.trimIndent()
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    val resultSpec = project.copy(
+      group = "com.example.test2",
+      version = "3.2.1",
+    )
+    val actualResult = result.copy(projectSpec = resultSpec)
+    assertThat(actualResult).outcome().succeeded()
+    assertThat(actualResult).artifact("jar").exists()
+    assertThat(actualResult).artifact("jar").isSignedIfNeeded()
+    assertThat(actualResult).pom().exists()
+    assertThat(actualResult).pom().isSignedIfNeeded()
+    assertThat(actualResult).pom().matchesExpectedPom()
+    assertThat(actualResult).module().exists()
+    assertThat(actualResult).module().isSignedIfNeeded()
+    assertThat(actualResult).sourcesJar().exists()
+    assertThat(actualResult).sourcesJar().isSignedIfNeeded()
+    assertThat(actualResult).sourcesJar().containsAllSourceFiles()
+    assertThat(actualResult).javadocJar().exists()
+    assertThat(actualResult).javadocJar().isSignedIfNeeded()
   }
 
   private fun AgpVersion.assumeSupportedGradleVersion() {

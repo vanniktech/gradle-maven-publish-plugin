@@ -53,7 +53,7 @@ enum class KotlinVersion(val value: String) {
 
 enum class GradleVersion(val value: String) {
   // minimum supported
-  GRADLE_7_2("7.2"),
+  GRADLE_7_3("7.3"),
   // stable
   GRADLE_7_6("7.6"),
   // preview
@@ -62,6 +62,7 @@ enum class GradleVersion(val value: String) {
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
+    val GRADLE_7_2 = GRADLE_7_3
     val GRADLE_7_4 = GRADLE_7_6
     val GRADLE_7_5 = GRADLE_7_6
   }

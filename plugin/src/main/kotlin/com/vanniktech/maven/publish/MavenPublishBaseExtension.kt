@@ -146,8 +146,11 @@ abstract class MavenPublishBaseExtension(
    */
   @Incubating
   fun pom(configure: Action<in MavenPom>) {
-    project.mavenPublications {
-      it.pom(configure)
+    project.mavenPublications { publication ->
+      // without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
+      project.afterEvaluate {
+        publication.pom(configure)
+      }
     }
   }
 
@@ -159,84 +162,81 @@ abstract class MavenPublishBaseExtension(
     pomFromProperties.set(true)
     pomFromProperties.finalizeValue()
 
-    // without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
-    project.afterEvaluate {
-      pom { pom ->
-        val name = project.findOptionalProperty("POM_NAME")
-        if (name != null) {
-          pom.name.set(name)
-        }
-        val description = project.findOptionalProperty("POM_DESCRIPTION")
-        if (description != null) {
-          pom.description.set(description)
-        }
-        val url = project.findOptionalProperty("POM_URL")
-        if (url != null) {
-          pom.url.set(url)
-        }
-        val inceptionYear = project.findOptionalProperty("POM_INCEPTION_YEAR")
-        if (inceptionYear != null) {
-          pom.inceptionYear.set(inceptionYear)
-        }
+    pom { pom ->
+      val name = project.findOptionalProperty("POM_NAME")
+      if (name != null) {
+        pom.name.set(name)
+      }
+      val description = project.findOptionalProperty("POM_DESCRIPTION")
+      if (description != null) {
+        pom.description.set(description)
+      }
+      val url = project.findOptionalProperty("POM_URL")
+      if (url != null) {
+        pom.url.set(url)
+      }
+      val inceptionYear = project.findOptionalProperty("POM_INCEPTION_YEAR")
+      if (inceptionYear != null) {
+        pom.inceptionYear.set(inceptionYear)
+      }
 
-        val issueManagementSystem = project.findOptionalProperty("POM_ISSUE_SYSTEM")
-        val issueManagementUrl = project.findOptionalProperty("POM_ISSUE_URL")
-        if (issueManagementSystem != null || issueManagementUrl != null) {
-          pom.issueManagement {
-            it.system.set(issueManagementSystem)
-            it.url.set(issueManagementUrl)
+      val issueManagementSystem = project.findOptionalProperty("POM_ISSUE_SYSTEM")
+      val issueManagementUrl = project.findOptionalProperty("POM_ISSUE_URL")
+      if (issueManagementSystem != null || issueManagementUrl != null) {
+        pom.issueManagement {
+          it.system.set(issueManagementSystem)
+          it.url.set(issueManagementUrl)
+        }
+      }
+
+      val scmUrl = project.findOptionalProperty("POM_SCM_URL")
+      val scmConnection = project.findOptionalProperty("POM_SCM_CONNECTION")
+      val scmDeveloperConnection = project.findOptionalProperty("POM_SCM_DEV_CONNECTION")
+      if (scmUrl != null || scmConnection != null || scmDeveloperConnection != null) {
+        pom.scm {
+          it.url.set(scmUrl)
+          it.connection.set(scmConnection)
+          it.developerConnection.set(scmDeveloperConnection)
+        }
+      }
+
+      val licenceName = project.findOptionalProperty("POM_LICENCE_NAME")
+      val licenceUrl = project.findOptionalProperty("POM_LICENCE_URL")
+      val licenceDistribution = project.findOptionalProperty("POM_LICENCE_DIST")
+      if (licenceName != null || licenceUrl != null || licenceDistribution != null) {
+        pom.licenses { licences ->
+          licences.license {
+            it.name.set(licenceName)
+            it.url.set(licenceUrl)
+            it.distribution.set(licenceDistribution)
           }
         }
+      }
 
-        val scmUrl = project.findOptionalProperty("POM_SCM_URL")
-        val scmConnection = project.findOptionalProperty("POM_SCM_CONNECTION")
-        val scmDeveloperConnection = project.findOptionalProperty("POM_SCM_DEV_CONNECTION")
-        if (scmUrl != null || scmConnection != null || scmDeveloperConnection != null) {
-          pom.scm {
-            it.url.set(scmUrl)
-            it.connection.set(scmConnection)
-            it.developerConnection.set(scmDeveloperConnection)
+      val licenseName = project.findOptionalProperty("POM_LICENSE_NAME")
+      val licenseUrl = project.findOptionalProperty("POM_LICENSE_URL")
+      val licenseDistribution = project.findOptionalProperty("POM_LICENSE_DIST")
+      if (licenseName != null || licenseUrl != null || licenseDistribution != null) {
+        pom.licenses { licenses ->
+          licenses.license {
+            it.name.set(licenseName)
+            it.url.set(licenseUrl)
+            it.distribution.set(licenseDistribution)
           }
         }
+      }
 
-        val licenceName = project.findOptionalProperty("POM_LICENCE_NAME")
-        val licenceUrl = project.findOptionalProperty("POM_LICENCE_URL")
-        val licenceDistribution = project.findOptionalProperty("POM_LICENCE_DIST")
-        if (licenceName != null || licenceUrl != null || licenceDistribution != null) {
-          pom.licenses { licences ->
-            licences.license {
-              it.name.set(licenceName)
-              it.url.set(licenceUrl)
-              it.distribution.set(licenceDistribution)
-            }
-          }
-        }
-
-        val licenseName = project.findOptionalProperty("POM_LICENSE_NAME")
-        val licenseUrl = project.findOptionalProperty("POM_LICENSE_URL")
-        val licenseDistribution = project.findOptionalProperty("POM_LICENSE_DIST")
-        if (licenseName != null || licenseUrl != null || licenseDistribution != null) {
-          pom.licenses { licenses ->
-            licenses.license {
-              it.name.set(licenseName)
-              it.url.set(licenseUrl)
-              it.distribution.set(licenseDistribution)
-            }
-          }
-        }
-
-        val developerId = project.findOptionalProperty("POM_DEVELOPER_ID")
-        val developerName = project.findOptionalProperty("POM_DEVELOPER_NAME")
-        val developerUrl = project.findOptionalProperty("POM_DEVELOPER_URL")
-        val developerEmail = project.findOptionalProperty("POM_DEVELOPER_EMAIL")
-        if (developerId != null || developerName != null || developerUrl != null) {
-          pom.developers { developers ->
-            developers.developer {
-              it.id.set(developerId)
-              it.name.set(developerName)
-              it.url.set(developerUrl)
-              it.email.set(developerEmail)
-            }
+      val developerId = project.findOptionalProperty("POM_DEVELOPER_ID")
+      val developerName = project.findOptionalProperty("POM_DEVELOPER_NAME")
+      val developerUrl = project.findOptionalProperty("POM_DEVELOPER_URL")
+      val developerEmail = project.findOptionalProperty("POM_DEVELOPER_EMAIL")
+      if (developerId != null || developerName != null || developerUrl != null) {
+        pom.developers { developers ->
+          developers.developer {
+            it.id.set(developerId)
+            it.name.set(developerName)
+            it.url.set(developerUrl)
+            it.email.set(developerEmail)
           }
         }
       }
