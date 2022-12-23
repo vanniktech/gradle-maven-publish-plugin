@@ -209,7 +209,8 @@ class PomSubject private constructor(
   fun matchesExpectedPom(
     packaging: String? = null,
     dependencies: List<PomDependency> = emptyList(),
-    modelFactory: (String, String, String, String?, List<PomDependency>) -> Model = ::createPom,
+    dependencyManagementDependencies: List<PomDependency> = emptyList(),
+    modelFactory: (String, String, String, String?, List<PomDependency>, List<PomDependency>) -> Model = ::createPom,
   ) {
     val pomWriter = MavenXpp3Writer()
 
@@ -222,7 +223,8 @@ class PomSubject private constructor(
       result.projectSpec.artifactId!!,
       result.projectSpec.version!!,
       packaging,
-      dependencies.toList()
+      dependencies,
+      dependencyManagementDependencies,
     )
     val expectedWriter = StringWriter()
     pomWriter.write(expectedWriter, expectedModel)

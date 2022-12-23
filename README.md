@@ -9,6 +9,20 @@ and has been enhanced to add Kotlin support and keep up with the latest changes.
 - [Publishing open source projects to Maven Central](https://vanniktech.github.io/gradle-maven-publish-plugin/central/)
 - [Publishing to other Maven repositories](https://vanniktech.github.io/gradle-maven-publish-plugin/other/)
 
+# Supported plugins
+
+The output of the following Gradle plugins is supported to be published with this plugin:
+
+- `com.android.library`
+- `org.jetbrains.kotlin.jvm`
+- `org.jetbrains.kotlin.js`
+- `org.jetbrains.kotlin.multiplatform`
+- `java`
+- `java-library`
+- `java-gradle-plugin`
+- `java-platform`
+- `version-catalog`
+
 # Advantages over `maven-publish`
 
 Gradle ships with the `maven-publish` and many other plugins like the Android Gradle Plugin or the Kotlin Multiplatform

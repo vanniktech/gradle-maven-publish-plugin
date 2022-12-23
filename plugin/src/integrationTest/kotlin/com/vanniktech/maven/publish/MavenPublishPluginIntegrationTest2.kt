@@ -210,6 +210,42 @@ class MavenPublishPluginIntegrationTest2 {
   }
 
   @TestParameterInjectorTest
+  fun javaPlatformProject() {
+    val project = javaPlatformProjectSpec()
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSignedIfNeeded()
+    assertThat(result).pom().matchesExpectedPom(
+      packaging = "pom",
+      dependencyManagementDependencies = listOf(
+        PomDependency("commons-httpclient", "commons-httpclient", "3.1", null),
+        PomDependency("org.postgresql", "postgresql", "42.2.5", null),
+      ),
+    )
+    assertThat(result).module().exists()
+    assertThat(result).module().isSignedIfNeeded()
+  }
+
+  @TestParameterInjectorTest
+  fun versionCatalogProject() {
+    assume().that(gradleVersion).isAtLeast(GradleVersion.GRADLE_7_6)
+
+    val project = versionCatalogProjectSpec()
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("toml").exists()
+    assertThat(result).artifact("toml").isSignedIfNeeded()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSignedIfNeeded()
+    assertThat(result).pom().matchesExpectedPom("toml")
+    assertThat(result).module().exists()
+    assertThat(result).module().isSignedIfNeeded()
+  }
+
+  @TestParameterInjectorTest
   fun minimalPomProject() {
     val project = javaProjectSpec().copy(
       properties = emptyMap()

@@ -89,6 +89,10 @@ private fun Project.configurePlatform() {
         baseExtension.configure(JavaLibrary(defaultJavaDocOption() ?: javadoc()))
       plugins.hasPlugin("java") ->
         baseExtension.configure(JavaLibrary(defaultJavaDocOption() ?: javadoc()))
+      plugins.hasPlugin("java-platform") ->
+        baseExtension.configure(JavaPlatform())
+      plugins.hasPlugin("version-catalog") ->
+        baseExtension.configure(VersionCatalog())
       else -> logger.warn("No compatible plugin found in project $name for publishing")
     }
   }
