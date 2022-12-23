@@ -4,6 +4,7 @@ import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
+import com.vanniktech.maven.publish.TestOptions.Signing.GPG_KEY
 import com.vanniktech.maven.publish.TestOptions.Signing.NO_SIGNING
 import java.nio.file.Path
 import org.junit.jupiter.api.io.TempDir
@@ -145,5 +146,87 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(nodejsResult).sourcesJar().exists()
     assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
     assertThat(nodejsResult).javadocJar().exists()
+  }
+
+  @TestParameterInjectorTest
+  fun minimalPomProject() {
+    val project = javaProjectSpec().copy(
+      properties = emptyMap()
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().matchesExpectedPom(modelFactory = ::createMinimalPom)
+    assertThat(result).module().exists()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+  }
+
+  @TestParameterInjectorTest
+  fun groupAndVersionFromProjectProject() {
+    val project = javaProjectSpec().copy(
+      group = null,
+      version = null,
+      buildFileExtra = """
+        group = "com.example.test2"
+        version = "3.2.1"
+      """.trimIndent()
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    val resultSpec = project.copy(
+      group = "com.example.test2",
+      version = "3.2.1",
+    )
+    val actualResult = result.copy(projectSpec = resultSpec)
+    assertThat(actualResult).outcome().succeeded()
+    assertThat(actualResult).artifact("jar").exists()
+    assertThat(actualResult).pom().exists()
+    assertThat(actualResult).pom().matchesExpectedPom()
+    assertThat(actualResult).module().exists()
+    assertThat(actualResult).sourcesJar().exists()
+    assertThat(actualResult).sourcesJar().containsAllSourceFiles()
+    assertThat(actualResult).javadocJar().exists()
+  }
+
+  @TestParameterInjectorTest
+  fun withoutSigning() {
+    val project = javaProjectSpec()
+    val result = project.run(fixtures, testProjectDir, testOptions.copy(signing = NO_SIGNING))
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isNotSigned()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isNotSigned()
+    assertThat(result).module().exists()
+    assertThat(result).module().isNotSigned()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isNotSigned()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isNotSigned()
+  }
+
+  @TestParameterInjectorTest
+  fun signWithGpgKey() {
+    val project = javaProjectSpec()
+    val result = project.run(fixtures, testProjectDir, testOptions.copy(signing = GPG_KEY))
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSigned()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSigned()
+    assertThat(result).pom().matchesExpectedPom()
+    assertThat(result).module().exists()
+    assertThat(result).module().isSigned()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSigned()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSigned()
   }
 }

@@ -18,18 +18,6 @@ class MavenPublishPluginIntegrationTest {
   private lateinit var expectedFolder: File
 
   // TODO
-  @Test fun generatesArtifactsAndDocumentationOnKotlinJvmWithDokkaProject() {
-    setupFixture("passing_kotlin_jvm_with_dokka_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result, hasDokka = true)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-    assertSourceJarContainsFile("com/vanniktech/maven/publish/test/TestClass.kt", "src/main/java")
-  }
-
-  // TODO
   @Test fun generatesArtifactsAndDocumentationOnAndroidSingleVariantProject() {
     setupFixture("passing_android_single_variant_project")
 
@@ -50,47 +38,6 @@ class MavenPublishPluginIntegrationTest {
     assertExpectedCommonArtifactsGenerated("aar", qualifier = "debug")
     assertExpectedCommonArtifactsGenerated("aar", qualifier = "release")
     assertPomContentMatches()
-  }
-
-  // TODO
-  @Test fun generatesArtifactsAndDocumentationOnKotlinMppWithDokkaProject() {
-    setupFixture("passing_kotlin_mpp_with_dokka_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertExpectedTasksRanSuccessfully(result, hasDokka = true)
-
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-
-    val jvmArtifactId = "$TEST_POM_ARTIFACT_ID-jvm"
-    assertExpectedCommonArtifactsGenerated(artifactId = jvmArtifactId)
-    // TODO dependency sorting is unstable - the other variants only have 1 and are enough to see that the pom is correct
-    // assertPomContentMatches(jvmArtifactId)
-
-    val nodejsArtifactId = "$TEST_POM_ARTIFACT_ID-nodejs"
-    assertExpectedCommonArtifactsGenerated(artifactId = nodejsArtifactId)
-    // TODO dependency sorting is unstable - the main variant only has 1 and is enough to see that the pom is correct
-    // assertPomContentMatches(nodejsArtifactId)
-
-    val linuxArtifactId = "$TEST_POM_ARTIFACT_ID-linux"
-    assertExpectedCommonArtifactsGenerated(artifactExtension = "klib", artifactId = linuxArtifactId)
-    assertPomContentMatches(linuxArtifactId)
-  }
-
-  // TODO
-  @Test fun generatesArtifactsAndDocumentationOnGradlePluginProject() {
-    setupFixture("passing_java_gradle_plugin_project")
-
-    val result = executeGradleCommands(TEST_TASK, "--stacktrace")
-
-    assertThat(result.task(":$TEST_TASK")?.outcome).isEqualTo(SUCCESS)
-    assertExpectedCommonArtifactsGenerated()
-    assertPomContentMatches()
-
-    val pluginId = "com.example.test-plugin"
-    val artifactId = "$pluginId.gradle.plugin"
-    assertPomContentMatches(artifactId, pluginId)
   }
 
   // TODO
