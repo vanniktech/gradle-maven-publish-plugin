@@ -128,7 +128,7 @@ private fun ProjectSpec.writeSettingFile(path: Path, options: TestOptions) {
   val rootProjectName = if (options.config == TestOptions.Config.DSL) {
     artifactId
   } else {
-    "default-root-project-name"
+    defaultProjectName
   }
   path.writeText(
     """
@@ -158,6 +158,8 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
   path.writeText(
     buildString {
       appendLine("org.gradle.vfs.watch=false")
+      appendLine("kotlin.compiler.execution.strategy=in-process")
+      appendLine("kotlin.mpp.androidSourceSetLayoutVersion1.nowarn=true")
       appendLine()
 
       if (options.config == TestOptions.Config.PROPERTIES) {
