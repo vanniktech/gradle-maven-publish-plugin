@@ -32,7 +32,7 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
       username = parameters.repositoryUsername.get(),
       password = parameters.repositoryPassword.get(),
       userAgentName = BuildConfig.NAME,
-      userAgentVersion = BuildConfig.VERSION
+      userAgentVersion = BuildConfig.VERSION,
     )
   }
 
