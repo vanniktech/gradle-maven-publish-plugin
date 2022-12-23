@@ -121,6 +121,13 @@ open class ArtifactSubject internal constructor(
       failWithoutActual(fact("expected to exist", signedArtifact))
     }
   }
+
+  fun isNotSigned() {
+    val signedArtifact = artifact.resolveSibling("${artifact.name}.asc")
+    if (signedArtifact.exists()) {
+      failWithoutActual(fact("expected not to exist", signedArtifact))
+    }
+  }
 }
 
 class SourcesJarSubject private constructor(
