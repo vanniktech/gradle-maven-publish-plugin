@@ -332,7 +332,7 @@ class JavaPlatform : Platform() {
 }
 
 /**
- * To be used for `org.jetbrains.kotlin.js` projects. Applying this creates a publication for the component called
+ * To be used for `version-catalog` projects. Applying this creates a publication for the component called
  * `versionCatalog`.
  *
  * Equivalent Gradle set up:
