@@ -24,9 +24,6 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(@TestParameter kotlinVersion: KotlinVersion) {
-    // in the DSL the artifact id is not configurable
-    assume().that(config).isNotEqualTo(TestOptions.Config.DSL)
-
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "foo-bar",
@@ -87,9 +84,6 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId2(@TestParameter kotlinVersion: KotlinVersion) {
-    // in the DSL the artifact id is not configurable
-    assume().that(config).isNotEqualTo(TestOptions.Config.DSL)
-
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "bar-foo",
