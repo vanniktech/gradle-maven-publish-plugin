@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import java.nio.file.Paths
+
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
 val javaGradlePluginPlugin = PluginSpec("java-gradle-plugin")
@@ -10,6 +12,8 @@ val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
 val kotlinJsPlugin = PluginSpec("org.jetbrains.kotlin.js")
 val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
+
+val fixtures = Paths.get("src/integrationTest/fixtures2").toAbsolutePath()
 
 val defaultProperties = mapOf(
   "POM_NAME" to "Gradle Maven Publish Plugin Test Artifact",
@@ -113,6 +117,79 @@ fun kotlinJsProjectSpec(version: KotlinVersion) = ProjectSpec(
     }
   """.trimIndent()
 )
+
+fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
+  plugins = listOf(
+    kotlinMultiplatformPlugin.copy(version = version.value)
+  ),
+  group = "com.example",
+  artifactId = "test-artifact",
+  version = "1.0.0",
+  properties = defaultProperties,
+  sourceFiles = listOf(
+    SourceFile("commonMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
+    SourceFile("jvmMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
+    SourceFile("linuxMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
+    SourceFile("nodeJsMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
+  ),
+  buildFileExtra = """
+    kotlin {
+        jvm()
+        js("nodeJs", "IR") {
+            nodejs()
+        }
+        linuxX64("linux")
+
+        sourceSets {
+            commonMain {
+                dependencies {
+                }
+            }
+            jvmMain {
+                dependencies {
+                }
+            }
+            nodeJsMain {
+                dependencies {
+                }
+            }
+            linuxMain {
+                dependencies {
+                }
+            }
+        }
+    }
+  """.trimIndent()
+)
+
+fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
+  val baseProject = kotlinMultiplatformProjectSpec(kotlinVersion)
+  return baseProject.copy(
+    plugins = listOf(androidLibraryPlugin.copy(version = agpVersion.value)) + baseProject.plugins,
+    sourceFiles = baseProject.sourceFiles + listOf(
+      SourceFile("androidMain", "kotlin", "com/vanniktech/maven/publish/test/AndroidTestClass.kt"),
+      SourceFile("androidDebug", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
+      SourceFile("androidRelease", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
+    ),
+    buildFileExtra = baseProject.buildFileExtra + """
+
+        android {
+          compileSdkVersion = 31
+          namespace = "com.test"
+        }
+
+        kotlin {
+          android {
+            publishLibraryVariants("release", "debug")
+          }
+
+          jvmToolchain {
+              languageVersion.set(JavaLanguageVersion.of("8"))
+          }
+        }
+    """.trimIndent()
+  )
+}
 
 fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   plugins = listOf(
