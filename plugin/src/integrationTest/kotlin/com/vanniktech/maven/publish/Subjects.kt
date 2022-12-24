@@ -121,6 +121,13 @@ open class ArtifactSubject internal constructor(
       failWithoutActual(fact("expected to exist", signedArtifact))
     }
   }
+
+  fun isNotSigned() {
+    val signedArtifact = artifact.resolveSibling("${artifact.name}.asc")
+    if (signedArtifact.exists()) {
+      failWithoutActual(fact("expected not to exist", signedArtifact))
+    }
+  }
 }
 
 class SourcesJarSubject private constructor(
@@ -138,6 +145,10 @@ class SourcesJarSubject private constructor(
 
   fun containsAllSourceFiles() {
     containsSourceFiles(result.projectSpec.sourceFiles)
+  }
+
+  fun containsSourceSetFiles(vararg sourceSets: String) {
+    containsSourceFiles(result.projectSpec.sourceFiles.filter { sourceSets.contains(it.sourceSet) })
   }
 
   private fun containsSourceFiles(sourceFiles: List<SourceFile>) {
