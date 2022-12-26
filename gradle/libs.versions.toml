@@ -11,6 +11,7 @@ dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.7.20"
 android-plugin = "com.android.tools.build:gradle:7.3.1"
 ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:11.0.0"
 maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.22.0"
+buildconfig-plugin = "com.github.gmazzo:gradle-buildconfig-plugin:3.1.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
