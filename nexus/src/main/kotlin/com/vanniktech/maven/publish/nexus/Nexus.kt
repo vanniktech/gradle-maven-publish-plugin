@@ -12,10 +12,12 @@ class Nexus(
   private val baseUrl: String,
   private val username: String,
   password: String,
+  userAgentName: String,
+  userAgentVersion: String,
 ) {
   private val service by lazy {
     val okHttpClient = OkHttpClient.Builder()
-      .addInterceptor(NexusOkHttpInterceptor(username, password))
+      .addInterceptor(NexusOkHttpInterceptor(username, password, userAgentName, userAgentVersion))
       .connectTimeout(60, TimeUnit.SECONDS)
       .readTimeout(60, TimeUnit.SECONDS)
       .writeTimeout(60, TimeUnit.SECONDS)
