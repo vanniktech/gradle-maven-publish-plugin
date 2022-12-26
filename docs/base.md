@@ -300,3 +300,46 @@ For projects using the `java-gradle-plugin` plugin.
       ))
     }
     ```
+
+### Java Platform
+
+
+For projects using the `java-platform` plugin.
+
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      configure(new JavaPlatform())
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    mavenPublishing {
+      configure(JavaPlatform())
+    }
+    ```
+
+
+### Version Catalog
+
+
+For projects using the `version-catalog` plugin.
+
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      configure(new VersionCatalog())
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    mavenPublishing {
+      configure(VersionCatalog())
+    }
+    ```

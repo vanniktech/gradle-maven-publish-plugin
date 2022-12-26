@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish
 
 import org.apache.maven.model.Dependency
+import org.apache.maven.model.DependencyManagement
 import org.apache.maven.model.Developer
 import org.apache.maven.model.License
 import org.apache.maven.model.Model
@@ -18,8 +19,9 @@ fun createPom(
   version: String,
   packaging: String?,
   dependencies: List<PomDependency>,
+  dependencyManagementDependencies: List<PomDependency>,
 ): Model {
-  val model = createMinimalPom(groupId, artifactId, version, packaging, dependencies)
+  val model = createMinimalPom(groupId, artifactId, version, packaging, dependencies, dependencyManagementDependencies)
 
   model.name = "Gradle Maven Publish Plugin Test Artifact"
   model.description = "Testing the Gradle Maven Publish Plugin"
@@ -54,6 +56,7 @@ fun createMinimalPom(
   version: String,
   packaging: String?,
   dependencies: List<PomDependency>,
+  dependencyManagementDependencies: List<PomDependency>,
 ): Model {
   val model = Model()
   model.modelVersion = "4.0.0"
@@ -73,6 +76,21 @@ fun createMinimalPom(
         this.scope = it.scope
       }
     )
+  }
+
+  if (dependencyManagementDependencies.isNotEmpty()) {
+    model.dependencyManagement = DependencyManagement().apply {
+      dependencyManagementDependencies.forEach {
+        addDependency(
+          Dependency().apply {
+            this.groupId = it.groupId
+            this.artifactId = it.artifactId
+            this.version = it.version
+            this.scope = it.scope
+          }
+        )
+      }
+    }
   }
 
   return model

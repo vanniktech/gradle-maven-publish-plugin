@@ -5,6 +5,8 @@ import java.nio.file.Paths
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
 val javaGradlePluginPlugin = PluginSpec("java-gradle-plugin")
+val javaPlatformPlugin = PluginSpec("java-platform")
+val versionCatalogPlugin = PluginSpec("version-catalog")
 val kotlinJvmPlugin = PluginSpec("org.jetbrains.kotlin.jvm")
 val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
 val kotlinJsPlugin = PluginSpec("org.jetbrains.kotlin.js")
@@ -232,3 +234,40 @@ fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: Kotli
     """.trimIndent()
   )
 }
+
+fun javaPlatformProjectSpec() = ProjectSpec(
+  plugins = listOf(
+    javaPlatformPlugin
+  ),
+  group = "com.example",
+  artifactId = "test-artifact",
+  version = "1.0.0",
+  properties = defaultProperties,
+  sourceFiles = emptyList(),
+  buildFileExtra = """
+    dependencies {
+        constraints {
+            api 'commons-httpclient:commons-httpclient:3.1'
+            runtime 'org.postgresql:postgresql:42.2.5'
+        }
+    }
+  """.trimIndent()
+)
+
+fun versionCatalogProjectSpec() = ProjectSpec(
+  plugins = listOf(
+    versionCatalogPlugin
+  ),
+  group = "com.example",
+  artifactId = "test-artifact",
+  version = "1.0.0",
+  properties = defaultProperties,
+  sourceFiles = emptyList(),
+  buildFileExtra = """
+    catalog {
+        versionCatalog {
+            library('my-lib', 'com.mycompany:mylib:1.2')
+        }
+    }
+  """.trimIndent()
+)

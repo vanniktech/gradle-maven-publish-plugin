@@ -294,12 +294,70 @@ data class KotlinJs @JvmOverloads constructor(
   override fun configure(project: Project) {
     // Create publication, since Kotlin/JS doesn't provide one by default.
     // https://youtrack.jetbrains.com/issue/KT-41582
-    project.gradlePublishing.publications.create("mavenJs", MavenPublication::class.java) {
+    project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("kotlin"))
       it.withSourcesJar { project.kotlinSourcesJar(sourcesJar) }
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
     }
   }
+}
+
+/**
+ * To be used for `java-platforms` projects. Applying this creates a publication for the component called
+ * `javaPlatform`.
+ *
+ * Equivalent Gradle set up:
+ * ```
+ * publishing {
+ *     publications {
+ *         maven(MavenPublication) {
+ *             from components.javaPlatform
+ *         }
+ *     }
+ * }
+ * ```
+ */
+class JavaPlatform : Platform() {
+  override val javadocJar: JavadocJar = JavadocJar.None()
+  override val sourcesJar: Boolean = false
+
+  override fun configure(project: Project) {
+    project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+      it.from(project.components.getByName("javaPlatform"))
+    }
+  }
+
+  override fun equals(other: Any?): Boolean = other is JavaPlatform
+  override fun hashCode(): Int = this::class.hashCode()
+}
+
+/**
+ * To be used for `version-catalog` projects. Applying this creates a publication for the component called
+ * `versionCatalog`.
+ *
+ * Equivalent Gradle set up:
+ * ```
+ * publishing {
+ *     publications {
+ *         maven(MavenPublication) {
+ *             from components.versionCatalog
+ *         }
+ *     }
+ * }
+ * ```
+ */
+class VersionCatalog : Platform() {
+  override val javadocJar: JavadocJar = JavadocJar.None()
+  override val sourcesJar: Boolean = false
+
+  override fun configure(project: Project) {
+    project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+      it.from(project.components.getByName("versionCatalog"))
+    }
+  }
+
+  override fun equals(other: Any?): Boolean = other is VersionCatalog
+  override fun hashCode(): Int = this::class.hashCode()
 }
 
 /**

@@ -403,6 +403,42 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).javadocJar().isSigned()
   }
 
+  @TestParameterInjectorTest
+  fun javaPlatformProject() {
+    val project = javaPlatformProjectSpec()
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSigned()
+    assertThat(result).pom().matchesExpectedPom(
+      packaging = "pom",
+      dependencyManagementDependencies = listOf(
+        PomDependency("commons-httpclient", "commons-httpclient", "3.1", null),
+        PomDependency("org.postgresql", "postgresql", "42.2.5", null),
+      ),
+    )
+    assertThat(result).module().exists()
+    assertThat(result).module().isSigned()
+  }
+
+  @TestParameterInjectorTest
+  fun versionCatalogProject() {
+    assume().that(gradleVersion).isAtLeast(GradleVersion.GRADLE_7_6)
+
+    val project = versionCatalogProjectSpec()
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("toml").exists()
+    assertThat(result).artifact("toml").isSigned()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSigned()
+    assertThat(result).pom().matchesExpectedPom("toml")
+    assertThat(result).module().exists()
+    assertThat(result).module().isSigned()
+  }
+
   private fun AgpVersion.assumeSupportedGradleVersion() {
     assume().that(gradleVersion).isAtLeast(minGradleVersion)
     if (firstUnsupportedGradleVersion != null) {
