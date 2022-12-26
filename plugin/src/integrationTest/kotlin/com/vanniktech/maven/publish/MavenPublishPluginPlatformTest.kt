@@ -379,6 +379,41 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
+  fun androidMultiVariantLibraryProject(@TestParameter agpVersion: AgpVersion) {
+    // regular plugin does not have a way to enable multi variant config
+    assume().that(config).isEqualTo(TestOptions.Config.BASE)
+    agpVersion.assumeSupportedGradleVersion()
+
+    val project = androidLibraryProjectSpec(agpVersion).copy(
+      basePluginConfig = "configure(new AndroidMultiVariantLibrary(true, true))",
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSigned()
+    assertThat(result).pom().matchesExpectedPom("pom")
+    assertThat(result).module().exists()
+    assertThat(result).module().isSigned()
+
+    assertThat(result).artifact("debug", "aar").exists()
+    assertThat(result).artifact("debug", "aar").isSigned()
+    assertThat(result).sourcesJar("debug").exists()
+    assertThat(result).sourcesJar("debug").isSigned()
+    assertThat(result).sourcesJar("debug").containsAllSourceFiles()
+    assertThat(result).javadocJar("debug").exists()
+    assertThat(result).javadocJar("debug").isSigned()
+
+    assertThat(result).artifact("release", "aar").exists()
+    assertThat(result).artifact("release", "aar").isSigned()
+    assertThat(result).sourcesJar("release").exists()
+    assertThat(result).sourcesJar("release").isSigned()
+    assertThat(result).sourcesJar("release").containsAllSourceFiles()
+    assertThat(result).javadocJar("release").exists()
+    assertThat(result).javadocJar("release").isSigned()
+  }
+
+  @TestParameterInjectorTest
   fun androidLibraryKotlinProject(
     @TestParameter agpVersion: AgpVersion,
     @TestParameter kotlinVersion: KotlinVersion,

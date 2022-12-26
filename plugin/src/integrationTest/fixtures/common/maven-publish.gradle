@@ -1,8 +1,0 @@
-publishing {
-    repositories {
-        maven {
-            name = "testFolder"
-            url = project.property("test.releaseRepository")
-        }
-    }
-}

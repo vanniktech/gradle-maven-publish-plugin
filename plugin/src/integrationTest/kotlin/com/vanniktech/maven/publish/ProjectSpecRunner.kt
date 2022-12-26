@@ -37,7 +37,9 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOptions) {
   path.writeText(
     """
-    ${pluginsBlock()}
+    import com.vanniktech.maven.publish.*
+
+    ${pluginsBlock(options)}
 
     ${publishingBlock(options)}
 
@@ -56,7 +58,7 @@ private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOpti
   )
 }
 
-private fun ProjectSpec.pluginsBlock() = buildString {
+private fun ProjectSpec.pluginsBlock(options: TestOptions) = buildString {
   appendLine("plugins {")
   plugins.forEach {
     append("  id \"${it.id}\"")
@@ -67,16 +69,31 @@ private fun ProjectSpec.pluginsBlock() = buildString {
       appendLine()
     }
   }
-  appendLine(" id \"com.vanniktech.maven.publish\" version \"${System.getProperty("com.vanniktech.publish.version")}\"")
+
+  val pluginVersion = System.getProperty("com.vanniktech.publish.version")
+  when (options.config) {
+    TestOptions.Config.BASE -> appendLine(" id \"com.vanniktech.maven.publish.base\" version \"${pluginVersion}\"")
+    TestOptions.Config.DSL,
+    TestOptions.Config.PROPERTIES -> appendLine(" id \"com.vanniktech.maven.publish\" version \"${pluginVersion}\"")
+  }
+
   appendLine("}")
 }
 
 private fun ProjectSpec.publishingBlock(options: TestOptions): String {
-  return if (options.config == TestOptions.Config.DSL) {
-    listOfNotNull(
+  return when (options.config) {
+    TestOptions.Config.PROPERTIES -> {
+      """
+        mavenPublishing {
+        }
+      """.trimIndent()
+    }
+    TestOptions.Config.BASE,
+    TestOptions.Config.DSL -> listOfNotNull(
       """
 
        mavenPublishing {
+         ${if (options.config == TestOptions.Config.BASE) basePluginConfig else ""}
          ${if (options.signing != TestOptions.Signing.NO_SIGNING) "signAllPublications()" else ""}
 
          ${if (group != null && artifactId != null && version != null) "coordinates(\"$group\", \"$artifactId\", \"$version\")" else ""}
@@ -117,11 +134,6 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String {
        }
       """.trimIndent(),
     ).joinToString(separator = "\n")
-  } else {
-    """
-      mavenPublishing {
-      }
-    """.trimIndent()
   }
 }
 

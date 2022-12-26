@@ -294,10 +294,12 @@ data class KotlinJs @JvmOverloads constructor(
   override fun configure(project: Project) {
     // Create publication, since Kotlin/JS doesn't provide one by default.
     // https://youtrack.jetbrains.com/issue/KT-41582
-    project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
-      it.from(project.components.getByName("kotlin"))
-      it.withSourcesJar { project.kotlinSourcesJar(sourcesJar) }
-      it.withJavadocJar { project.javadocJarTask(javadocJar) }
+    project.afterEvaluate {
+      project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+        it.from(project.components.getByName("kotlin"))
+        it.withSourcesJar { project.kotlinSourcesJar(sourcesJar) }
+        it.withJavadocJar { project.javadocJarTask(javadocJar) }
+      }
     }
   }
 }

@@ -19,6 +19,7 @@ Updated docs can be found on [the new website](https://vanniktech.github.io/grad
       please use the new `coordinates` method instead.
     - The `GROUP` and `VERSION_NAME` Gradle properties will not be explicitly set as `project.group` and
       `project.version` anymore.
+- Fix publishing Kotlin/JS project with the base plugin.
 - The minimum supported Gradle version has been increased to 7.3.
 
 Version 0.22.0 *(2022-09-09)*
