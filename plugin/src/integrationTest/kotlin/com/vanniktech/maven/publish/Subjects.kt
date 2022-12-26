@@ -100,18 +100,20 @@ class ProjectResultSubject private constructor(
 open class ArtifactSubject internal constructor(
   failureMetadata: FailureMetadata,
   private val artifact: Path,
+  private val result: ProjectResult,
 ) : Subject(failureMetadata, artifact) {
 
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ArtifactSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> ArtifactSubject(metadata, actual.first) }
+      Factory { metadata, actual -> ArtifactSubject(metadata, actual.first, actual.second) }
 
     fun artifact() = BUILD_RESULT_SUBJECT_FACTORY
   }
 
   fun exists() {
     if (!artifact.exists()) {
-      failWithoutActual(fact("expected to exist", artifact))
+      val files = result.repo.toFile().walkTopDown().filter { it.isFile }.toList()
+      failWithActual(fact("expected to exist", artifact), fact("but repo contained", files))
     }
   }
 
@@ -134,7 +136,7 @@ class SourcesJarSubject private constructor(
   failureMetadata: FailureMetadata,
   private val artifact: Path,
   private val result: ProjectResult,
-) : ArtifactSubject(failureMetadata, artifact) {
+) : ArtifactSubject(failureMetadata, artifact, result) {
 
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<SourcesJarSubject, Pair<Path, ProjectResult>> =
@@ -200,7 +202,7 @@ class PomSubject private constructor(
   failureMetadata: FailureMetadata,
   private val artifact: Path,
   private val result: ProjectResult,
-) : ArtifactSubject(failureMetadata, artifact) {
+) : ArtifactSubject(failureMetadata, artifact, result) {
 
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<PomSubject, Pair<Path, ProjectResult>> =

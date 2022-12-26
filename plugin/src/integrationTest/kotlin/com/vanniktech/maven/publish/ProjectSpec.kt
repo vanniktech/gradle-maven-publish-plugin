@@ -10,6 +10,7 @@ data class ProjectSpec(
   val version: String?,
   val properties: Map<String, String>,
   val sourceFiles: List<SourceFile>,
+  val basePluginConfig: String,
   val defaultProjectName: String = "default-root-project-name",
   val buildFileExtra: String = "",
 )

@@ -44,7 +44,8 @@ fun javaProjectSpec() = ProjectSpec(
   properties = defaultProperties,
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
-  )
+  ),
+  basePluginConfig = "configure(new JavaLibrary(new JavadocJar.Empty(), true))",
 )
 
 fun javaLibraryProjectSpec() = ProjectSpec(
@@ -57,7 +58,8 @@ fun javaLibraryProjectSpec() = ProjectSpec(
   properties = defaultProperties,
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
-  )
+  ),
+  basePluginConfig = "configure(new JavaLibrary(new JavadocJar.Empty(), true))",
 )
 
 fun javaGradlePluginProjectSpec() = ProjectSpec(
@@ -81,7 +83,8 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
             }
         }
     }
-  """.trimIndent()
+  """.trimIndent(),
+  basePluginConfig = "configure(new GradlePlugin(new JavadocJar.Empty(), true))",
 )
 
 fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
@@ -95,7 +98,8 @@ fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
     SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
-  )
+  ),
+  basePluginConfig = "configure(new KotlinJvm(new JavadocJar.Empty(), true))",
 )
 
 fun kotlinJsProjectSpec(version: KotlinVersion) = ProjectSpec(
@@ -109,13 +113,14 @@ fun kotlinJsProjectSpec(version: KotlinVersion) = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
   ),
+  basePluginConfig = "configure(new KotlinJs(new JavadocJar.Empty(), true))",
   buildFileExtra = """
     kotlin {
         js("IR") {
             nodejs()
         }
     }
-  """.trimIndent()
+  """.trimIndent(),
 )
 
 fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
@@ -132,6 +137,7 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
     SourceFile("linuxMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
     SourceFile("nodeJsMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
   ),
+  basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty()))",
   buildFileExtra = """
     kotlin {
         jvm()
@@ -202,6 +208,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   ),
+  basePluginConfig = "configure(new AndroidSingleVariantLibrary(\"release\", true, true))",
   buildFileExtra = """
     android {
         namespace "com.test.library"
@@ -244,6 +251,7 @@ fun javaPlatformProjectSpec() = ProjectSpec(
   version = "1.0.0",
   properties = defaultProperties,
   sourceFiles = emptyList(),
+  basePluginConfig = "configure(new JavaPlatform())",
   buildFileExtra = """
     dependencies {
         constraints {
@@ -263,6 +271,7 @@ fun versionCatalogProjectSpec() = ProjectSpec(
   version = "1.0.0",
   properties = defaultProperties,
   sourceFiles = emptyList(),
+  basePluginConfig = "configure(new VersionCatalog())",
   buildFileExtra = """
     catalog {
         versionCatalog {

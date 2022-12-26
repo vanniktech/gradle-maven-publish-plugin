@@ -8,6 +8,7 @@ data class TestOptions(
   enum class Config {
     DSL,
     PROPERTIES,
+    BASE,
   }
   enum class Signing {
     NO_SIGNING,
