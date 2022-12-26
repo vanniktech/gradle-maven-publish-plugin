@@ -3,13 +3,13 @@ package com.vanniktech.maven.publish
 import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerCloseAndReleaseRepository
 import com.vanniktech.maven.publish.sonatype.CreateSonatypeRepositoryTask.Companion.registerCreateRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
-import java.util.concurrent.Callable
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.build.event.BuildEventsListenerRegistry
@@ -18,13 +18,16 @@ import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.util.GradleVersion
 
-@Incubating
 abstract class MavenPublishBaseExtension(
   private val project: Project,
 ) {
 
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
+  private val groupId: Property<String> = project.objects.property(String::class.java)
+    .convention(project.provider { project.group.toString() })
+  private val version: Property<String> = project.objects.property(String::class.java)
+    .convention(project.provider { project.version.toString() })
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val platform: Property<Platform> = project.objects.property(Platform::class.java)
 
@@ -61,14 +64,13 @@ abstract class MavenPublishBaseExtension(
       )
     project.serviceOf<BuildEventsListenerRegistry>().onTaskCompletion(buildService)
 
-    val groupId = project.provider { project.group.toString() }
-    val versionIsSnapshot = project.provider { project.versionIsSnapshot }
+    val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
     val createRepository = project.tasks.registerCreateRepository(groupId, versionIsSnapshot, buildService)
     val stagingRepositoryId = createRepository.flatMap { it.stagingRepositoryId }
 
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
-      repo.setUrl(sonatypeHost.map { it.publishingUrl(project.versionIsSnapshot, stagingRepositoryId) })
+      repo.setUrl(sonatypeHost.map { it.publishingUrl(versionIsSnapshot.get(), stagingRepositoryId) })
       repo.credentials(PasswordCredentials::class.java)
     }
 
@@ -114,7 +116,7 @@ abstract class MavenPublishBaseExtension(
     signing.finalizeValue()
 
     project.plugins.apply(SigningPlugin::class.java)
-    project.gradleSigning.setRequired(Callable { !project.versionIsSnapshot })
+    project.gradleSigning.setRequired(version.map { !it.endsWith("-SNAPSHOT") })
 
     val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
     if (inMemoryKey != null) {
@@ -135,6 +137,68 @@ abstract class MavenPublishBaseExtension(
     // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
     project.tasks.withType(AbstractPublishToMaven::class.java).configureEach { publishTask ->
       publishTask.dependsOn(project.tasks.withType(Sign::class.java))
+    }
+  }
+
+  /**
+   * Set the Maven coordinates consisting of [groupId], [artifactId] and [version] for this project. In the case of
+   * Kotlin Multiplatform projects the given [artifactId] is used together with the platform targets resulting in
+   * artifactIds like `[artifactId]-jvm`.
+   */
+  @Incubating
+  fun coordinates(groupId: String, artifactId: String, version: String) {
+    groupId(groupId)
+    artifactId(artifactId)
+    version(version)
+  }
+
+  private fun groupId(groupId: String) {
+    this.groupId.set(groupId)
+    this.groupId.finalizeValueOnRead()
+
+    // skip the plugin marker artifact which has its own group id based on the plugin id
+    project.mavenPublicationsWithoutPluginMarker {
+      it.groupId = this.groupId.get()
+    }
+  }
+
+  private fun artifactId(artifactId: String) {
+    // skip the plugin marker artifact which has its own artifact id based on the plugin id
+    project.mavenPublicationsWithoutPluginMarker {
+      // the multiplatform plugin creates its own publications, so it is ok to use hasPlugin in here
+      if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+        // needed to avoid the mpp plugin writing over our artifact ids
+        project.afterEvaluate { project ->
+          it.artifactId = artifactId.forMultiplatform(it, project)
+        }
+      } else {
+        it.artifactId = artifactId
+      }
+    }
+  }
+
+  private fun String.forMultiplatform(publication: MavenPublication, project: Project): String {
+    val projectName = project.name
+    return if (publication.artifactId == projectName) {
+      this
+    } else if (publication.artifactId.startsWith("$projectName-")) {
+      // Publications for specific platform targes use derived artifact ids (e.g. library, library-jvm,
+      // library-js) and the suffix needs to be preserved
+      publication.artifactId.replace("$projectName-", "$this-")
+    } else {
+      throw IllegalStateException(
+        "The plugin can't handle the publication ${publication.name} artifactId " +
+          "${publication.artifactId} in project $projectName"
+      )
+    }
+  }
+
+  private fun version(version: String) {
+    this.version.set(version)
+    this.version.finalizeValueOnRead()
+
+    project.mavenPublications {
+      it.version = this.version.get()
     }
   }
 
@@ -161,6 +225,19 @@ abstract class MavenPublishBaseExtension(
   fun pomFromGradleProperties() {
     pomFromProperties.set(true)
     pomFromProperties.finalizeValue()
+
+    val groupId = project.findOptionalProperty("GROUP")
+    if (groupId != null) {
+      groupId(groupId)
+    }
+    val artifactId = project.findOptionalProperty("POM_ARTIFACT_ID")
+    if (artifactId != null) {
+      artifactId(artifactId)
+    }
+    val version = project.findOptionalProperty("VERSION_NAME")
+    if (version != null) {
+      version(version)
+    }
 
     pom { pom ->
       val name = project.findOptionalProperty("POM_NAME")

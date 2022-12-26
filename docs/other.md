@@ -75,15 +75,11 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
 === "build.gradle"
 
     ```groovy
-    group = "com.example.project"
-    version = "1.0.3-SNAPSHOT"
-    // note that it's currently not possible to modify the artifact id through the DSL
-    // by default `project.name` is used, to modify it use gradle.properties
-
-
-    // the following is optional
-
     mavenPublishing {
+      coordinates("com.example.mylibrary", "library-name", "1.0.3-SNAPSHOT")
+
+      // the following is optional
+
       pom {
         name = "My Library"
         description = "A description of what my library does."
@@ -115,15 +111,11 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
 === "build.gradle.kts"
 
     ```kotlin
-    group = "com.example.project"
-    version = "1.0.3-SNAPSHOT"
-    // note that it's currently not possible to modify the artifact id through the DSL
-    // by default `project.name` is used, to modify it use gradle.properties
-
-
-    // the following is optional
-
     mavenPublishing {
+      coordinates("com.example.mylibrary", "library-name", "1.0.3-SNAPSHOT")
+
+      // the following is optional
+
       pom {
         name.set("My Library")
         description.set("A description of what my library does.")

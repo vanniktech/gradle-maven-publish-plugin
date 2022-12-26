@@ -4,7 +4,6 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -14,8 +13,6 @@ open class MavenPublishPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     project.plugins.apply(MavenPublishBasePlugin::class.java)
     val baseExtension = project.baseExtension
-
-    project.setCoordinates()
 
     val sonatypeHost = project.findOptionalProperty("SONATYPE_HOST")
     if (!sonatypeHost.isNullOrBlank()) {
@@ -30,32 +27,6 @@ open class MavenPublishPlugin : Plugin<Project> {
     baseExtension.pomFromGradleProperties()
 
     project.configurePlatform()
-  }
-}
-
-private fun Project.setCoordinates() {
-  group = project.findOptionalProperty("GROUP") ?: group
-  version = project.findOptionalProperty("VERSION_NAME") ?: version
-
-  // Artifact id defaults to project name which is not mutable.
-  // Some created publications use derived artifact ids (e.g. library, library-jvm, library-js) so it needs to be
-  // replaced instead of just set.
-  val artifactId = project.findOptionalProperty("POM_ARTIFACT_ID")
-  if (artifactId != null && artifactId != project.name) {
-    mavenPublicationsWithoutPluginMarker { publication ->
-      val projectName = name
-      val updatedArtifactId = publication.artifactId.replace(projectName, artifactId)
-      publication.artifactId = updatedArtifactId
-
-      // in Kotlin MPP projects some publications change our manually set artifactId again
-      afterEvaluate {
-        gradlePublishing.publications.withType(MavenPublication::class.java).named(publication.name).configure { publication ->
-          if (publication.artifactId != updatedArtifactId) {
-            publication.artifactId = publication.artifactId.replace(projectName, artifactId)
-          }
-        }
-      }
-    }
   }
 }
 

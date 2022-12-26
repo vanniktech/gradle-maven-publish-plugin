@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish
 
-import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
@@ -24,9 +23,6 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(@TestParameter kotlinVersion: KotlinVersion) {
-    // in the DSL the artifact id is not configurable
-    assume().that(config).isNotEqualTo(TestOptions.Config.DSL)
-
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "foo-bar",
@@ -87,9 +83,6 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId2(@TestParameter kotlinVersion: KotlinVersion) {
-    // in the DSL the artifact id is not configurable
-    assume().that(config).isNotEqualTo(TestOptions.Config.DSL)
-
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "bar-foo",
@@ -169,6 +162,7 @@ class MavenPublishPluginSpecialCaseTest {
   fun groupAndVersionFromProjectProject() {
     val project = javaProjectSpec().copy(
       group = null,
+      artifactId = null,
       version = null,
       buildFileExtra = """
         group = "com.example.test2"
@@ -179,6 +173,8 @@ class MavenPublishPluginSpecialCaseTest {
 
     val resultSpec = project.copy(
       group = "com.example.test2",
+      // the project name is used as default value for the artifact id
+      artifactId = "default-root-project-name",
       version = "3.2.1",
     )
     val actualResult = result.copy(projectSpec = resultSpec)

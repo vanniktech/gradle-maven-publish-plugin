@@ -12,7 +12,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
   val repo = temp.resolve("repo").apply { createDirectories() }
 
   writeBuildFile(project.resolve("build.gradle"), repo, options)
-  writeSettingFile(project.resolve("settings.gradle"), options)
+  writeSettingFile(project.resolve("settings.gradle"))
   writeGradleProperties(project.resolve("gradle.properties"), options)
   writeSourceFiles(fixtures, project)
   fixtures.resolve("test-secring.gpg").copyTo(project.resolve("test-secring.gpg"))
@@ -75,11 +75,12 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String {
   return if (options.config == TestOptions.Config.DSL) {
     listOfNotNull(
       """
-       group = "$group"
-       version = "$version"
 
        mavenPublishing {
          ${if (options.signing != TestOptions.Signing.NO_SIGNING) "signAllPublications()" else ""}
+
+         ${if (group != null && artifactId != null && version != null) "coordinates(\"$group\", \"$artifactId\", \"$version\")" else ""}
+
          pom {
       """,
       "    name = \"${properties["POM_NAME"]}\"".takeIf { properties.containsKey("POM_NAME") },
@@ -124,12 +125,7 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String {
   }
 }
 
-private fun ProjectSpec.writeSettingFile(path: Path, options: TestOptions) {
-  val rootProjectName = if (options.config == TestOptions.Config.DSL) {
-    artifactId
-  } else {
-    defaultProjectName
-  }
+private fun writeSettingFile(path: Path) {
   path.writeText(
     """
     pluginManagement {
@@ -148,7 +144,7 @@ private fun ProjectSpec.writeSettingFile(path: Path, options: TestOptions) {
         }
     }
 
-    rootProject.name = "$rootProjectName"
+    rootProject.name = "default-root-project-name"
 
     """.trimIndent()
   )
