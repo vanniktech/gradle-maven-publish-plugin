@@ -32,7 +32,3 @@ truth = { module = "com.google.truth:truth", version.ref = "truth" }
 truth-java8 = { module = "com.google.truth.extensions:truth-java8-extension", version.ref = "truth" }
 truth-testKit = "com.autonomousapps:testkit-truth:1.1"
 maven-model = "org.apache.maven:maven-model:3.8.6"
-
-[plugins]
-
-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "3.1.0" }

@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish.sonatype
 
-import com.vanniktech.maven.publish.BuildConfig
 import com.vanniktech.maven.publish.SonatypeHost
 import com.vanniktech.maven.publish.nexus.Nexus
 import java.io.IOException
@@ -31,8 +30,6 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
       baseUrl = parameters.sonatypeHost.get().apiBaseUrl(),
       username = parameters.repositoryUsername.get(),
       password = parameters.repositoryPassword.get(),
-      userAgentName = BuildConfig.NAME,
-      userAgentVersion = BuildConfig.VERSION,
     )
   }
 

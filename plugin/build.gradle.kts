@@ -1,7 +1,6 @@
 plugins {
   id("shared")
   id("java-gradle-plugin")
-  alias(libs.plugins.buildconfig)
 }
 
 gradlePlugin {
@@ -19,12 +18,6 @@ gradlePlugin {
       description = "Gradle plugin that configures publish tasks to automatically upload all of your Java, Kotlin, Gradle, or Android libraries to any Maven instance."
     }
   }
-}
-
-buildConfig {
-  packageName("com.vanniktech.maven.publish")
-  buildConfigField("String", "NAME", "\"com.vanniktech.maven.publish\"")
-  buildConfigField("String", "VERSION", "\"${project.property("VERSION_NAME")}\"")
 }
 
 val integrationTestSourceSet = sourceSets.create("integrationTest") {
