@@ -4,13 +4,15 @@ import com.vanniktech.maven.publish.BuildConfig
 import com.vanniktech.maven.publish.SonatypeHost
 import com.vanniktech.maven.publish.nexus.Nexus
 import java.io.IOException
+import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
-import org.gradle.api.services.BuildServiceRegistry
+import org.gradle.build.event.BuildEventsListenerRegistry
+import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
@@ -51,6 +53,10 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
   // indicates whether we already closed a staging repository to avoid doing it more than once in a build
   var repositoryClosed: Boolean = false
 
+  // should only be accessed from DropSonatypeRepositoryTask
+  // indicates whether we already closed a staging repository to avoid doing it more than once in a build
+  var repositoryDropped: Boolean = false
+
   private var buildIsSuccess: Boolean = true
 
   override fun onFinish(event: FinishEvent) {
@@ -80,19 +86,22 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
   companion object {
     private const val NAME = "sonatype-repository-build-service"
 
-    fun BuildServiceRegistry.registerSonatypeRepositoryBuildService(
+    @Suppress("UnstableApiUsage")
+    fun Project.registerSonatypeRepositoryBuildService(
       sonatypeHost: Provider<SonatypeHost>,
       repositoryUsername: Provider<String>,
       repositoryPassword: Provider<String>,
       automaticRelease: Boolean,
     ): Provider<SonatypeRepositoryBuildService> {
-      return registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {
+      val service = gradle.sharedServices.registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {
         it.maxParallelUsages.set(1)
         it.parameters.sonatypeHost.set(sonatypeHost)
         it.parameters.repositoryUsername.set(repositoryUsername)
         it.parameters.repositoryPassword.set(repositoryPassword)
         it.parameters.automaticRelease.set(automaticRelease)
       }
+      project.serviceOf<BuildEventsListenerRegistry>().onTaskCompletion(service)
+      return service
     }
   }
 }

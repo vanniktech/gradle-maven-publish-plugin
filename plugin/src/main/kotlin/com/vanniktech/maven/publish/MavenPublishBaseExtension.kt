@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerCloseAndReleaseRepository
 import com.vanniktech.maven.publish.sonatype.CreateSonatypeRepositoryTask.Companion.registerCreateRepository
+import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companion.registerDropRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -12,8 +13,6 @@ import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
-import org.gradle.build.event.BuildEventsListenerRegistry
-import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.util.GradleVersion
@@ -54,15 +53,12 @@ abstract class MavenPublishBaseExtension(
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
 
-    val buildService = project.gradle
-      .sharedServices
-      .registerSonatypeRepositoryBuildService(
-        sonatypeHost = sonatypeHost,
-        repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
-        repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
-        automaticRelease = automaticRelease,
-      )
-    project.serviceOf<BuildEventsListenerRegistry>().onTaskCompletion(buildService)
+    val buildService = project.registerSonatypeRepositoryBuildService(
+      sonatypeHost = sonatypeHost,
+      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
+      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
+      automaticRelease = automaticRelease,
+    )
 
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
     val createRepository = project.tasks.registerCreateRepository(groupId, versionIsSnapshot, buildService)
@@ -81,6 +77,7 @@ abstract class MavenPublishBaseExtension(
     }
 
     project.tasks.registerCloseAndReleaseRepository(buildService)
+    project.tasks.registerDropRepository(buildService)
   }
 
   /**
@@ -211,7 +208,7 @@ abstract class MavenPublishBaseExtension(
   @Incubating
   fun pom(configure: Action<in MavenPom>) {
     project.mavenPublications { publication ->
-      // without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
+      // TODO without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
       project.afterEvaluate {
         publication.pom(configure)
       }

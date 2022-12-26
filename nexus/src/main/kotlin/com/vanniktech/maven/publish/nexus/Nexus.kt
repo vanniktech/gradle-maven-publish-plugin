@@ -261,6 +261,11 @@ class Nexus(
     }
   }
 
+  fun dropCurrentStagingRepository() {
+    val stagingRepository = findStagingRepository()
+    dropStagingRepository(stagingRepository.repositoryId)
+  }
+
   companion object {
     private const val PROGRESS_1 = "\u2839"
     private const val PROGRESS_2 = "\u2838"
