@@ -251,6 +251,7 @@ fun javaPlatformProjectSpec() = ProjectSpec(
   version = "1.0.0",
   properties = defaultProperties,
   sourceFiles = emptyList(),
+  basePluginConfig = "configure(new JavaPlatform())",
   buildFileExtra = """
     dependencies {
         constraints {
@@ -270,6 +271,7 @@ fun versionCatalogProjectSpec() = ProjectSpec(
   version = "1.0.0",
   properties = defaultProperties,
   sourceFiles = emptyList(),
+  basePluginConfig = "configure(new VersionCatalog())",
   buildFileExtra = """
     catalog {
         versionCatalog {
