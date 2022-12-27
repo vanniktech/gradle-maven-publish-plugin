@@ -23,6 +23,7 @@ Updated docs can be found on [the new website](https://vanniktech.github.io/grad
   which repository to drop by adding a `--repository` parameter with the id of the staging repository that was
   printed during `publish`. If no repository is specified and there is only one staging repository, that one
   will be dropped.
+- Added workaround to also publish sources for the `java-test-fixtures` plugin
 - Fixed publishing Kotlin/JS projects with the base plugin.
 - Fixed that a POM configured through the DSL is incomplete when publishing Gradle plugins.
 - The minimum supported Gradle version has been increased to 7.3.
