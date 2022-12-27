@@ -182,7 +182,7 @@ class SourcesJarSubject private constructor(
     }
 
     val facts = mutableListOf<Fact>()
-    if (missingFiles.isNotEmpty() && zipFiles.isNotEmpty()) {
+    if (missingFiles.isNotEmpty()) {
       facts += fact("expected to contain", missingFiles)
       facts += simpleFact("but did not.")
     }
