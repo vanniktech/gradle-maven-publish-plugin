@@ -31,7 +31,7 @@ plugin directly integrate with, so why should you use this plugin?
 - **No need to know how publishing works for different project types**. AGP provides an API to configure publishing,
   `java-library` too, Kotlin Multiplatform does most things automatically but not everything. This plugin configures
   as much as possible on its  own.
-- **A unified approach for all kinds of projects**. Some parts require manual configuration and for those we provide an API
+- **An unified approach for all kinds of projects**. Some parts require manual configuration and for those we provide an API
   that works regardless of whether this is a Gradle plugin, an Android library or a Kotlin Multiplatform project. This
   is especially useful for projects that combine multiple of these.
 - **Maven central integration**. The plugin makes it easy to configure publishing to Maven Central with dedicated
