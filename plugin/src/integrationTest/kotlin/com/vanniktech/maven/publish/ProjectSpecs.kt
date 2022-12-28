@@ -5,6 +5,7 @@ import java.nio.file.Paths
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
 val javaGradlePluginPlugin = PluginSpec("java-gradle-plugin")
+val javaTestFixturesPlugin = PluginSpec("java-test-fixtures")
 val javaPlatformPlugin = PluginSpec("java-platform")
 val versionCatalogPlugin = PluginSpec("version-catalog")
 val kotlinJvmPlugin = PluginSpec("org.jetbrains.kotlin.jvm")

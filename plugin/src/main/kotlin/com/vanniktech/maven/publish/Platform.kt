@@ -5,9 +5,11 @@ import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
 import org.gradle.api.Project
+import org.gradle.api.plugins.jvm.internal.JvmModelingServices
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.configurationcache.extensions.serviceOf
 
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
@@ -53,6 +55,15 @@ data class JavaLibrary @JvmOverloads constructor(
       it.from(project.components.getByName("java"))
       it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
+    }
+
+    if (sourcesJar) {
+      // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
+      project.plugins.withId("java-test-fixtures") {
+        project.serviceOf<JvmModelingServices>().createJvmVariant("testFixtures") {
+          it.withSourcesJar().published()
+        }
+      }
     }
   }
 }

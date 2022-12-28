@@ -62,6 +62,36 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
+  fun javaLibraryWithTestFixturesProject() {
+    val default = javaLibraryProjectSpec()
+    val project = default.copy(
+      plugins = default.plugins + javaTestFixturesPlugin,
+      sourceFiles = default.sourceFiles +
+        SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java")
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSigned()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSigned()
+    assertThat(result).pom().matchesExpectedPom(PomDependency("com.example", "test-artifact", "1.0.0", "compile", true))
+    assertThat(result).module().exists()
+    assertThat(result).module().isSigned()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSigned()
+    assertThat(result).sourcesJar().containsSourceSetFiles("main")
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSigned()
+    assertThat(result).artifact("test-fixtures", "jar").exists()
+    assertThat(result).artifact("test-fixtures", "jar").isSigned()
+    assertThat(result).sourcesJar("test-fixtures").exists()
+    assertThat(result).sourcesJar("test-fixtures").isSigned()
+    assertThat(result).sourcesJar("test-fixtures").containsSourceSetFiles("testFixtures")
+  }
+
+  @TestParameterInjectorTest
   fun javaGradlePluginProject() {
     val project = javaGradlePluginProjectSpec()
     val result = project.run(fixtures, testProjectDir, testOptions)
