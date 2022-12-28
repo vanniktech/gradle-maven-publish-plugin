@@ -46,10 +46,10 @@ enum class AgpVersion(
 }
 
 enum class KotlinVersion(val value: String) {
-  // stable
+  // minimum supported
   KT_1_7("1.7.20"),
-  // preview
-  KT_1_8("1.8.0-RC2"),
+  // stable
+  KT_1_8("1.8.0"),
 }
 
 enum class GradleVersion(val value: String) {
