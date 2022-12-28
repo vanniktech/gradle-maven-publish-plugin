@@ -63,6 +63,42 @@ A new repository to publish to can be added like this
     }
     ```
 
+### Github Packages example
+
+=== "build.gradle"
+
+    ```groovy
+    publishing {
+        repositories {
+            githubPackages {
+                url = "https://maven.pkg.github.com/your-org/your-project"
+                // username and password (a personal Github access token) should be specified as
+                // `githubPackagesUsername` and `githubPackagesPassword` Gradle properties or alternatively
+                // as `ORG_GRADLE_PROJECT_githubPackagesUsername` and `ORG_GRADLE_PROJECT_githubPackagesPassword`
+                // environment variables
+                credentials(PasswordCredentials)
+            }
+        }
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    publishing {
+        repositories {
+            myRepo {
+                url = uri("https://maven.pkg.github.com/your-org/your-project")
+                // username and password (a personal Github access token) should be specified as
+                // `githubPackagesUsername` and `githubPackagesPassword` Gradle properties or alternatively
+                // as `ORG_GRADLE_PROJECT_githubPackagesUsername` and `ORG_GRADLE_PROJECT_githubPackagesPassword`
+                // environment variables
+                credentials(PasswordCredentials::class)
+            }
+        }
+    }
+    ```
+
 
 ## Configuring the POM
 
