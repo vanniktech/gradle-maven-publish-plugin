@@ -24,10 +24,7 @@ moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.re
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 
-assertj = "org.assertj:assertj-core:3.23.1"
-junit = "junit:junit:4.13.2"
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
-junit-vintage = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit" }
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.10"
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 truth-java8 = { module = "com.google.truth.extensions:truth-java8-extension", version.ref = "truth" }

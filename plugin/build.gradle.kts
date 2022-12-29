@@ -50,11 +50,6 @@ dependencies {
   testImplementation(libs.truth)
   testImplementation(libs.truth.java8)
   testImplementation(libs.truth.testKit)
-
-  // TODO remove after all old integration tests were migrated
-  testCompileOnly(libs.junit)
-  testRuntimeOnly(libs.junit.vintage)
-  testImplementation(libs.assertj)
   testImplementation(libs.maven.model)
 }
 
