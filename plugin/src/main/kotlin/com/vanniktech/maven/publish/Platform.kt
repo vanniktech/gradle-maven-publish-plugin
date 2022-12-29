@@ -439,7 +439,6 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
       it.suppressPomMetadataWarningsFor("testFixturesApiElements")
       it.suppressPomMetadataWarningsFor("testFixturesRuntimeElements")
       it.suppressPomMetadataWarningsFor("testFixturesSourcesElements")
-
     }
   }
 }
