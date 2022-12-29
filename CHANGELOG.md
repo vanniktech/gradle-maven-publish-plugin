@@ -1,6 +1,6 @@
 # Change Log
 
-Version 0.23.0 *UNRELEASED*
+Version 0.23.0 *(2022-12-29)*
 ---------------------------------
 
 Updated docs can be found on [the new website](https://vanniktech.github.io/gradle-maven-publish-plugin/).
