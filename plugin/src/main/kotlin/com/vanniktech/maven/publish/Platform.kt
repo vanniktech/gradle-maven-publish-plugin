@@ -57,14 +57,7 @@ data class JavaLibrary @JvmOverloads constructor(
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
     }
 
-    if (sourcesJar) {
-      // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
-      project.plugins.withId("java-test-fixtures") {
-        project.serviceOf<JvmModelingServices>().createJvmVariant("testFixtures") {
-          it.withSourcesJar().published()
-        }
-      }
-    }
+    setupTestFixtures(project, sourcesJar)
   }
 }
 
@@ -278,6 +271,8 @@ data class KotlinJvm @JvmOverloads constructor(
       it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
     }
+
+    setupTestFixtures(project, sourcesJar)
   }
 }
 
@@ -427,6 +422,26 @@ private fun MavenPublication.withJavadocJar(factory: () -> TaskProvider<*>?) {
   val task = factory()
   if (task != null) {
     artifact(task)
+  }
+}
+
+private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
+  project.plugins.withId("java-test-fixtures") {
+    if (sourcesJar) {
+      // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
+      project.serviceOf<JvmModelingServices>().createJvmVariant("testFixtures") {
+        it.exposesApi()
+        it.withSourcesJar().published()
+      }
+    }
+
+    // test fixtures can't be mapped to the POM because there is no equivalent concept in Maven
+    project.mavenPublications {
+      it.suppressPomMetadataWarningsFor("testFixturesApiElements")
+      it.suppressPomMetadataWarningsFor("testFixturesRuntimeElements")
+      it.suppressPomMetadataWarningsFor("testFixturesSourcesElements")
+
+    }
   }
 }
 

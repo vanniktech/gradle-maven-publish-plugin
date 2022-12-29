@@ -76,7 +76,10 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(PomDependency("com.example", "test-artifact", "1.0.0", "compile", true))
+    assertThat(result).pom().matchesExpectedPom(
+      // TODO: Gradle currently adds a self dependency when test fixtures are published https://github.com/gradle/gradle/issues/14936
+      PomDependency("com.example", "test-artifact", "1.0.0", "compile", true),
+    )
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
@@ -167,6 +170,42 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).sourcesJar().containsAllSourceFiles()
     assertThat(result).javadocJar().exists()
     assertThat(result).javadocJar().isSigned()
+  }
+
+  @TestParameterInjectorTest
+  fun kotlinJvmWithTestFixturesProject(@TestParameter kotlinVersion: KotlinVersion) {
+    val default = kotlinJvmProjectSpec(kotlinVersion)
+    val project = default.copy(
+      plugins = default.plugins + javaTestFixturesPlugin,
+      sourceFiles = default.sourceFiles + listOf(
+        SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java"),
+        SourceFile("testFixtures", "kotlin", "com/vanniktech/maven/publish/test/TestFixtureKotlinClass.kt"),
+      )
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSigned()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSigned()
+    assertThat(result).pom().matchesExpectedPom(
+      kotlinStdlibJdk(kotlinVersion),
+      // TODO: Gradle currently adds a self dependency when test fixtures are published https://github.com/gradle/gradle/issues/14936
+      PomDependency("com.example", "test-artifact", "1.0.0", "compile", true),
+    )
+    assertThat(result).module().exists()
+    assertThat(result).module().isSigned()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSigned()
+    assertThat(result).sourcesJar().containsSourceSetFiles("main")
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSigned()
+    assertThat(result).artifact("test-fixtures", "jar").exists()
+    assertThat(result).artifact("test-fixtures", "jar").isSigned()
+    assertThat(result).sourcesJar("test-fixtures").exists()
+    assertThat(result).sourcesJar("test-fixtures").isSigned()
+    assertThat(result).sourcesJar("test-fixtures").containsSourceSetFiles("testFixtures")
   }
 
   @TestParameterInjectorTest
