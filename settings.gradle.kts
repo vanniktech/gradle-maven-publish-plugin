@@ -1,5 +1,13 @@
 rootProject.name = "gradle-maven-publish-plugin"
 
+pluginManagement {
+  repositories {
+    mavenCentral()
+    google()
+    gradlePluginPortal()
+  }
+}
+
 plugins {
   id("com.gradle.enterprise") version "3.12.1"
 }
