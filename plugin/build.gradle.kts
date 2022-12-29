@@ -76,7 +76,7 @@ val integrationTest by tasks.registering(Test::class) {
   maxHeapSize = "2g"
   jvmArgs("--add-opens", "java.base/java.util=ALL-UNNAMED")
 
-  systemProperty("com.vanniktech.publish.version", property("VERSION_NAME").toString())
+  systemProperty("com.vanniktech.publish.version", project.property("VERSION_NAME").toString())
   systemProperty("testConfigMethod", System.getProperty("testConfigMethod"))
 
   beforeTest(
