@@ -430,7 +430,6 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
     if (sourcesJar) {
       // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
       project.serviceOf<JvmModelingServices>().createJvmVariant("testFixtures") {
-        it.exposesApi()
         it.withSourcesJar().published()
       }
     }
