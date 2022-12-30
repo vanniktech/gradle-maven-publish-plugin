@@ -1,5 +1,11 @@
 # Change Log
 
+Version 0.23.1 *(2022-12-30)*
+---------------------------------
+
+- also support publishing sources for the `java-test-fixtures` plugin in Kotlin/JVM projects
+- suppress Gradle warnings when publishing a project that uses `java-test-fixtures`
+
 Version 0.23.0 *(2022-12-29)*
 ---------------------------------
 
