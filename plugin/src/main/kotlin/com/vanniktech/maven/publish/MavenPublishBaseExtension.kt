@@ -122,7 +122,7 @@ abstract class MavenPublishBaseExtension(
       project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId, inMemoryKey, inMemoryKeyPassword)
     }
 
-    if (GradleVersion.current() < GradleVersion.version("8.0")) {
+    if (GradleVersion.current() < GradleVersion.version("8.0-rc-1")) {
       project.mavenPublications { publication ->
         val task = project.tasks.findByName("sign${publication.name.capitalize()}Publication")
         if (task == null) {
