@@ -6,6 +6,7 @@ import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
 import org.gradle.api.Project
 import org.gradle.api.plugins.jvm.internal.JvmModelingServices
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
@@ -441,11 +442,13 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
       it.suppressPomMetadataWarningsFor("testFixturesSourcesElements")
     }
 
-    // Gradle will put the project group and version into capabilities instead of using
-    // the publication, this can lead to invalid published metadata
-    // TODO remove after https://github.com/gradle/gradle/issues/23354 is resolved
-    project.group = project.baseExtension.groupId
-    project.version = project.baseExtension.version
+    project.afterEvaluate {
+      // Gradle will put the project group and version into capabilities instead of using
+      // the publication, this can lead to invalid published metadata
+      // TODO remove after https://github.com/gradle/gradle/issues/23354 is resolved
+      project.group = project.baseExtension.groupId.get()
+      project.version = project.baseExtension.version.get()
+    }
   }
 }
 
