@@ -23,9 +23,9 @@ abstract class MavenPublishBaseExtension(
 
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
-  private val groupId: Property<String> = project.objects.property(String::class.java)
+  internal val groupId: Property<String> = project.objects.property(String::class.java)
     .convention(project.provider { project.group.toString() })
-  private val version: Property<String> = project.objects.property(String::class.java)
+  internal val version: Property<String> = project.objects.property(String::class.java)
     .convention(project.provider { project.version.toString() })
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val platform: Property<Platform> = project.objects.property(Platform::class.java)
