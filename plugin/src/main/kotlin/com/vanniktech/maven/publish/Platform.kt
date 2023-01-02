@@ -6,7 +6,6 @@ import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
 import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
 import org.gradle.api.Project
 import org.gradle.api.plugins.jvm.internal.JvmModelingServices
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
