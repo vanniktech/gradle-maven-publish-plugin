@@ -13,7 +13,8 @@ jobs:
 
     strategy:
       matrix:
-        java_version: [11]
+        java_version: [11, 17]
+        test_config_method: ["DSL", "PROPERTIES", "BASE"]
 
     steps:
       - name: Checkout
