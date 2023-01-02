@@ -24,7 +24,7 @@ gradlePlugin {
 buildConfig {
   packageName("com.vanniktech.maven.publish")
   buildConfigField("String", "NAME", "\"com.vanniktech.maven.publish\"")
-  buildConfigField("String", "VERSION", "\"${project.property("VERSION_NAME")}\"")
+  buildConfigField("String", "VERSION", "\"${project.findProperty("VERSION_NAME") ?: "dev"}\"")
 }
 
 val integrationTestSourceSet = sourceSets.create("integrationTest") {

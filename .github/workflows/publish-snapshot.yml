@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - '**'
 
 jobs:
   publish:
@@ -14,22 +16,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Install JDK 11
+      - name: Install JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
+          distribution: zulu
           java-version: 11
+
+      - name: Set version
+        run: |
+          echo "ORG_GRADLE_PROJECT_VERSION_NAME=$(git describe --tags --abbrev=0 | awk -F. '/[0-9]+\./{$NF++;print}' OFS=.)-SNAPSHOT" >> $GITHUB_ENV
 
       - uses: gradle/gradle-build-action@v2
 
-      - name: Retrieve version
-        run: |
-          echo "VERSION_NAME=$(cat gradle.properties | grep -w "VERSION_NAME" | cut -d'=' -f2)" >> $GITHUB_ENV
-
-      - name: Publish snapshot
-        run: ./gradlew publishAllPublicationsToMavenCentralRepository
-        if: endsWith(env.VERSION_NAME, '-SNAPSHOT')
+      - name: Publish
+        run: ./gradlew publish
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
