@@ -2,13 +2,15 @@
 
 ## 0.23.2 **UNRELEASED**
 
-- fix signing when using Gradle 8.0 final
+- Fix signing when using the final Gradle 8.0 release. 
+- As a workaround for an issue in Gradle that causes invalid module metadata for `java-test-fixtures` projects, `project.group`
+  and `project.version` are now being set again for those projects. [#490](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/490)
 
 
 ## 0.23.1 *(2022-12-30)*
 
-- also support publishing sources for the `java-test-fixtures` plugin in Kotlin/JVM projects
-- suppress Gradle warnings when publishing a project that uses `java-test-fixtures`
+- Also support publishing sources for the `java-test-fixtures` plugin in Kotlin/JVM projects.
+- Suppress Gradle warnings when publishing a project that uses `java-test-fixtures`.
 
 
 ## 0.23.0 *(2022-12-29)*
