@@ -440,6 +440,12 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
       it.suppressPomMetadataWarningsFor("testFixturesRuntimeElements")
       it.suppressPomMetadataWarningsFor("testFixturesSourcesElements")
     }
+
+    // Gradle will put the project group and version into capabilities instead of using
+    // the publication, this can lead to invalid published metadata
+    // TODO remove after https://github.com/gradle/gradle/issues/23354 is resolved
+    project.group = project.baseExtension.groupId
+    project.version = project.baseExtension.version
   }
 }
 
