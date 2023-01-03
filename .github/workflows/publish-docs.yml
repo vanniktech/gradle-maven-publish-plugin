@@ -4,11 +4,17 @@ on:
   push:
     branches:
       - main
+  # TODO: replace with on push tag https://github.com/actions/deploy-pages/issues/76
+  workflow_run:
+    workflows: [Publish Release]
+    types:
+      - completed
 
 jobs:
-  deploy:
+  publish:
 
     runs-on: ubuntu-latest
+    if: github.repository == 'vanniktech/gradle-maven-publish-plugin'
 
     permissions:
       contents: read
@@ -22,20 +28,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Install Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.x
 
-      - name: Install mkdocs material
+      - name: Install MkDocs Material
         run: pip install mkdocs-material
 
       - name: Copy docs
         run: |
           cp README.md docs/index.md
-          # Update page time
+          # Update page title
           sed -i 's/# gradle-maven-publish-plugin/# Overview/' docs/index.md
+          # Update plugin version
+          sed -i "s/<latest-version>/$(git describe --tags --abbrev=0)/" docs/base.md
+          sed -i "s/<latest-version>/$(git describe --tags --abbrev=0)/" docs/central.md
+          sed -i "s/<latest-version>/$(git describe --tags --abbrev=0)/" docs/other.md
 
       - name: Build MkDocs
         run: mkdocs build

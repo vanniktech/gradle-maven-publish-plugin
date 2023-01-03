@@ -3,7 +3,7 @@ name: Publish Release
 on:
   push:
     tags:
-      - '*'
+      - '**'
 
 jobs:
   publish:
@@ -15,18 +15,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install JDK 11
+      - name: Install JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
+          distribution: zulu
           java-version: 11
+
+      - name: Get release notes
+        run: |
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          echo "$(awk '/^## ${{ github.ref_name }}/{flag=1;next}/^## /{flag=0}flag' CHANGELOG.md)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Set version for tag
+        run: |
+          echo "ORG_GRADLE_PROJECT_VERSION_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
 
       - uses: gradle/gradle-build-action@v2
 
-      - name: Publish release
-        run: ./gradlew publishAllPublicationsToMavenCentralRepository
+      - name: Publish
+        run: ./gradlew publish
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: ${{ env.RELEASE_NOTES }}

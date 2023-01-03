@@ -12,7 +12,7 @@ Add the plugin to any Gradle project that should be published
 
     ```groovy
     plugins {
-      id "com.vanniktech.maven.publish.base" version "0.23.1"
+      id "com.vanniktech.maven.publish.base" version "<latest-version>"
     }
     ```
 
@@ -20,7 +20,7 @@ Add the plugin to any Gradle project that should be published
 
     ```kotlin
     plugins {
-      id("com.vanniktech.maven.publish.base") version "0.23.1"
+      id("com.vanniktech.maven.publish.base") version "<latest-version>"
     }
     ```
 
