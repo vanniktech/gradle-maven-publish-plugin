@@ -39,6 +39,7 @@ Updated docs can be found on [the new website](https://vanniktech.github.io/grad
 - Fixed publishing Kotlin/JS projects with the base plugin.
 - Fixed that a POM configured through the DSL is incomplete when publishing Gradle plugins.
 - The minimum supported Gradle version has been increased to 7.3.
+- The plugin now requires using JDK 11+ to run Gradle.
 
 
 ## 0.22.0 *(2022-09-09)*
