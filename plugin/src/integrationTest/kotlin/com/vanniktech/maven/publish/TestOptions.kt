@@ -29,13 +29,8 @@ enum class AgpVersion(
     firstUnsupportedGradleVersion = GradleVersion.GRADLE_8_0,
   ),
   // stable
-  AGP_7_3(
-    value = "7.3.1",
-    minGradleVersion = GradleVersion.GRADLE_7_4,
-  ),
-  // beta channel
   AGP_7_4(
-    value = "7.4.0-rc01",
+    value = "7.4.0",
     minGradleVersion = GradleVersion.GRADLE_7_5,
   ),
   // canary channel
