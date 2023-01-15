@@ -48,12 +48,24 @@ class Nexus(
       throw IllegalArgumentException("No staging profiles found in account $username. Make sure you called \"./gradlew publish\".")
     }
 
-    val candidateProfiles = allProfiles.filter { group == it.name || group.startsWith(it.name) }
+    if (allProfiles.size == 1) {
+      return allProfiles[0]
+    }
+
+    var candidateProfiles = allProfiles.filter { group == it.name }
+
+    if (candidateProfiles.isEmpty()) {
+      candidateProfiles = allProfiles.filter { group.startsWith(it.name) }
+    }
+
+    if (candidateProfiles.isEmpty()) {
+      candidateProfiles = allProfiles.filter { group.commonPrefixWith(it.name).isNotEmpty() }
+    }
 
     if (candidateProfiles.isEmpty()) {
       throw IllegalArgumentException(
         "No matching staging profile found in account $username. It is expected that the account contains a staging " +
-          "profile that matches or is the start of $group." +
+          "profile that matches or is the start of $group. " +
           "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}"
       )
     }
