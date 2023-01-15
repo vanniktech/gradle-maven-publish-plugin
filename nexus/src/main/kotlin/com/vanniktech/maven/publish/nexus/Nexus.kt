@@ -48,7 +48,7 @@ class Nexus(
       throw IllegalArgumentException("No staging profiles found in account $username. Make sure you called \"./gradlew publish\".")
     }
 
-    val candidateProfiles = allProfiles.filter { group == it.name || group.startsWith(it.name) }
+    val candidateProfiles = allProfiles.takeIf { it.size == 1 } ?: findProfilesForGroup(allProfiles, group)
 
     if (candidateProfiles.isEmpty()) {
       throw IllegalArgumentException(
@@ -67,6 +67,11 @@ class Nexus(
 
     return candidateProfiles[0]
   }
+
+  private fun findProfilesForGroup(
+    profiles: List<StagingProfile>,
+    group: String
+  ): List<StagingProfile> = profiles.filter { group == it.name || group.startsWith(it.name) }
 
   private fun createStagingRepository(group: String, profile: StagingProfile): String {
     println("Creating repository in profile: ${profile.name}")
