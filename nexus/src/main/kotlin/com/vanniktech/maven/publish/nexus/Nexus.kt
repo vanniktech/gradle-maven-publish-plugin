@@ -52,15 +52,9 @@ class Nexus(
       return allProfiles[0]
     }
 
-    var candidateProfiles = allProfiles.filter { group == it.name }
-
-    if (candidateProfiles.isEmpty()) {
-      candidateProfiles = allProfiles.filter { group.startsWith(it.name) }
-    }
-
-    if (candidateProfiles.isEmpty()) {
-      candidateProfiles = allProfiles.filter { group.commonPrefixWith(it.name).isNotEmpty() }
-    }
+    val candidateProfiles = allProfiles.filter { group == it.name }
+      .ifEmpty { allProfiles.filter { group.startsWith(it.name) } }
+      .ifEmpty { allProfiles.filter { group.commonPrefixWith(it.name).isNotEmpty() } }
 
     if (candidateProfiles.isEmpty()) {
       throw IllegalArgumentException(
