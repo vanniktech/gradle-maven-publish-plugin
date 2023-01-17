@@ -1,8 +1,8 @@
 # Change Log
 
-## 0.23.2 **UNRELEASED**
+## 0.23.2 *(2023-01-17)*
 
-- Fix signing when using the final Gradle 8.0 release.
+- Fix signing when using Gradle 8.0.
 - Finding a matching staging profile in Sonatype is more lenient. If there is just one that one will always be used.
   The plugin will also fallback to any staging profile that has a matching prefix with the group id.
 - As a workaround for an issue in Gradle that causes invalid module metadata for `java-test-fixtures` projects, `project.group`
