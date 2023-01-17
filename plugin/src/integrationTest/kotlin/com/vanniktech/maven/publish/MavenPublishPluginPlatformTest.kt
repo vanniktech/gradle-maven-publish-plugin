@@ -6,6 +6,7 @@ import com.google.testing.junit.testparameterinjector.junit5.TestParameterInject
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.TestOptions.Signing.IN_MEMORY_KEY
 import java.nio.file.Path
+import org.gradle.api.JavaVersion
 import org.junit.jupiter.api.io.TempDir
 
 class MavenPublishPluginPlatformTest {
@@ -310,7 +311,7 @@ class MavenPublishPluginPlatformTest {
     @TestParameter agpVersion: AgpVersion,
     @TestParameter kotlinVersion: KotlinVersion,
   ) {
-    agpVersion.assumeSupportedGradleVersion()
+    agpVersion.assumeSupportedJdkAndGradleVersion()
 
     val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -427,7 +428,7 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun androidLibraryProject(@TestParameter agpVersion: AgpVersion) {
-    agpVersion.assumeSupportedGradleVersion()
+    agpVersion.assumeSupportedJdkAndGradleVersion()
 
     val project = androidLibraryProjectSpec(agpVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -451,7 +452,7 @@ class MavenPublishPluginPlatformTest {
   fun androidMultiVariantLibraryProject(@TestParameter agpVersion: AgpVersion) {
     // regular plugin does not have a way to enable multi variant config
     assume().that(config).isEqualTo(TestOptions.Config.BASE)
-    agpVersion.assumeSupportedGradleVersion()
+    agpVersion.assumeSupportedJdkAndGradleVersion()
 
     val project = androidLibraryProjectSpec(agpVersion).copy(
       basePluginConfig = "configure(new AndroidMultiVariantLibrary(true, true))",
@@ -487,7 +488,7 @@ class MavenPublishPluginPlatformTest {
     @TestParameter agpVersion: AgpVersion,
     @TestParameter kotlinVersion: KotlinVersion,
   ) {
-    agpVersion.assumeSupportedGradleVersion()
+    agpVersion.assumeSupportedJdkAndGradleVersion()
 
     val project = androidLibraryKotlinProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -543,7 +544,8 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).module().isSigned()
   }
 
-  private fun AgpVersion.assumeSupportedGradleVersion() {
+  private fun AgpVersion.assumeSupportedJdkAndGradleVersion() {
+    assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
     assume().that(gradleVersion).isAtLeast(minGradleVersion)
     if (firstUnsupportedGradleVersion != null) {
       assume().that(gradleVersion).isLessThan(firstUnsupportedGradleVersion)

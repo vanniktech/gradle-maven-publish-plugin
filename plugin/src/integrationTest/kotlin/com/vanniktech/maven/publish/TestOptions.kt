@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import org.gradle.api.JavaVersion
+
 data class TestOptions(
   val config: Config,
   val signing: Signing,
@@ -21,6 +23,7 @@ enum class AgpVersion(
   val value: String,
   val minGradleVersion: GradleVersion,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
+  val minJdkVersion: JavaVersion = JavaVersion.VERSION_11,
 ) {
   // minimum supported
   AGP_7_1(
@@ -35,8 +38,9 @@ enum class AgpVersion(
   ),
   // canary channel
   AGP_8_0(
-    value = "8.0.0-alpha09",
+    value = "8.0.0-alpha11",
     minGradleVersion = GradleVersion.GRADLE_8_0,
+    minJdkVersion = JavaVersion.VERSION_17,
   ),
 }
 
@@ -53,7 +57,7 @@ enum class GradleVersion(val value: String) {
   // stable
   GRADLE_7_6("7.6"),
   // preview
-  GRADLE_8_0("8.0-rc-1"),
+  GRADLE_8_0("8.0-rc-2"),
   ;
 
   companion object {
