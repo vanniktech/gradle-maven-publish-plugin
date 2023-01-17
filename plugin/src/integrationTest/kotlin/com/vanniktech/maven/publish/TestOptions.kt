@@ -63,13 +63,12 @@ enum class GradleVersion(val value: String) {
   // stable
   GRADLE_7_6("7.6"),
   // preview
-  GRADLE_8_0("8.0-rc-2"),
+  GRADLE_8_0("8.0-rc-1"),
   ;
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
     val GRADLE_7_2 = GRADLE_7_3
-    val GRADLE_7_4 = GRADLE_7_6
     val GRADLE_7_5 = GRADLE_7_6
   }
 }
