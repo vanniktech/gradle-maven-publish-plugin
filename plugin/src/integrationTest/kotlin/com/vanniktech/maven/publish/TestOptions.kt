@@ -36,9 +36,15 @@ enum class AgpVersion(
     value = "7.4.0",
     minGradleVersion = GradleVersion.GRADLE_7_5,
   ),
-  // canary channel
+  // beta channel
   AGP_8_0(
-    value = "8.0.0-alpha11",
+    value = "8.0.0-beta01",
+    minGradleVersion = GradleVersion.GRADLE_8_0,
+    minJdkVersion = JavaVersion.VERSION_17,
+  ),
+  // canary channel
+  AGP_8_1(
+    value = "8.1.0-alpha01",
     minGradleVersion = GradleVersion.GRADLE_8_0,
     minJdkVersion = JavaVersion.VERSION_17,
   ),
