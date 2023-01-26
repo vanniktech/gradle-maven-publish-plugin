@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish
 
+import java.io.Serializable
 import org.gradle.api.provider.Provider
 
 /**
@@ -10,7 +11,7 @@ import org.gradle.api.provider.Provider
  */
 data class SonatypeHost(
   internal val rootUrl: String
-) {
+): Serializable {
   internal fun apiBaseUrl(): String {
     return "$rootUrl/service/local/"
   }
