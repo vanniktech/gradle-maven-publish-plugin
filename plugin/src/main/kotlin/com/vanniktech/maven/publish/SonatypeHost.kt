@@ -8,7 +8,7 @@ import org.gradle.api.provider.Provider
  *
  * https://central.sonatype.org/articles/2021/Feb/23/new-users-on-s01osssonatypeorg/
  */
-class SonatypeHost(
+data class SonatypeHost(
   internal val rootUrl: String
 ) {
   internal fun apiBaseUrl(): String {
