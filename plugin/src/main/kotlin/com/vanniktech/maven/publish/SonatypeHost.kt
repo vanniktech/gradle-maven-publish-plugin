@@ -8,12 +8,9 @@ import org.gradle.api.provider.Provider
  *
  * https://central.sonatype.org/articles/2021/Feb/23/new-users-on-s01osssonatypeorg/
  */
-enum class SonatypeHost(
+class SonatypeHost(
   internal val rootUrl: String
 ) {
-  DEFAULT("https://oss.sonatype.org"),
-  S01("https://s01.oss.sonatype.org");
-
   internal fun apiBaseUrl(): String {
     return "$rootUrl/service/local/"
   }
@@ -27,5 +24,16 @@ enum class SonatypeHost(
     } else {
       "$rootUrl/service/local/staging/deployByRepositoryId/${stagingRepositoryId.get()}/"
     }
+  }
+
+  companion object {
+    fun valueOf(sonatypeHost: String): SonatypeHost = when (sonatypeHost) {
+      "DEFAULT" -> DEFAULT
+      "S01" -> S01
+      else -> throw IllegalArgumentException("No SonatypeHost constant $sonatypeHost")
+    }
+
+    val DEFAULT = SonatypeHost("https://oss.sonatype.org")
+    val S01 = SonatypeHost("https://s01.oss.sonatype.org")
   }
 }
