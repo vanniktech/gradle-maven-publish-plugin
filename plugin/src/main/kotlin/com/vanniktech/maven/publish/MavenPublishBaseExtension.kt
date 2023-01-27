@@ -80,6 +80,12 @@ abstract class MavenPublishBaseExtension(
     project.tasks.registerDropRepository(buildService)
   }
 
+  @JvmOverloads
+  @JvmSynthetic
+  fun publishToMavenCentral(host: String, automaticRelease: Boolean = false) {
+    publishToMavenCentral(SonatypeHost.valueOf(host), automaticRelease)
+  }
+
   /**
    * Automatically apply Gradle's `signing` plugin and configure all publications to be signed. If signing credentials
    * are not configured this will fail the build unless the current version is a `SNAPSHOT`.
