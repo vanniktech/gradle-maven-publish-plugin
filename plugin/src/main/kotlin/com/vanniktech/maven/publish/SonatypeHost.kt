@@ -28,13 +28,17 @@ data class SonatypeHost(
   }
 
   companion object {
+    @JvmStatic
     fun valueOf(sonatypeHost: String): SonatypeHost = when (sonatypeHost) {
       "DEFAULT" -> DEFAULT
       "S01" -> S01
       else -> throw IllegalArgumentException("No SonatypeHost constant $sonatypeHost")
     }
 
+    @JvmField
     val DEFAULT = SonatypeHost("https://oss.sonatype.org")
+
+    @JvmField
     val S01 = SonatypeHost("https://s01.oss.sonatype.org")
   }
 }
