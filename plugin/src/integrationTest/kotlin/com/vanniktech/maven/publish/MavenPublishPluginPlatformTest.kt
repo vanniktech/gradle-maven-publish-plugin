@@ -126,6 +126,36 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
+  fun javaGradlePluginKotlinProject(@TestParameter kotlinVersion: KotlinVersion) {
+    val project = javaGradlePluginKotlinProjectSpec(kotlinVersion)
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSigned()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSigned()
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).module().exists()
+    assertThat(result).module().isSigned()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSigned()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSigned()
+
+    val pluginId = "com.example.test-plugin"
+    val pluginMarkerSpec = project.copy(group = pluginId, artifactId = "$pluginId.gradle.plugin")
+    val pluginMarkerResult = result.copy(projectSpec = pluginMarkerSpec)
+    assertThat(pluginMarkerResult).pom().exists()
+    assertThat(pluginMarkerResult).pom().isSigned()
+    assertThat(pluginMarkerResult).pom().matchesExpectedPom(
+      "pom",
+      PomDependency("com.example", "test-artifact", "1.0.0", null)
+    )
+  }
+
+  @TestParameterInjectorTest
   fun javaLibraryWithToolchainProject() {
     val project = javaLibraryProjectSpec().copy(
       buildFileExtra = """

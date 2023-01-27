@@ -88,6 +88,16 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
   basePluginConfig = "configure(new GradlePlugin(new JavadocJar.Empty(), true))",
 )
 
+fun javaGradlePluginKotlinProjectSpec(version: KotlinVersion): ProjectSpec {
+  val plainJavaGradlePluginProject = javaGradlePluginProjectSpec()
+  return plainJavaGradlePluginProject.copy(
+    plugins = plainJavaGradlePluginProject.plugins + kotlinJvmPlugin.copy(version = version.value),
+    sourceFiles = plainJavaGradlePluginProject.sourceFiles + listOf(
+      SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
+    )
+  )
+}
+
 fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
   plugins = listOf(
     kotlinJvmPlugin.copy(version = version.value)

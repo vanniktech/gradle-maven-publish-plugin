@@ -2,14 +2,14 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
-import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.javaSourcesJar
-import com.vanniktech.maven.publish.tasks.SourcesJar.Companion.kotlinSourcesJar
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.jvm.internal.JvmModelingServices
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.serviceOf
+import org.gradle.jvm.tasks.Jar
 
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
@@ -53,7 +53,7 @@ data class JavaLibrary @JvmOverloads constructor(
   override fun configure(project: Project) {
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
-      it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
+      it.withJavaSourcesJar(sourcesJar, project)
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
     }
 
@@ -81,7 +81,7 @@ data class GradlePlugin @JvmOverloads constructor(
 
   override fun configure(project: Project) {
     project.mavenPublicationsWithoutPluginMarker {
-      it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
+      it.withJavaSourcesJar(sourcesJar, project)
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
     }
   }
@@ -268,7 +268,7 @@ data class KotlinJvm @JvmOverloads constructor(
     // https://youtrack.jetbrains.com/issue/KT-41582
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
-      it.withSourcesJar { project.javaSourcesJar(sourcesJar) }
+      it.withKotlinSourcesJar(sourcesJar, project)
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
     }
 
@@ -303,7 +303,7 @@ data class KotlinJs @JvmOverloads constructor(
     project.afterEvaluate {
       project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
         it.from(project.components.getByName("kotlin"))
-        it.withSourcesJar { project.kotlinSourcesJar(sourcesJar) }
+        it.withKotlinSourcesJar(sourcesJar, project)
         it.withJavadocJar { project.javadocJarTask(javadocJar) }
       }
     }
@@ -416,6 +416,28 @@ private const val PUBLICATION_NAME = "maven"
 private fun MavenPublication.withSourcesJar(factory: () -> TaskProvider<*>) {
   val task = factory()
   artifact(task)
+}
+
+private fun MavenPublication.withKotlinSourcesJar(enabled: Boolean, project: Project) {
+  val task = if (enabled) {
+    project.tasks.named("kotlinSourcesJar")
+  } else {
+    project.emptySourcesJar()
+  }
+  artifact(task)
+}
+
+private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Project) {
+  if (enabled) {
+    project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
+  } else {
+    val task = project.emptySourcesJar()
+    artifact(task)
+  }
+}
+
+private fun Project.emptySourcesJar(): TaskProvider<*> = tasks.register("emptySourcesJar", Jar::class.java) {
+  it.archiveClassifier.set("sources")
 }
 
 private fun MavenPublication.withJavadocJar(factory: () -> TaskProvider<*>?) {
