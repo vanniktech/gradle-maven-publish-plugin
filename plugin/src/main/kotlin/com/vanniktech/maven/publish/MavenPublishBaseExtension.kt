@@ -81,7 +81,8 @@ abstract class MavenPublishBaseExtension(
   }
 
   @JvmOverloads
-  fun publishToMavenCentral(host: String = "DEFAULT", automaticRelease: Boolean = false) {
+  @JvmSynthetic
+  fun publishToMavenCentral(host: String, automaticRelease: Boolean = false) {
     publishToMavenCentral(SonatypeHost.valueOf(host), automaticRelease)
   }
 

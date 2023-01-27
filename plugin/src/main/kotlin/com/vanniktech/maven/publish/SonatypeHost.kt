@@ -11,7 +11,7 @@ import org.gradle.api.provider.Provider
  */
 data class SonatypeHost(
   internal val rootUrl: String
-): Serializable {
+) : Serializable {
   internal fun apiBaseUrl(): String {
     return "$rootUrl/service/local/"
   }
