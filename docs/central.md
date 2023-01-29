@@ -282,9 +282,9 @@ the artifacts are available for download.
 ## Timeouts
 
 From time to time Sonatype tends to time out during staging operations. The default timeouts of the plugin
-are long already but can be modified if needed. The time out for HTTP requests can be modified with
-`SONATYPE_CONNECT_TIMEOUT_SECONDS` which defaults to 1 minute. After a staging repository gets closed
-Sonatype will run several validations on it and the plugin needs to wait for those to finish before it can
+are long already, but can be modified if needed. The timeout for HTTP requests can be modified with
+`SONATYPE_CONNECT_TIMEOUT_SECONDS` which defaults to 1 minute. After a staging repository gets closed,
+Sonatype will run several validations on it and the plugin needs to wait for those to finish, before it can
 release the repository. The timeout for how long it is waiting for the close operation to finish can be
 modified by `SONATYPE_CLOSE_TIMEOUT_SECONDS` and defaults to 15 minutes.
 
