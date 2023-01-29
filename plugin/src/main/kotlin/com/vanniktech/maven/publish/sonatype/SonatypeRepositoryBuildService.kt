@@ -26,6 +26,8 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
     val repositoryUsername: Property<String>
     val repositoryPassword: Property<String>
     val automaticRelease: Property<Boolean>
+    val okhttpTimeoutSeconds: Property<Long>
+    val closeTimeoutSeconds: Property<Long>
   }
 
   val nexus by lazy {
@@ -35,6 +37,8 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
       password = parameters.repositoryPassword.get(),
       userAgentName = BuildConfig.NAME,
       userAgentVersion = BuildConfig.VERSION,
+      okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
+      closeTimeoutSeconds = parameters.closeTimeoutSeconds.get(),
     )
   }
 
@@ -93,12 +97,20 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
       repositoryPassword: Provider<String>,
       automaticRelease: Boolean,
     ): Provider<SonatypeRepositoryBuildService> {
+      val okhttpTimeout = project.providers.gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
+        .map { it.toLong() }
+        .orElse(60)
+      val closeTimeout = project.providers.gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
+        .map { it.toLong() }
+        .orElse(60 * 15)
       val service = gradle.sharedServices.registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {
         it.maxParallelUsages.set(1)
         it.parameters.sonatypeHost.set(sonatypeHost)
         it.parameters.repositoryUsername.set(repositoryUsername)
         it.parameters.repositoryPassword.set(repositoryPassword)
         it.parameters.automaticRelease.set(automaticRelease)
+        it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
+        it.parameters.closeTimeoutSeconds.set(closeTimeout)
       }
       project.serviceOf<BuildEventsListenerRegistry>().onTaskCompletion(service)
       return service
