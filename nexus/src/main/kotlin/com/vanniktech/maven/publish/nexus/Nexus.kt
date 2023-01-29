@@ -14,13 +14,15 @@ class Nexus(
   password: String,
   userAgentName: String,
   userAgentVersion: String,
+  okhttpTimeoutSeconds: Long,
+  private val closeTimeoutSeconds: Long,
 ) {
   private val service by lazy {
     val okHttpClient = OkHttpClient.Builder()
       .addInterceptor(NexusOkHttpInterceptor(username, password, userAgentName, userAgentVersion))
-      .connectTimeout(60, TimeUnit.SECONDS)
-      .readTimeout(60, TimeUnit.SECONDS)
-      .writeTimeout(60, TimeUnit.SECONDS)
+      .connectTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
+      .readTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
+      .writeTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
       .build()
     val retrofit = Retrofit.Builder()
       .addConverterFactory(MoshiConverterFactory.create())
@@ -177,7 +179,7 @@ class Nexus(
     )
     var i = 0
     while (true) {
-      if (System.currentTimeMillis() - startMillis > CLOSE_TIMEOUT_MILLIS) {
+      if (System.currentTimeMillis() - startMillis > TimeUnit.SECONDS.toMillis(closeTimeoutSeconds)) {
         throw IOException("Timeout waiting for repository close")
       }
 
@@ -281,7 +283,6 @@ class Nexus(
     private const val PROGRESS_6 = "\u280F"
     private const val PROGRESS_7 = "\u2819"
 
-    private const val CLOSE_TIMEOUT_MILLIS = 15 * 60 * 1000L
     private const val CLOSE_WAIT_INTERVAL_MILLIS = 10_000L
   }
 }

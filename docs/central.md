@@ -278,3 +278,17 @@ by adding an extra parameter in the DSL or setting a Gradle property
 Regardless of whether it is done automatically or manually after the staging repository is released the artifacts
 will be synced to Maven Central. This process takes 10-30 minutes and when it is completed
 the artifacts are available for download.
+
+## Timeouts
+
+From time to time Sonatype tends to time out during staging operations. The default timeouts of the plugin
+are long already, but can be modified if needed. The timeout for HTTP requests can be modified with
+`SONATYPE_CONNECT_TIMEOUT_SECONDS` which defaults to 1 minute. After a staging repository gets closed,
+Sonatype will run several validations on it and the plugin needs to wait for those to finish, before it can
+release the repository. The timeout for how long it is waiting for the close operation to finish can be
+modified by `SONATYPE_CLOSE_TIMEOUT_SECONDS` and defaults to 15 minutes.
+
+```properties
+SONATYPE_CONNECT_TIMEOUT_SECONDS=60
+SONATYPE_CLOSE_TIMEOUT_SECONDS=900
+```
