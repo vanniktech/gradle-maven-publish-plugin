@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.24.0 *(2023-01-29)*
+
+- Support arbitrary Sonatype hosts instead of just oss.sonatype.org and s01.oss.sonatype.org.
+- Support adjusting timeouts for Sonatype related requests and operations. [See docs](https://vanniktech.github.io/gradle-maven-publish-plugin/central/#timeouts)
+- Internal change on how the sources jar is created.
+
+
 ## 0.23.2 *(2023-01-17)*
 
 - Fix signing when using Gradle 8.0.
