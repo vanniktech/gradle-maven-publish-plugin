@@ -55,6 +55,8 @@ enum class KotlinVersion(val value: String) {
   KT_1_7("1.7.20"),
   // stable
   KT_1_8("1.8.10"),
+  // preview
+  KT_1_8_BETA("1.8.20-Beta"),
 }
 
 enum class GradleVersion(val value: String) {
