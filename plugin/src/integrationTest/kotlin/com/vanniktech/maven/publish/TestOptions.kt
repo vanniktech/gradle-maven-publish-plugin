@@ -68,5 +68,6 @@ enum class GradleVersion(val value: String) {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
     val GRADLE_7_2 = GRADLE_7_3
     val GRADLE_7_5 = GRADLE_8_0
+    val GRADLE_7_6 = GRADLE_8_0
   }
 }
