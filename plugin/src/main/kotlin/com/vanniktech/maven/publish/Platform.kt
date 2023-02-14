@@ -10,6 +10,8 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsPluginWrapper
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
@@ -284,7 +286,7 @@ data class KotlinJvm @JvmOverloads constructor(
  * Equivalent Gradle set up:
  * ```
  * publications {
- *   create<MavenPublication>("mavenJs") {
+ *   create<MavenPublication>("maven") {
  *     from(components["kotlin"])
  *     artifact(project.tasks.named("kotlinSourcesJar"))
  *   }
@@ -303,7 +305,13 @@ data class KotlinJs @JvmOverloads constructor(
     project.afterEvaluate {
       project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
         it.from(project.components.getByName("kotlin"))
-        it.withKotlinSourcesJar(sourcesJar, project)
+        if (project.isAtLeastKotlinVersion("org.jetbrains.kotlin.js", 1, 8, 20)) {
+          check(sourcesJar) {
+            "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20"
+          }
+        } else {
+          it.withKotlinSourcesJar(sourcesJar, project)
+        }
         it.withJavadocJar { project.javadocJarTask(javadocJar) }
       }
     }
