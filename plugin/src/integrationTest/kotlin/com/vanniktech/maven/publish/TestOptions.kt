@@ -44,7 +44,7 @@ enum class AgpVersion(
   ),
   // canary channel
   AGP_8_1(
-    value = "8.1.0-alpha03",
+    value = "8.1.0-alpha04",
     minGradleVersion = GradleVersion.GRADLE_8_0,
     minJdkVersion = JavaVersion.VERSION_17,
   ),
@@ -61,14 +61,12 @@ enum class GradleVersion(val value: String) {
   // minimum supported
   GRADLE_7_3("7.3"),
   // stable
-  GRADLE_7_6("7.6"),
-  // preview
-  GRADLE_8_0("8.0-rc-3"),
+  GRADLE_8_0("8.0"),
   ;
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
     val GRADLE_7_2 = GRADLE_7_3
-    val GRADLE_7_5 = GRADLE_7_6
+    val GRADLE_7_5 = GRADLE_8_0
   }
 }
