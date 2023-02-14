@@ -8,12 +8,8 @@ plugins {
   id("java-library")
   id("kotlin")
   id("kotlin-kapt")
-  id("org.jlleitschuh.gradle.ktlint")
+  //id("org.jlleitschuh.gradle.ktlint")
   id("com.vanniktech.maven.publish")
-}
-
-ktlint {
-  version.set("0.41.0")
 }
 
 repositories {

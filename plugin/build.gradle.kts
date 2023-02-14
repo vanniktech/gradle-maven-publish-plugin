@@ -28,7 +28,8 @@ buildConfig {
 }
 
 val integrationTestSourceSet = sourceSets.create("integrationTest") {
-  compileClasspath += sourceSets["main"].output + configurations.testRuntimeClasspath
+  compileClasspath += sourceSets["main"].output
+  compileClasspath += configurations.testRuntimeClasspath.get()
   runtimeClasspath += output + compileClasspath
 }
 val integrationTestImplementation = configurations["integrationTestImplementation"]
