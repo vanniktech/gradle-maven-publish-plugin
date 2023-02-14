@@ -60,6 +60,8 @@ For projects using the `com.android.library` plugin. This will publish all varia
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.AndroidMultiVariantLibrary
+
     mavenPublishing {
       // the first parameter represennts whether to publish a sources jar
       // the second whether to publish a javadoc jar
@@ -74,6 +76,8 @@ For projects using the `com.android.library` plugin. This will publish all varia
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.AndroidMultiVariantLibrary
+
     mavenPublishing {
       configure(AndroidMultiVariantLibrary(
         // whether to publish a sources jar
@@ -112,6 +116,8 @@ the specified variant instead of publishing all of them.
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+
     mavenPublishing {
       // the first parameter represennts which variant is published
       // the second whether to publish a sources jar
@@ -123,6 +129,8 @@ the specified variant instead of publishing all of them.
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+
     mavenPublishing {
       configure(AndroidSingleVariantLibrary(
         // the published variant
@@ -142,6 +150,9 @@ For projects using the `java-library` plugin.
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.JavaLibrary
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
@@ -155,6 +166,9 @@ For projects using the `java-library` plugin.
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.JavaLibrary
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       configure(JavaLibrary(
         // configures the -javadoc artifact, possible values:
@@ -175,6 +189,9 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.KotlinJvm
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
@@ -188,6 +205,9 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.KotlinJvm
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       configure(KotlinJvm(
         // configures the -javadoc artifact, possible values:
@@ -208,6 +228,9 @@ For projects using the `org.jetbrains.kotlin.js` plugin.
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.KotlinJs
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
@@ -221,6 +244,9 @@ For projects using the `org.jetbrains.kotlin.js` plugin.
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.KotlinJs
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       configure(KotlinJs(
         // configures the -javadoc artifact, possible values:
@@ -241,6 +267,9 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.KotlinMultiplatform
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       // the parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
@@ -254,6 +283,9 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.KotlinMultiplatform
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       // sources publishing is always enabled by the Kotlin Multiplatform plugin
       configure(KotlinMultiplatform(
@@ -274,6 +306,9 @@ For projects using the `java-gradle-plugin` plugin.
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.GradlePlugin
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
@@ -287,6 +322,9 @@ For projects using the `java-gradle-plugin` plugin.
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.GradlePlugin
+    import com.vanniktech.maven.publish.JavadocJar
+
     mavenPublishing {
       configure(GradlePlugin(
         // configures the -javadoc artifact, possible values:
@@ -309,6 +347,8 @@ For projects using the `java-platform` plugin.
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.JavaPlatform
+
     mavenPublishing {
       configure(new JavaPlatform())
     }
@@ -317,6 +357,8 @@ For projects using the `java-platform` plugin.
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.JavaPlatform
+
     mavenPublishing {
       configure(JavaPlatform())
     }
@@ -331,6 +373,8 @@ For projects using the `version-catalog` plugin.
 === "build.gradle"
 
     ```groovy
+    import com.vanniktech.maven.publish.VersionCatalog
+
     mavenPublishing {
       configure(new VersionCatalog())
     }
@@ -339,6 +383,8 @@ For projects using the `version-catalog` plugin.
 === "build.gradle.kts"
 
     ```kotlin
+    import com.vanniktech.maven.publish.VersionCatalog
+
     mavenPublishing {
       configure(VersionCatalog())
     }
