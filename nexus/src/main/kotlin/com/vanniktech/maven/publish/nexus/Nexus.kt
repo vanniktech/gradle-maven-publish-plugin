@@ -76,8 +76,8 @@ class Nexus(
     return candidateProfiles[0]
   }
 
-  private fun createStagingRepository(group: String, profile: StagingProfile): String {
-    println("Creating repository in profile: ${profile.name}")
+  private fun createStagingRepository(group: String, profile: StagingProfile, logger: Logger): String {
+    logger.progress("Creating repository in profile: ${profile.name}")
 
     val response = service.createRepository(profile.id, CreateRepositoryInput(CreateRepositoryInputData("Repository for $group"))).execute()
     if (!response.isSuccessful) {
@@ -86,14 +86,14 @@ class Nexus(
 
     val id = response.body()?.data?.stagedRepositoryId ?: throw IOException("Did not receive created repository")
 
-    println("Created staging repository $id")
+    logger.progress("Created staging repository $id")
 
     return id
   }
 
-  fun createRepositoryForGroup(group: String): String {
+  fun createRepositoryForGroup(group: String, logger: Logger): String {
     val profile = findStagingProfile(group)
-    return createStagingRepository(group, profile)
+    return createStagingRepository(group, profile, logger)
   }
 
   private fun getProfileRepositories(): List<Repository>? {
@@ -138,12 +138,12 @@ class Nexus(
       ?: throw IOException("Could not get repository with id $repositoryId for account $username")
   }
 
-  private fun closeStagingRepository(stagingRepository: Repository) {
+  private fun closeStagingRepository(stagingRepository: Repository, logger: Logger) {
     val repositoryId = stagingRepository.repositoryId
 
     if (stagingRepository.type == "closed") {
       if (stagingRepository.transitioning) {
-        waitForClose(stagingRepository.repositoryId)
+        waitForClose(stagingRepository.repositoryId, logger)
       } else {
         println("Repository $repositoryId already closed")
       }
@@ -160,11 +160,11 @@ class Nexus(
       throw IOException("Cannot close repository: ${response.errorBody()?.string()}")
     }
 
-    waitForClose(repositoryId)
+    waitForClose(repositoryId, logger)
     println("Repository $repositoryId closed")
   }
 
-  private fun waitForClose(repositoryId: String) {
+  private fun waitForClose(repositoryId: String, logger: Logger) {
 
     val startMillis = System.currentTimeMillis()
 
@@ -178,23 +178,29 @@ class Nexus(
       PROGRESS_7
     )
     var i = 0
+    var lastNetworkCheck = System.currentTimeMillis()
     while (true) {
       if (System.currentTimeMillis() - startMillis > TimeUnit.SECONDS.toMillis(closeTimeoutSeconds)) {
         throw IOException("Timeout waiting for repository close")
       }
 
-      print("\r${waitingChars[i++ % waitingChars.size]} waiting for close...")
-      System.out.flush()
+      logger.progress("${waitingChars[i++ % waitingChars.size]} waiting for close...")
 
-      Thread.sleep(CLOSE_WAIT_INTERVAL_MILLIS)
+      Thread.sleep(CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS)
 
+      val newTime = System.currentTimeMillis()
+      if (newTime - lastNetworkCheck < CLOSE_CLOSE_CHECK_INTERVAL_MILLIS) {
+        // Not enough time has lapsed to re-check the repository
+        continue
+      }
+      lastNetworkCheck = newTime
       val repository = try {
         getStagingRepository(repositoryId)
       } catch (e: IOException) {
-        System.err.println("Exception trying to get repository status: ${e.message}")
+        logger.progress("Exception trying to get repository status: ${e.message}", failing = true)
         null
       } catch (e: TimeoutException) {
-        System.err.println("Exception trying to get repository status: ${e.message}")
+        logger.progress("Exception trying to get repository status: ${e.message}", failing = true)
         null
       }
 
@@ -226,19 +232,19 @@ class Nexus(
     }
   }
 
-  fun closeCurrentStagingRepository(): String {
+  fun closeCurrentStagingRepository(logger: Logger): String {
     val stagingRepository = findStagingRepository()
-    closeStagingRepository(stagingRepository)
+    closeStagingRepository(stagingRepository, logger)
     return stagingRepository.repositoryId
   }
 
-  fun closeStagingRepository(repositoryId: String) {
+  fun closeStagingRepository(repositoryId: String, logger: Logger) {
     val stagingRepository = getStagingRepository(repositoryId)
-    closeStagingRepository(stagingRepository)
+    closeStagingRepository(stagingRepository, logger)
   }
 
-  fun releaseStagingRepository(repositoryId: String) {
-    println("Releasing repository: $repositoryId")
+  fun releaseStagingRepository(repositoryId: String, logger: Logger) {
+    logger.progress("Releasing repository: $repositoryId")
     val response = service.releaseRepository(
       TransitionRepositoryInput(
         TransitionRepositoryInputData(
@@ -252,7 +258,7 @@ class Nexus(
       throw IOException("Cannot release repository: ${response.errorBody()?.string()}")
     }
 
-    println("Repository $repositoryId released")
+    logger.completed("Repository $repositoryId released", failed = false)
   }
 
   fun dropStagingRepository(repositoryId: String) {
@@ -274,6 +280,34 @@ class Nexus(
     dropStagingRepository(stagingRepository.repositoryId)
   }
 
+  /** A simple logger interface that can start, complete, and report intermediate progress. */
+  interface Logger {
+    fun start(description: String, status: String)
+    fun progress(status: String, failing: Boolean = false)
+    fun completed(status: String, failed: Boolean)
+
+    /** A system logger that writes to [System.out] or [System.err]. */
+    object SystemLogger : Logger {
+      override fun start(description: String, status: String) {
+        println("$description: $status")
+      }
+      override fun progress(status: String, failing: Boolean) {
+        if (failing) {
+          System.err.println(status)
+        } else {
+          println(status)
+        }
+      }
+      override fun completed(status: String, failed: Boolean) {
+        if (failed) {
+          System.err.println("Completed with errors: $status")
+        } else {
+          println("Completed: $status")
+        }
+      }
+    }
+  }
+
   companion object {
     private const val PROGRESS_1 = "\u2839"
     private const val PROGRESS_2 = "\u2838"
@@ -283,6 +317,9 @@ class Nexus(
     private const val PROGRESS_6 = "\u280F"
     private const val PROGRESS_7 = "\u2819"
 
-    private const val CLOSE_WAIT_INTERVAL_MILLIS = 10_000L
+    /** Update the progress loader every 500ms */
+    private const val CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS = 500L
+    /** Check the repository every 5 seconds. */
+    private const val CLOSE_CLOSE_CHECK_INTERVAL_MILLIS = 5_000L
   }
 }
