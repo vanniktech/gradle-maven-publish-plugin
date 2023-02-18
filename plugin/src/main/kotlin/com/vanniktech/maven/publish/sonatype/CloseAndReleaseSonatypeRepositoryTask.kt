@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish.sonatype
 
+import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -10,8 +11,11 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.options.Option
+import org.gradle.internal.logging.progress.ProgressLoggerFactory
 
-internal abstract class CloseAndReleaseSonatypeRepositoryTask : DefaultTask() {
+internal abstract class CloseAndReleaseSonatypeRepositoryTask @Inject constructor(
+  private val progressLoggerFactory: ProgressLoggerFactory,
+) : DefaultTask() {
 
   @get:Internal
   abstract val buildService: Property<SonatypeRepositoryBuildService>
@@ -30,13 +34,16 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask : DefaultTask() {
       return
     }
 
+    val progressLogger = progressLoggerFactory.newOperation(CloseAndReleaseSonatypeRepositoryTask::class.java)
+    val nexusProgressLogger = NexusProgressLogger(progressLogger)
+
     val manualStagingRepositoryId = this.manualStagingRepositoryId
     if (manualStagingRepositoryId != null) {
-      service.nexus.closeStagingRepository(manualStagingRepositoryId)
-      service.nexus.releaseStagingRepository(manualStagingRepositoryId)
+      service.nexus.closeStagingRepository(manualStagingRepositoryId, nexusProgressLogger)
+      service.nexus.releaseStagingRepository(manualStagingRepositoryId, nexusProgressLogger)
     } else {
-      val id = service.nexus.closeCurrentStagingRepository()
-      service.nexus.releaseStagingRepository(id)
+      val id = service.nexus.closeCurrentStagingRepository(nexusProgressLogger)
+      service.nexus.releaseStagingRepository(id, nexusProgressLogger)
     }
 
     service.repositoryClosed = true
@@ -57,3 +64,4 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask : DefaultTask() {
     }
   }
 }
+

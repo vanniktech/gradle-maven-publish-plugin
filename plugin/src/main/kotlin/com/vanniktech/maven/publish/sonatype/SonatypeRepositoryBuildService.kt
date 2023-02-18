@@ -73,9 +73,9 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
     val stagingRepositoryId = this.stagingRepositoryId
     if (stagingRepositoryId != null) {
       if (buildIsSuccess) {
-        nexus.closeStagingRepository(stagingRepositoryId)
+        nexus.closeStagingRepository(stagingRepositoryId, Nexus.Logger.SystemLogger)
         if (parameters.automaticRelease.get()) {
-          nexus.releaseStagingRepository(stagingRepositoryId)
+          nexus.releaseStagingRepository(stagingRepositoryId, Nexus.Logger.SystemLogger)
         }
       } else {
         try {

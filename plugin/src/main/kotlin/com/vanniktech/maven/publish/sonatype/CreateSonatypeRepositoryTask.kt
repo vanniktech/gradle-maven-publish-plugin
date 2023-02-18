@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish.sonatype
 
+import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -7,8 +8,11 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.internal.logging.progress.ProgressLoggerFactory
 
-internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
+internal abstract class CreateSonatypeRepositoryTask @Inject constructor(
+  private val progressLoggerFactory: ProgressLoggerFactory,
+) : DefaultTask() {
 
   @get:Internal
   abstract val projectGroup: Property<String>
@@ -37,7 +41,9 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
       return
     }
 
-    val id = service.nexus.createRepositoryForGroup(projectGroup.get())
+    val progressLogger = progressLoggerFactory.newOperation(CreateSonatypeRepositoryTask::class.java)
+    val nexusLogger = NexusProgressLogger(progressLogger)
+    val id = service.nexus.createRepositoryForGroup(projectGroup.get(), nexusLogger)
 
     service.stagingRepositoryId = id
     stagingRepositoryId.set(id)
