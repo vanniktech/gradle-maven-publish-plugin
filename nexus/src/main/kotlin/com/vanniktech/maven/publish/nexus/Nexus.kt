@@ -320,7 +320,7 @@ class Nexus(
     private const val PROGRESS_7 = "\u2819"
 
     /** Update the progress loader every 500ms */
-    private const val CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS = 500L
+    private const val CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS = 200L
     /** Check the repository every 5 seconds. */
     private const val CLOSE_CLOSE_CHECK_INTERVAL_MILLIS = 5_000L
   }
