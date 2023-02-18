@@ -293,9 +293,11 @@ class Nexus(
       }
       override fun progress(status: String, failing: Boolean) {
         if (failing) {
-          System.err.println(status)
+          System.err.print("\r$status")
+          System.err.flush()
         } else {
-          println(status)
+          print("\r$status")
+          System.out.flush()
         }
       }
       override fun completed(status: String, failed: Boolean) {
