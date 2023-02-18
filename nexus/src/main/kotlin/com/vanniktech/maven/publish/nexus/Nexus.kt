@@ -77,7 +77,7 @@ class Nexus(
   }
 
   private fun createStagingRepository(group: String, profile: StagingProfile, logger: Logger): String {
-    logger.progress("Creating repository in profile: ${profile.name}")
+    logger.start("Create staging repository", "Creating in profile '${profile.name}'")
 
     val response = service.createRepository(profile.id, CreateRepositoryInput(CreateRepositoryInputData("Repository for $group"))).execute()
     if (!response.isSuccessful) {
@@ -86,7 +86,7 @@ class Nexus(
 
     val id = response.body()?.data?.stagedRepositoryId ?: throw IOException("Did not receive created repository")
 
-    logger.progress("Created staging repository $id")
+    logger.completed("Created staging repository $id", failed = false)
 
     return id
   }
