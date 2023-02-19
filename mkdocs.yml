@@ -12,7 +12,11 @@ theme:
     primary: 'cyan'
     accent: 'purple'
   features:
+    - navigation.sections
+    - navigation.tracking
+    - navigation.tabs
     - content.tabs.link
+    - toc.integrate
 
 nav:
   - 'index.md'
