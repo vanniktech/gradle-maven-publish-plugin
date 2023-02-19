@@ -70,7 +70,11 @@ val integrationTest by tasks.registering(Test::class) {
   useJUnitPlatform()
   testLogging.showStandardStreams = true
   maxHeapSize = "2g"
-  jvmArgs("--add-opens", "java.base/java.util=ALL-UNNAMED")
+  jvmArgs(
+    "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
+    "--add-opens", "java.base/java.net=ALL-UNNAMED",
+    "--add-opens", "java.base/java.util=ALL-UNNAMED",
+  )
 
   systemProperty("com.vanniktech.publish.version", project.property("VERSION_NAME").toString())
   systemProperty("testConfigMethod", System.getProperty("testConfigMethod"))
