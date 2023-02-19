@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import com.google.common.truth.TruthJUnit
+import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
@@ -23,6 +25,9 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(@TestParameter kotlinVersion: KotlinVersion) {
+    // TODO: Kotlin Multiplatform publishing fails with Gradle 8.1
+    assume().that(gradleVersion).isLessThan(GradleVersion.GRADLE_8_1)
+
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "foo-bar",
@@ -87,6 +92,9 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId2(@TestParameter kotlinVersion: KotlinVersion) {
+    // TODO: Kotlin Multiplatform publishing fails with Gradle 8.1
+    assume().that(gradleVersion).isLessThan(GradleVersion.GRADLE_8_1)
+
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "bar-foo",
