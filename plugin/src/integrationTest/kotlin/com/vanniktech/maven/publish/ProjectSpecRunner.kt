@@ -30,7 +30,6 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     .withProjectDir(project.toFile())
     .withDebug(true)
     .withArguments(arguments)
-    .forwardOutput()
     .build()
 
   return ProjectResult(
