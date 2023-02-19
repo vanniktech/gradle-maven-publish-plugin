@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import java.io.File
+import java.nio.file.FileSystem
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.copyTo
@@ -28,6 +30,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     .withProjectDir(project.toFile())
     .withDebug(true)
     .withArguments(arguments)
+    .forwardOutput()
     .build()
 
   return ProjectResult(
@@ -41,15 +44,21 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 
 private fun TestOptions.supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
   // TODO: Kotlin Multiplatform plugin has configuration cache issues
+  //  - https://youtrack.jetbrains.com/issue/KT-49933 (meta ticket)
+  //  - https://youtrack.jetbrains.com/issue/KT-43293 (closed but still has issues)
+  //  - https://youtrack.jetbrains.com/issue/KT-55051
   if (plugins.any { it.id == kotlinMultiplatformPlugin.id }) {
     return false
   }
   // publishing supports configuration cache starting with 7.6
   // signing only supports configuration cache starting with 8.1
+  if (gradleVersion >= GradleVersion.GRADLE_8_1) {
+    return true
+  }
   if (gradleVersion >= GradleVersion.GRADLE_7_6) {
     return signing == TestOptions.Signing.NO_SIGNING
   }
-  return gradleVersion >= GradleVersion.GRADLE_8_1
+  return false
 }
 
 private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOptions) {
