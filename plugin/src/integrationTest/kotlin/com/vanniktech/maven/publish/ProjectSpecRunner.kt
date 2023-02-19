@@ -18,18 +18,16 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
   fixtures.resolve("test-secring.gpg").copyTo(project.resolve("test-secring.gpg"))
 
   val task = ":publishAllPublicationsToTestFolderRepository"
+  val arguments = mutableListOf(task, "--stacktrace")
+  if (options.supportsConfigCaching()) {
+    arguments.add("--configuration-cache")
+  }
+
   val result = GradleRunner.create()
     .withGradleVersion(options.gradleVersion.value)
     .withProjectDir(project.toFile())
     .withDebug(true)
-    .withArguments(task, "--stacktrace")
-    .apply {
-      // signing only supports configuration cache starting with 8.1
-      if ((options.gradleVersion >= GradleVersion.GRADLE_7_6 && options.signing == TestOptions.Signing.NO_SIGNING)
-          || options.gradleVersion >= GradleVersion.GRADLE_8_1) {
-        withArguments("--configuration-cache")
-      }
-    }
+    .withArguments(arguments)
     .build()
 
   return ProjectResult(
@@ -39,6 +37,15 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     project = project,
     repo = repo,
   )
+}
+
+private fun TestOptions.supportsConfigCaching(): Boolean {
+  // publishing supports configuration cache starting with 7.6
+  // signing only supports configuration cache starting with 8.1
+  if (gradleVersion >= GradleVersion.GRADLE_7_6) {
+    return signing == TestOptions.Signing.NO_SIGNING
+  }
+  return gradleVersion >= GradleVersion.GRADLE_8_1
 }
 
 private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOptions) {
