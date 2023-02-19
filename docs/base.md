@@ -236,8 +236,8 @@ For projects using the `org.jetbrains.kotlin.js` plugin.
       // - `JavadocJar.None()` don't publish this artifact
       // - `JavadocJar.Empty()` publish an emprt jar
       // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-      // the second whether to publish a sources jar
-      configure(new KotlinJs(new JavadocJar.Dokka("dokkaHtml"), true))
+      // sources publishing is always enabled by the Kotlin/JS plugin
+      configure(new KotlinJs(new JavadocJar.Dokka("dokkaHtml")))
     }
     ```
 
@@ -248,14 +248,13 @@ For projects using the `org.jetbrains.kotlin.js` plugin.
     import com.vanniktech.maven.publish.JavadocJar
 
     mavenPublishing {
+      // sources publishing is always enabled by the Kotlin/JS plugin
       configure(KotlinJs(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
         // - `JavadocJar.Empty()` publish an emprt jar
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Dokka("dokkaHtml"),
-        // whether to publish a sources jar
-        sourcesJar = true,
       ))
     }
     ```

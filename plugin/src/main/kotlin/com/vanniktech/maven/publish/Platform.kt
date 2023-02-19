@@ -294,10 +294,19 @@ data class KotlinJvm @JvmOverloads constructor(
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinJs @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true
+data class KotlinJs @Deprecated(
+  "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20. " +
+    "Use the single or no-arg constructors instead."
+) constructor(
+  override val javadocJar: JavadocJar,
+  override val sourcesJar: Boolean,
 ) : Platform() {
+
+  @Suppress("DEPRECATION")
+  @JvmOverloads
+  constructor(
+    javadocJar: JavadocJar = JavadocJar.Empty(),
+  ) : this(javadocJar, true)
 
   override fun configure(project: Project) {
     // Create publication, since Kotlin/JS doesn't provide one by default.
