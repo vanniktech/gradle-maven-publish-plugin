@@ -261,9 +261,6 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun kotlinMultiplatformProject(@TestParameter kotlinVersion: KotlinVersion) {
-    // TODO: Kotlin Multiplatform publishing fails with Gradle 8.1
-    assume().that(gradleVersion).isLessThan(GradleVersion.GRADLE_8_1)
-
     val project = kotlinMultiplatformProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -348,8 +345,6 @@ class MavenPublishPluginPlatformTest {
     @TestParameter agpVersion: AgpVersion,
     @TestParameter kotlinVersion: KotlinVersion,
   ) {
-    // TODO: Kotlin Multiplatform publishing fails with Gradle 8.1
-    assume().that(gradleVersion).isLessThan(GradleVersion.GRADLE_8_1)
     agpVersion.assumeSupportedJdkAndGradleVersion()
 
     val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
