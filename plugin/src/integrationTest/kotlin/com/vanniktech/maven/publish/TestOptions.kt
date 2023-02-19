@@ -64,6 +64,8 @@ enum class GradleVersion(val value: String) {
   GRADLE_7_3("7.3"),
   // stable
   GRADLE_8_0("8.0.1"),
+  // preview
+  GRADLE_8_1("8.1-20230217231705+0000"),
   ;
 
   companion object {

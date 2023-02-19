@@ -23,6 +23,13 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     .withProjectDir(project.toFile())
     .withDebug(true)
     .withArguments(task, "--stacktrace")
+    .apply {
+      // signing only supports configuration cache starting with 8.1
+      if ((options.gradleVersion >= GradleVersion.GRADLE_7_6 && options.signing == TestOptions.Signing.NO_SIGNING)
+          || options.gradleVersion >= GradleVersion.GRADLE_8_1) {
+        withArguments("--configuration-cache")
+      }
+    }
     .build()
 
   return ProjectResult(
