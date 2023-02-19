@@ -25,11 +25,11 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
   abstract val buildService: Property<SonatypeRepositoryBuildService>
 
   @Inject
-  abstract fun getWorkerExecutor(): WorkerExecutor?
+  abstract fun getWorkerExecutor(): WorkerExecutor
 
   @TaskAction
   fun createStagingRepository() {
-    val workQueue: WorkQueue = getWorkerExecutor()!!.noIsolation()
+    val workQueue: WorkQueue = getWorkerExecutor().noIsolation()
     workQueue.submit(CreateStagingRepository::class.java) {
       requireNotNull(it)
       it.projectGroup.set(projectGroup)
