@@ -193,6 +193,11 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
         android {
           compileSdkVersion = 31
           namespace = "com.test"
+
+          // resolves config cache issue, can be removed when AGP 8 becomes the minimum supported version
+          buildFeatures {
+              shaders = false
+          }
         }
 
         kotlin {
@@ -224,6 +229,11 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     android {
         namespace "com.test.library"
         compileSdkVersion 29
+
+        // resolves config cache issue, can be removed when AGP 8 becomes the minimum supported version
+        buildFeatures {
+            shaders = false
+        }
     }
 
     // disable the dokka task to speed up Android tests significantly
