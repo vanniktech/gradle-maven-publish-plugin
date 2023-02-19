@@ -19,7 +19,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 
   val task = ":publishAllPublicationsToTestFolderRepository"
   val arguments = mutableListOf(task, "--stacktrace")
-  if (options.supportsConfigCaching()) {
+  if (options.supportsConfigCaching(plugins)) {
     arguments.add("--configuration-cache")
   }
 
@@ -39,7 +39,11 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
   )
 }
 
-private fun TestOptions.supportsConfigCaching(): Boolean {
+private fun TestOptions.supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
+  // TODO: Kotlin Multiplatform plugin has configuration cache issues
+  if (plugins.any { it.id == kotlinMultiplatformPlugin.id }) {
+    return false
+  }
   // publishing supports configuration cache starting with 7.6
   // signing only supports configuration cache starting with 8.1
   if (gradleVersion >= GradleVersion.GRADLE_7_6) {
