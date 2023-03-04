@@ -2,14 +2,18 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.jvm.internal.JvmModelingServices
+import org.gradle.api.plugins.jvm.internal.JvmVariantBuilder
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.jvm.tasks.Jar
+import org.gradle.util.GradleVersion
 
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
@@ -468,8 +472,18 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
   project.plugins.withId("java-test-fixtures") {
     if (sourcesJar) {
       // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
-      project.serviceOf<JvmModelingServices>().createJvmVariant("testFixtures") {
+      val services = project.serviceOf<JvmModelingServices>()
+      val variant = "testFixtures"
+      val action = Action<JvmVariantBuilder> {
         it.withSourcesJar().published()
+      }
+      if (GradleVersion.current() >= GradleVersion.version("8.1-20230302232219+0000")) {
+        val extension = project.extensions.getByType(JavaPluginExtension::class.java)
+        val testFixturesSourceSet = extension.sourceSets.maybeCreate(variant)
+        val method = services.javaClass.getMethod("createJvmVariant", String::class.java, SourceSet::class.java, Action::class.java)
+        method.invoke(services, variant, testFixturesSourceSet, action)
+      } else {
+        project.serviceOf<JvmModelingServices>().createJvmVariant(variant, action)
       }
     }
 
