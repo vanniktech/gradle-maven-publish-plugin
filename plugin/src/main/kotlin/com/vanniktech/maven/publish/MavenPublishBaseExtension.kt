@@ -204,7 +204,7 @@ abstract class MavenPublishBaseExtension(
     } else {
       throw IllegalStateException(
         "The plugin can't handle the publication ${publication.name} artifactId " +
-          "${publication.artifactId} in project $projectName"
+          "${publication.artifactId} in project $projectName",
       )
     }
   }

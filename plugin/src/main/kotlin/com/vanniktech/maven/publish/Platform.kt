@@ -10,8 +10,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsPluginWrapper
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
@@ -49,7 +47,7 @@ sealed class Platform {
  */
 data class JavaLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
-  override val sourcesJar: Boolean = true
+  override val sourcesJar: Boolean = true,
 ) : Platform() {
 
   override fun configure(project: Project) {
@@ -78,7 +76,7 @@ data class JavaLibrary @JvmOverloads constructor(
  */
 data class GradlePlugin @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
-  override val sourcesJar: Boolean = true
+  override val sourcesJar: Boolean = true,
 ) : Platform() {
 
   override fun configure(project: Project) {
@@ -230,7 +228,7 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
  * This does not include javadoc jars because there are no APIs for that available.
  */
 data class KotlinMultiplatform @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty()
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
 ) : Platform() {
   // Automatically added by Kotlin MPP plugin.
   override val sourcesJar = false
@@ -262,7 +260,7 @@ data class KotlinMultiplatform @JvmOverloads constructor(
  */
 data class KotlinJvm @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true
+  override val sourcesJar: Boolean = true,
 ) : Platform() {
 
   override fun configure(project: Project) {
@@ -294,10 +292,12 @@ data class KotlinJvm @JvmOverloads constructor(
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinJs @Deprecated(
+data class KotlinJs
+@Deprecated(
   "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20. " +
-    "Use the single or no-arg constructors instead."
-) constructor(
+    "Use the single or no-arg constructors instead.",
+)
+constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean,
 ) : Platform() {
@@ -418,7 +418,7 @@ sealed class JavadocJar {
    * for that purpose.
    */
   class Dokka private constructor(
-    internal val taskName: Any
+    internal val taskName: Any,
   ) : JavadocJar() {
     constructor(taskName: String) : this(taskName as Any)
     constructor(taskName: Provider<String>) : this(taskName as Any)
@@ -493,5 +493,5 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
 private class MissingVariantException(name: String) : RuntimeException(
   "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
     " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
-    " extension object to something that matches the variant that ought to be published."
+    " extension object to something that matches the variant that ought to be published.",
 )

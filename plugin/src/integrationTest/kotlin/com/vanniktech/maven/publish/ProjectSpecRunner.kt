@@ -1,7 +1,5 @@
 package com.vanniktech.maven.publish
 
-import java.io.File
-import java.nio.file.FileSystem
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.copyTo
@@ -80,7 +78,7 @@ private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOpti
 
     $buildFileExtra
 
-    """.trimIndent()
+    """.trimIndent(),
   )
 }
 
@@ -100,7 +98,8 @@ private fun ProjectSpec.pluginsBlock(options: TestOptions) = buildString {
   when (options.config) {
     TestOptions.Config.BASE -> appendLine(" id \"com.vanniktech.maven.publish.base\" version \"${pluginVersion}\"")
     TestOptions.Config.DSL,
-    TestOptions.Config.PROPERTIES -> appendLine(" id \"com.vanniktech.maven.publish\" version \"${pluginVersion}\"")
+    TestOptions.Config.PROPERTIES,
+    -> appendLine(" id \"com.vanniktech.maven.publish\" version \"${pluginVersion}\"")
   }
 
   appendLine("}")
@@ -115,7 +114,8 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String {
       """.trimIndent()
     }
     TestOptions.Config.BASE,
-    TestOptions.Config.DSL -> listOfNotNull(
+    TestOptions.Config.DSL,
+    -> listOfNotNull(
       """
 
        mavenPublishing {
@@ -184,7 +184,7 @@ private fun writeSettingFile(path: Path) {
 
     rootProject.name = "default-root-project-name"
 
-    """.trimIndent()
+    """.trimIndent(),
   )
 }
 
@@ -237,7 +237,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
           appendLine("signingInMemoryKeyPassword=test")
         }
       }
-    }
+    },
   )
 }
 

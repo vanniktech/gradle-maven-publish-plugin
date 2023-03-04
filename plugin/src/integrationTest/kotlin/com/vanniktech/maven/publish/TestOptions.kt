@@ -31,17 +31,20 @@ enum class AgpVersion(
     minGradleVersion = GradleVersion.GRADLE_7_2,
     firstUnsupportedGradleVersion = GradleVersion.GRADLE_8_0,
   ),
+
   // stable
   AGP_7_4(
     value = "7.4.1",
     minGradleVersion = GradleVersion.GRADLE_7_5,
   ),
+
   // beta channel
   AGP_8_0(
     value = "8.0.0-beta03",
     minGradleVersion = GradleVersion.GRADLE_8_0,
     minJdkVersion = JavaVersion.VERSION_17,
   ),
+
   // canary channel
   AGP_8_1(
     value = "8.1.0-alpha05",
@@ -53,8 +56,10 @@ enum class AgpVersion(
 enum class KotlinVersion(val value: String) {
   // minimum supported
   KT_1_7("1.7.20"),
+
   // stable
   KT_1_8("1.8.10"),
+
   // preview
   KT_1_8_BETA("1.8.20-Beta"),
 }
@@ -62,10 +67,13 @@ enum class KotlinVersion(val value: String) {
 enum class GradleVersion(val value: String) {
   // minimum supported
   GRADLE_7_3("7.3"),
+
   // stable
   GRADLE_8_0("8.0.1"),
+
   // preview
   GRADLE_8_1("8.1-20230217231705+0000"),
+
   ;
 
   companion object {

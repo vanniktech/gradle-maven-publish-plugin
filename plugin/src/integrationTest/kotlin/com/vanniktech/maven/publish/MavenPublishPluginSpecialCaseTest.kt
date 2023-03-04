@@ -63,7 +63,7 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(linuxResult).pom().exists()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion)
+      kotlinStdlibCommon(kotlinVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).sourcesJar().exists()
@@ -127,7 +127,7 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(linuxResult).pom().exists()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion)
+      kotlinStdlibCommon(kotlinVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).sourcesJar().exists()
@@ -152,7 +152,7 @@ class MavenPublishPluginSpecialCaseTest {
   @TestParameterInjectorTest
   fun minimalPomProject() {
     val project = javaProjectSpec().copy(
-      properties = emptyMap()
+      properties = emptyMap(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -175,7 +175,7 @@ class MavenPublishPluginSpecialCaseTest {
       buildFileExtra = """
         group = "com.example.test2"
         version = "3.2.1"
-      """.trimIndent()
+      """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 

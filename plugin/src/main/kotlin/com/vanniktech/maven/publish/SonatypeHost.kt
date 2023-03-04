@@ -10,7 +10,7 @@ import org.gradle.api.provider.Provider
  * https://central.sonatype.org/articles/2021/Feb/23/new-users-on-s01osssonatypeorg/
  */
 data class SonatypeHost(
-  internal val rootUrl: String
+  internal val rootUrl: String,
 ) : Serializable {
   internal fun apiBaseUrl(): String {
     return "$rootUrl/service/local/"

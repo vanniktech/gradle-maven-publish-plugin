@@ -62,14 +62,14 @@ class Nexus(
       throw IllegalArgumentException(
         "No matching staging profile found in account $username. It is expected that the account contains a staging " +
           "profile that matches or is the start of $group. " +
-          "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}"
+          "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}",
       )
     }
 
     if (candidateProfiles.size > 1) {
       throw IllegalArgumentException(
         "More than 1 matching staging profile found in account $username. " +
-          "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}"
+          "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}",
       )
     }
 
@@ -113,7 +113,7 @@ class Nexus(
       throw IllegalArgumentException(
         "No matching staging repository found in account $username. You can can explicitly choose one by " +
           "passing it as an option like this \"./gradlew closeAndReleaseRepository --repository=comexample-123\". " +
-          "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}"
+          "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}",
       )
     }
 
@@ -121,7 +121,7 @@ class Nexus(
       throw IllegalArgumentException(
         "More than 1 matching staging repository found in account $username. You can can explicitly choose " +
           "one by passing it as an option like this \"./gradlew closeAndReleaseRepository --repository comexample-123\". " +
-          "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}"
+          "Available repositories are: ${allRepositories.joinToString(separator = ", ") { it.repositoryId }}",
       )
     }
     return allRepositories[0]
@@ -165,7 +165,6 @@ class Nexus(
   }
 
   private fun waitForClose(repositoryId: String) {
-
     val startMillis = System.currentTimeMillis()
 
     val waitingChars = listOf(
@@ -175,7 +174,7 @@ class Nexus(
       PROGRESS_4,
       PROGRESS_5,
       PROGRESS_6,
-      PROGRESS_7
+      PROGRESS_7,
     )
     var i = 0
     while (true) {
@@ -243,9 +242,9 @@ class Nexus(
       TransitionRepositoryInput(
         TransitionRepositoryInputData(
           stagedRepositoryIds = listOf(repositoryId),
-          autoDropAfterRelease = true
-        )
-      )
+          autoDropAfterRelease = true,
+        ),
+      ),
     ).execute()
 
     if (!response.isSuccessful) {
@@ -259,9 +258,9 @@ class Nexus(
     val response = service.dropRepository(
       TransitionRepositoryInput(
         TransitionRepositoryInputData(
-          stagedRepositoryIds = listOf(repositoryId)
-        )
-      )
+          stagedRepositoryIds = listOf(repositoryId),
+        ),
+      ),
     ).execute()
 
     if (!response.isSuccessful) {
