@@ -57,7 +57,7 @@ dependencies {
 val integrationTest by tasks.registering(Test::class) {
   dependsOn(
     tasks.publishToMavenLocal,
-    projects.nexus.dependencyProject.tasks.publishToMavenLocal
+    projects.nexus.dependencyProject.tasks.publishToMavenLocal,
   )
   mustRunAfter(tasks.test)
 
@@ -71,9 +71,12 @@ val integrationTest by tasks.registering(Test::class) {
   testLogging.showStandardStreams = true
   maxHeapSize = "2g"
   jvmArgs(
-    "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
-    "--add-opens", "java.base/java.net=ALL-UNNAMED",
-    "--add-opens", "java.base/java.util=ALL-UNNAMED",
+    "--add-opens",
+    "java.base/java.lang.invoke=ALL-UNNAMED",
+    "--add-opens",
+    "java.base/java.net=ALL-UNNAMED",
+    "--add-opens",
+    "java.base/java.util=ALL-UNNAMED",
   )
 
   systemProperty("com.vanniktech.publish.version", project.property("VERSION_NAME").toString())
@@ -82,7 +85,7 @@ val integrationTest by tasks.registering(Test::class) {
   beforeTest(
     closureOf<TestDescriptor> {
       logger.lifecycle("Running test: ${this.className} ${this.displayName}")
-    }
+    },
   )
 }
 

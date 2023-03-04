@@ -42,8 +42,12 @@ internal fun Project.isAtLeastKotlinVersion(id: String, major: Int, minor: Int, 
   val kgpMinor = elements[1].toInt()
   val kgpPatch = elements[2].toInt()
   return kgpMajor > major ||
-    (kgpMajor == major && (kgpMinor > minor ||
-      (kgpMinor == minor && kgpPatch >= patch)))
+    (
+      kgpMajor == major && (
+        kgpMinor > minor ||
+          (kgpMinor == minor && kgpPatch >= patch)
+        )
+      )
 }
 
 internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, patch: Int): Boolean {

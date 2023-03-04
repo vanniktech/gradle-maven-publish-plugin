@@ -36,7 +36,6 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
       it.versionIsSnapshot.set(versionIsSnapshot)
       it.buildService.set(buildService)
     }
-
   }
 
   internal interface CreateStagingRepositoryParameters : WorkParameters {
@@ -84,4 +83,3 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
     }
   }
 }
-

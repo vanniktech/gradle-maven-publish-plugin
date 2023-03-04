@@ -68,7 +68,7 @@ class MavenPublishPluginPlatformTest {
     val project = default.copy(
       plugins = default.plugins + javaTestFixturesPlugin,
       sourceFiles = default.sourceFiles +
-        SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java")
+        SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java"),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -121,7 +121,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(pluginMarkerResult).pom().isSigned()
     assertThat(pluginMarkerResult).pom().matchesExpectedPom(
       "pom",
-      PomDependency("com.example", "test-artifact", "1.0.0", null)
+      PomDependency("com.example", "test-artifact", "1.0.0", null),
     )
   }
 
@@ -151,7 +151,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(pluginMarkerResult).pom().isSigned()
     assertThat(pluginMarkerResult).pom().matchesExpectedPom(
       "pom",
-      PomDependency("com.example", "test-artifact", "1.0.0", null)
+      PomDependency("com.example", "test-artifact", "1.0.0", null),
     )
   }
 
@@ -164,7 +164,7 @@ class MavenPublishPluginPlatformTest {
                 languageVersion = JavaLanguageVersion.of(8)
             }
         }
-      """.trimIndent()
+      """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -211,7 +211,7 @@ class MavenPublishPluginPlatformTest {
       sourceFiles = default.sourceFiles + listOf(
         SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java"),
         SourceFile("testFixtures", "kotlin", "com/vanniktech/maven/publish/test/TestFixtureKotlinClass.kt"),
-      )
+      ),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -310,7 +310,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(linuxResult).pom().isSigned()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion)
+      kotlinStdlibCommon(kotlinVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).module().isSigned()
@@ -396,7 +396,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(linuxResult).pom().isSigned()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion)
+      kotlinStdlibCommon(kotlinVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).module().isSigned()
