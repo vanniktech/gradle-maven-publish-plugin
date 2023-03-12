@@ -95,7 +95,6 @@ val quickIntegrationTest by tasks.registering {
   System.setProperty("quickTest", "true")
 }
 
-
 tasks.check {
   dependsOn(integrationTest)
 }

@@ -127,7 +127,7 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun javaGradlePluginKotlinProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
     val project = javaGradlePluginKotlinProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -187,7 +187,7 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun kotlinJvmProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
     val project = kotlinJvmProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -209,7 +209,7 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun kotlinJvmWithTestFixturesProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
     val default = kotlinJvmProjectSpec(kotlinVersion)
     val project = default.copy(
@@ -247,7 +247,7 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun kotlinJsProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
     val project = kotlinJsProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -269,7 +269,7 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun kotlinMultiplatformProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
     val project = kotlinMultiplatformProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
