@@ -81,6 +81,7 @@ val integrationTest by tasks.registering(Test::class) {
 
   systemProperty("com.vanniktech.publish.version", project.property("VERSION_NAME").toString())
   systemProperty("testConfigMethod", System.getProperty("testConfigMethod"))
+  systemProperty("quickTest", System.getProperty("quickTest"))
 
   beforeTest(
     closureOf<TestDescriptor> {
@@ -88,6 +89,12 @@ val integrationTest by tasks.registering(Test::class) {
     },
   )
 }
+
+val quickIntegrationTest by tasks.registering {
+  dependsOn(integrationTest)
+  System.setProperty("quickTest", "true")
+}
+
 
 tasks.check {
   dependsOn(integrationTest)

@@ -22,7 +22,9 @@ class MavenPublishPluginSpecialCaseTest {
     get() = TestOptions(config, NO_SIGNING, gradleVersion)
 
   @TestParameterInjectorTest
-  fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(@TestParameter kotlinVersion: KotlinVersion) {
+  fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+  ) {
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "foo-bar",
@@ -86,7 +88,9 @@ class MavenPublishPluginSpecialCaseTest {
   }
 
   @TestParameterInjectorTest
-  fun artifactIdThatContainsProjectNameProducesCorrectArtifactId2(@TestParameter kotlinVersion: KotlinVersion) {
+  fun artifactIdThatContainsProjectNameProducesCorrectArtifactId2(
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+  ) {
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "bar-foo",
