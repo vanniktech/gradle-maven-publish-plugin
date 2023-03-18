@@ -58,21 +58,3 @@ internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, 
     false
   }
 }
-
-internal fun Project.isAtLeastUsingAndroidGradleVersionBeta(major: Int, minor: Int, patch: Int, beta: Int): Boolean {
-  return try {
-    androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch).beta(beta)
-  } catch (e: NoClassDefFoundError) {
-    // was added in 7.0
-    false
-  }
-}
-
-internal fun Project.isAtLeastUsingAndroidGradleVersionAlpha(major: Int, minor: Int, patch: Int, alpha: Int): Boolean {
-  return try {
-    androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch).alpha(alpha)
-  } catch (e: NoClassDefFoundError) {
-    // was added in 7.0
-    false
-  }
-}
