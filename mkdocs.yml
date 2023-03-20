@@ -23,6 +23,7 @@ nav:
   - 'central.md'
   - 'other.md'
   - 'base.md'
+  - 'changelog.md'
 
 markdown_extensions:
   - smarty
