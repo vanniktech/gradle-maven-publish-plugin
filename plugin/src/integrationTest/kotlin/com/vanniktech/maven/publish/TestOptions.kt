@@ -88,4 +88,3 @@ enum class GradlePluginPublish(val version: String) {
   // stable
   GRADLE_PLUGIN_PUBLISH_1_1("1.1.0"),
 }
-
