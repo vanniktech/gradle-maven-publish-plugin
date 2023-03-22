@@ -477,7 +477,7 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
       val action = Action<JvmVariantBuilder> {
         it.withSourcesJar().published()
       }
-      if (GradleVersion.current() >= GradleVersion.version("8.1-20230302232219+0000")) {
+      if (GradleVersion.current() >= GradleVersion.version("8.1-rc-1")) {
         val extension = project.extensions.getByType(JavaPluginExtension::class.java)
         val testFixturesSourceSet = extension.sourceSets.maybeCreate(variant)
         val method = services.javaClass.getMethod("createJvmVariant", String::class.java, SourceSet::class.java, Action::class.java)
