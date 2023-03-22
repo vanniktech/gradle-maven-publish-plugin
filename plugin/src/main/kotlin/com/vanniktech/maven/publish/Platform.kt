@@ -92,6 +92,22 @@ data class GradlePlugin @JvmOverloads constructor(
 }
 
 /**
+ * To be used for `com.gradle.plugin-publish` projects. Uses the default publication that gets created by that plugin.
+ */
+class GradlePublishPlugin : Platform() {
+
+  override val javadocJar: JavadocJar = JavadocJar.Javadoc()
+  override val sourcesJar: Boolean = true
+
+  override fun configure(project: Project) {
+    // setup is fully handled by com.gradle.plugin-publish already
+  }
+
+  override fun equals(other: Any?): Boolean = other is GradlePublishPlugin
+  override fun hashCode(): Int = this::class.hashCode()
+}
+
+/**
  * To be used for `com.android.library` projects. Applying this creates a publication for the component of the given
  * `variant`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
  * be added to the publication.

@@ -13,6 +13,7 @@ val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
 val kotlinJsPlugin = PluginSpec("org.jetbrains.kotlin.js")
 val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
+val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 
 val fixtures = Paths.get("src/integrationTest/fixtures2").toAbsolutePath()
 
@@ -87,6 +88,14 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
   """.trimIndent(),
   basePluginConfig = "configure(new GradlePlugin(new JavadocJar.Empty(), true))",
 )
+
+fun javaGradlePluginWithGradlePluginPublish(gradlePluginPublish: GradlePluginPublish): ProjectSpec {
+  val base = javaGradlePluginProjectSpec()
+  return base.copy(
+    plugins = base.plugins + gradlePluginPublishPlugin.copy(version = gradlePluginPublish.version),
+    basePluginConfig = "configure(new GradlePublishPlugin())",
+  )
+}
 
 fun javaGradlePluginKotlinProjectSpec(version: KotlinVersion): ProjectSpec {
   val plainJavaGradlePluginProject = javaGradlePluginProjectSpec()

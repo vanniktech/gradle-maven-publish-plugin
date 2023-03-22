@@ -50,6 +50,8 @@ private fun Project.configurePlatform() {
     when {
       plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> {} // Handled above.
       plugins.hasPlugin("com.android.library") -> {} // Handled above.
+      plugins.hasPlugin("com.gradle.plugin-publish") ->
+        baseExtension.configure(GradlePublishPlugin())
       plugins.hasPlugin("java-gradle-plugin") ->
         baseExtension.configure(GradlePlugin(defaultJavaDocOption() ?: javadoc()))
       plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->

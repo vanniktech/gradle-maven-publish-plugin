@@ -80,3 +80,12 @@ enum class GradleVersion(val value: String) {
     val GRADLE_7_6 = GRADLE_8_0
   }
 }
+
+enum class GradlePluginPublish(val version: String) {
+  // minimum supported
+  GRADLE_PLUGIN_PUBLISH_1_0("1.0.0"),
+
+  // stable
+  GRADLE_PLUGIN_PUBLISH_1_1("1.1.0"),
+}
+
