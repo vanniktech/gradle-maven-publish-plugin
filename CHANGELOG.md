@@ -1,5 +1,29 @@
 # Change Log
 
+## 0.25.0 **UNRELEASED**
+
+- The `createStagingRepository` task now uses the worker API which allows the project to built
+  in parallel to the creation of the staging repository.
+- Fix incompatibility with Kotlin 1.8.20-Beta for Kotlin/JS projects. The Kotlin/JS plugin is now taking
+  care of creating the sources jar on its own. Because of this the base plugin won't allow disabling
+  sources jar creation for Kotlin/JS projects anymore starting with 1.8.20. The `KotlinJs` constructor
+  with a `sourcesJar` parameter has been deprecated.
+- Fix incompatibility with Gradle 8.1 for `java-test-fixtures` projects
+- New minimum supported versions:
+  - Gradle 7.4
+  - Android Gradle Plugin 7.3.0
+  - Kotlin Gradle Plugin 1.7.0
+- Note: Starting with Kotlin 1.8.20-Beta the `common` sources jar for multiplatform projects will only contain
+  the sources of the common source set instead of containing the sources from all source sets.
+
+#### Configuration cache status
+
+Configuration cache is supported starting with **Gradle 7.6+** except for:
+- Builds with enabled signing, will be resolved in Gradle 8.1.
+- Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+- Kotlin Multiplatform projects, blocked by [KT-49933](https://youtrack.jetbrains.com/issue/KT-49933).
+
+
 ## 0.24.0 *(2023-01-29)*
 
 - Support arbitrary Sonatype hosts instead of just oss.sonatype.org and s01.oss.sonatype.org.

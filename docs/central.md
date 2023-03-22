@@ -223,7 +223,25 @@ The result will be a very long single line string that looks like this
 lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEpr64iB9b6YRkWil3EODiiLd9JS3V...9pip+B1QLwEdLCEJA+3IIiw4qM5hnMw=
 ```
 
-## Publishing
+## Publishing snapshots
+
+Snapshots can be published by setting the version to something ending with `-SNAPSHOT`
+and then running the following Gradle task:
+
+```
+./gradlew publishAllPublicationsToMavenCentral
+```
+
+The snapshot will be automatically available in Sonatype's
+[snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/) (or the
+[S01 snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots/)) directly after the
+task finished.
+
+Signing is not required for snapshot builds, but if the configuration is present the build
+will still be signed.
+
+
+## Publishing releases
 
 The publishing process for Maven Central consists of several steps
 
@@ -236,7 +254,7 @@ The publishing process for Maven Central consists of several steps
 By running the following Gradle task the plugin will take care of steps 1 to 3 automatically:
 
 ```
-./gradlew publishAllPublicationsToMavenCentral
+./gradlew publishAllPublicationsToMavenCentral --no-configuration-cache
 ```
 
 The releasing step can be done manually by going to oss.sonatype.org (or s01.oss.sonatype.org) and
