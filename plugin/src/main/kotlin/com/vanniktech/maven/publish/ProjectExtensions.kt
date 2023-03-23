@@ -62,7 +62,7 @@ internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, 
 
 @Suppress("UnstableApiUsage")
 internal fun Project.configurationCache(): Boolean {
-  if (GradleVersion.current() > GradleVersion.version("7.6")) {
+  if (GradleVersion.current() >= GradleVersion.version("7.6")) {
     return gradle.startParameter.isConfigurationCacheRequested
   }
   return false
