@@ -171,6 +171,7 @@ private fun writeSettingFile(path: Path) {
             mavenLocal()
             mavenCentral()
             google()
+            gradlePluginPortal()
         }
     }
 

@@ -9,10 +9,12 @@
   sources jar creation for Kotlin/JS projects anymore starting with 1.8.20. The `KotlinJs` constructor
   with a `sourcesJar` parameter has been deprecated.
 - Fix incompatibility with Gradle 8.1 for `java-test-fixtures` projects
+- Fix incompatibility with `com.gradle.plugin-publish` 1.0.0 and 1.1.0
 - New minimum supported versions:
   - Gradle 7.4
   - Android Gradle Plugin 7.3.0
   - Kotlin Gradle Plugin 1.7.0
+  - `com.gradle.plugin-publish` 1.0.0
 - Note: Starting with Kotlin 1.8.20-Beta the `common` sources jar for multiplatform projects will only contain
   the sources of the common source set instead of containing the sources from all source sets.
 

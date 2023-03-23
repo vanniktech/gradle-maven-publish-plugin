@@ -299,8 +299,8 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
 
 ### Gradle Plugin
 
-
-For projects using the `java-gradle-plugin` plugin.
+For projects using the `java-gradle-plugin` plugin. When also using `com.gradle.plugin-publish` please
+use [GradlePublishPlugin](#gradle-publish-plugin)
 
 === "build.gradle"
 
@@ -335,6 +335,31 @@ For projects using the `java-gradle-plugin` plugin.
         // whether to publish a sources jar
         sourcesJar = true,
       ))
+    }
+    ```
+
+### Gradle Publish Plugin
+
+For projects using the `com.gradle.plugin-publish` plugin. This will always publish a sources jar
+and a javadoc jar.
+
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.GradlePublishPlugin
+
+    mavenPublishing {
+      configure(new GradlePublishPlugin())
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    import com.vanniktech.maven.publish.GradlePublishPlugin
+
+    mavenPublishing {
+      configure(GradlePublishPlugin())
     }
     ```
 
