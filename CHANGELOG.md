@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.25.0 **UNRELEASED**
+## 0.25.0 *(2023-03-23)*
 
 - The `createStagingRepository` task now uses the worker API which allows the project to built
   in parallel to the creation of the staging repository.
