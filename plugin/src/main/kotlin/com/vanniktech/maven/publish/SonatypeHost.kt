@@ -38,7 +38,7 @@ data class SonatypeHost(
         }
       }
 
-      "$rootUrl/service/local/staging/deployByRepositoryId/${stagingRepositoryId}/"
+      "$rootUrl/service/local/staging/deployByRepositoryId/$stagingRepositoryId/"
     }
   }
 
