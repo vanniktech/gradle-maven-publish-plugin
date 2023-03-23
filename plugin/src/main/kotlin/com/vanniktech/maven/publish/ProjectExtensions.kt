@@ -7,6 +7,7 @@ import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningExtension
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 
 internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
@@ -57,4 +58,12 @@ internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, 
     // was added in 7.0
     false
   }
+}
+
+@Suppress("UnstableApiUsage")
+internal fun Project.configurationCache(): Boolean {
+  if (GradleVersion.current() > GradleVersion.version("7.6")) {
+    return gradle.startParameter.isConfigurationCacheRequested
+  }
+  return false
 }

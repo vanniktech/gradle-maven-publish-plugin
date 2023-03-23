@@ -9,6 +9,7 @@ import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
@@ -62,21 +63,11 @@ abstract class MavenPublishBaseExtension(
 
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
     val createRepository = project.tasks.registerCreateRepository(groupId, versionIsSnapshot, buildService)
-    val stagingRepositoryId = buildService.map {
-      requireNotNull(it.stagingRepositoryId) {
-        @Suppress("UnstableApiUsage")
-        if (project.gradle.startParameter.isConfigurationCacheRequested) {
-          "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
-            "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
-        } else {
-          "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
-        }
-      }
-    }
+    val url = sonatypeHost.map { it.publishingUrl(versionIsSnapshot, buildService, project.configurationCache()) }
 
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
-      repo.setUrl(sonatypeHost.map { it.publishingUrl(versionIsSnapshot.get(), stagingRepositoryId) })
+      repo.setUrl(url)
       repo.credentials(PasswordCredentials::class.java)
     }
 
