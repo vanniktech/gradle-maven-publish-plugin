@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.25.1 *(2023-03-23)*
+## 0.25.1 *(2023-03-24)*
 
 - Fix snapshot publishing being broken.
 

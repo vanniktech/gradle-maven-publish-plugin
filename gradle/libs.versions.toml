@@ -10,7 +10,7 @@ okhttp = "com.squareup.okhttp3:okhttp:4.10.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.8.10"
 android-plugin = "com.android.tools.build:gradle:7.4.2"
 ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:11.3.1"
-maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.24.0"
+maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.25.0-rc1"
 buildconfig-plugin = "com.github.gmazzo:gradle-buildconfig-plugin:3.1.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
