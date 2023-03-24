@@ -46,3 +46,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: ${{ env.RELEASE_NOTES }}
+        if: ${{ env.RELEASE_NOTES != '' }}
