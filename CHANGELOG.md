@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.25.1 *(2023-03-23)*
+
+- Fix snapshot publishing being broken.
+
+
 ## 0.25.0 *(2023-03-23)*
 
 - The `createStagingRepository` task now uses the worker API which allows the project to built
