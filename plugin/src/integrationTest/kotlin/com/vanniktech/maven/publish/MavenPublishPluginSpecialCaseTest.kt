@@ -39,7 +39,7 @@ class MavenPublishPluginSpecialCaseTest {
     )
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
-    if (kotlinVersion < KotlinVersion.KT_1_8_BETA) {
+    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
       assertThat(result).sourcesJar().containsAllSourceFiles()
     } else {
       assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
@@ -105,7 +105,7 @@ class MavenPublishPluginSpecialCaseTest {
     )
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
-    if (kotlinVersion < KotlinVersion.KT_1_8_BETA) {
+    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
       assertThat(result).sourcesJar().containsAllSourceFiles()
     } else {
       assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
