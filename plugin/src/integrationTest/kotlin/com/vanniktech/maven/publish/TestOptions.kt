@@ -54,13 +54,10 @@ enum class AgpVersion(
 
 enum class KotlinVersion(val value: String) {
   // minimum supported
-  KT_1_7("1.7.0"),
+  KT_1_7_0("1.7.0"),
 
   // stable
-  KT_1_8("1.8.10"),
-
-  // preview
-  KT_1_8_BETA("1.8.20"),
+  KT_1_8_20("1.8.20"),
 }
 
 enum class GradleVersion(val value: String) {
@@ -68,16 +65,14 @@ enum class GradleVersion(val value: String) {
   GRADLE_7_4("7.4"),
 
   // stable
-  GRADLE_8_0("8.0.2"),
-
-  // preview
-  GRADLE_8_1("8.1-rc-2"),
+  GRADLE_8_1("8.1"),
   ;
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
-    val GRADLE_7_5 = GRADLE_8_0
-    val GRADLE_7_6 = GRADLE_8_0
+    val GRADLE_7_5 = GRADLE_8_1
+    val GRADLE_7_6 = GRADLE_8_1
+    val GRADLE_8_0 = GRADLE_8_1
   }
 }
 
@@ -86,5 +81,5 @@ enum class GradlePluginPublish(val version: String) {
   GRADLE_PLUGIN_PUBLISH_1_0("1.0.0"),
 
   // stable
-  GRADLE_PLUGIN_PUBLISH_1_1("1.1.0"),
+  GRADLE_PLUGIN_PUBLISH_1_2("1.2.0"),
 }
