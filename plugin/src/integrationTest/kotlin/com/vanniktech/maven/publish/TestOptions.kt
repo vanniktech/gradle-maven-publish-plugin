@@ -32,8 +32,7 @@ enum class AgpVersion(
   ),
 
   // stable
- 
-   AGP_8_0(
+  AGP_8_0(
     value = "8.0.0",
     minGradleVersion = GradleVersion.GRADLE_8_0,
     minJdkVersion = JavaVersion.VERSION_17,
