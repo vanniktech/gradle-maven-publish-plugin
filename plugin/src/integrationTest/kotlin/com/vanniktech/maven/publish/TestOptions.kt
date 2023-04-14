@@ -32,14 +32,9 @@ enum class AgpVersion(
   ),
 
   // stable
-  AGP_7_4(
-    value = "7.4.2",
-    minGradleVersion = GradleVersion.GRADLE_7_5,
-  ),
-
-  // beta channel
-  AGP_8_0(
-    value = "8.0.0-rc01",
+ 
+   AGP_8_0(
+    value = "8.0.0",
     minGradleVersion = GradleVersion.GRADLE_8_0,
     minJdkVersion = JavaVersion.VERSION_17,
   ),
