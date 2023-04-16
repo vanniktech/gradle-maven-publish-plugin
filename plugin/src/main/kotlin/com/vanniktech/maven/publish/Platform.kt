@@ -437,10 +437,15 @@ sealed class JavadocJar {
    * for that purpose.
    */
   class Dokka private constructor(
-    internal val taskName: Any,
+    internal val taskName: DokkaTaskName,
   ) : JavadocJar() {
-    constructor(taskName: String) : this(taskName as Any)
-    constructor(taskName: Provider<String>) : this(taskName as Any)
+
+    internal sealed interface DokkaTaskName
+    internal data class StringDokkaTaskName(val value: String) : DokkaTaskName
+    internal data class ProviderDokkaTaskName(val value: Provider<String>) : DokkaTaskName
+
+    constructor(taskName: String) : this(StringDokkaTaskName(taskName))
+    constructor(taskName: Provider<String>) : this(ProviderDokkaTaskName(taskName))
 
     override fun equals(other: Any?): Boolean = other is Dokka && taskName == other.taskName
     override fun hashCode(): Int = taskName.hashCode()

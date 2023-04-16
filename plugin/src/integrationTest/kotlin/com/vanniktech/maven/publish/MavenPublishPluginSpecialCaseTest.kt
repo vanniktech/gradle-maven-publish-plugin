@@ -237,4 +237,25 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(result).javadocJar().exists()
     assertThat(result).javadocJar().isSigned()
   }
+
+  @TestParameterInjectorTest
+  fun dokka() {
+    val kotlinVersion = KotlinVersion.values().last()
+    val original = kotlinJvmProjectSpec(kotlinVersion)
+    val project = original.copy(
+      plugins = original.plugins + dokkaPlugin,
+      basePluginConfig = original.basePluginConfig.replace("JavadocJar.Empty()", "JavadocJar.Dokka(\"dokkaHtml\")"),
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).module().exists()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().containsFiles(ignoreAdditionalFiles = true, "index.html")
+  }
 }

@@ -47,6 +47,10 @@ private fun TestOptions.supportsConfigCaching(plugins: List<PluginSpec>): Boolea
   if (plugins.any { it.id == kotlinMultiplatformPlugin.id }) {
     return false
   }
+  // TODO https://github.com/Kotlin/dokka/issues/2231
+  if (plugins.any { it.id == dokkaPlugin.id }) {
+    return false
+  }
   // publishing supports configuration cache starting with 7.6
   // signing only supports configuration cache starting with 8.1
   if (gradleVersion >= GradleVersion.GRADLE_8_1) {
