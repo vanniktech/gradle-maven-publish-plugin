@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.25.2 *(2023-04-16)*
+
+- Fix javadoc jar being empty when using dokka.
+
+
 ## 0.25.1 *(2023-03-24)*
 
 - Fix snapshot publishing being broken.
