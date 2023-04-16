@@ -139,7 +139,7 @@ open class ArtifactSubject internal constructor(
       failWhenAdditionalFilesFound = !ignoreAdditionalFiles,
       fileMatcher = { sourceFile, zipEntry -> zipEntry.name == sourceFile },
       fileDescriptor = { it },
-      fileContent = { null }
+      fileContent = { null },
     )
   }
 
@@ -227,10 +227,10 @@ class SourcesJarSubject private constructor(
       filesToIgnore = listOf("META-INF", "BuildConfig.java"),
       failWhenAdditionalFilesFound = true,
       fileMatcher = { sourceFile, zipEntry ->
-        zipEntry.name == sourceFile.file  || zipEntry.name == "${sourceFile.sourceSet}/${sourceFile.file}"
+        zipEntry.name == sourceFile.file || zipEntry.name == "${sourceFile.sourceSet}/${sourceFile.file}"
       },
       fileDescriptor = { "${it.sourceSet}/${it.file}" },
-      fileContent = { it.resolveIn(result.project).readText() }
+      fileContent = { it.resolveIn(result.project).readText() },
     )
   }
 }
