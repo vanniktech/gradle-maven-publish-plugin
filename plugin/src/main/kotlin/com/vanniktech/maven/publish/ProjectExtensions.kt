@@ -4,6 +4,7 @@ import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.variant.AndroidComponentsExtension
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.logging.configuration.ConsoleOutput
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningExtension
@@ -22,6 +23,9 @@ internal inline val Project.gradlePublishing: PublishingExtension
 
 internal inline val Project.androidComponents: AndroidComponentsExtension<*, *, *>
   get() = extensions.getByType(AndroidComponentsExtension::class.java)
+
+internal inline val Project.isUsingPlainConsole: Boolean
+  get() = project.gradle.startParameter.consoleOutput == ConsoleOutput.Plain
 
 internal fun Project.mavenPublications(action: Action<MavenPublication>) {
   gradlePublishing.publications.withType(MavenPublication::class.java).configureEach(action)

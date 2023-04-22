@@ -53,6 +53,7 @@ abstract class MavenPublishBaseExtension(
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
 
+    val usingPlainConsole = project.isUsingPlainConsole
     val buildService = project.registerSonatypeRepositoryBuildService(
       sonatypeHost = sonatypeHost,
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
@@ -61,7 +62,7 @@ abstract class MavenPublishBaseExtension(
     )
 
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
-    val createRepository = project.tasks.registerCreateRepository(groupId, versionIsSnapshot, buildService)
+    val createRepository = project.tasks.registerCreateRepository(groupId, versionIsSnapshot, usingPlainConsole, buildService)
     val stagingRepositoryId = createRepository.flatMap { it.stagingRepositoryId }
 
     project.gradlePublishing.repositories.maven { repo ->
@@ -76,7 +77,7 @@ abstract class MavenPublishBaseExtension(
       }
     }
 
-    project.tasks.registerCloseAndReleaseRepository(buildService)
+    project.tasks.registerCloseAndReleaseRepository(usingPlainConsole, buildService)
     project.tasks.registerDropRepository(buildService)
   }
 

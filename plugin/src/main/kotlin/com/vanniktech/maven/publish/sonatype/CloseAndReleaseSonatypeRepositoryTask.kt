@@ -20,6 +20,9 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask @Inject constructo
   @get:Internal
   abstract val buildService: Property<SonatypeRepositoryBuildService>
 
+  @get:Internal
+  abstract val usingPlainConsole: Property<Boolean>
+
   @Option(option = "repository", description = "Specify which staging repository to close and release.")
   @Input
   @Optional
@@ -35,7 +38,7 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask @Inject constructo
     }
 
     val progressLogger = progressLoggerFactory.newOperation(CloseAndReleaseSonatypeRepositoryTask::class.java)
-    val nexusProgressLogger = NexusProgressLogger(progressLogger)
+    val nexusProgressLogger = NexusProgressLogger(usingPlainConsole.get(), progressLogger)
 
     val manualStagingRepositoryId = this.manualStagingRepositoryId
     if (manualStagingRepositoryId != null) {
@@ -55,11 +58,13 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask @Inject constructo
     private const val NAME = "closeAndReleaseRepository"
 
     fun TaskContainer.registerCloseAndReleaseRepository(
+      isUsingPlainConsole: Boolean,
       buildService: Provider<SonatypeRepositoryBuildService>,
     ): TaskProvider<CloseAndReleaseSonatypeRepositoryTask> {
       return register(NAME, CloseAndReleaseSonatypeRepositoryTask::class.java) {
         it.description = "Closes and releases a staging repository on Sonatype OSS"
         it.group = "release"
+        it.usingPlainConsole.set(isUsingPlainConsole)
         it.buildService.set(buildService)
         it.usesService(buildService)
       }

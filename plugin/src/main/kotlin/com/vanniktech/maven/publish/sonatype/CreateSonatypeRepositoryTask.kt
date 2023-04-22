@@ -24,6 +24,9 @@ internal abstract class CreateSonatypeRepositoryTask @Inject constructor(
   abstract val stagingRepositoryId: Property<String>
 
   @get:Internal
+  abstract val usingPlainConsole: Property<Boolean>
+
+  @get:Internal
   abstract val buildService: Property<SonatypeRepositoryBuildService>
 
   @TaskAction
@@ -42,7 +45,7 @@ internal abstract class CreateSonatypeRepositoryTask @Inject constructor(
     }
 
     val progressLogger = progressLoggerFactory.newOperation(CreateSonatypeRepositoryTask::class.java)
-    val nexusLogger = NexusProgressLogger(progressLogger)
+    val nexusLogger = NexusProgressLogger(usingPlainConsole.get(), progressLogger)
     val id = service.nexus.createRepositoryForGroup(projectGroup.get(), nexusLogger)
 
     service.stagingRepositoryId = id
@@ -55,6 +58,7 @@ internal abstract class CreateSonatypeRepositoryTask @Inject constructor(
     fun TaskContainer.registerCreateRepository(
       projectGroup: Provider<String>,
       versionIsSnapshot: Provider<Boolean>,
+      usingPlainConsole: Boolean,
       buildService: Provider<SonatypeRepositoryBuildService>,
     ): TaskProvider<CreateSonatypeRepositoryTask> {
       return register(NAME, CreateSonatypeRepositoryTask::class.java) {
@@ -62,6 +66,7 @@ internal abstract class CreateSonatypeRepositoryTask @Inject constructor(
         it.group = "release"
         it.projectGroup.set(projectGroup)
         it.versionIsSnapshot.set(versionIsSnapshot)
+        it.usingPlainConsole.set(usingPlainConsole)
         it.buildService.set(buildService)
         it.usesService(buildService)
       }

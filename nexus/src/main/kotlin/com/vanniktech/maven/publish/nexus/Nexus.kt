@@ -168,6 +168,11 @@ class Nexus(
 
     val startMillis = System.currentTimeMillis()
 
+    val progressUpdateInternal = if (logger.usingPlainConsole) {
+      CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS_SLOW
+    } else {
+      CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS_FAST
+    }
     val waitingChars = listOf(
       PROGRESS_1,
       PROGRESS_2,
@@ -186,7 +191,7 @@ class Nexus(
 
       logger.progress("${waitingChars[i++ % waitingChars.size]} waiting for close...")
 
-      Thread.sleep(CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS)
+      Thread.sleep(progressUpdateInternal)
 
       val newTime = System.currentTimeMillis()
       if (newTime - lastNetworkCheck < CLOSE_CLOSE_CHECK_INTERVAL_MILLIS) {
@@ -282,6 +287,13 @@ class Nexus(
 
   /** A simple logger interface that can start, complete, and report intermediate progress. */
   interface Logger {
+    /**
+     * Indicates if this progress logger is outputting to a plain console output, which is
+     * useful to know if it can handle more frequent progress update ticks.
+     */
+    val usingPlainConsole: Boolean
+      get() = false
+
     fun start(description: String, status: String)
     fun lifecycle(status: String)
     fun progress(status: String, failing: Boolean = false)
@@ -331,8 +343,10 @@ class Nexus(
     private const val PROGRESS_6 = "\u280F"
     private const val PROGRESS_7 = "\u2819"
 
-    /** Update the progress loader every 500ms */
-    private const val CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS = 200L
+    /** Update the progress loader every 500ms, for rich loggers. */
+    private const val CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS_FAST = 200L
+    /** Update the progress loader every 10s, for non-rich loggers. */
+    private const val CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS_SLOW = 200L
     /** Check the repository every 5 seconds. */
     private const val CLOSE_CLOSE_CHECK_INTERVAL_MILLIS = 5_000L
   }
