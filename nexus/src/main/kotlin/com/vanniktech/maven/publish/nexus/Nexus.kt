@@ -326,9 +326,9 @@ class Nexus(
       override fun completed(status: String, failed: Boolean) {
         flush()
         if (failed) {
-          System.err.println("Completed with errors: $status\n")
+          System.err.println("\nCompleted with errors: $status")
         } else {
-          println("Completed: $status\n")
+          println("\nCompleted: $status")
         }
       }
     }
