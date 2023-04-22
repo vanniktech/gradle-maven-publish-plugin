@@ -42,6 +42,7 @@ jobs:
       - name: Copy docs
         run: |
           cp README.md docs/index.md
+          cp CHANGELOG.md docs/changelog.md
           # Update page title
           sed -i 's/# gradle-maven-publish-plugin/# Overview/' docs/index.md
           # Update plugin version
@@ -59,4 +60,4 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2

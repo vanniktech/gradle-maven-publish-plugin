@@ -12,13 +12,18 @@ theme:
     primary: 'cyan'
     accent: 'purple'
   features:
+    - navigation.sections
+    - navigation.tracking
+    - navigation.tabs
     - content.tabs.link
+    - toc.integrate
 
 nav:
   - 'index.md'
   - 'central.md'
   - 'other.md'
   - 'base.md'
+  - 'changelog.md'
 
 markdown_extensions:
   - smarty

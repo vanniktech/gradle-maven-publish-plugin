@@ -22,7 +22,9 @@ class MavenPublishPluginSpecialCaseTest {
     get() = TestOptions(config, NO_SIGNING, gradleVersion)
 
   @TestParameterInjectorTest
-  fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(@TestParameter kotlinVersion: KotlinVersion) {
+  fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+  ) {
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "foo-bar",
@@ -37,7 +39,7 @@ class MavenPublishPluginSpecialCaseTest {
     )
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
-    if (kotlinVersion < KotlinVersion.KT_1_8_BETA) {
+    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
       assertThat(result).sourcesJar().containsAllSourceFiles()
     } else {
       assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
@@ -63,7 +65,7 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(linuxResult).pom().exists()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion)
+      kotlinStdlibCommon(kotlinVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).sourcesJar().exists()
@@ -86,7 +88,9 @@ class MavenPublishPluginSpecialCaseTest {
   }
 
   @TestParameterInjectorTest
-  fun artifactIdThatContainsProjectNameProducesCorrectArtifactId2(@TestParameter kotlinVersion: KotlinVersion) {
+  fun artifactIdThatContainsProjectNameProducesCorrectArtifactId2(
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+  ) {
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "bar-foo",
@@ -101,7 +105,7 @@ class MavenPublishPluginSpecialCaseTest {
     )
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
-    if (kotlinVersion < KotlinVersion.KT_1_8_BETA) {
+    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
       assertThat(result).sourcesJar().containsAllSourceFiles()
     } else {
       assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
@@ -127,7 +131,7 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(linuxResult).pom().exists()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion)
+      kotlinStdlibCommon(kotlinVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).sourcesJar().exists()
@@ -152,7 +156,7 @@ class MavenPublishPluginSpecialCaseTest {
   @TestParameterInjectorTest
   fun minimalPomProject() {
     val project = javaProjectSpec().copy(
-      properties = emptyMap()
+      properties = emptyMap(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -175,7 +179,7 @@ class MavenPublishPluginSpecialCaseTest {
       buildFileExtra = """
         group = "com.example.test2"
         version = "3.2.1"
-      """.trimIndent()
+      """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -232,5 +236,26 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(result).sourcesJar().containsAllSourceFiles()
     assertThat(result).javadocJar().exists()
     assertThat(result).javadocJar().isSigned()
+  }
+
+  @TestParameterInjectorTest
+  fun dokka() {
+    val kotlinVersion = KotlinVersion.values().last()
+    val original = kotlinJvmProjectSpec(kotlinVersion)
+    val project = original.copy(
+      plugins = original.plugins + dokkaPlugin,
+      basePluginConfig = original.basePluginConfig.replace("JavadocJar.Empty()", "JavadocJar.Dokka(\"dokkaHtml\")"),
+    )
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).module().exists()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().containsFiles(ignoreAdditionalFiles = true, "index.html")
   }
 }

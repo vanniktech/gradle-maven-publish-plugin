@@ -18,11 +18,16 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
   fixtures.resolve("test-secring.gpg").copyTo(project.resolve("test-secring.gpg"))
 
   val task = ":publishAllPublicationsToTestFolderRepository"
+  val arguments = mutableListOf(task, "--stacktrace")
+  if (options.supportsConfigCaching(plugins)) {
+    arguments.add("--configuration-cache")
+  }
+
   val result = GradleRunner.create()
     .withGradleVersion(options.gradleVersion.value)
     .withProjectDir(project.toFile())
     .withDebug(true)
-    .withArguments(task, "--stacktrace")
+    .withArguments(arguments)
     .build()
 
   return ProjectResult(
@@ -32,6 +37,29 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     project = project,
     repo = repo,
   )
+}
+
+private fun TestOptions.supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
+  // TODO: Kotlin Multiplatform plugin has configuration cache issues
+  //  - https://youtrack.jetbrains.com/issue/KT-49933 (meta ticket)
+  //  - https://youtrack.jetbrains.com/issue/KT-43293 (closed but still has issues)
+  //  - https://youtrack.jetbrains.com/issue/KT-55051
+  if (plugins.any { it.id == kotlinMultiplatformPlugin.id }) {
+    return false
+  }
+  // TODO https://github.com/Kotlin/dokka/issues/2231
+  if (plugins.any { it.id == dokkaPlugin.id }) {
+    return false
+  }
+  // publishing supports configuration cache starting with 7.6
+  // signing only supports configuration cache starting with 8.1
+  if (gradleVersion >= GradleVersion.GRADLE_8_1) {
+    return true
+  }
+  if (gradleVersion >= GradleVersion.GRADLE_7_6) {
+    return signing == TestOptions.Signing.NO_SIGNING
+  }
+  return false
 }
 
 private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOptions) {
@@ -54,7 +82,7 @@ private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOpti
 
     $buildFileExtra
 
-    """.trimIndent()
+    """.trimIndent(),
   )
 }
 
@@ -74,7 +102,8 @@ private fun ProjectSpec.pluginsBlock(options: TestOptions) = buildString {
   when (options.config) {
     TestOptions.Config.BASE -> appendLine(" id \"com.vanniktech.maven.publish.base\" version \"${pluginVersion}\"")
     TestOptions.Config.DSL,
-    TestOptions.Config.PROPERTIES -> appendLine(" id \"com.vanniktech.maven.publish\" version \"${pluginVersion}\"")
+    TestOptions.Config.PROPERTIES,
+    -> appendLine(" id \"com.vanniktech.maven.publish\" version \"${pluginVersion}\"")
   }
 
   appendLine("}")
@@ -89,7 +118,8 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String {
       """.trimIndent()
     }
     TestOptions.Config.BASE,
-    TestOptions.Config.DSL -> listOfNotNull(
+    TestOptions.Config.DSL,
+    -> listOfNotNull(
       """
 
        mavenPublishing {
@@ -145,6 +175,7 @@ private fun writeSettingFile(path: Path) {
             mavenLocal()
             mavenCentral()
             google()
+            gradlePluginPortal()
         }
     }
 
@@ -158,7 +189,7 @@ private fun writeSettingFile(path: Path) {
 
     rootProject.name = "default-root-project-name"
 
-    """.trimIndent()
+    """.trimIndent(),
   )
 }
 
@@ -211,7 +242,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
           appendLine("signingInMemoryKeyPassword=test")
         }
       }
-    }
+    },
   )
 }
 

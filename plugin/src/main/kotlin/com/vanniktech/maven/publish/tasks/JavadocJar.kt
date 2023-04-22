@@ -1,6 +1,9 @@
 package com.vanniktech.maven.publish.tasks
 
 import com.vanniktech.maven.publish.JavadocJar as JavadocJarOption
+import com.vanniktech.maven.publish.JavadocJar.Dokka.DokkaTaskName
+import com.vanniktech.maven.publish.JavadocJar.Dokka.ProviderDokkaTaskName
+import com.vanniktech.maven.publish.JavadocJar.Dokka.StringDokkaTaskName
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -31,10 +34,14 @@ open class JavadocJar : Jar() {
       }
     }
 
-    private fun Project.dokkaJavadocJar(taskName: Any): TaskProvider<*> {
+    private fun Project.dokkaJavadocJar(taskName: DokkaTaskName): TaskProvider<*> {
       return tasks.register("dokkaJavadocJar", JavadocJar::class.java) {
-        it.dependsOn(taskName)
-        it.from(taskName)
+        val task = when (taskName) {
+          is ProviderDokkaTaskName -> taskName.value.flatMap { tasks.named(it) }
+          is StringDokkaTaskName -> tasks.named(taskName.value)
+        }
+        it.dependsOn(task)
+        it.from(task)
       }
     }
   }

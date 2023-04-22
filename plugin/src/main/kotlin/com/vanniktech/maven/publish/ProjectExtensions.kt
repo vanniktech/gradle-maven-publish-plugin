@@ -8,6 +8,7 @@ import org.gradle.api.logging.configuration.ConsoleOutput
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningExtension
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 
 internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
@@ -46,8 +47,12 @@ internal fun Project.isAtLeastKotlinVersion(id: String, major: Int, minor: Int, 
   val kgpMinor = elements[1].toInt()
   val kgpPatch = elements[2].toInt()
   return kgpMajor > major ||
-    (kgpMajor == major && (kgpMinor > minor ||
-      (kgpMinor == minor && kgpPatch >= patch)))
+    (
+      kgpMajor == major && (
+        kgpMinor > minor ||
+          (kgpMinor == minor && kgpPatch >= patch)
+        )
+      )
 }
 
 internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, patch: Int): Boolean {
@@ -59,20 +64,10 @@ internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, 
   }
 }
 
-internal fun Project.isAtLeastUsingAndroidGradleVersionBeta(major: Int, minor: Int, patch: Int, beta: Int): Boolean {
-  return try {
-    androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch).beta(beta)
-  } catch (e: NoClassDefFoundError) {
-    // was added in 7.0
-    false
+@Suppress("UnstableApiUsage")
+internal fun Project.configurationCache(): Boolean {
+  if (GradleVersion.current() >= GradleVersion.version("7.6")) {
+    return gradle.startParameter.isConfigurationCacheRequested
   }
-}
-
-internal fun Project.isAtLeastUsingAndroidGradleVersionAlpha(major: Int, minor: Int, patch: Int, alpha: Int): Boolean {
-  return try {
-    androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch).alpha(alpha)
-  } catch (e: NoClassDefFoundError) {
-    // was added in 7.0
-    false
-  }
+  return false
 }

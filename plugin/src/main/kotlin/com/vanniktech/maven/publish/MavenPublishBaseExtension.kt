@@ -63,11 +63,11 @@ abstract class MavenPublishBaseExtension(
 
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
     val createRepository = project.tasks.registerCreateRepository(groupId, versionIsSnapshot, usingPlainConsole, buildService)
-    val stagingRepositoryId = createRepository.flatMap { it.stagingRepositoryId }
+    val url = sonatypeHost.map { it.publishingUrl(versionIsSnapshot, buildService, project.configurationCache()) }
 
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
-      repo.setUrl(sonatypeHost.map { it.publishingUrl(versionIsSnapshot.get(), stagingRepositoryId) })
+      repo.setUrl(url)
       repo.credentials(PasswordCredentials::class.java)
     }
 
@@ -195,7 +195,7 @@ abstract class MavenPublishBaseExtension(
     } else {
       throw IllegalStateException(
         "The plugin can't handle the publication ${publication.name} artifactId " +
-          "${publication.artifactId} in project $projectName"
+          "${publication.artifactId} in project $projectName",
       )
     }
   }

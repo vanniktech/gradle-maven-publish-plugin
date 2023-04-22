@@ -4,6 +4,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -50,6 +51,8 @@ private fun Project.configurePlatform() {
     when {
       plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> {} // Handled above.
       plugins.hasPlugin("com.android.library") -> {} // Handled above.
+      plugins.hasPlugin("com.gradle.plugin-publish") ->
+        baseExtension.configure(GradlePublishPlugin())
       plugins.hasPlugin("java-gradle-plugin") ->
         baseExtension.configure(GradlePlugin(defaultJavaDocOption() ?: javadoc()))
       plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
@@ -71,7 +74,7 @@ private fun Project.configurePlatform() {
 
 private fun Project.defaultJavaDocOption(): JavadocJar? {
   return if (plugins.hasPlugin("org.jetbrains.dokka") || plugins.hasPlugin("org.jetbrains.dokka-android")) {
-    JavadocJar.Dokka(provider { findDokkaTask() })
+    JavadocJar.Dokka(findDokkaTask())
   } else {
     null
   }
@@ -105,11 +108,7 @@ private fun Project.javaVersion(): JavaVersion {
   return JavaVersion.current()
 }
 
-private fun Project.findDokkaTask(): String {
+private fun Project.findDokkaTask(): Provider<String> = provider {
   val tasks = project.tasks.withType(DokkaTask::class.java)
-  return if (tasks.size == 1) {
-    tasks.first().name
-  } else {
-    tasks.findByName("dokkaHtml")?.name ?: "dokka"
-  }
+  tasks.singleOrNull()?.name ?: "dokkaHtml"
 }

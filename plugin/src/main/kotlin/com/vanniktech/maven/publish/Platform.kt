@@ -2,16 +2,17 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.jvm.internal.JvmModelingServices
+import org.gradle.api.plugins.jvm.internal.JvmVariantBuilder
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsPluginWrapper
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
+import org.gradle.util.GradleVersion
 
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
@@ -49,7 +50,7 @@ sealed class Platform {
  */
 data class JavaLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
-  override val sourcesJar: Boolean = true
+  override val sourcesJar: Boolean = true,
 ) : Platform() {
 
   override fun configure(project: Project) {
@@ -78,7 +79,7 @@ data class JavaLibrary @JvmOverloads constructor(
  */
 data class GradlePlugin @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
-  override val sourcesJar: Boolean = true
+  override val sourcesJar: Boolean = true,
 ) : Platform() {
 
   override fun configure(project: Project) {
@@ -87,6 +88,22 @@ data class GradlePlugin @JvmOverloads constructor(
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
     }
   }
+}
+
+/**
+ * To be used for `com.gradle.plugin-publish` projects. Uses the default publication that gets created by that plugin.
+ */
+class GradlePublishPlugin : Platform() {
+
+  override val javadocJar: JavadocJar = JavadocJar.Javadoc()
+  override val sourcesJar: Boolean = true
+
+  override fun configure(project: Project) {
+    // setup is fully handled by com.gradle.plugin-publish already
+  }
+
+  override fun equals(other: Any?): Boolean = other is GradlePublishPlugin
+  override fun hashCode(): Int = this::class.hashCode()
 }
 
 /**
@@ -230,7 +247,7 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
  * This does not include javadoc jars because there are no APIs for that available.
  */
 data class KotlinMultiplatform @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty()
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
 ) : Platform() {
   // Automatically added by Kotlin MPP plugin.
   override val sourcesJar = false
@@ -262,7 +279,7 @@ data class KotlinMultiplatform @JvmOverloads constructor(
  */
 data class KotlinJvm @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true
+  override val sourcesJar: Boolean = true,
 ) : Platform() {
 
   override fun configure(project: Project) {
@@ -294,10 +311,21 @@ data class KotlinJvm @JvmOverloads constructor(
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinJs @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true
+data class KotlinJs
+@Deprecated(
+  "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20. " +
+    "Use the single or no-arg constructors instead.",
+)
+constructor(
+  override val javadocJar: JavadocJar,
+  override val sourcesJar: Boolean,
 ) : Platform() {
+
+  @Suppress("DEPRECATION")
+  @JvmOverloads
+  constructor(
+    javadocJar: JavadocJar = JavadocJar.Empty(),
+  ) : this(javadocJar, true)
 
   override fun configure(project: Project) {
     // Create publication, since Kotlin/JS doesn't provide one by default.
@@ -409,10 +437,15 @@ sealed class JavadocJar {
    * for that purpose.
    */
   class Dokka private constructor(
-    internal val taskName: Any
+    internal val taskName: DokkaTaskName,
   ) : JavadocJar() {
-    constructor(taskName: String) : this(taskName as Any)
-    constructor(taskName: Provider<String>) : this(taskName as Any)
+
+    internal sealed interface DokkaTaskName
+    internal data class StringDokkaTaskName(val value: String) : DokkaTaskName
+    internal data class ProviderDokkaTaskName(val value: Provider<String>) : DokkaTaskName
+
+    constructor(taskName: String) : this(StringDokkaTaskName(taskName))
+    constructor(taskName: Provider<String>) : this(ProviderDokkaTaskName(taskName))
 
     override fun equals(other: Any?): Boolean = other is Dokka && taskName == other.taskName
     override fun hashCode(): Int = taskName.hashCode()
@@ -459,8 +492,18 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
   project.plugins.withId("java-test-fixtures") {
     if (sourcesJar) {
       // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
-      project.serviceOf<JvmModelingServices>().createJvmVariant("testFixtures") {
+      val services = project.serviceOf<JvmModelingServices>()
+      val variant = "testFixtures"
+      val action = Action<JvmVariantBuilder> {
         it.withSourcesJar().published()
+      }
+      if (GradleVersion.current() >= GradleVersion.version("8.1")) {
+        val extension = project.extensions.getByType(JavaPluginExtension::class.java)
+        val testFixturesSourceSet = extension.sourceSets.maybeCreate(variant)
+        services.createJvmVariant(variant, testFixturesSourceSet, action)
+      } else {
+        val method = services.javaClass.getMethod("createJvmVariant", String::class.java, Action::class.java)
+        method.invoke(services, variant, action)
       }
     }
 
@@ -484,5 +527,5 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
 private class MissingVariantException(name: String) : RuntimeException(
   "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
     " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
-    " extension object to something that matches the variant that ought to be published."
+    " extension object to something that matches the variant that ought to be published.",
 )

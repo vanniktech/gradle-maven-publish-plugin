@@ -236,8 +236,8 @@ For projects using the `org.jetbrains.kotlin.js` plugin.
       // - `JavadocJar.None()` don't publish this artifact
       // - `JavadocJar.Empty()` publish an emprt jar
       // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-      // the second whether to publish a sources jar
-      configure(new KotlinJs(new JavadocJar.Dokka("dokkaHtml"), true))
+      // sources publishing is always enabled by the Kotlin/JS plugin
+      configure(new KotlinJs(new JavadocJar.Dokka("dokkaHtml")))
     }
     ```
 
@@ -248,14 +248,13 @@ For projects using the `org.jetbrains.kotlin.js` plugin.
     import com.vanniktech.maven.publish.JavadocJar
 
     mavenPublishing {
+      // sources publishing is always enabled by the Kotlin/JS plugin
       configure(KotlinJs(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
         // - `JavadocJar.Empty()` publish an emprt jar
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Dokka("dokkaHtml"),
-        // whether to publish a sources jar
-        sourcesJar = true,
       ))
     }
     ```
@@ -300,8 +299,8 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
 
 ### Gradle Plugin
 
-
-For projects using the `java-gradle-plugin` plugin.
+For projects using the `java-gradle-plugin` plugin. When also using `com.gradle.plugin-publish` please
+use [GradlePublishPlugin](#gradle-publish-plugin)
 
 === "build.gradle"
 
@@ -336,6 +335,31 @@ For projects using the `java-gradle-plugin` plugin.
         // whether to publish a sources jar
         sourcesJar = true,
       ))
+    }
+    ```
+
+### Gradle Publish Plugin
+
+For projects using the `com.gradle.plugin-publish` plugin. This will always publish a sources jar
+and a javadoc jar.
+
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.GradlePublishPlugin
+
+    mavenPublishing {
+      configure(new GradlePublishPlugin())
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    import com.vanniktech.maven.publish.GradlePublishPlugin
+
+    mavenPublishing {
+      configure(GradlePublishPlugin())
     }
     ```
 

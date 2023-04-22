@@ -18,7 +18,7 @@ internal interface NexusService {
   @POST("staging/profiles/{profileId}/start")
   fun createRepository(
     @Path("profileId") stagingProfileId: String,
-    @Body input: CreateRepositoryInput
+    @Body input: CreateRepositoryInput,
   ): Call<CreateRepositoryResponse>
 
   @GET("staging/profile_repositories")

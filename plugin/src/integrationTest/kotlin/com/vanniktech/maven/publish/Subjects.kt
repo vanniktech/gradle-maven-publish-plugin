@@ -14,6 +14,7 @@ import com.vanniktech.maven.publish.PomSubject.Companion.pomSubject
 import com.vanniktech.maven.publish.SourcesJarSubject.Companion.sourcesJarSubject
 import java.io.StringWriter
 import java.nio.file.Path
+import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.io.path.exists
 import kotlin.io.path.inputStream
@@ -25,7 +26,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer
 
 class ProjectResultSubject private constructor(
   failureMetadata: FailureMetadata,
-  private val result: ProjectResult
+  private val result: ProjectResult,
 ) : Subject(failureMetadata, result) {
 
   companion object {
@@ -130,6 +131,73 @@ open class ArtifactSubject internal constructor(
       failWithoutActual(fact("expected not to exist", signedArtifact))
     }
   }
+
+  fun containsFiles(ignoreAdditionalFiles: Boolean, vararg files: String) {
+    containsMatchingFiles(
+      filesToFind = files.toList(),
+      filesToIgnore = emptyList(),
+      failWhenAdditionalFilesFound = !ignoreAdditionalFiles,
+      fileMatcher = { sourceFile, zipEntry -> zipEntry.name == sourceFile },
+      fileDescriptor = { it },
+      fileContent = { null },
+    )
+  }
+
+  protected fun <T : Any> containsMatchingFiles(
+    filesToFind: List<T>,
+    filesToIgnore: List<String>,
+    failWhenAdditionalFilesFound: Boolean,
+    fileMatcher: (T, ZipEntry) -> Boolean,
+    fileDescriptor: (T) -> String,
+    // only match file content if this does not return null
+    fileContent: (T) -> String?,
+  ) {
+    val zip = ZipFile(artifact.toFile())
+    val zipFiles = zip.entries()
+      .toList()
+      .filter { zipEntry -> !zipEntry.isDirectory && filesToIgnore.none { zipEntry.name.contains(it) } }
+      .toMutableList()
+
+    val missingFiles = mutableListOf<String>()
+    val notMatchingFiles = mutableListOf<Fact>()
+
+    filesToFind.forEach { sourceFile ->
+      // fallback is a workaround for KotlinJs creating a main folder inside the jar
+      val entry = zipFiles.find { fileMatcher(sourceFile, it) }
+      if (entry == null) {
+        missingFiles.add(fileDescriptor(sourceFile))
+      } else {
+        zipFiles.remove(entry)
+
+        val content = zip.getInputStream(entry)?.reader()?.buffered()?.readText()
+        val expectedContent = fileContent(sourceFile)
+        if (expectedContent != null && expectedContent != content) {
+          notMatchingFiles += fact("expected ${fileDescriptor(sourceFile)} to equal", expectedContent)
+          notMatchingFiles += fact("but was", content)
+        }
+      }
+    }
+
+    val facts = mutableListOf<Fact>()
+
+    if (missingFiles.isNotEmpty()) {
+      facts += fact("expected to contain", missingFiles)
+      facts += simpleFact("but did not.")
+    }
+
+    if (failWhenAdditionalFilesFound) {
+      if (zipFiles.isNotEmpty()) {
+        facts += fact("expected not to contain", zipFiles.map { it.name })
+        facts += simpleFact("but did.")
+      }
+    }
+
+    facts += notMatchingFiles
+
+    if (facts.isNotEmpty()) {
+      failWithoutActual(facts.first(), *facts.drop(1).toTypedArray())
+    }
+  }
 }
 
 class SourcesJarSubject private constructor(
@@ -154,47 +222,16 @@ class SourcesJarSubject private constructor(
   }
 
   private fun containsSourceFiles(sourceFiles: List<SourceFile>) {
-    val zip = ZipFile(artifact.toFile())
-    val zipFiles = zip.entries()
-      .toList()
-      .filter { !it.isDirectory && !it.name.contains("META-INF") && !it.name.contains("BuildConfig.java") }
-      .toMutableList()
-
-    val missingFiles = mutableListOf<String>()
-    val notMatchingFiles = mutableListOf<Fact>()
-
-    sourceFiles.forEach { sourceFile ->
-      // fallback is a workaround for KotlinJs creating a main folder inside the jar
-      val entry = zipFiles.find { it.name == sourceFile.file }
-        ?: zipFiles.find { it.name == "${sourceFile.sourceSet}/${sourceFile.file}" }
-      if (entry == null) {
-        missingFiles.add("${sourceFile.sourceSet}/${sourceFile.file}")
-      } else {
-        zipFiles.remove(entry)
-
-        val content = zip.getInputStream(entry)?.reader()?.buffered()?.readText()
-        val expectedContent = sourceFile.resolveIn(result.project).readText()
-        if (content != expectedContent) {
-          notMatchingFiles += fact("expected ${sourceFile.file} to equal", expectedContent)
-          notMatchingFiles += fact("but was", content)
-        }
-      }
-    }
-
-    val facts = mutableListOf<Fact>()
-    if (missingFiles.isNotEmpty()) {
-      facts += fact("expected to contain", missingFiles)
-      facts += simpleFact("but did not.")
-    }
-    if (zipFiles.isNotEmpty()) {
-      facts += fact("expected not to contain", zipFiles.map { it.name })
-      facts += simpleFact("but did.")
-    }
-    facts += notMatchingFiles
-
-    if (facts.isNotEmpty()) {
-      failWithoutActual(facts.first(), *facts.drop(1).toTypedArray())
-    }
+    containsMatchingFiles(
+      filesToFind = sourceFiles,
+      filesToIgnore = listOf("META-INF", "BuildConfig.java"),
+      failWhenAdditionalFilesFound = true,
+      fileMatcher = { sourceFile, zipEntry ->
+        zipEntry.name == sourceFile.file || zipEntry.name == "${sourceFile.sourceSet}/${sourceFile.file}"
+      },
+      fileDescriptor = { "${it.sourceSet}/${it.file}" },
+      fileContent = { it.resolveIn(result.project).readText() },
+    )
   }
 }
 

@@ -20,6 +20,7 @@ The output of the following Gradle plugins is supported to be published with thi
 - `java`
 - `java-library`
 - `java-gradle-plugin`
+- `com.gradle.plugin-publish`
 - `java-platform`
 - `version-catalog`
 

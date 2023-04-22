@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService
 import java.io.Serializable
 import org.gradle.api.provider.Provider
 
@@ -10,20 +11,34 @@ import org.gradle.api.provider.Provider
  * https://central.sonatype.org/articles/2021/Feb/23/new-users-on-s01osssonatypeorg/
  */
 data class SonatypeHost(
-  internal val rootUrl: String
+  internal val rootUrl: String,
 ) : Serializable {
   internal fun apiBaseUrl(): String {
     return "$rootUrl/service/local/"
   }
 
-  internal fun publishingUrl(snapshot: Boolean, stagingRepositoryId: Provider<String>): String {
-    return if (snapshot) {
-      if (stagingRepositoryId.isPresent) {
-        throw IllegalArgumentException("Staging repositories are not supported for SNAPSHOT versions.")
+  internal fun publishingUrl(
+    snapshot: Provider<Boolean>,
+    buildService: Provider<SonatypeRepositoryBuildService>,
+    configCache: Boolean,
+  ): String {
+    return if (snapshot.get()) {
+      require(buildService.get().stagingRepositoryId == null) {
+        "Staging repositories are not supported for SNAPSHOT versions."
       }
       "$rootUrl/content/repositories/snapshots/"
     } else {
-      "$rootUrl/service/local/staging/deployByRepositoryId/${stagingRepositoryId.get()}/"
+      val stagingRepositoryId = buildService.get().stagingRepositoryId
+      requireNotNull(stagingRepositoryId) {
+        if (configCache) {
+          "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
+            "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
+        } else {
+          "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
+        }
+      }
+
+      "$rootUrl/service/local/staging/deployByRepositoryId/$stagingRepositoryId/"
     }
   }
 

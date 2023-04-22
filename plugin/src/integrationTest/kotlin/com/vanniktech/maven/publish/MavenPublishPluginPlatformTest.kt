@@ -16,7 +16,7 @@ class MavenPublishPluginPlatformTest {
   @TestParameter(valuesProvider = TestOptionsConfigProvider::class)
   lateinit var config: TestOptions.Config
 
-  @TestParameter
+  @TestParameter(valuesProvider = GradleVersionProvider::class)
   lateinit var gradleVersion: GradleVersion
 
   private val testOptions
@@ -68,7 +68,7 @@ class MavenPublishPluginPlatformTest {
     val project = default.copy(
       plugins = default.plugins + javaTestFixturesPlugin,
       sourceFiles = default.sourceFiles +
-        SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java")
+        SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java"),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -121,12 +121,44 @@ class MavenPublishPluginPlatformTest {
     assertThat(pluginMarkerResult).pom().isSigned()
     assertThat(pluginMarkerResult).pom().matchesExpectedPom(
       "pom",
-      PomDependency("com.example", "test-artifact", "1.0.0", null)
+      PomDependency("com.example", "test-artifact", "1.0.0", null),
     )
   }
 
   @TestParameterInjectorTest
-  fun javaGradlePluginKotlinProject(@TestParameter kotlinVersion: KotlinVersion) {
+  fun javaGradlePluginWithPluginPublishProject(@TestParameter gradlePluginPublish: GradlePluginPublish) {
+    val project = javaGradlePluginWithGradlePluginPublish(gradlePluginPublish)
+    val result = project.run(fixtures, testProjectDir, testOptions)
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("jar").exists()
+    assertThat(result).artifact("jar").isSigned()
+    assertThat(result).pom().exists()
+    assertThat(result).pom().isSigned()
+    assertThat(result).pom().matchesExpectedPom()
+    assertThat(result).module().exists()
+    assertThat(result).module().isSigned()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).sourcesJar().isSigned()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    assertThat(result).javadocJar().isSigned()
+
+    val pluginId = "com.example.test-plugin"
+    val pluginMarkerSpec = project.copy(group = pluginId, artifactId = "$pluginId.gradle.plugin")
+    val pluginMarkerResult = result.copy(projectSpec = pluginMarkerSpec)
+    assertThat(pluginMarkerResult).pom().exists()
+    assertThat(pluginMarkerResult).pom().isSigned()
+    assertThat(pluginMarkerResult).pom().matchesExpectedPom(
+      "pom",
+      PomDependency("com.example", "test-artifact", "1.0.0", null),
+    )
+  }
+
+  @TestParameterInjectorTest
+  fun javaGradlePluginKotlinProject(
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+  ) {
     val project = javaGradlePluginKotlinProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -151,7 +183,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(pluginMarkerResult).pom().isSigned()
     assertThat(pluginMarkerResult).pom().matchesExpectedPom(
       "pom",
-      PomDependency("com.example", "test-artifact", "1.0.0", null)
+      PomDependency("com.example", "test-artifact", "1.0.0", null),
     )
   }
 
@@ -164,7 +196,7 @@ class MavenPublishPluginPlatformTest {
                 languageVersion = JavaLanguageVersion.of(8)
             }
         }
-      """.trimIndent()
+      """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -184,7 +216,9 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
-  fun kotlinJvmProject(@TestParameter kotlinVersion: KotlinVersion) {
+  fun kotlinJvmProject(
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+  ) {
     val project = kotlinJvmProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -204,14 +238,16 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
-  fun kotlinJvmWithTestFixturesProject(@TestParameter kotlinVersion: KotlinVersion) {
+  fun kotlinJvmWithTestFixturesProject(
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+  ) {
     val default = kotlinJvmProjectSpec(kotlinVersion)
     val project = default.copy(
       plugins = default.plugins + javaTestFixturesPlugin,
       sourceFiles = default.sourceFiles + listOf(
         SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java"),
         SourceFile("testFixtures", "kotlin", "com/vanniktech/maven/publish/test/TestFixtureKotlinClass.kt"),
-      )
+      ),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -240,7 +276,9 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
-  fun kotlinJsProject(@TestParameter kotlinVersion: KotlinVersion) {
+  fun kotlinJsProject(
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+  ) {
     val project = kotlinJsProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -260,7 +298,9 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
-  fun kotlinMultiplatformProject(@TestParameter kotlinVersion: KotlinVersion) {
+  fun kotlinMultiplatformProject(
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+  ) {
     val project = kotlinMultiplatformProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -276,7 +316,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().isSigned()
-    if (kotlinVersion < KotlinVersion.KT_1_8_BETA) {
+    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
       assertThat(result).sourcesJar().containsAllSourceFiles()
     } else {
       assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
@@ -310,7 +350,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(linuxResult).pom().isSigned()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion)
+      kotlinStdlibCommon(kotlinVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).module().isSigned()
@@ -342,8 +382,8 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun kotlinMultiplatformWithAndroidLibraryProject(
-    @TestParameter agpVersion: AgpVersion,
-    @TestParameter kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion()
 
@@ -362,7 +402,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().isSigned()
-    if (kotlinVersion < KotlinVersion.KT_1_8_BETA) {
+    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
       assertThat(result).sourcesJar().containsAllSourceFiles()
     } else {
       assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
@@ -396,7 +436,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(linuxResult).pom().isSigned()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion)
+      kotlinStdlibCommon(kotlinVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).module().isSigned()
@@ -465,7 +505,9 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
-  fun androidLibraryProject(@TestParameter agpVersion: AgpVersion) {
+  fun androidLibraryProject(
+    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
+  ) {
     agpVersion.assumeSupportedJdkAndGradleVersion()
 
     val project = androidLibraryProjectSpec(agpVersion)
@@ -487,7 +529,9 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
-  fun androidMultiVariantLibraryProject(@TestParameter agpVersion: AgpVersion) {
+  fun androidMultiVariantLibraryProject(
+    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
+  ) {
     // regular plugin does not have a way to enable multi variant config
     assume().that(config).isEqualTo(TestOptions.Config.BASE)
     agpVersion.assumeSupportedJdkAndGradleVersion()
@@ -523,8 +567,8 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun androidLibraryKotlinProject(
-    @TestParameter agpVersion: AgpVersion,
-    @TestParameter kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion()
 

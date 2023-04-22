@@ -13,6 +13,8 @@ val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
 val kotlinJsPlugin = PluginSpec("org.jetbrains.kotlin.js")
 val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
+val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
+val dokkaPlugin = PluginSpec("org.jetbrains.dokka", "1.8.10")
 
 val fixtures = Paths.get("src/integrationTest/fixtures2").toAbsolutePath()
 
@@ -88,19 +90,27 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
   basePluginConfig = "configure(new GradlePlugin(new JavadocJar.Empty(), true))",
 )
 
+fun javaGradlePluginWithGradlePluginPublish(gradlePluginPublish: GradlePluginPublish): ProjectSpec {
+  val base = javaGradlePluginProjectSpec()
+  return base.copy(
+    plugins = base.plugins + gradlePluginPublishPlugin.copy(version = gradlePluginPublish.version),
+    basePluginConfig = "configure(new GradlePublishPlugin())",
+  )
+}
+
 fun javaGradlePluginKotlinProjectSpec(version: KotlinVersion): ProjectSpec {
   val plainJavaGradlePluginProject = javaGradlePluginProjectSpec()
   return plainJavaGradlePluginProject.copy(
     plugins = plainJavaGradlePluginProject.plugins + kotlinJvmPlugin.copy(version = version.value),
     sourceFiles = plainJavaGradlePluginProject.sourceFiles + listOf(
       SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
-    )
+    ),
   )
 }
 
 fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
   plugins = listOf(
-    kotlinJvmPlugin.copy(version = version.value)
+    kotlinJvmPlugin.copy(version = version.value),
   ),
   group = "com.example",
   artifactId = "test-artifact",
@@ -115,7 +125,7 @@ fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
 
 fun kotlinJsProjectSpec(version: KotlinVersion) = ProjectSpec(
   plugins = listOf(
-    kotlinJsPlugin.copy(version = version.value)
+    kotlinJsPlugin.copy(version = version.value),
   ),
   group = "com.example",
   artifactId = "test-artifact",
@@ -136,7 +146,7 @@ fun kotlinJsProjectSpec(version: KotlinVersion) = ProjectSpec(
 
 fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
   plugins = listOf(
-    kotlinMultiplatformPlugin.copy(version = version.value)
+    kotlinMultiplatformPlugin.copy(version = version.value),
   ),
   group = "com.example",
   artifactId = "test-artifact",
@@ -176,7 +186,7 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
             }
         }
     }
-  """.trimIndent()
+  """.trimIndent(),
 )
 
 fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
@@ -193,6 +203,11 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
         android {
           compileSdkVersion = 31
           namespace = "com.test"
+
+          // resolves config cache issue, can be removed when AGP 8 becomes the minimum supported version
+          buildFeatures {
+              shaders = false
+          }
         }
 
         kotlin {
@@ -204,13 +219,13 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
               languageVersion.set(JavaLanguageVersion.of("8"))
           }
         }
-    """.trimIndent()
+    """.trimIndent(),
   )
 }
 
 fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   plugins = listOf(
-    androidLibraryPlugin.copy(version = version.value)
+    androidLibraryPlugin.copy(version = version.value),
   ),
   group = "com.example",
   artifactId = "test-artifact",
@@ -224,6 +239,11 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     android {
         namespace "com.test.library"
         compileSdkVersion 29
+
+        // resolves config cache issue, can be removed when AGP 8 becomes the minimum supported version
+        buildFeatures {
+            shaders = false
+        }
     }
 
     // disable the dokka task to speed up Android tests significantly
@@ -232,7 +252,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
         it.enabled = false
       }
     }
-  """.trimIndent()
+  """.trimIndent(),
 )
 
 fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
@@ -240,7 +260,7 @@ fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: Kotli
   return plainAndroidProject.copy(
     plugins = plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value),
     sourceFiles = plainAndroidProject.sourceFiles + listOf(
-      SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt")
+      SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
     ),
     buildFileExtra = plainAndroidProject.buildFileExtra + """
 
@@ -249,13 +269,13 @@ fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: Kotli
               languageVersion.set(JavaLanguageVersion.of("8"))
           }
       }
-    """.trimIndent()
+    """.trimIndent(),
   )
 }
 
 fun javaPlatformProjectSpec() = ProjectSpec(
   plugins = listOf(
-    javaPlatformPlugin
+    javaPlatformPlugin,
   ),
   group = "com.example",
   artifactId = "test-artifact",
@@ -270,12 +290,12 @@ fun javaPlatformProjectSpec() = ProjectSpec(
             runtime 'org.postgresql:postgresql:42.2.5'
         }
     }
-  """.trimIndent()
+  """.trimIndent(),
 )
 
 fun versionCatalogProjectSpec() = ProjectSpec(
   plugins = listOf(
-    versionCatalogPlugin
+    versionCatalogPlugin,
   ),
   group = "com.example",
   artifactId = "test-artifact",
@@ -289,5 +309,5 @@ fun versionCatalogProjectSpec() = ProjectSpec(
             library('my-lib', 'com.mycompany:mylib:1.2')
         }
     }
-  """.trimIndent()
+  """.trimIndent(),
 )

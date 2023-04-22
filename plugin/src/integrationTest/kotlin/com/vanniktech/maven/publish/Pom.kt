@@ -38,14 +38,14 @@ fun createPom(
       name = "The Apache Software License, Version 2.0"
       url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
       distribution = "repo"
-    }
+    },
   )
   model.addDeveloper(
     Developer().apply {
       id = "vanniktech"
       name = "Niklas Baudy"
       url = "https://github.com/vanniktech/"
-    }
+    },
   )
   model.scm = Scm().apply {
     connection = "scm:git:git://github.com/vanniktech/gradle-maven-publish-plugin.git"
@@ -83,7 +83,7 @@ fun createMinimalPom(
         if (it.optional != null) {
           this.isOptional = it.optional
         }
-      }
+      },
     )
   }
 
@@ -99,7 +99,7 @@ fun createMinimalPom(
             if (it.optional != null) {
               this.isOptional = it.optional
             }
-          }
+          },
         )
       }
     }
