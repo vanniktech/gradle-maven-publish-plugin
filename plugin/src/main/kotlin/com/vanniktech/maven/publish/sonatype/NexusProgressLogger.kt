@@ -8,6 +8,11 @@ internal class NexusProgressLogger(private val progressLogger: ProgressLogger) :
     progressLogger.start(description, status)
   }
 
+  override fun lifecycle(status: String) {
+    // Lifecycle events don't participate in progress logging.
+    println(status)
+  }
+
   override fun progress(status: String, failing: Boolean) {
     progressLogger.progress(status, failing)
   }

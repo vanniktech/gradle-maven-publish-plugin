@@ -145,7 +145,7 @@ class Nexus(
       if (stagingRepository.transitioning) {
         waitForClose(stagingRepository.repositoryId, logger)
       } else {
-        println("Repository $repositoryId already closed")
+        logger.lifecycle("Repository $repositoryId already closed")
       }
       return
     }
@@ -154,14 +154,14 @@ class Nexus(
       throw IllegalArgumentException("Repository $repositoryId is of type '${stagingRepository.type}' and not 'open'")
     }
 
-    println("Closing repository: $repositoryId")
+    logger.lifecycle("Closing repository: $repositoryId")
     val response = service.closeRepository(TransitionRepositoryInput(TransitionRepositoryInputData(listOf(repositoryId)))).execute()
     if (!response.isSuccessful) {
       throw IOException("Cannot close repository: ${response.errorBody()?.string()}")
     }
 
     waitForClose(repositoryId, logger)
-    println("Repository $repositoryId closed")
+    logger.lifecycle("Repository $repositoryId closed")
   }
 
   private fun waitForClose(repositoryId: String, logger: Logger) {
@@ -283,24 +283,36 @@ class Nexus(
   /** A simple logger interface that can start, complete, and report intermediate progress. */
   interface Logger {
     fun start(description: String, status: String)
+    fun lifecycle(status: String)
     fun progress(status: String, failing: Boolean = false)
     fun completed(status: String, failed: Boolean)
 
     /** A system logger that writes to [System.out] or [System.err]. */
     object SystemLogger : Logger {
+      private fun flush() {
+        System.err.flush()
+        System.out.flush()
+      }
+
       override fun start(description: String, status: String) {
         println("$description: $status")
       }
+
+      override fun lifecycle(status: String) {
+        flush()
+        println(status)
+      }
+
       override fun progress(status: String, failing: Boolean) {
         if (failing) {
           System.err.print("\r$status")
-          System.err.flush()
         } else {
           print("\r$status")
-          System.out.flush()
         }
+        flush()
       }
       override fun completed(status: String, failed: Boolean) {
+        flush()
         if (failed) {
           System.err.println("Completed with errors: $status")
         } else {
