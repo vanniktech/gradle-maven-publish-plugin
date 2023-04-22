@@ -71,4 +71,3 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask @Inject constructo
     }
   }
 }
-

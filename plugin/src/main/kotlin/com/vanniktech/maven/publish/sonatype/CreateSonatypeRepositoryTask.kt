@@ -51,7 +51,7 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
   }
 
   abstract class CreateStagingRepository @Inject constructor(
-    private val progressLoggerFactory: ProgressLoggerFactory
+    private val progressLoggerFactory: ProgressLoggerFactory,
   ) : WorkAction<CreateStagingRepositoryParameters> {
     override fun execute() {
       val parameters = requireNotNull(parameters)

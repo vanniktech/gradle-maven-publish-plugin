@@ -344,8 +344,10 @@ class Nexus(
 
     /** Update the progress loader every 500ms, for rich loggers. */
     private const val CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS_FAST = 200L
+
     /** Update the progress loader every 10s, for non-rich loggers. */
     private const val CLOSE_PROGRESS_UPDATE_INTERVAL_MILLIS_SLOW = 200L
+
     /** Check the repository every 5 seconds. */
     private const val CLOSE_CLOSE_CHECK_INTERVAL_MILLIS = 5_000L
   }
