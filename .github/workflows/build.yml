@@ -32,4 +32,4 @@ jobs:
       - uses: gradle/gradle-build-action@v2
 
       - name: Build with Gradle
-        run: ./gradlew build --stacktrace -DtestConfigMethod=${{ matrix.test_config_method }}
+        run: ./gradlew build --stacktrace -DtestConfigMethod=${{ matrix.test_config_method }} -DtestCiJdkVersion=${{ matrix.java_version }}

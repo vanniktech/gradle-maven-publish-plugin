@@ -18,8 +18,13 @@ repositories {
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(System.getProperty("testCiJdkVersion", "11").toInt()))
+  }
+}
+
+tasks.withType(JavaCompile::class.java) {
+  options.release.set(11)
 }
 
 tasks.withType(KotlinCompile::class.java) {
@@ -28,7 +33,7 @@ tasks.withType(KotlinCompile::class.java) {
   }
 }
 
-configurations.all {
+configurations.configureEach {
   // Pin the kotlin version
   resolutionStrategy {
     force(libs.kotlin.stdlib)
