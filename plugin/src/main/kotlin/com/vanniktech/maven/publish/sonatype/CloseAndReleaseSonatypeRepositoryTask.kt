@@ -39,9 +39,11 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask @Inject constructo
 
     val manualStagingRepositoryId = this.manualStagingRepositoryId
     if (manualStagingRepositoryId != null) {
+      nexusProgressLogger.start("Closing and releasing repository $manualStagingRepositoryId", "Close and release repository")
       service.nexus.closeStagingRepository(manualStagingRepositoryId, nexusProgressLogger)
       service.nexus.releaseStagingRepository(manualStagingRepositoryId, nexusProgressLogger)
     } else {
+      nexusProgressLogger.start("Closing and releasing current repository", "Close and release repository")
       val id = service.nexus.closeCurrentStagingRepository(nexusProgressLogger)
       service.nexus.releaseStagingRepository(id, nexusProgressLogger)
     }
