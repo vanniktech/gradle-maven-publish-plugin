@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.8.20"
+kotlin = "1.8.21"
 moshi = "1.14.0"
 retrofit = "2.9.0"
 junit = "5.9.2"
