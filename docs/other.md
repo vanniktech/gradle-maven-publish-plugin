@@ -32,7 +32,8 @@ A new repository to publish to can be added like this
     ```groovy
     publishing {
         repositories {
-            myRepo {
+            maven {
+                name = "myRepo"
                 url = layout.buildDirectory.dir('repo')
                 // or
                 url = "http://my.org/repo"
@@ -50,7 +51,8 @@ A new repository to publish to can be added like this
     ```kotlin
     publishing {
         repositories {
-            myRepo {
+            maven {
+                name = "myRepo"
                 url = uri(layout.buildDirectory.dir("repo"))
                 // or
                 url = uri("http://my.org/repo")
@@ -70,7 +72,8 @@ A new repository to publish to can be added like this
     ```groovy
     publishing {
         repositories {
-            githubPackages {
+            maven {
+                name = "githubPackages"
                 url = "https://maven.pkg.github.com/your-org/your-project"
                 // username and password (a personal Github access token) should be specified as
                 // `githubPackagesUsername` and `githubPackagesPassword` Gradle properties or alternatively
@@ -87,7 +90,8 @@ A new repository to publish to can be added like this
     ```kotlin
     publishing {
         repositories {
-            githubPackages {
+            maven {
+                name = "githubPackages"
                 url = uri("https://maven.pkg.github.com/your-org/your-project")
                 // username and password (a personal Github access token) should be specified as
                 // `githubPackagesUsername` and `githubPackagesPassword` Gradle properties or alternatively
