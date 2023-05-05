@@ -87,7 +87,7 @@ A new repository to publish to can be added like this
     ```kotlin
     publishing {
         repositories {
-            myRepo {
+            githubPackages {
                 url = uri("https://maven.pkg.github.com/your-org/your-project")
                 // username and password (a personal Github access token) should be specified as
                 // `githubPackagesUsername` and `githubPackagesPassword` Gradle properties or alternatively
