@@ -30,10 +30,7 @@ jobs:
           java-version: ${{ matrix.java_version }}
 
       - name: Accept Android SDK license
-        run: ls $ANDROID_HOME
-
-      - name: Accept Android SDK license
-        run: yes | "$ANDROID_HOME/cmdline-tools/bin/sdkmanager" --sdk_root="$ANDROID_HOME" --licenses
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
 
       - uses: gradle/gradle-build-action@v2
 
