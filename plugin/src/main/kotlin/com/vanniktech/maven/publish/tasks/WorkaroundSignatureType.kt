@@ -1,5 +1,8 @@
 package com.vanniktech.maven.publish.tasks
 
+import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
@@ -7,9 +10,6 @@ import org.gradle.api.tasks.Nested
 import org.gradle.plugins.signing.signatory.Signatory
 import org.gradle.plugins.signing.type.AbstractSignatureType
 import org.gradle.plugins.signing.type.SignatureType
-import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
 
 class WorkaroundSignatureType(
   @Nested
