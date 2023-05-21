@@ -32,4 +32,4 @@ truth-testKit = "com.autonomousapps:testkit-truth:1.1"
 maven-model = "org.apache.maven:maven-model:3.9.2"
 
 [plugins]
-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "4.0.4" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version = "3.1.0" }
