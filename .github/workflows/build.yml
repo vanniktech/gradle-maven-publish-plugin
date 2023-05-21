@@ -29,6 +29,9 @@ jobs:
           distribution: zulu
           java-version: ${{ matrix.java_version }}
 
+      - name: Accept Android SDK license
+        run: yes | "$ANDROID_HOME/cmdline-tools/bin/sdkmanager" --sdk_root="$ANDROID_HOME" --licenses
+
       - uses: gradle/gradle-build-action@v2
 
       - name: Build with Gradle
