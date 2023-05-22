@@ -4,6 +4,7 @@ import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTa
 import com.vanniktech.maven.publish.sonatype.CreateSonatypeRepositoryTask.Companion.registerCreateRepository
 import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companion.registerDropRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
+import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
@@ -15,6 +16,7 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
+import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
 import org.gradle.util.GradleVersion
 
 abstract class MavenPublishBaseExtension(
@@ -143,6 +145,15 @@ abstract class MavenPublishBaseExtension(
     // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
     project.tasks.withType(AbstractPublishToMaven::class.java).configureEach { publishTask ->
       publishTask.dependsOn(project.tasks.withType(Sign::class.java))
+    }
+
+    project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
+      project.tasks.withType(Sign::class.java).configureEach {
+        it.signatureType = WorkaroundSignatureType(
+          it.signatureType ?: ArmoredSignatureType(),
+          project.layout.buildDirectory.dir("signatures/${it.name}"),
+        )
+      }
     }
   }
 
