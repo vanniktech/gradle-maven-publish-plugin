@@ -76,11 +76,20 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(nodejsResult).outcome().succeeded()
     assertThat(nodejsResult).artifact("klib").exists()
     assertThat(nodejsResult).pom().exists()
-    assertThat(nodejsResult).pom().matchesExpectedPom(
-      "klib",
-      kotlinStdlibJs(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
-    )
+    if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibJs(kotlinVersion),
+        kotlinDomApi(kotlinVersion),
+        kotlinStdlibCommon(kotlinVersion),
+      )
+    } else {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibJs(kotlinVersion),
+        kotlinStdlibCommon(kotlinVersion),
+      )
+    }
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).sourcesJar().exists()
     assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
@@ -142,11 +151,20 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(nodejsResult).outcome().succeeded()
     assertThat(nodejsResult).artifact("klib").exists()
     assertThat(nodejsResult).pom().exists()
-    assertThat(nodejsResult).pom().matchesExpectedPom(
-      "klib",
-      kotlinStdlibJs(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
-    )
+    if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibJs(kotlinVersion),
+        kotlinDomApi(kotlinVersion),
+        kotlinStdlibCommon(kotlinVersion),
+      )
+    } else {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibJs(kotlinVersion),
+        kotlinStdlibCommon(kotlinVersion),
+      )
+    }
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).sourcesJar().exists()
     assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
