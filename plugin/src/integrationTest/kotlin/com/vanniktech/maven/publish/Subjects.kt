@@ -31,7 +31,7 @@ class ProjectResultSubject private constructor(
 
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ProjectResultSubject, ProjectResult> =
-      Factory { metadata, actual -> ProjectResultSubject(metadata, actual) }
+      Factory { metadata, actual -> ProjectResultSubject(metadata, actual!!) }
 
     fun projectResult() = BUILD_RESULT_SUBJECT_FACTORY
 
@@ -106,7 +106,7 @@ open class ArtifactSubject internal constructor(
 
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ArtifactSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> ArtifactSubject(metadata, actual.first, actual.second) }
+      Factory { metadata, actual -> ArtifactSubject(metadata, actual!!.first, actual.second) }
 
     fun artifact() = BUILD_RESULT_SUBJECT_FACTORY
   }
@@ -208,7 +208,7 @@ class SourcesJarSubject private constructor(
 
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<SourcesJarSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> SourcesJarSubject(metadata, actual.first, actual.second) }
+      Factory { metadata, actual -> SourcesJarSubject(metadata, actual!!.first, actual.second) }
 
     fun sourcesJarSubject() = BUILD_RESULT_SUBJECT_FACTORY
   }
@@ -243,7 +243,7 @@ class PomSubject private constructor(
 
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<PomSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> PomSubject(metadata, actual.first, actual.second) }
+      Factory { metadata, actual -> PomSubject(metadata, actual!!.first, actual.second) }
 
     fun pomSubject() = BUILD_RESULT_SUBJECT_FACTORY
   }
