@@ -40,7 +40,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 }
 
 private fun TestOptions.supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
-  // Kotlin MPP support s config cache since 1.9.0
+  // Kotlin MPP supports config cache since 1.9.0
   val multiplatform = plugins.find { it.id == kotlinMultiplatformPlugin.id }
   if (multiplatform != null) {
     val parts = multiplatform.version!!.split(".")
