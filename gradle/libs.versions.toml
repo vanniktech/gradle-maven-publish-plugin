@@ -25,7 +25,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
-testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.11"
+testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.12"
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 truth-java8 = { module = "com.google.truth.extensions:truth-java8-extension", version.ref = "truth" }
 truth-testKit = "com.autonomousapps:testkit-truth:1.1"
