@@ -40,12 +40,13 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 }
 
 private fun TestOptions.supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
-  // TODO: Kotlin Multiplatform plugin has configuration cache issues
-  //  - https://youtrack.jetbrains.com/issue/KT-49933 (meta ticket)
-  //  - https://youtrack.jetbrains.com/issue/KT-43293 (closed but still has issues)
-  //  - https://youtrack.jetbrains.com/issue/KT-55051
-  if (plugins.any { it.id == kotlinMultiplatformPlugin.id }) {
-    return false
+  // Kotlin MPP support s config cache since 1.9.0
+  val multiplatform = plugins.find { it.id == kotlinMultiplatformPlugin.id }
+  if (multiplatform != null) {
+    val parts = multiplatform.version!!.split(".")
+    if (parts[0].toInt() == 1 && parts[1].toInt() < 9) {
+      return false
+    }
   }
   // TODO https://github.com/Kotlin/dokka/issues/2231
   if (plugins.any { it.id == dokkaPlugin.id }) {
