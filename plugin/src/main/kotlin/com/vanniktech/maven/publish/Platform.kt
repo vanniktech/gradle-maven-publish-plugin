@@ -4,13 +4,20 @@ import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.attributes.DocsType
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
+import org.gradle.api.plugins.internal.JavaPluginHelper
+import org.gradle.api.plugins.internal.JvmPluginsHelper
 import org.gradle.api.plugins.jvm.internal.JvmPluginServices
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.serviceOf
+import org.gradle.internal.component.external.model.ProjectDerivedCapability
+import org.gradle.jvm.component.internal.DefaultJvmSoftwareComponent
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.GradleVersion
 
@@ -492,28 +499,31 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
   project.plugins.withId("java-test-fixtures") {
     if (sourcesJar) {
       // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
-      // TODO: make test fixture source publishing work in 8.2+
-      if (GradleVersion.current() < GradleVersion.version("8.2-rc-1")) {
+      val testFixtureSourceSetName = "testFixtures"
+      if (GradleVersion.current() >= GradleVersion.version("8.1")) {
+        val extension = project.extensions.getByType(JavaPluginExtension::class.java)
+        val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
+
+        val sourceElements = JvmPluginsHelper.createDocumentationVariantWithArtifact(
+          testFixturesSourceSet.sourcesElementsConfigurationName,
+          testFixtureSourceSetName,
+          DocsType.SOURCES,
+          listOf(ProjectDerivedCapability(project, "testFixtures")),
+          testFixturesSourceSet.sourcesJarTaskName,
+          testFixturesSourceSet.allSource,
+          project as ProjectInternal,
+        )
+
+        val component = JavaPluginHelper.getJavaComponent(project) as DefaultJvmSoftwareComponent
+        component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))
+      } else {
         val services = project.serviceOf<JvmPluginServices>()
-        val variant = "testFixtures"
         val action = Action<Any> {
           it.javaClass.getMethod("withSourcesJar").invoke(it)
           it.javaClass.getMethod("published").invoke(it)
         }
-        if (GradleVersion.current() >= GradleVersion.version("8.1")) {
-          val extension = project.extensions.getByType(JavaPluginExtension::class.java)
-          val testFixturesSourceSet = extension.sourceSets.maybeCreate(variant)
-          val method = services.javaClass.getMethod(
-            "createJvmVariant",
-            String::class.java,
-            SourceSet::class.java,
-            Action::class.java,
-          )
-          method.invoke(services, variant, testFixturesSourceSet, action)
-        } else {
-          val method = services.javaClass.getMethod("createJvmVariant", String::class.java, Action::class.java)
-          method.invoke(services, variant, action)
-        }
+        val method = services.javaClass.getMethod("createJvmVariant", String::class.java, Action::class.java)
+        method.invoke(services, testFixtureSourceSetName, action)
       }
     }
 
