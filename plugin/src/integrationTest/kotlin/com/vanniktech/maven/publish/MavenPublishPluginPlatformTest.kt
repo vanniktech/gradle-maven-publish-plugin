@@ -287,7 +287,15 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).artifact("klib").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion))
+    if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
+      assertThat(result).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibJs(kotlinVersion),
+        kotlinDomApi(kotlinVersion),
+      )
+    } else {
+      assertThat(result).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion))
+    }
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
@@ -366,11 +374,20 @@ class MavenPublishPluginPlatformTest {
     assertThat(nodejsResult).artifact("klib").isSigned()
     assertThat(nodejsResult).pom().exists()
     assertThat(nodejsResult).pom().isSigned()
-    assertThat(nodejsResult).pom().matchesExpectedPom(
-      "klib",
-      kotlinStdlibJs(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
-    )
+    if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibJs(kotlinVersion),
+        kotlinDomApi(kotlinVersion),
+        kotlinStdlibCommon(kotlinVersion),
+      )
+    } else {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibJs(kotlinVersion),
+        kotlinStdlibCommon(kotlinVersion),
+      )
+    }
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).module().isSigned()
     assertThat(nodejsResult).sourcesJar().exists()
@@ -452,11 +469,20 @@ class MavenPublishPluginPlatformTest {
     assertThat(nodejsResult).artifact("klib").isSigned()
     assertThat(nodejsResult).pom().exists()
     assertThat(nodejsResult).pom().isSigned()
-    assertThat(nodejsResult).pom().matchesExpectedPom(
-      "klib",
-      kotlinStdlibJs(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
-    )
+    if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibJs(kotlinVersion),
+        kotlinDomApi(kotlinVersion),
+        kotlinStdlibCommon(kotlinVersion),
+      )
+    } else {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibJs(kotlinVersion),
+        kotlinStdlibCommon(kotlinVersion),
+      )
+    }
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).module().isSigned()
     assertThat(nodejsResult).sourcesJar().exists()
