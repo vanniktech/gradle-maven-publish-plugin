@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.25.3 *(2023-07-01)*
+
+- Gradle 8.2: Fix error for projects that use the `java-test-fixtures` plugin.
+- Fix issue for Kotlin Multiplatform projects when running tests and having signing enabled.
+
+
 ## 0.25.2 *(2023-04-16)*
 
 - Fix javadoc jar being empty when using dokka.
