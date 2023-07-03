@@ -9,7 +9,7 @@ truth = "1.1.5"
 okhttp = "com.squareup.okhttp3:okhttp:4.11.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.8.20"
 android-plugin = "com.android.tools.build:gradle:8.0.2"
-ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:11.4.2"
+ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:11.5.0"
 maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.25.3"
 buildconfig-plugin = "com.github.gmazzo:gradle-buildconfig-plugin:3.1.0"
 
