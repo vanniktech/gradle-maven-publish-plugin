@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish
 
+import com.google.common.truth.TruthJUnit.assume
 import org.gradle.api.JavaVersion
 
 data class TestOptions(
@@ -53,9 +54,15 @@ enum class AgpVersion(
   ),
 }
 
-enum class KotlinVersion(val value: String) {
+enum class KotlinVersion(
+  val value: String,
+  val firstUnsupportedJdkVersion: JavaVersion? = null,
+) {
   // minimum supported
-  KT_1_7_0("1.7.0"),
+  KT_1_7_0(
+    value = "1.7.0",
+    firstUnsupportedJdkVersion = JavaVersion.VERSION_18,
+  ),
 
   // stable
   KT_1_9_0("1.9.0"),
@@ -101,4 +108,24 @@ enum class GradlePluginPublish(val version: String) {
 
   // stable
   GRADLE_PLUGIN_PUBLISH_1_2("1.2.0"),
+}
+
+fun GradleVersion.assumeSupportedJdkVersion() {
+  if (firstUnsupportedJdkVersion != null) {
+    assume().that(JavaVersion.current()).isLessThan(firstUnsupportedJdkVersion)
+  }
+}
+
+fun KotlinVersion.assumeSupportedJdkVersion() {
+  if (firstUnsupportedJdkVersion != null) {
+    assume().that(JavaVersion.current()).isLessThan(firstUnsupportedJdkVersion)
+  }
+}
+
+fun AgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
+  assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
+  assume().that(gradleVersion).isAtLeast(minGradleVersion)
+  if (firstUnsupportedGradleVersion != null) {
+    assume().that(gradleVersion).isLessThan(firstUnsupportedGradleVersion)
+  }
 }

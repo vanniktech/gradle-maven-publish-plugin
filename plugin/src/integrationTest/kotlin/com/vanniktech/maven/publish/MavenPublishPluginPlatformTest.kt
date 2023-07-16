@@ -6,7 +6,6 @@ import com.google.testing.junit.testparameterinjector.junit5.TestParameterInject
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.TestOptions.Signing.IN_MEMORY_KEY
 import java.nio.file.Path
-import org.gradle.api.JavaVersion
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 
@@ -25,9 +24,7 @@ class MavenPublishPluginPlatformTest {
 
   @BeforeEach
   fun setup() {
-    if (gradleVersion.firstUnsupportedJdkVersion != null) {
-      assume().that(JavaVersion.current()).isLessThan(gradleVersion.firstUnsupportedJdkVersion)
-    }
+    gradleVersion.assumeSupportedJdkVersion()
   }
 
   @TestParameterInjectorTest
@@ -167,6 +164,8 @@ class MavenPublishPluginPlatformTest {
   fun javaGradlePluginKotlinProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
+    kotlinVersion.assumeSupportedJdkVersion()
+
     val project = javaGradlePluginKotlinProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -227,6 +226,8 @@ class MavenPublishPluginPlatformTest {
   fun kotlinJvmProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
+    kotlinVersion.assumeSupportedJdkVersion()
+
     val project = kotlinJvmProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -249,6 +250,8 @@ class MavenPublishPluginPlatformTest {
   fun kotlinJvmWithTestFixturesProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
+    kotlinVersion.assumeSupportedJdkVersion()
+
     val default = kotlinJvmProjectSpec(kotlinVersion)
     val project = default.copy(
       plugins = default.plugins + javaTestFixturesPlugin,
@@ -287,6 +290,8 @@ class MavenPublishPluginPlatformTest {
   fun kotlinJsProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
+    kotlinVersion.assumeSupportedJdkVersion()
+
     val project = kotlinJsProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -317,6 +322,8 @@ class MavenPublishPluginPlatformTest {
   fun kotlinMultiplatformProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
+    kotlinVersion.assumeSupportedJdkVersion()
+
     val project = kotlinMultiplatformProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -410,7 +417,8 @@ class MavenPublishPluginPlatformTest {
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
-    agpVersion.assumeSupportedJdkAndGradleVersion()
+    agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kotlinVersion.assumeSupportedJdkVersion()
 
     val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -542,7 +550,7 @@ class MavenPublishPluginPlatformTest {
   fun androidLibraryProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
   ) {
-    agpVersion.assumeSupportedJdkAndGradleVersion()
+    agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = androidLibraryProjectSpec(agpVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -568,7 +576,7 @@ class MavenPublishPluginPlatformTest {
   ) {
     // regular plugin does not have a way to enable multi variant config
     assume().that(config).isEqualTo(TestOptions.Config.BASE)
-    agpVersion.assumeSupportedJdkAndGradleVersion()
+    agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = androidLibraryProjectSpec(agpVersion).copy(
       basePluginConfig = "configure(new AndroidMultiVariantLibrary(true, true))",
@@ -604,7 +612,8 @@ class MavenPublishPluginPlatformTest {
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
-    agpVersion.assumeSupportedJdkAndGradleVersion()
+    agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kotlinVersion.assumeSupportedJdkVersion()
 
     val project = androidLibraryKotlinProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -658,13 +667,5 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).pom().matchesExpectedPom("toml")
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
-  }
-
-  private fun AgpVersion.assumeSupportedJdkAndGradleVersion() {
-    assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
-    assume().that(gradleVersion).isAtLeast(minGradleVersion)
-    if (firstUnsupportedGradleVersion != null) {
-      assume().that(gradleVersion).isLessThan(firstUnsupportedGradleVersion)
-    }
   }
 }

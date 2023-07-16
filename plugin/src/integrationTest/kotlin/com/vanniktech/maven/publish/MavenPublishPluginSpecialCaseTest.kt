@@ -1,13 +1,11 @@
 package com.vanniktech.maven.publish
 
-import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.TestOptions.Signing.GPG_KEY
 import com.vanniktech.maven.publish.TestOptions.Signing.NO_SIGNING
 import java.nio.file.Path
-import org.gradle.api.JavaVersion
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 
@@ -26,15 +24,15 @@ class MavenPublishPluginSpecialCaseTest {
 
   @BeforeEach
   fun setup() {
-    if (gradleVersion.firstUnsupportedJdkVersion != null) {
-      assume().that(JavaVersion.current()).isLessThan(gradleVersion.firstUnsupportedJdkVersion)
-    }
+    gradleVersion.assumeSupportedJdkVersion()
   }
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
+    kotlinVersion.assumeSupportedJdkVersion()
+
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "foo-bar",
