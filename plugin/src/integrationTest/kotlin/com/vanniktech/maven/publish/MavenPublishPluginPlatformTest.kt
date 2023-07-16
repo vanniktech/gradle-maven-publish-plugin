@@ -164,7 +164,7 @@ class MavenPublishPluginPlatformTest {
   fun javaGradlePluginKotlinProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkVersion()
+    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = javaGradlePluginKotlinProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -226,7 +226,7 @@ class MavenPublishPluginPlatformTest {
   fun kotlinJvmProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkVersion()
+    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinJvmProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -250,7 +250,7 @@ class MavenPublishPluginPlatformTest {
   fun kotlinJvmWithTestFixturesProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkVersion()
+    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val default = kotlinJvmProjectSpec(kotlinVersion)
     val project = default.copy(
@@ -290,7 +290,7 @@ class MavenPublishPluginPlatformTest {
   fun kotlinJsProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkVersion()
+    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinJsProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -322,7 +322,7 @@ class MavenPublishPluginPlatformTest {
   fun kotlinMultiplatformProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkVersion()
+    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinMultiplatformProjectSpec(kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -418,7 +418,7 @@ class MavenPublishPluginPlatformTest {
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-    kotlinVersion.assumeSupportedJdkVersion()
+    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
@@ -613,7 +613,7 @@ class MavenPublishPluginPlatformTest {
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-    kotlinVersion.assumeSupportedJdkVersion()
+    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = androidLibraryKotlinProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)

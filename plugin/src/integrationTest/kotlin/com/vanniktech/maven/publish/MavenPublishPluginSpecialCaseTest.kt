@@ -31,7 +31,7 @@ class MavenPublishPluginSpecialCaseTest {
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkVersion()
+    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",

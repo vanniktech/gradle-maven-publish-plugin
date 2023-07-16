@@ -57,11 +57,13 @@ enum class AgpVersion(
 enum class KotlinVersion(
   val value: String,
   val firstUnsupportedJdkVersion: JavaVersion? = null,
+  val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
   // minimum supported
   KT_1_7_0(
     value = "1.7.0",
     firstUnsupportedJdkVersion = JavaVersion.VERSION_18,
+    firstUnsupportedGradleVersion = GradleVersion.GRADLE_8_3,
   ),
 
   // stable
@@ -116,9 +118,12 @@ fun GradleVersion.assumeSupportedJdkVersion() {
   }
 }
 
-fun KotlinVersion.assumeSupportedJdkVersion() {
+fun KotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
   if (firstUnsupportedJdkVersion != null) {
     assume().that(JavaVersion.current()).isLessThan(firstUnsupportedJdkVersion)
+  }
+  if (firstUnsupportedGradleVersion != null) {
+    assume().that(gradleVersion).isLessThan(firstUnsupportedGradleVersion)
   }
 }
 
