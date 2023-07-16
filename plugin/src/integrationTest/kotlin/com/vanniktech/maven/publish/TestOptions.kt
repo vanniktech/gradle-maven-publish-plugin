@@ -92,7 +92,7 @@ enum class GradleVersion(
   ),
 
   // preview
-  GRADLE_8_3("8.3-20230715071551+0000"),
+  GRADLE_8_3("8.3-rc-1"),
   ;
 
   companion object {
