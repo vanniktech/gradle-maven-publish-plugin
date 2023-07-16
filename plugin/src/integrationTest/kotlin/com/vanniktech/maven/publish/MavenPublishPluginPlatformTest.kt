@@ -8,6 +8,7 @@ import com.vanniktech.maven.publish.TestOptions.Signing.IN_MEMORY_KEY
 import java.nio.file.Path
 import org.gradle.api.JavaVersion
 import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.api.BeforeEach
 
 class MavenPublishPluginPlatformTest {
   @TempDir
@@ -21,6 +22,13 @@ class MavenPublishPluginPlatformTest {
 
   private val testOptions
     get() = TestOptions(config, IN_MEMORY_KEY, gradleVersion)
+
+  @BeforeEach
+  fun setup() {
+    if (gradleVersion.firstUnsupportedJdkVersion != null) {
+      assume().that(JavaVersion.current()).isLessThan(gradleVersion.firstUnsupportedJdkVersion)
+    }
+  }
 
   @TestParameterInjectorTest
   fun javaProject() {
