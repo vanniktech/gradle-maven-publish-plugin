@@ -7,8 +7,8 @@ import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.TestOptions.Signing.IN_MEMORY_KEY
 import java.nio.file.Path
 import org.gradle.api.JavaVersion
-import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.io.TempDir
 
 class MavenPublishPluginPlatformTest {
   @TempDir

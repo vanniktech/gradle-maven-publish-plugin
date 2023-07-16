@@ -8,8 +8,8 @@ import com.vanniktech.maven.publish.TestOptions.Signing.GPG_KEY
 import com.vanniktech.maven.publish.TestOptions.Signing.NO_SIGNING
 import java.nio.file.Path
 import org.gradle.api.JavaVersion
-import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.io.TempDir
 
 class MavenPublishPluginSpecialCaseTest {
   @TempDir
