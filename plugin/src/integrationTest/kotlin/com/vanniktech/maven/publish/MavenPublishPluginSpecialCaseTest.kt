@@ -6,6 +6,7 @@ import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.TestOptions.Signing.GPG_KEY
 import com.vanniktech.maven.publish.TestOptions.Signing.NO_SIGNING
 import java.nio.file.Path
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 
 class MavenPublishPluginSpecialCaseTest {
@@ -15,16 +16,23 @@ class MavenPublishPluginSpecialCaseTest {
   @TestParameter(valuesProvider = TestOptionsConfigProvider::class)
   lateinit var config: TestOptions.Config
 
-  @TestParameter
+  @TestParameter(valuesProvider = GradleVersionProvider::class)
   lateinit var gradleVersion: GradleVersion
 
   private val testOptions
     get() = TestOptions(config, NO_SIGNING, gradleVersion)
 
+  @BeforeEach
+  fun setup() {
+    gradleVersion.assumeSupportedJdkVersion()
+  }
+
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
+    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+
     val project = kotlinMultiplatformProjectSpec(kotlinVersion).copy(
       defaultProjectName = "foo",
       artifactId = "foo-bar",
