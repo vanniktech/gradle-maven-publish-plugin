@@ -60,7 +60,7 @@ data class JavaLibrary @JvmOverloads constructor(
 ) : Platform() {
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("java") || project.plugins.hasPlugin("java-library")) {
+    check(project.plugins.hasPlugin("java") || project.plugins.hasPlugin("java-library")) {
       "Calling configure(JavaLibrary(...)) requires the java-library plugin to be applied"
     }
 
@@ -93,7 +93,7 @@ data class GradlePlugin @JvmOverloads constructor(
 ) : Platform() {
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("java-gradle-plugin")) {
+    check(project.plugins.hasPlugin("java-gradle-plugin")) {
       "Calling configure(GradlePlugin(...)) requires the java-gradle-plugin to be applied"
     }
 
@@ -113,7 +113,7 @@ class GradlePublishPlugin : Platform() {
   override val sourcesJar: Boolean = true
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("com.gradle.plugin-publish")) {
+    check(project.plugins.hasPlugin("com.gradle.plugin-publish")) {
       "Calling configure(GradlePublishPlugin()) requires the com.gradle.plugin-publish plugin to be applied"
     }
 
@@ -160,7 +160,7 @@ data class AndroidSingleVariantLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("com.android.library")) {
+    check(project.plugins.hasPlugin("com.android.library")) {
       "Calling configure(AndroidSingleVariantLibrary(...)) requires the com.android.library plugin to be applied"
     }
 
@@ -224,7 +224,7 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("com.android.library")) {
+    check(project.plugins.hasPlugin("com.android.library")) {
       "Calling configure(AndroidMultiVariantLibrary(...)) requires the com.android.library plugin to be applied"
     }
 
@@ -279,7 +279,7 @@ data class KotlinMultiplatform @JvmOverloads constructor(
   override val sourcesJar = false
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+    check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
       "Calling configure(KotlinMultiplatform(...)) requires the org.jetbrains.kotlin.multiplatform plugin to be applied"
     }
 
@@ -313,7 +313,7 @@ data class KotlinJvm @JvmOverloads constructor(
 ) : Platform() {
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
+    check(project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
       "Calling configure(KotlinJvm(...)) requires the org.jetbrains.kotlin.jvm plugin to be applied"
     }
 
@@ -362,7 +362,7 @@ constructor(
   ) : this(javadocJar, true)
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
+    check(project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
       "Calling configure(KotlinJs(...)) requires the org.jetbrains.kotlin.js plugin to be applied"
     }
 
@@ -404,7 +404,7 @@ class JavaPlatform : Platform() {
   override val sourcesJar: Boolean = false
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("java-platform")) {
+    check(project.plugins.hasPlugin("java-platform")) {
       "Calling configure(JavaPlatform(...)) requires the java-platform plugin to be applied"
     }
 
@@ -437,7 +437,7 @@ class VersionCatalog : Platform() {
   override val sourcesJar: Boolean = false
 
   override fun configure(project: Project) {
-    check (project.plugins.hasPlugin("version-catalog")) {
+    check(project.plugins.hasPlugin("version-catalog")) {
       "Calling configure(VersionCatalog(...)) requires the version-catalog plugin to be applied"
     }
 
