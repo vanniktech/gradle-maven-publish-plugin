@@ -355,6 +355,7 @@ data class KotlinJvm @JvmOverloads constructor(
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
  */
+@Deprecated("The Kotlin/JS plugin has been deprecated in Kotlin 1.9.0")
 data class KotlinJs
 @Deprecated(
   "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20. " +
