@@ -19,6 +19,7 @@ import org.gradle.internal.component.external.model.ProjectDerivedCapability
 import org.gradle.jvm.component.internal.DefaultJvmSoftwareComponent
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
@@ -274,9 +275,8 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
  */
 data class KotlinMultiplatform @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val sourcesJar: Boolean = true,
 ) : Platform() {
-  // Automatically added by Kotlin MPP plugin.
-  override val sourcesJar = false
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
@@ -287,6 +287,16 @@ data class KotlinMultiplatform @JvmOverloads constructor(
 
     project.mavenPublications {
       it.withJavadocJar { javadocJarTask }
+    }
+
+    if (project.isAtLeastKotlinVersion("org.jetbrains.kotlin.multiplatform", 1, 9, 0)) {
+      project.extensions.configure(KotlinMultiplatformExtension::class.java) {
+        it.withSourcesJar(sourcesJar)
+      }
+    } else {
+      check(sourcesJar) {
+        "Disabling sources publishing for Kotlin/Multiplatform is not supported until Kotlin 1.9.0"
+      }
     }
   }
 }
@@ -499,11 +509,6 @@ sealed class JavadocJar {
 }
 
 private const val PUBLICATION_NAME = "maven"
-
-private fun MavenPublication.withSourcesJar(factory: () -> TaskProvider<*>) {
-  val task = factory()
-  artifact(task)
-}
 
 private fun MavenPublication.withKotlinSourcesJar(enabled: Boolean, project: Project) {
   val task = if (enabled) {
