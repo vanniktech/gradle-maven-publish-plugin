@@ -60,6 +60,10 @@ data class JavaLibrary @JvmOverloads constructor(
 ) : Platform() {
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("java") || project.plugins.hasPlugin("java-library")) {
+      "Calling configure(JavaLibrary(...)) requires the java-library plugin to be applied"
+    }
+
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
       it.withJavaSourcesJar(sourcesJar, project)
@@ -89,6 +93,10 @@ data class GradlePlugin @JvmOverloads constructor(
 ) : Platform() {
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("java-gradle-plugin")) {
+      "Calling configure(GradlePlugin(...)) requires the java-gradle-plugin to be applied"
+    }
+
     project.mavenPublicationsWithoutPluginMarker {
       it.withJavaSourcesJar(sourcesJar, project)
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
@@ -105,6 +113,10 @@ class GradlePublishPlugin : Platform() {
   override val sourcesJar: Boolean = true
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("com.gradle.plugin-publish")) {
+      "Calling configure(GradlePublishPlugin()) requires the com.gradle.plugin-publish plugin to be applied"
+    }
+
     // setup is fully handled by com.gradle.plugin-publish already
   }
 
@@ -148,6 +160,10 @@ data class AndroidSingleVariantLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("com.android.library")) {
+      "Calling configure(AndroidSingleVariantLibrary(...)) requires the com.android.library plugin to be applied"
+    }
+
     val library = project.extensions.findByType(LibraryExtension::class.java)!!
     library.publishing {
       singleVariant(variant) {
@@ -208,6 +224,10 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("com.android.library")) {
+      "Calling configure(AndroidMultiVariantLibrary(...)) requires the com.android.library plugin to be applied"
+    }
+
     val library = project.extensions.findByType(LibraryExtension::class.java)!!
     library.publishing {
       multipleVariants(PUBLICATION_NAME) {
@@ -259,6 +279,10 @@ data class KotlinMultiplatform @JvmOverloads constructor(
   override val sourcesJar = false
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+      "Calling configure(KotlinMultiplatform(...)) requires the org.jetbrains.kotlin.multiplatform plugin to be applied"
+    }
+
     val javadocJarTask = project.javadocJarTask(javadocJar)
 
     project.mavenPublications {
@@ -289,6 +313,10 @@ data class KotlinJvm @JvmOverloads constructor(
 ) : Platform() {
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
+      "Calling configure(KotlinJvm(...)) requires the org.jetbrains.kotlin.jvm plugin to be applied"
+    }
+
     // Create publication, since Kotlin/JS doesn't provide one by default.
     // https://youtrack.jetbrains.com/issue/KT-41582
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
@@ -334,6 +362,10 @@ constructor(
   ) : this(javadocJar, true)
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
+      "Calling configure(KotlinJs(...)) requires the org.jetbrains.kotlin.js plugin to be applied"
+    }
+
     // Create publication, since Kotlin/JS doesn't provide one by default.
     // https://youtrack.jetbrains.com/issue/KT-41582
     project.afterEvaluate {
@@ -372,6 +404,10 @@ class JavaPlatform : Platform() {
   override val sourcesJar: Boolean = false
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("java-platform")) {
+      "Calling configure(JavaPlatform(...)) requires the java-platform plugin to be applied"
+    }
+
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("javaPlatform"))
     }
@@ -401,6 +437,10 @@ class VersionCatalog : Platform() {
   override val sourcesJar: Boolean = false
 
   override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("version-catalog")) {
+      "Calling configure(VersionCatalog(...)) requires the version-catalog plugin to be applied"
+    }
+
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("versionCatalog"))
     }
