@@ -63,7 +63,7 @@ For projects using the `com.android.library` plugin. This will publish all varia
     import com.vanniktech.maven.publish.AndroidMultiVariantLibrary
 
     mavenPublishing {
-      // the first parameter represennts whether to publish a sources jar
+      // the first parameter represents whether to publish a sources jar
       // the second whether to publish a javadoc jar
       configure(new AndroidMultiVariantLibrary(true, true))
       // or to limit which build types to include
