@@ -41,7 +41,7 @@ enum class AgpVersion(
 
   // canary channel
   AGP_8_2(
-    value = "8.2.0-alpha14",
+    value = "8.2.0-alpha15",
     minGradleVersion = GradleVersion.GRADLE_8_1,
     minJdkVersion = JavaVersion.VERSION_17,
   ),
@@ -85,7 +85,7 @@ enum class GradleVersion(
   ),
 
   // preview
-  GRADLE_8_3("8.3-rc-2"),
+  GRADLE_8_3("8.3-rc-3"),
   ;
 
   companion object {
