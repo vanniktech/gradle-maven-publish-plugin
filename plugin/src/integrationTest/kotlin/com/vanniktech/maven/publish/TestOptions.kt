@@ -53,7 +53,10 @@ enum class KotlinVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
   // minimum supported
-  KT_1_8_20("1.8.20"),
+  KT_1_8_20(
+    "1.8.20",
+    firstUnsupportedJdkVersion = JavaVersion.VERSION_20,
+  ),
 
   // stable
   KT_1_9_0("1.9.0"),
