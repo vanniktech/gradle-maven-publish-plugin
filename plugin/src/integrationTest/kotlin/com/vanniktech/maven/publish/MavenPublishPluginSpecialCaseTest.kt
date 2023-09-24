@@ -80,17 +80,23 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(nodejsResult).outcome().succeeded()
     assertThat(nodejsResult).artifact("klib").exists()
     assertThat(nodejsResult).pom().exists()
-    if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
+    if (kotlinVersion >= KotlinVersion.KT_1_9_20) {
       assertThat(nodejsResult).pom().matchesExpectedPom(
         "klib",
-        kotlinStdlibJs(kotlinVersion),
+        kotlinStdlibMppJs(kotlinVersion),
+        kotlinDomApi(kotlinVersion),
+      )
+    } else if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibMppJs(kotlinVersion),
         kotlinDomApi(kotlinVersion),
         kotlinStdlibCommon(kotlinVersion),
       )
     } else {
       assertThat(nodejsResult).pom().matchesExpectedPom(
         "klib",
-        kotlinStdlibJs(kotlinVersion),
+        kotlinStdlibMppJs(kotlinVersion),
         kotlinStdlibCommon(kotlinVersion),
       )
     }
@@ -153,17 +159,23 @@ class MavenPublishPluginSpecialCaseTest {
     assertThat(nodejsResult).outcome().succeeded()
     assertThat(nodejsResult).artifact("klib").exists()
     assertThat(nodejsResult).pom().exists()
-    if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
+    if (kotlinVersion >= KotlinVersion.KT_1_9_20) {
       assertThat(nodejsResult).pom().matchesExpectedPom(
         "klib",
-        kotlinStdlibJs(kotlinVersion),
+        kotlinStdlibMppJs(kotlinVersion),
+        kotlinDomApi(kotlinVersion),
+      )
+    } else if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
+      assertThat(nodejsResult).pom().matchesExpectedPom(
+        "klib",
+        kotlinStdlibMppJs(kotlinVersion),
         kotlinDomApi(kotlinVersion),
         kotlinStdlibCommon(kotlinVersion),
       )
     } else {
       assertThat(nodejsResult).pom().matchesExpectedPom(
         "klib",
-        kotlinStdlibJs(kotlinVersion),
+        kotlinStdlibMppJs(kotlinVersion),
         kotlinStdlibCommon(kotlinVersion),
       )
     }
