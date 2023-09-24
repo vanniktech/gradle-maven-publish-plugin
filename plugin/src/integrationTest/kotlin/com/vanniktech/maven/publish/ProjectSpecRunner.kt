@@ -52,6 +52,8 @@ private fun TestOptions.supportsConfigCaching(plugins: List<PluginSpec>): Boolea
     return false
   }
 
+  // publishing supports configuration cache starting with 7.6
+  // signing only supports configuration cache starting with 8.1
   return gradleVersion >= GradleVersion.GRADLE_8_1 || signing == TestOptions.Signing.NO_SIGNING
 }
 
