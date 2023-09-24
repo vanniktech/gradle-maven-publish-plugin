@@ -58,10 +58,6 @@ enum class KotlinVersion(
   // stable
   KT_1_9_0("1.9.0"),
   ;
-
-  companion object {
-    val KT_1_8_20 = KT_1_9_0
-  }
 }
 
 enum class GradleVersion(
