@@ -202,7 +202,7 @@ open class ArtifactSubject internal constructor(
 
 class SourcesJarSubject private constructor(
   failureMetadata: FailureMetadata,
-  private val artifact: Path,
+  artifact: Path,
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
 

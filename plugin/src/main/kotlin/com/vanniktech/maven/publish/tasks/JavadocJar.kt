@@ -37,7 +37,7 @@ open class JavadocJar : Jar() {
     private fun Project.dokkaJavadocJar(taskName: DokkaTaskName): TaskProvider<*> {
       return tasks.register("dokkaJavadocJar", JavadocJar::class.java) {
         val task = when (taskName) {
-          is ProviderDokkaTaskName -> taskName.value.flatMap { tasks.named(it) }
+          is ProviderDokkaTaskName -> taskName.value.flatMap { name -> tasks.named(name) }
           is StringDokkaTaskName -> tasks.named(taskName.value)
         }
         it.dependsOn(task)

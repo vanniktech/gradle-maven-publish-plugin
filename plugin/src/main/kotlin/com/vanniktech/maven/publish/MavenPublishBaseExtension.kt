@@ -35,7 +35,7 @@ abstract class MavenPublishBaseExtension(
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
    * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
-   * `publish` task. As part of running publish the plugin will automatically create a staging repostory on Sonatype
+   * `publish` task. As part of running publish the plugin will automatically create a staging repository on Sonatype
    * to which all artifacts will be published. At the end of the build this staging repository will be automatically
    * closed. When the [automaticRelease] parameter is `true` the staging repository will also be released
    * automatically afterwards.
@@ -99,7 +99,7 @@ abstract class MavenPublishBaseExtension(
    * signing.secretKeyRingFile=/Users/me/.gnupg/secring.gpg
    * ```
    *
-   * Alternatively an in memory key can be used by exporting an ascii-armored GPG key and setting these Gradle properties"
+   * Alternatively an in memory key can be used by exporting an ascii-armored GPG key and setting these Gradle properties:
    * ```
    * signingInMemoryKey=exported_ascii_armored_key
    * # optional
@@ -147,6 +147,7 @@ abstract class MavenPublishBaseExtension(
       publishTask.dependsOn(project.tasks.withType(Sign::class.java))
     }
 
+    // TODO: https://youtrack.jetbrains.com/issue/KT-61313/ https://github.com/gradle/gradle/issues/26132
     project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
       project.tasks.withType(Sign::class.java).configureEach {
         it.signatureType = WorkaroundSignatureType(
@@ -199,7 +200,7 @@ abstract class MavenPublishBaseExtension(
     return if (publication.artifactId == projectName) {
       this
     } else if (publication.artifactId.startsWith("$projectName-")) {
-      // Publications for specific platform targes use derived artifact ids (e.g. library, library-jvm,
+      // Publications for specific platform targets use derived artifact ids (e.g. library, library-jvm,
       // library-js) and the suffix needs to be preserved
       publication.artifactId.replace("$projectName-", "$this-")
     } else {

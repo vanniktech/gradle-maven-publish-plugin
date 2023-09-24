@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish
 
 import java.nio.file.Paths
+import kotlin.io.path.absolute
 
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
@@ -16,7 +17,7 @@ val androidLibraryPlugin = PluginSpec("com.android.library")
 val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 val dokkaPlugin = PluginSpec("org.jetbrains.dokka", "1.8.10")
 
-val fixtures = Paths.get("src/integrationTest/fixtures2").toAbsolutePath()
+val fixtures = Paths.get("src/integrationTest/fixtures2").absolute()
 
 val defaultProperties = mapOf(
   "POM_NAME" to "Gradle Maven Publish Plugin Test Artifact",

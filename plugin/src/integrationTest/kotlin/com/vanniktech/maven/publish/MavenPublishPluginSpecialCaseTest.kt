@@ -47,11 +47,7 @@ class MavenPublishPluginSpecialCaseTest {
     )
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
-    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
-      assertThat(result).sourcesJar().containsAllSourceFiles()
-    } else {
-      assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-    }
+    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
     assertThat(result).javadocJar().exists()
 
     val jvmResult = result.withArtifactIdSuffix("jvm")
@@ -122,11 +118,7 @@ class MavenPublishPluginSpecialCaseTest {
     )
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
-    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
-      assertThat(result).sourcesJar().containsAllSourceFiles()
-    } else {
-      assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-    }
+    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
     assertThat(result).javadocJar().exists()
 
     val jvmResult = result.withArtifactIdSuffix("jvm")
@@ -266,7 +258,7 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun dokka() {
-    val kotlinVersion = KotlinVersion.values().last()
+    val kotlinVersion = KotlinVersion.entries.last()
     val original = kotlinJvmProjectSpec(kotlinVersion)
     val project = original.copy(
       plugins = original.plugins + dokkaPlugin,

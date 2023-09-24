@@ -41,26 +41,18 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 
 private fun TestOptions.supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
   // Kotlin MPP supports config cache since 1.9.0
-  val multiplatform = plugins.find { it.id == kotlinMultiplatformPlugin.id }
-  if (multiplatform != null) {
-    val parts = multiplatform.version!!.split(".")
-    if (parts[0].toInt() == 1 && parts[1].toInt() < 9) {
-      return false
-    }
+  val multiplatformPlugin = plugins.find { it.id == kotlinMultiplatformPlugin.id }
+  if (multiplatformPlugin != null) {
+    val version = KotlinVersion.entries.find { it.value == multiplatformPlugin.version }!!
+    return version >= KotlinVersion.KT_1_9_0
   }
+
   // TODO https://github.com/Kotlin/dokka/issues/2231
   if (plugins.any { it.id == dokkaPlugin.id }) {
     return false
   }
-  // publishing supports configuration cache starting with 7.6
-  // signing only supports configuration cache starting with 8.1
-  if (gradleVersion >= GradleVersion.GRADLE_8_1) {
-    return true
-  }
-  if (gradleVersion >= GradleVersion.GRADLE_7_6) {
-    return signing == TestOptions.Signing.NO_SIGNING
-  }
-  return false
+
+  return gradleVersion >= GradleVersion.GRADLE_8_1 || signing == TestOptions.Signing.NO_SIGNING
 }
 
 private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOptions) {
