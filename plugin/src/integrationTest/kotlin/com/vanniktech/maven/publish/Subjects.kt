@@ -20,6 +20,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 import kotlin.io.path.name
 import kotlin.io.path.readText
+import org.apache.maven.model.Dependency
 import org.apache.maven.model.Model
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer
@@ -265,6 +266,7 @@ class PomSubject private constructor(
     val pomWriter = MavenXpp3Writer()
 
     val actualModel = MavenXpp3Reader().read(artifact.inputStream())
+    actualModel.sortDependencies()
     val actualWriter = StringWriter()
     pomWriter.write(actualWriter, actualModel)
 
@@ -276,9 +278,21 @@ class PomSubject private constructor(
       dependencies,
       dependencyManagementDependencies,
     )
+    expectedModel.sortDependencies()
     val expectedWriter = StringWriter()
     pomWriter.write(expectedWriter, expectedModel)
 
     assertThat(actualWriter.toString()).isEqualTo(expectedWriter.toString())
+  }
+
+  private fun Model.sortDependencies() {
+    dependencies = dependencies.sortedWith(comparator)
+    if (dependencyManagement != null) {
+      dependencyManagement.dependencies = dependencyManagement.dependencies.sortedWith(comparator)
+    }
+  }
+
+  private val comparator = compareBy<Dependency> {
+    "${it.scope} ${it.groupId}:${it.artifactId}:${it.version}@${it.classifier}"
   }
 }
