@@ -90,7 +90,6 @@ internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRe
   companion object {
     private const val NAME = "sonatype-repository-build-service"
 
-    @Suppress("UnstableApiUsage")
     fun Project.registerSonatypeRepositoryBuildService(
       sonatypeHost: Provider<SonatypeHost>,
       repositoryUsername: Provider<String>,

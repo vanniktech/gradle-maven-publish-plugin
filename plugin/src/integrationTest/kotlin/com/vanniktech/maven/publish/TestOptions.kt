@@ -27,9 +27,9 @@ enum class AgpVersion(
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_11,
 ) {
   // minimum supported
-  AGP_7_3(
-    value = "7.3.1",
-    minGradleVersion = GradleVersion.GRADLE_7_4,
+  AGP_7_4(
+    value = "7.4.0",
+    minGradleVersion = GradleVersion.GRADLE_7_6,
   ),
 
   // stable
@@ -53,19 +53,14 @@ enum class KotlinVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
   // minimum supported
-  KT_1_7_0(
-    value = "1.7.0",
-    firstUnsupportedJdkVersion = JavaVersion.VERSION_18,
-    firstUnsupportedGradleVersion = GradleVersion.GRADLE_8_3,
+  KT_1_8_20(
+    "1.8.20",
+    firstUnsupportedJdkVersion = JavaVersion.VERSION_20,
   ),
 
   // stable
   KT_1_9_0("1.9.0"),
   ;
-
-  companion object {
-    val KT_1_8_20 = KT_1_9_0
-  }
 }
 
 enum class GradleVersion(
@@ -73,8 +68,8 @@ enum class GradleVersion(
   val firstUnsupportedJdkVersion: JavaVersion? = null,
 ) {
   // minimum supported
-  GRADLE_7_4(
-    value = "7.4",
+  GRADLE_7_6(
+    value = "7.6",
     firstUnsupportedJdkVersion = JavaVersion.VERSION_18,
   ),
 
@@ -90,8 +85,6 @@ enum class GradleVersion(
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
-    val GRADLE_7_5 = GRADLE_8_2
-    val GRADLE_7_6 = GRADLE_8_2
     val GRADLE_8_0 = GRADLE_8_2
     val GRADLE_8_1 = GRADLE_8_2
   }

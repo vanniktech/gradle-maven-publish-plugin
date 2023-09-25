@@ -20,21 +20,21 @@ open class MavenPublishBasePlugin : Plugin<Project> {
       error("You need Gradle version $MIN_GRADLE_VERSION or higher, was ${GradleVersion.current()}")
     }
     plugins.withId("com.android.library") {
-      if (!isAtLeastUsingAndroidGradleVersion(7, 3, 0)) {
-        error("You need AGP version 7.3.0 or newer")
+      if (!isAtLeastUsingAndroidGradleVersion(7, 4, 0)) {
+        error("You need AGP version 7.4.0 or newer")
       }
     }
     KOTLIN_PLUGIN_IDS.forEach { pluginId ->
       plugins.withId(pluginId) {
-        if (!isAtLeastKotlinVersion(pluginId, 1, 7, 0)) {
-          error("You need Kotlin version 1.7.0 or newer")
+        if (!isAtLeastKotlinVersion(pluginId, 1, 8, 20)) {
+          error("You need Kotlin version 1.8.20 or newer")
         }
       }
     }
   }
 
   private companion object {
-    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("7.4")
+    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("7.6")
     val KOTLIN_PLUGIN_IDS = listOf(
       "org.jetbrains.kotlin.jvm",
       "org.jetbrains.kotlin.js",

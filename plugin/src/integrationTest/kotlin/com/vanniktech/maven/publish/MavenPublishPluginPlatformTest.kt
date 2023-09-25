@@ -339,11 +339,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().isSigned()
-    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
-      assertThat(result).sourcesJar().containsAllSourceFiles()
-    } else {
-      assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-    }
+    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
     assertThat(result).javadocJar().exists()
     assertThat(result).javadocJar().isSigned()
 
@@ -435,11 +431,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().isSigned()
-    if (kotlinVersion < KotlinVersion.KT_1_8_20) {
-      assertThat(result).sourcesJar().containsAllSourceFiles()
-    } else {
-      assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-    }
+    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
     assertThat(result).javadocJar().exists()
     assertThat(result).javadocJar().isSigned()
 
