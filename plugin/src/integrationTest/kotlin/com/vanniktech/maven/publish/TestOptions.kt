@@ -34,14 +34,21 @@ enum class AgpVersion(
 
   // stable
   AGP_8_1(
-    value = "8.1.0",
+    value = "8.1.1",
+    minGradleVersion = GradleVersion.GRADLE_8_1,
+    minJdkVersion = JavaVersion.VERSION_17,
+  ),
+
+  // beta channel
+  AGP_8_2(
+    value = "8.2.0-beta05",
     minGradleVersion = GradleVersion.GRADLE_8_1,
     minJdkVersion = JavaVersion.VERSION_17,
   ),
 
   // canary channel
-  AGP_8_2(
-    value = "8.2.0-alpha15",
+  AGP_8_3(
+    value = "8.3.0-alpha04",
     minGradleVersion = GradleVersion.GRADLE_8_1,
     minJdkVersion = JavaVersion.VERSION_17,
   ),
@@ -60,6 +67,9 @@ enum class KotlinVersion(
 
   // stable
   KT_1_9_0("1.9.0"),
+
+  // preview
+  KT_1_9_20("1.9.20-Beta2"),
   ;
 }
 
@@ -74,19 +84,20 @@ enum class GradleVersion(
   ),
 
   // stable
-  GRADLE_8_2(
-    value = "8.2.1",
+  GRADLE_8_3(
+    value = "8.3",
     firstUnsupportedJdkVersion = JavaVersion.VERSION_20,
   ),
 
   // preview
-  GRADLE_8_3("8.3-rc-3"),
+  GRADLE_8_4("8.4-rc-1"),
   ;
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
-    val GRADLE_8_0 = GRADLE_8_2
-    val GRADLE_8_1 = GRADLE_8_2
+    val GRADLE_8_0 = GRADLE_8_3
+    val GRADLE_8_1 = GRADLE_8_3
+    val GRADLE_8_2 = GRADLE_8_3
   }
 }
 
