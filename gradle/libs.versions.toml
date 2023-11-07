@@ -2,7 +2,7 @@
 kotlin = "1.9.20"
 moshi = "1.15.0"
 retrofit = "2.9.0"
-junit = "5.10.0"
+junit = "5.10.1"
 truth = "1.1.5"
 
 [libraries]
