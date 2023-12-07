@@ -4,6 +4,7 @@ import com.vanniktech.maven.publish.JavadocJar as JavadocJarOption
 import com.vanniktech.maven.publish.JavadocJar.Dokka.DokkaTaskName
 import com.vanniktech.maven.publish.JavadocJar.Dokka.ProviderDokkaTaskName
 import com.vanniktech.maven.publish.JavadocJar.Dokka.StringDokkaTaskName
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -27,21 +28,39 @@ open class JavadocJar : Jar() {
     private fun Project.emptyJavadocJar(): TaskProvider<*> = tasks.register("emptyJavadocJar", JavadocJar::class.java)
 
     private fun Project.plainJavadocJar(): TaskProvider<*> {
-      return tasks.register("simpleJavadocJar", JavadocJar::class.java) {
-        val task = tasks.named("javadoc")
-        it.dependsOn(task)
-        it.from(task)
+      val javadoc = tasks.named("javadoc")
+
+      return try {
+        // This can throw an DuplicateTaskException (which is private, but extends InvalidUserDataException).
+        tasks.register("simpleJavadocJar", JavadocJar::class.java) { javadocJar ->
+          javadocJar.dependsOn(javadoc)
+          javadocJar.from(javadoc)
+        }
+      } catch (e: InvalidUserDataException) {
+        tasks.named("simpleJavadocJar", JavadocJar::class.java) { javadocJar ->
+          javadocJar.dependsOn(javadoc)
+          javadocJar.from(javadoc)
+        }
       }
     }
 
     private fun Project.dokkaJavadocJar(taskName: DokkaTaskName): TaskProvider<*> {
-      return tasks.register("dokkaJavadocJar", JavadocJar::class.java) {
-        val task = when (taskName) {
-          is ProviderDokkaTaskName -> taskName.value.flatMap { name -> tasks.named(name) }
-          is StringDokkaTaskName -> tasks.named(taskName.value)
+      val task = when (taskName) {
+        is ProviderDokkaTaskName -> taskName.value.flatMap { name -> tasks.named(name) }
+        is StringDokkaTaskName -> tasks.named(taskName.value)
+      }
+
+      return try {
+        // This can throw an DuplicateTaskException (which is private, but extends InvalidUserDataException).
+        tasks.register("dokkaJavadocJar", JavadocJar::class.java) { javadocJar ->
+          javadocJar.dependsOn(task)
+          javadocJar.from(task)
         }
-        it.dependsOn(task)
-        it.from(task)
+      } catch (e: InvalidUserDataException) {
+        tasks.named("dokkaJavadocJar", JavadocJar::class.java) { javadocJar ->
+          javadocJar.dependsOn(task)
+          javadocJar.from(task)
+        }
       }
     }
   }
