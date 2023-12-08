@@ -98,9 +98,11 @@ data class GradlePlugin @JvmOverloads constructor(
       "Calling configure(GradlePlugin(...)) requires the java-gradle-plugin to be applied"
     }
 
+    val javadocJarTask = project.javadocJarTask(javadocJar)
+
     project.mavenPublicationsWithoutPluginMarker {
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar { project.javadocJarTask(javadocJar) }
+      it.withJavadocJar { javadocJarTask }
     }
   }
 }
