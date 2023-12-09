@@ -27,7 +27,7 @@ open class JavadocJar : Jar() {
     private fun Project.emptyJavadocJar(): TaskProvider<*> = tasks.register("emptyJavadocJar", JavadocJar::class.java)
 
     private fun Project.plainJavadocJar(): TaskProvider<*> {
-      return tasks.register("simpleJavadocJar", JavadocJar::class.java) {
+      return tasks.register("plainJavadocJar", JavadocJar::class.java) {
         val task = tasks.named("javadoc")
         it.dependsOn(task)
         it.from(task)
