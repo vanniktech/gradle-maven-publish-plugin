@@ -178,7 +178,6 @@ private fun writeSettingFile(path: Path) {
 
     dependencyResolutionManagement {
         repositories {
-            mavenLocal()
             mavenCentral()
             google()
         }

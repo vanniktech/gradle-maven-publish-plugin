@@ -14,10 +14,13 @@ import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
 import org.gradle.util.GradleVersion
+import org.jetbrains.dokka.gradle.DokkaTask
 
 abstract class MavenPublishBaseExtension(
   private val project: Project,
@@ -30,7 +33,7 @@ abstract class MavenPublishBaseExtension(
   internal val version: Property<String> = project.objects.property(String::class.java)
     .convention(project.provider { project.version.toString() })
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
-  private val platform: Property<Platform> = project.objects.property(Platform::class.java)
+  internal val platform: Property<Platform> = project.objects.property(Platform::class.java)
 
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
@@ -348,5 +351,67 @@ abstract class MavenPublishBaseExtension(
     this.platform.finalizeValue()
 
     platform.configure(project)
+  }
+
+  /**
+   * Calls [configure] with a [Platform] chosen based on other applied Gradle plugins.
+   */
+  @Incubating
+  fun configureBasedOnAppliedPlugins() {
+    // has already been called before by the user or from finalizeDsl
+    if (platform.isPresent) {
+      return
+    }
+
+    when {
+      project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") ->
+        configure(KotlinMultiplatform(defaultJavaDocOption(plainJavadocSupported = false)))
+      project.plugins.hasPlugin("com.android.library") -> {
+        val variant = project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release"
+        configure(AndroidSingleVariantLibrary(variant))
+      }
+      project.plugins.hasPlugin("com.gradle.plugin-publish") ->
+        configure(GradlePublishPlugin())
+      project.plugins.hasPlugin("java-gradle-plugin") ->
+        configure(GradlePlugin(defaultJavaDocOption(plainJavadocSupported = true)))
+      project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
+        configure(KotlinJvm(defaultJavaDocOption(plainJavadocSupported = true)))
+      project.plugins.hasPlugin("org.jetbrains.kotlin.js") ->
+        @Suppress("DEPRECATION")
+        configure(KotlinJs(defaultJavaDocOption(plainJavadocSupported = false)))
+      project.plugins.hasPlugin("java-library") ->
+        configure(JavaLibrary(defaultJavaDocOption(plainJavadocSupported = true)))
+      project.plugins.hasPlugin("java") ->
+        configure(JavaLibrary(defaultJavaDocOption(plainJavadocSupported = true)))
+      project.plugins.hasPlugin("java-platform") ->
+        configure(JavaPlatform())
+      project.plugins.hasPlugin("version-catalog") ->
+        configure(VersionCatalog())
+      else -> project.logger.warn("No compatible plugin found in project ${project.path} for publishing")
+    }
+  }
+
+  private fun defaultJavaDocOption(plainJavadocSupported: Boolean): JavadocJar {
+    return if (project.plugins.hasPlugin("org.jetbrains.dokka") || project.plugins.hasPlugin("org.jetbrains.dokka-android")) {
+      val dokkaTask = project.provider {
+        val tasks = project.tasks.withType(DokkaTask::class.java)
+        tasks.singleOrNull()?.name ?: "dokkaHtml"
+      }
+      JavadocJar.Dokka(dokkaTask)
+    } else if (plainJavadocSupported) {
+      project.tasks.withType(Javadoc::class.java).configureEach {
+        val options = it.options as StandardJavadocDocletOptions
+        val javaVersion = project.javaVersion()
+        if (javaVersion.isJava9Compatible) {
+          options.addBooleanOption("html5", true)
+        }
+        if (javaVersion.isJava8Compatible) {
+          options.addStringOption("Xdoclint:none", "-quiet")
+        }
+      }
+      return JavadocJar.Javadoc()
+    } else {
+      JavadocJar.Empty()
+    }
   }
 }

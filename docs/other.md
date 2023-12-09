@@ -23,6 +23,34 @@ Add the plugin to any Gradle project that should be published
     }
     ```
 
+## Configuring what to publish
+
+By default, the plugin will automatically detect other applied plugins like the
+Android Gradle plugin or Kotlin Gradle plugin and set up what to publish automatically.
+This automatic configuration includes publishing a sources and a javadoc jar. The
+javadoc jar content is either created from the default javadoc task or from Dokka if
+applied.
+
+To modify these defaults it is possible to call `configure` in the DSL. For
+more check out the [what to publish page](what.md) which contains a detailed
+description of available options for each project type.
+
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      configure(...)
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    mavenPublishing {
+      configure(...)
+    }
+    ```
+
 ## Configuring the repository
 
 A new repository to publish to can be added like this
