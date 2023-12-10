@@ -7,7 +7,7 @@
 - The base plugin now has a `configureBasedOnAppliedPlugins` DSL method to
   allow applying the default `configure` logic of the main plugin.
 - Calling `configure(Platform)` now validates that the required plugins are
-  applied (e.g. AGP for Android projects).
+  applied (e.g. Android Gradle Plugin for Android projects).
 - It's now possible to disable source publishing for KMP projects.
 - Fixed an issue which would cause the javadoc jar task to be registered multiple
   times for Gradle plugin projects with more than one publication. Thanks to
