@@ -1,5 +1,44 @@
 # Change Log
 
+## 0.26.0 **UNRELEASED**
+
+- It's now supported to call `configure(Platform)` from the main plugin to modify
+  what is getting published. [Check out the docs for more details](https://vanniktech.github.io/gradle-maven-publish-plugin/what/)
+- The base plugin now has a `configureBasedOnAppliedPlugins` DSL method to
+  allow applying the default `configure` logic of the main plugin.
+- Calling `configure(Platform)` now validates that the required plugins are
+  applied (e.g. Android Gradle Plugin for Android projects).
+- It's now possible to disable source publishing for KMP projects.
+- Fixed an issue which would cause the javadoc jar task to be registered multiple
+  times for Gradle plugin projects with more than one publication. Thanks to
+  @autonomousapps for the fix.
+- Publishing Kotlin/JS projects has been deprecated and will be removed in the
+  next release, because the Kotlin/JS plugin has been deprecated.
+- The internal task to create a javadoc jar for certain project types has been renamed
+  from `simpleJavadocJar` to `plainJavadocJar`. Thanks to @sschuberth.
+
+#### Minimum supported versions
+- Gradle 7.6
+- Android Gradle Plugin 7.4.0
+- Kotlin Gradle Plugin 1.8.20
+
+#### Compatibility tested up to
+- JDK 21
+- Gradle 8.5
+- Android Gradle Plugin 8.2.0
+- Android Gradle Plugin 8.3.0-alpha17
+- Kotlin Gradle Plugin 1.9.21
+- Kotlin Gradle Plugin 2.0.0-Beta1
+
+#### Configuration cache status
+
+When using **Gradle 8.1** or newer configuration cache is generally supported.
+
+Exceptions to that are:
+- Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+- Dokka does not support configuration cache
+
+
 ## 0.25.3 *(2023-07-01)*
 
 - Gradle 8.2: Fix error for projects that use the `java-test-fixtures` plugin.
