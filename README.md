@@ -9,6 +9,11 @@ and has been enhanced to add Kotlin support and keep up with the latest changes.
 - [Publishing open source projects to Maven Central](https://vanniktech.github.io/gradle-maven-publish-plugin/central/)
 - [Publishing to other Maven repositories](https://vanniktech.github.io/gradle-maven-publish-plugin/other/)
 
+For modifying what is getting published see [configuring what to publish](https://vanniktech.github.io/gradle-maven-publish-plugin/what/).
+
+There is also a [base plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/base/) that doesn't apply any
+default configuration and allows the most customization.
+
 # Supported plugins
 
 The output of the following Gradle plugins is supported to be published with this plugin:
@@ -43,9 +48,6 @@ plugin directly integrate with, so why should you use this plugin?
   no extra setup required.
 - **Gradle property based config**. Easily configure the plugin with Gradle properties that will apply to all
   subprojects
-
-There is also a [base plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/base/) which removes any automatic configuration and allows for a more manual
-configuration of what should be published.
 
 # License
 

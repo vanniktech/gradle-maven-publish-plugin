@@ -1,13 +1,7 @@
 package com.vanniktech.maven.publish
 
-import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.javadoc.Javadoc
-import org.gradle.external.javadoc.StandardJavadocDocletOptions
-import org.jetbrains.dokka.gradle.DokkaTask
 
 open class MavenPublishPlugin : Plugin<Project> {
 
@@ -27,88 +21,17 @@ open class MavenPublishPlugin : Plugin<Project> {
 
     baseExtension.pomFromGradleProperties()
 
-    project.configurePlatform()
-  }
-}
-
-private fun Project.configurePlatform() {
-  plugins.withId("org.jetbrains.kotlin.multiplatform") {
-    baseExtension.configure(KotlinMultiplatform(defaultJavaDocOption() ?: JavadocJar.Empty()))
-  }
-
-  plugins.withId("com.android.library") {
-    // afterEvaluate is too late, but we can't run this synchronously because we shouldn't call the APIs for
-    // multiplatform projects that use Android
-    androidComponents.finalizeDsl {
-      if (!plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-        val variant = project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release"
-        baseExtension.configure(AndroidSingleVariantLibrary(variant))
+    // afterEvaluate is too late for AGP which doesn't allow configuration after finalizeDsl
+    project.plugins.withId("com.android.library") {
+      @Suppress("UnstableApiUsage")
+      project.androidComponents.finalizeDsl {
+        baseExtension.configureBasedOnAppliedPlugins()
       }
     }
-  }
 
-  afterEvaluate {
-    when {
-      plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> {} // Handled above.
-      plugins.hasPlugin("com.android.library") -> {} // Handled above.
-      plugins.hasPlugin("com.gradle.plugin-publish") ->
-        baseExtension.configure(GradlePublishPlugin())
-      plugins.hasPlugin("java-gradle-plugin") ->
-        baseExtension.configure(GradlePlugin(defaultJavaDocOption() ?: javadoc()))
-      plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
-        baseExtension.configure(KotlinJvm(defaultJavaDocOption() ?: javadoc()))
-      plugins.hasPlugin("org.jetbrains.kotlin.js") ->
-        baseExtension.configure(KotlinJs(defaultJavaDocOption() ?: JavadocJar.Empty()))
-      plugins.hasPlugin("java-library") ->
-        baseExtension.configure(JavaLibrary(defaultJavaDocOption() ?: javadoc()))
-      plugins.hasPlugin("java") ->
-        baseExtension.configure(JavaLibrary(defaultJavaDocOption() ?: javadoc()))
-      plugins.hasPlugin("java-platform") ->
-        baseExtension.configure(JavaPlatform())
-      plugins.hasPlugin("version-catalog") ->
-        baseExtension.configure(VersionCatalog())
-      else -> logger.warn("No compatible plugin found in project $name for publishing")
+    project.afterEvaluate {
+      // will no-op if it was already called
+      baseExtension.configureBasedOnAppliedPlugins()
     }
   }
-}
-
-private fun Project.defaultJavaDocOption(): JavadocJar? {
-  return if (plugins.hasPlugin("org.jetbrains.dokka") || plugins.hasPlugin("org.jetbrains.dokka-android")) {
-    JavadocJar.Dokka(findDokkaTask())
-  } else {
-    null
-  }
-}
-
-private fun Project.javadoc(): JavadocJar {
-  tasks.withType(Javadoc::class.java).configureEach {
-    val options = it.options as StandardJavadocDocletOptions
-    val javaVersion = javaVersion()
-    if (javaVersion.isJava9Compatible) {
-      options.addBooleanOption("html5", true)
-    }
-    if (javaVersion.isJava8Compatible) {
-      options.addStringOption("Xdoclint:none", "-quiet")
-    }
-  }
-  return JavadocJar.Javadoc()
-}
-
-private fun Project.javaVersion(): JavaVersion {
-  try {
-    val extension = project.extensions.findByType(JavaPluginExtension::class.java)
-    if (extension != null) {
-      val toolchain = extension.toolchain
-      val version = toolchain.languageVersion.get().asInt()
-      return JavaVersion.toVersion(version)
-    }
-  } catch (t: Throwable) {
-    // ignore failures and fallback to java version in which Gradle is running
-  }
-  return JavaVersion.current()
-}
-
-private fun Project.findDokkaTask(): Provider<String> = provider {
-  val tasks = project.tasks.withType(DokkaTask::class.java)
-  tasks.singleOrNull()?.name ?: "dokkaHtml"
 }
