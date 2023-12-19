@@ -4,14 +4,15 @@ moshi = "1.15.0"
 retrofit = "2.9.0"
 junit = "5.10.1"
 truth = "1.1.5"
+maven-publish = "0.25.3"
+ktlint = "12.0.3"
 
 [libraries]
 okhttp = "com.squareup.okhttp3:okhttp:4.12.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.9.10"
 android-plugin = "com.android.tools.build:gradle:8.2.0"
-ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:12.0.3"
-maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.25.3"
-buildconfig-plugin = "com.github.gmazzo:gradle-buildconfig-plugin:3.1.0"
+ktlint-plugin = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
+maven-publish-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "maven-publish" }
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
@@ -32,4 +33,7 @@ truth-testKit = "com.autonomousapps:testkit-truth:1.1"
 maven-model = "org.apache.maven:maven-model:3.9.6"
 
 [plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.1.0" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
