@@ -51,7 +51,12 @@ internal fun Project.javaVersion(): JavaVersion {
   return JavaVersion.current()
 }
 
-internal fun Project.isAtLeastKotlinVersion(id: String, major: Int, minor: Int, patch: Int): Boolean {
+internal fun Project.isAtLeastKotlinVersion(
+  id: String,
+  major: Int,
+  minor: Int,
+  patch: Int,
+): Boolean {
   val plugin = project.plugins.getPlugin(id) as KotlinBasePlugin
   val elements = plugin.pluginVersion.takeWhile { it != '-' }.split(".")
   val kgpMajor = elements[0].toInt()
@@ -62,8 +67,8 @@ internal fun Project.isAtLeastKotlinVersion(id: String, major: Int, minor: Int, 
       kgpMajor == major && (
         kgpMinor > minor ||
           (kgpMinor == minor && kgpPatch >= patch)
-        )
       )
+    )
 }
 
 internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, patch: Int): Boolean {

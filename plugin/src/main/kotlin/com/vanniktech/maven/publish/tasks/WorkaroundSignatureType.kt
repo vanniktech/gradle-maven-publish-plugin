@@ -17,7 +17,6 @@ class WorkaroundSignatureType(
   @Internal
   val directory: Provider<Directory>,
 ) : AbstractSignatureType() {
-
   override fun fileFor(toSign: File): File {
     val original = super.fileFor(toSign)
     return directory.get().file(original.name).asFile

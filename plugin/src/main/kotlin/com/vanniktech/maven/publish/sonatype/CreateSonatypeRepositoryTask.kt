@@ -14,7 +14,6 @@ import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 
 internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
-
   @get:Internal
   abstract val projectGroup: Property<String>
 

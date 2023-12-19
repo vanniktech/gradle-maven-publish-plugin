@@ -25,7 +25,6 @@ import org.jetbrains.dokka.gradle.DokkaTask
 abstract class MavenPublishBaseExtension(
   private val project: Project,
 ) {
-
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
   internal val groupId: Property<String> = project.objects.property(String::class.java)

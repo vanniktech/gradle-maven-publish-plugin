@@ -59,7 +59,6 @@ data class JavaLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true,
 ) : Platform() {
-
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("java") || project.plugins.hasPlugin("java-library")) {
       "Calling configure(JavaLibrary(...)) requires the java-library plugin to be applied"
@@ -92,7 +91,6 @@ data class GradlePlugin @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true,
 ) : Platform() {
-
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("java-gradle-plugin")) {
       "Calling configure(GradlePlugin(...)) requires the java-gradle-plugin to be applied"
@@ -111,7 +109,6 @@ data class GradlePlugin @JvmOverloads constructor(
  * To be used for `com.gradle.plugin-publish` projects. Uses the default publication that gets created by that plugin.
  */
 class GradlePublishPlugin : Platform() {
-
   override val javadocJar: JavadocJar = JavadocJar.Javadoc()
   override val sourcesJar: Boolean = true
 
@@ -124,6 +121,7 @@ class GradlePublishPlugin : Platform() {
   }
 
   override fun equals(other: Any?): Boolean = other is GradlePublishPlugin
+
   override fun hashCode(): Int = this::class.hashCode()
 }
 
@@ -159,7 +157,6 @@ data class AndroidSingleVariantLibrary @JvmOverloads constructor(
   override val sourcesJar: Boolean = true,
   val publishJavadocJar: Boolean = true,
 ) : Platform() {
-
   override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
 
   override fun configure(project: Project) {
@@ -223,7 +220,6 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
   val includedBuildTypeValues: Set<String> = emptySet(),
   val includedFlavorDimensionsAndValues: Map<String, Set<String>> = emptyMap(),
 ) : Platform() {
-
   override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
 
   override fun configure(project: Project) {
@@ -279,7 +275,6 @@ data class KotlinMultiplatform @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true,
 ) : Platform() {
-
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
       "Calling configure(KotlinMultiplatform(...)) requires the org.jetbrains.kotlin.multiplatform plugin to be applied"
@@ -323,7 +318,6 @@ data class KotlinJvm @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true,
 ) : Platform() {
-
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
       "Calling configure(KotlinJvm(...)) requires the org.jetbrains.kotlin.jvm plugin to be applied"
@@ -359,43 +353,42 @@ data class KotlinJvm @JvmOverloads constructor(
  */
 @Deprecated("The Kotlin/JS plugin has been deprecated in Kotlin 1.9.0")
 data class KotlinJs
-@Deprecated(
-  "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20. " +
-    "Use the single or no-arg constructors instead.",
-)
-constructor(
-  override val javadocJar: JavadocJar,
-  override val sourcesJar: Boolean,
-) : Platform() {
-
-  @Suppress("DEPRECATION")
-  @JvmOverloads
+  @Deprecated(
+    "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20. " +
+      "Use the single or no-arg constructors instead.",
+  )
   constructor(
-    javadocJar: JavadocJar = JavadocJar.Empty(),
-  ) : this(javadocJar, true)
+    override val javadocJar: JavadocJar,
+    override val sourcesJar: Boolean,
+  ) : Platform() {
+    @Suppress("DEPRECATION")
+    @JvmOverloads
+    constructor(
+      javadocJar: JavadocJar = JavadocJar.Empty(),
+    ) : this(javadocJar, true)
 
-  override fun configure(project: Project) {
-    check(project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
-      "Calling configure(KotlinJs(...)) requires the org.jetbrains.kotlin.js plugin to be applied"
-    }
+    override fun configure(project: Project) {
+      check(project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
+        "Calling configure(KotlinJs(...)) requires the org.jetbrains.kotlin.js plugin to be applied"
+      }
 
-    // Create publication, since Kotlin/JS doesn't provide one by default.
-    // https://youtrack.jetbrains.com/issue/KT-41582
-    project.afterEvaluate {
-      project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
-        it.from(project.components.getByName("kotlin"))
-        if (project.isAtLeastKotlinVersion("org.jetbrains.kotlin.js", 1, 8, 20)) {
-          check(sourcesJar) {
-            "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20"
+      // Create publication, since Kotlin/JS doesn't provide one by default.
+      // https://youtrack.jetbrains.com/issue/KT-41582
+      project.afterEvaluate {
+        project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+          it.from(project.components.getByName("kotlin"))
+          if (project.isAtLeastKotlinVersion("org.jetbrains.kotlin.js", 1, 8, 20)) {
+            check(sourcesJar) {
+              "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20"
+            }
+          } else {
+            it.withKotlinSourcesJar(sourcesJar, project)
           }
-        } else {
-          it.withKotlinSourcesJar(sourcesJar, project)
+          it.withJavadocJar { project.javadocJarTask(javadocJar) }
         }
-        it.withJavadocJar { project.javadocJarTask(javadocJar) }
       }
     }
   }
-}
 
 /**
  * To be used for `java-platforms` projects. Applying this creates a publication for the component called
@@ -427,6 +420,7 @@ class JavaPlatform : Platform() {
   }
 
   override fun equals(other: Any?): Boolean = other is JavaPlatform
+
   override fun hashCode(): Int = this::class.hashCode()
 }
 
@@ -460,6 +454,7 @@ class VersionCatalog : Platform() {
   }
 
   override fun equals(other: Any?): Boolean = other is VersionCatalog
+
   override fun hashCode(): Int = this::class.hashCode()
 }
 
@@ -472,6 +467,7 @@ sealed class JavadocJar {
    */
   class None : JavadocJar() {
     override fun equals(other: Any?): Boolean = other is None
+
     override fun hashCode(): Int = this::class.hashCode()
   }
 
@@ -480,6 +476,7 @@ sealed class JavadocJar {
    */
   class Empty : JavadocJar() {
     override fun equals(other: Any?): Boolean = other is Empty
+
     override fun hashCode(): Int = this::class.hashCode()
   }
 
@@ -488,6 +485,7 @@ sealed class JavadocJar {
    */
   class Javadoc : JavadocJar() {
     override fun equals(other: Any?): Boolean = other is Javadoc
+
     override fun hashCode(): Int = this::class.hashCode()
   }
 
@@ -498,15 +496,17 @@ sealed class JavadocJar {
   class Dokka private constructor(
     internal val taskName: DokkaTaskName,
   ) : JavadocJar() {
-
     internal sealed interface DokkaTaskName
+
     internal data class StringDokkaTaskName(val value: String) : DokkaTaskName
+
     internal data class ProviderDokkaTaskName(val value: Provider<String>) : DokkaTaskName
 
     constructor(taskName: String) : this(StringDokkaTaskName(taskName))
     constructor(taskName: Provider<String>) : this(ProviderDokkaTaskName(taskName))
 
     override fun equals(other: Any?): Boolean = other is Dokka && taskName == other.taskName
+
     override fun hashCode(): Int = taskName.hashCode()
   }
 }

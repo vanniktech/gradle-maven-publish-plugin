@@ -29,7 +29,6 @@ class ProjectResultSubject private constructor(
   failureMetadata: FailureMetadata,
   private val result: ProjectResult,
 ) : Subject(failureMetadata, result) {
-
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ProjectResultSubject, ProjectResult> =
       Factory { metadata, actual -> ProjectResultSubject(metadata, actual!!) }
@@ -87,10 +86,7 @@ class ProjectResultSubject private constructor(
       .that(artifactPath("", "module") to result)
   }
 
-  private fun artifactPath(
-    suffix: String,
-    extension: String,
-  ): Path = with(result.projectSpec) {
+  private fun artifactPath(suffix: String, extension: String): Path = with(result.projectSpec) {
     return result.repo
       .resolve(group!!.replace(".", "/"))
       .resolve(artifactId!!)
@@ -104,7 +100,6 @@ open class ArtifactSubject internal constructor(
   private val artifact: Path,
   private val result: ProjectResult,
 ) : Subject(failureMetadata, artifact) {
-
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ArtifactSubject, Pair<Path, ProjectResult>> =
       Factory { metadata, actual -> ArtifactSubject(metadata, actual!!.first, actual.second) }
@@ -206,7 +201,6 @@ class SourcesJarSubject private constructor(
   artifact: Path,
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
-
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<SourcesJarSubject, Pair<Path, ProjectResult>> =
       Factory { metadata, actual -> SourcesJarSubject(metadata, actual!!.first, actual.second) }
@@ -241,7 +235,6 @@ class PomSubject private constructor(
   private val artifact: Path,
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
-
   companion object {
     private val BUILD_RESULT_SUBJECT_FACTORY: Factory<PomSubject, Pair<Path, ProjectResult>> =
       Factory { metadata, actual -> PomSubject(metadata, actual!!.first, actual.second) }

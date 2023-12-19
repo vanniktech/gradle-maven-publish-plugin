@@ -15,15 +15,23 @@ data class PomDependency(
   val optional: Boolean? = null,
 )
 
-fun kotlinStdlibCommon(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", version.commonStdlibArtifactId, version.value, "compile")
+fun kotlinStdlibCommon(version: KotlinVersion) = PomDependency(
+  "org.jetbrains.kotlin",
+  version.commonStdlibArtifactId,
+  version.value,
+  "compile",
+)
+
 private val KotlinVersion.commonStdlibArtifactId
   get() = if (this < KotlinVersion.KT_1_9_20) "kotlin-stdlib-common" else "kotlin-stdlib"
 
 fun kotlinStdlibJdk(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", version.jdkStdlibArtifactId, version.value, "compile")
+
 private val KotlinVersion.jdkStdlibArtifactId
   get() = if (this < KotlinVersion.KT_1_9_20) "kotlin-stdlib-jdk8" else "kotlin-stdlib"
 
 fun kotlinStdlibJs(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", version.jsStdlibArtifactId, version.value, "compile")
+
 private val KotlinVersion.jsStdlibArtifactId
   get() = if (this < KotlinVersion.KT_1_9_20) "kotlin-stdlib-js" else "kotlin-stdlib"
 

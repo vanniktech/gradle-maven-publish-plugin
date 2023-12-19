@@ -139,7 +139,9 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String {
                 distribution = "${properties["POM_LICENCE_DIST"]}"
               }
             }
-      """.trimIndent().takeIf { properties.containsKey("POM_LICENCE_NAME") },
+      """.trimIndent().takeIf {
+        properties.containsKey("POM_LICENCE_NAME")
+      },
       """
             developers {
               developer {
@@ -148,14 +150,18 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String {
                 url = "${properties["POM_DEVELOPER_URL"]}"
               }
             }
-      """.trimIndent().takeIf { properties.containsKey("POM_DEVELOPER_ID") },
+      """.trimIndent().takeIf {
+        properties.containsKey("POM_DEVELOPER_ID")
+      },
       """
             scm {
               url = "${properties["POM_SCM_URL"]}"
               connection = "${properties["POM_SCM_CONNECTION"]}"
               developerConnection = "${properties["POM_SCM_DEV_CONNECTION"]}"
             }
-      """.trimIndent().takeIf { properties.containsKey("POM_SCM_URL") },
+      """.trimIndent().takeIf {
+        properties.containsKey("POM_SCM_URL")
+      },
       """
          }
        }
@@ -233,8 +239,9 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
           appendLine("signing.secretKeyRingFile=test-secring.gpg")
         }
         TestOptions.Signing.IN_MEMORY_KEY -> {
-          appendLine("signingInMemoryKey=lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEpr64iB9b6YRkWil3EODiiLd9JS3V7+BWpZ" +
-            "VF8mbGy8AUR7T3GUsYmEvhHGw2s0IosOUVIu5W3eiU/K4CFMEsmV5JZLRSoHa+VJ3XOJA0ZQfBxwaLyq1vicgtOVVA1AJKctQZ3gfm" +
+          appendLine(
+            "signingInMemoryKey=lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEpr64iB9b6YRkWil3EODiiLd9JS3V7+BWpZ" +
+              "VF8mbGy8AUR7T3GUsYmEvhHGw2s0IosOUVIu5W3eiU/K4CFMEsmV5JZLRSoHa+VJ3XOJA0ZQfBxwaLyq1vicgtOVVA1AJKctQZ3gfm" +
               "w8u45NHBvtUOgAZQrDytKN1B/bcpxPqLOBi1RQuYOyjtLTGJoU+Jbf27H9EhXEJ80hWzd2c3khtZO3HkCbgHKIvEDi5qkb25zKluQb" +
               "mMmhGpDyyR8XzIiVjPfSRG/+VXpWQlo9NjcaUWtaVyXYqN29z87BOdtD734b56kzHMhr1taDM89lkTKrgtuJBjZkA/wnDUG3+NZ1ly" +
               "7Wc4z1sw7eovwrfBhDFpyWoASyoui8/78dZHflm3v9Xe+01d1mFeZzs9+UtlK9xUaGzpNBq6FYOKB8HaxgKKSNcFMio6XM9Wfmxc0b" +
@@ -305,7 +312,8 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
               "IM2XlgK/XgoyxIPdikiWam5aDNLb2+E+sU3o52EdTL/yBg7tdaWBf42GoGC8di/rSmpul89VHtejoDAzJlUtw9NE7wmMRhxJPriW32" +
               "PbIvcMlsk0JFlQpPBKK1Kkxttni68IWxuLKrsthXEqSerqV86L7fdtEtXONnjKxRPgT6omSbgDsBZjn8Om8h8fC5ZmZNDp6Cfchdp1" +
               "oKANA7vimtuplILcGmqQ7bfvUmf2v+PbE4xcBxGO5UM4Il2s30KxZh5v89frKX7i8bXuQUOIGQI+X7zyVxtLmIdzWZe5Z4+Vb5D/q0" +
-              "3nk7LqZfwn90YtUFgFApuYKEa5GVl3BYmAeH47ms3loMAR1r9pip+B1QLwEdLCEJA+3IIiw4qM5hnMw=")
+              "3nk7LqZfwn90YtUFgFApuYKEa5GVl3BYmAeH47ms3loMAR1r9pip+B1QLwEdLCEJA+3IIiw4qM5hnMw=",
+          )
           appendLine("signingInMemoryKeyId=B89C4055")
           appendLine("signingInMemoryKeyPassword=test")
         }
