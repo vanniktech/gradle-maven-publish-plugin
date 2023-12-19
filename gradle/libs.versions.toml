@@ -4,7 +4,7 @@ moshi = "1.15.0"
 retrofit = "2.9.0"
 junit = "5.10.1"
 truth = "1.1.5"
-maven-publish = "0.25.3"
+maven-publish = "0.26.0-rc1"
 ktlint = "12.0.3"
 
 [libraries]
