@@ -257,7 +257,7 @@ Snapshots can be published by setting the version to something ending with `-SNA
 and then running the following Gradle task:
 
 ```
-./gradlew publishAllPublicationsToMavenCentral
+./gradlew publishAllPublicationsToMavenCentralRepository
 ```
 
 The snapshot will be automatically available in Sonatype's
@@ -282,7 +282,7 @@ The publishing process for Maven Central consists of several steps
 By running the following Gradle task the plugin will take care of steps 1 to 3 automatically:
 
 ```
-./gradlew publishAllPublicationsToMavenCentral --no-configuration-cache
+./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
 ```
 
 The releasing step can be done manually by going to oss.sonatype.org (or s01.oss.sonatype.org) and
