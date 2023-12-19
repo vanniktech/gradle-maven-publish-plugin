@@ -6,7 +6,6 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPub
 import org.gradle.util.GradleVersion
 
 open class MavenPublishBasePlugin : Plugin<Project> {
-
   override fun apply(project: Project) {
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
 

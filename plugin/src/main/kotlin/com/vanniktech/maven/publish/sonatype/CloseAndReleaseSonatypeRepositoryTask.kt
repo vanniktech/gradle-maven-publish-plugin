@@ -12,7 +12,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.options.Option
 
 internal abstract class CloseAndReleaseSonatypeRepositoryTask : DefaultTask() {
-
   @get:Internal
   abstract val buildService: Property<SonatypeRepositoryBuildService>
 

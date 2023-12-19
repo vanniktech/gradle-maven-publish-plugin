@@ -11,7 +11,6 @@ import retrofit2.http.Path
  * -Nexus CORE API: https://repository.sonatype.org/nexus-restlet1x-plugin/default/docs/index.html
  */
 internal interface NexusService {
-
   @GET("staging/profiles")
   fun getStagingProfiles(): Call<StagingProfilesResponse>
 
@@ -25,17 +24,27 @@ internal interface NexusService {
   fun getProfileRepositories(): Call<ProfileRepositoriesResponse>
 
   @GET("staging/repository/{repositoryId}")
-  fun getRepository(@Path("repositoryId") repositoryId: String): Call<Repository>
+  fun getRepository(
+    @Path("repositoryId") repositoryId: String,
+  ): Call<Repository>
 
   @GET("staging/repository/{repositoryId}/activity")
-  fun getRepositoryActivity(@Path("repositoryId") repositoryId: String): Call<List<RepositoryActivity>>
+  fun getRepositoryActivity(
+    @Path("repositoryId") repositoryId: String,
+  ): Call<List<RepositoryActivity>>
 
   @POST("staging/bulk/close")
-  fun closeRepository(@Body input: TransitionRepositoryInput): Call<Unit>
+  fun closeRepository(
+    @Body input: TransitionRepositoryInput,
+  ): Call<Unit>
 
   @POST("staging/bulk/promote")
-  fun releaseRepository(@Body input: TransitionRepositoryInput): Call<Unit>
+  fun releaseRepository(
+    @Body input: TransitionRepositoryInput,
+  ): Call<Unit>
 
   @POST("staging/bulk/drop")
-  fun dropRepository(@Body input: TransitionRepositoryInput): Call<Unit>
+  fun dropRepository(
+    @Body input: TransitionRepositoryInput,
+  ): Call<Unit>
 }

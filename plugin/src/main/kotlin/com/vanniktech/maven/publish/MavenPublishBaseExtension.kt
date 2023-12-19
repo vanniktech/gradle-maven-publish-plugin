@@ -25,7 +25,6 @@ import org.jetbrains.dokka.gradle.DokkaTask
 abstract class MavenPublishBaseExtension(
   private val project: Project,
 ) {
-
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
   internal val groupId: Property<String> = project.objects.property(String::class.java)
@@ -118,7 +117,6 @@ abstract class MavenPublishBaseExtension(
    * More information about signing as well as different ways to provide credentials
    * can be found in the [Gradle documentation](https://docs.gradle.org/current/userguide/signing_plugin.html)
    */
-  // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
   fun signAllPublications() {
     signing.set(true)
     signing.finalizeValue()
@@ -126,6 +124,7 @@ abstract class MavenPublishBaseExtension(
     project.plugins.apply(SigningPlugin::class.java)
     project.gradleSigning.setRequired(version.map { !it.endsWith("-SNAPSHOT") })
 
+    // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
     val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
     if (inMemoryKey != null) {
       val inMemoryKeyId = project.findOptionalProperty("signingInMemoryKeyId")

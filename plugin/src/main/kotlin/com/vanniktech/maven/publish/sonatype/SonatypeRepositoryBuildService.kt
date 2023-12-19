@@ -17,8 +17,8 @@ import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 
-internal abstract class SonatypeRepositoryBuildService : BuildService<SonatypeRepositoryBuildService.Params>, AutoCloseable, OperationCompletionListener {
-
+internal abstract class SonatypeRepositoryBuildService :
+  BuildService<SonatypeRepositoryBuildService.Params>, AutoCloseable, OperationCompletionListener {
   private val logger: Logger = Logging.getLogger(SonatypeRepositoryBuildService::class.java)
 
   internal interface Params : BuildServiceParameters {

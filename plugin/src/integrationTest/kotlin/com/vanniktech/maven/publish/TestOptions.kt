@@ -13,6 +13,7 @@ data class TestOptions(
     PROPERTIES,
     BASE,
   }
+
   enum class Signing {
     NO_SIGNING,
     GPG_KEY,
