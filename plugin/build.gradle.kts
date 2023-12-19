@@ -10,13 +10,15 @@ gradlePlugin {
       id = "com.vanniktech.maven.publish"
       implementationClass = "com.vanniktech.maven.publish.MavenPublishPlugin"
       displayName = "Gradle Maven Publish Plugin"
-      description = "Gradle plugin that configures publish tasks to automatically upload all of your Java, Kotlin, Gradle, or Android libraries to any Maven instance."
+      description = "Gradle plugin that configures publish tasks to automatically upload all of your Java, Kotlin, " +
+        "Gradle, or Android libraries to any Maven instance."
     }
     create("mavenPublishBasePlugin") {
       id = "com.vanniktech.maven.publish.base"
       implementationClass = "com.vanniktech.maven.publish.MavenPublishBasePlugin"
       displayName = "Gradle Maven Publish Base Plugin"
-      description = "Gradle plugin that configures publish tasks to automatically upload all of your Java, Kotlin, Gradle, or Android libraries to any Maven instance."
+      description = "Gradle plugin that configures publish tasks to automatically upload all of your Java, Kotlin, " +
+        "Gradle, or Android libraries to any Maven instance."
     }
   }
 }
