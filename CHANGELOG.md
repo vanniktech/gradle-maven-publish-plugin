@@ -18,6 +18,7 @@
   from `simpleJavadocJar` to `plainJavadocJar`. Thanks to @sschuberth.
 
 #### Minimum supported versions
+- JDK 11
 - Gradle 7.6
 - Android Gradle Plugin 7.4.0
 - Kotlin Gradle Plugin 1.8.20
