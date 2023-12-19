@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.26.0 **UNRELEASED**
+## 0.26.0 *(2023-12-19)*
 
 - It's now supported to call `configure(Platform)` from the main plugin to modify
   what is getting published. [Check out the docs for more details](https://vanniktech.github.io/gradle-maven-publish-plugin/what/)
