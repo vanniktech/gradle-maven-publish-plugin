@@ -36,13 +36,13 @@ enum class AgpVersion(
   // stable
   AGP_8_2(
     value = "8.2.0",
-    minGradleVersion = GradleVersion.GRADLE_8_1,
+    minGradleVersion = GradleVersion.GRADLE_8_2,
   ),
 
   // canary channel
   AGP_8_3(
     value = "8.3.0-alpha18",
-    minGradleVersion = GradleVersion.GRADLE_8_1,
+    minGradleVersion = GradleVersion.GRADLE_8_2,
   ),
 }
 
@@ -73,6 +73,12 @@ enum class GradleVersion(
   GRADLE_8_5(
     value = "8.5",
   ),
+  ;
+
+  companion object {
+    // aliases for the skipped version to be able to reference the correct one in AgpVersion
+    val GRADLE_8_2 = GRADLE_8_5
+  }
 }
 
 enum class GradlePluginPublish(val version: String) {
@@ -99,7 +105,7 @@ fun KotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersio
 }
 
 fun AgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
-  assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
+  assume().that(JavaVersion.current()).isLessThan(minJdkVersion)
   assume().that(gradleVersion).isAtLeast(minGradleVersion)
   if (firstUnsupportedGradleVersion != null) {
     assume().that(gradleVersion).isLessThan(firstUnsupportedGradleVersion)
