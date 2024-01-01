@@ -4,6 +4,7 @@ import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.DocsType
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaPluginExtension
@@ -191,7 +192,7 @@ data class AndroidSingleVariantLibrary @JvmOverloads constructor(
  * be added to the publication.
  *
  * If the [includedBuildTypeValues] and [includedFlavorDimensionsAndValues] parameters are not provided or
- * empty all variants will be published. Otherwise only variants matching those filters will be included.
+ * empty all variants will be published. Otherwise, only variants matching those filters will be included.
  *
  * Equivalent Gradle set up (AGP 7.1.1):
  * android {
@@ -551,15 +552,37 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
         val extension = project.extensions.getByType(JavaPluginExtension::class.java)
         val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
 
-        val sourceElements = JvmPluginsHelper.createDocumentationVariantWithArtifact(
-          testFixturesSourceSet.sourcesElementsConfigurationName,
-          testFixtureSourceSetName,
-          DocsType.SOURCES,
-          listOf(ProjectDerivedCapability(project, "testFixtures")),
-          testFixturesSourceSet.sourcesJarTaskName,
-          testFixturesSourceSet.allSource,
-          project as ProjectInternal,
-        )
+        val sourceElements = if (GradleVersion.current() >= GradleVersion.version("8.6-rc-1")) {
+          JvmPluginsHelper.createDocumentationVariantWithArtifact(
+            testFixturesSourceSet.sourcesElementsConfigurationName,
+            testFixtureSourceSetName,
+            DocsType.SOURCES,
+            setOf(ProjectDerivedCapability(project, "testFixtures")),
+            testFixturesSourceSet.sourcesJarTaskName,
+            testFixturesSourceSet.allSource,
+            project as ProjectInternal,
+          )
+        } else {
+          JvmPluginsHelper::class.java.getMethod(
+            "createDocumentationVariantWithArtifact",
+            String::class.java,
+            String::class.java,
+            String::class.java,
+            List::class.java,
+            String::class.java,
+            Object::class.java,
+            ProjectInternal::class.java,
+          ).invoke(
+            null,
+            testFixturesSourceSet.sourcesElementsConfigurationName,
+            testFixtureSourceSetName,
+            DocsType.SOURCES,
+            listOf(ProjectDerivedCapability(project, "testFixtures")),
+            testFixturesSourceSet.sourcesJarTaskName,
+            testFixturesSourceSet.allSource,
+            project as ProjectInternal,
+          ) as Configuration
+        }
 
         val component = JavaPluginHelper.getJavaComponent(project) as DefaultJvmSoftwareComponent
         component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))

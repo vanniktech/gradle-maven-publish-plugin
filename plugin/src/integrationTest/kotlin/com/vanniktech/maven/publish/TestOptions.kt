@@ -40,9 +40,16 @@ enum class AgpVersion(
     minJdkVersion = JavaVersion.VERSION_17,
   ),
 
-  // canary channel
+  // beta channel
   AGP_8_3(
-    value = "8.3.0-alpha17",
+    value = "8.3.0-beta01",
+    minGradleVersion = GradleVersion.GRADLE_8_1,
+    minJdkVersion = JavaVersion.VERSION_17,
+  ),
+
+  // canary channel
+  AGP_8_4(
+    value = "8.4.0-alpha01",
     minGradleVersion = GradleVersion.GRADLE_8_1,
     minJdkVersion = JavaVersion.VERSION_17,
   ),
@@ -63,7 +70,7 @@ enum class KotlinVersion(
   KT_1_9_21("1.9.21"),
 
   // beta
-  KT_2_0_0("2.0.0-Beta1"),
+  KT_2_0_0("2.0.0-Beta2"),
   ;
 
   companion object {
@@ -86,6 +93,11 @@ enum class GradleVersion(
   // stable
   GRADLE_8_5(
     value = "8.5",
+  ),
+
+  // rc
+  GRADLE_8_6(
+    value = "8.6-rc-1",
   ),
   ;
 
