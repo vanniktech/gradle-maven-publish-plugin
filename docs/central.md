@@ -274,7 +274,7 @@ will still be signed.
 The publishing process for Maven Central consists of several steps
 
 1. A staging repository is created on Sonatype OSS
-2. The artifacts are uploaded to this staging repository
+2. The artifacts are uploaded/published to this staging repository
 3. The staging repository is closed
 4. The staging repository is released
 5. All artifacts in the released repository will be synchronized to maven central
@@ -287,10 +287,10 @@ the artifacts are available for download.
 
 ### Automatic release
 
-Run the following tasks to let the plugin handle all steps automatically:
+Run the following task to let the plugin handle all steps automatically:
 
 ```
-./gradlew publishAllPublicationsToMavenCentralRepository closeAndReleaseRepository --no-configuration-cache
+./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
 ```
 
 !!! note "Configuration cache"
@@ -298,8 +298,8 @@ Run the following tasks to let the plugin handle all steps automatically:
     Configuration caching when uploading releases is currently not possible. Supporting it is
     blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
 
-It is also possible to permanently enable the automatic releases without having to specify `closeAndReleaseRepository`
-by adding an extra parameter in the DSL or setting a Gradle property
+It is possible to permanently enable the automatic releases so that regular publishing tasks
+like `publish` and `publishToMavenCentral` will also always do the release step:
 
 === "build.gradle"
 
@@ -336,7 +336,7 @@ by adding an extra parameter in the DSL or setting a Gradle property
 The release (step 4) can be done manually by running the following command, so that the plugin will
 only do step 1 to 3:
 ```
-./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
+./gradlew publishToMavenCentral --no-configuration-cache
 ```
 
 !!! note "Configuration cache"
