@@ -59,20 +59,21 @@ abstract class MavenPublishBaseExtension(
 
     val buildService = project.registerSonatypeRepositoryBuildService(
       sonatypeHost = sonatypeHost,
+      groupId = groupId,
+      versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") },
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       automaticRelease = automaticRelease,
     )
 
-    val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
-    val createRepository = project.tasks.registerCreateRepository(groupId, versionIsSnapshot, buildService)
-    val url = sonatypeHost.map { it.publishingUrl(versionIsSnapshot, buildService, project.configurationCache()) }
-
+    val configCacheEnabled = project.configurationCache()
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
-      repo.setUrl(url)
+      repo.setUrl(buildService.map { it.publishingUrl(configCacheEnabled) })
       repo.credentials(PasswordCredentials::class.java)
     }
+
+    val createRepository = project.tasks.registerCreateRepository(buildService)
 
     project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
       if (publishTask.name.endsWith("ToMavenCentralRepository")) {
