@@ -20,7 +20,6 @@ The output of the following Gradle plugins is supported to be published with thi
 
 - `com.android.library`
 - `org.jetbrains.kotlin.jvm`
-- `org.jetbrains.kotlin.js`
 - `org.jetbrains.kotlin.multiplatform`
 - `java`
 - `java-library`

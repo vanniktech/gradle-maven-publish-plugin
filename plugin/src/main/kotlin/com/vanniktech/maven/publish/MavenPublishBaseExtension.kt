@@ -19,7 +19,6 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
-import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 
 abstract class MavenPublishBaseExtension(
@@ -134,15 +133,7 @@ abstract class MavenPublishBaseExtension(
     }
 
     project.mavenPublications { publication ->
-      if (GradleVersion.current() < GradleVersion.version("8.0-rc-1")) {
-        // workaround incompatibility with other plugins because sign(publication) was not idempotent
-        val task = project.tasks.findByName("sign${publication.name.capitalize()}Publication")
-        if (task == null) {
-          project.gradleSigning.sign(publication)
-        }
-      } else {
-        project.gradleSigning.sign(publication)
-      }
+      project.gradleSigning.sign(publication)
     }
 
     // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
@@ -376,9 +367,6 @@ abstract class MavenPublishBaseExtension(
         configure(GradlePlugin(defaultJavaDocOption(plainJavadocSupported = true)))
       project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
         configure(KotlinJvm(defaultJavaDocOption(plainJavadocSupported = true)))
-      project.plugins.hasPlugin("org.jetbrains.kotlin.js") ->
-        @Suppress("DEPRECATION")
-        configure(KotlinJs(defaultJavaDocOption(plainJavadocSupported = false)))
       project.plugins.hasPlugin("java-library") ->
         configure(JavaLibrary(defaultJavaDocOption(plainJavadocSupported = true)))
       project.plugins.hasPlugin("java") ->

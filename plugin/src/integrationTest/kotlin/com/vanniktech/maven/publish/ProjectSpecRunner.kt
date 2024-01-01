@@ -19,7 +19,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 
   val task = ":publishAllPublicationsToTestFolderRepository"
   val arguments = mutableListOf(task, "--stacktrace")
-  if (options.supportsConfigCaching(plugins)) {
+  if (supportsConfigCaching(plugins)) {
     arguments.add("--configuration-cache")
   }
 
@@ -39,24 +39,9 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
   )
 }
 
-private fun TestOptions.supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
+private fun supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
   // TODO https://github.com/Kotlin/dokka/issues/2231
-  if (plugins.any { it.id == dokkaPlugin.id }) {
-    return false
-  }
-
-  // publishing supports configuration cache starting with 7.6
-  // signing only supports configuration cache starting with 8.1
-  val configCachingSupported = gradleVersion >= GradleVersion.GRADLE_8_1 || signing == TestOptions.Signing.NO_SIGNING
-
-  // Kotlin MPP supports config cache since 1.9.0
-  val multiplatformPlugin = plugins.find { it.id == kotlinMultiplatformPlugin.id }
-  if (multiplatformPlugin != null) {
-    val version = KotlinVersion.entries.find { it.value == multiplatformPlugin.version }!!
-    return version >= KotlinVersion.KT_1_9_0 && configCachingSupported
-  }
-
-  return configCachingSupported
+  return !plugins.any { it.id == dokkaPlugin.id }
 }
 
 private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOptions) {

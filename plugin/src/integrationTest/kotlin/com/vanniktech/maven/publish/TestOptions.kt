@@ -25,26 +25,24 @@ enum class AgpVersion(
   val value: String,
   val minGradleVersion: GradleVersion,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
-  val minJdkVersion: JavaVersion = JavaVersion.VERSION_11,
+  val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
 ) {
   // minimum supported
-  AGP_7_4(
-    value = "7.4.0",
-    minGradleVersion = GradleVersion.GRADLE_7_6,
+  AGP_8_0(
+    value = "8.0.0",
+    minGradleVersion = GradleVersion.GRADLE_8_1,
   ),
 
   // stable
   AGP_8_2(
     value = "8.2.0",
     minGradleVersion = GradleVersion.GRADLE_8_1,
-    minJdkVersion = JavaVersion.VERSION_17,
   ),
 
   // canary channel
   AGP_8_3(
-    value = "8.3.0-alpha17",
+    value = "8.3.0-alpha18",
     minGradleVersion = GradleVersion.GRADLE_8_1,
-    minJdkVersion = JavaVersion.VERSION_17,
   ),
 }
 
@@ -54,23 +52,11 @@ enum class KotlinVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
   // minimum supported
-  KT_1_8_20(
-    "1.8.20",
-    firstUnsupportedJdkVersion = JavaVersion.VERSION_20,
-  ),
-
   // stable
   KT_1_9_21("1.9.21"),
 
   // beta
-  KT_2_0_0("2.0.0-Beta1"),
-  ;
-
-  companion object {
-    // aliases for skipped versions
-    val KT_1_9_0 = KT_1_9_21
-    val KT_1_9_20 = KT_1_9_21
-  }
+  KT_2_0_0("2.0.0-Beta2"),
 }
 
 enum class GradleVersion(
@@ -78,25 +64,15 @@ enum class GradleVersion(
   val firstUnsupportedJdkVersion: JavaVersion? = null,
 ) {
   // minimum supported
-  GRADLE_7_6(
-    value = "7.6",
-    firstUnsupportedJdkVersion = JavaVersion.VERSION_18,
+  GRADLE_8_1(
+    value = "8.1",
+    firstUnsupportedJdkVersion = JavaVersion.VERSION_20,
   ),
 
   // stable
   GRADLE_8_5(
     value = "8.5",
   ),
-  ;
-
-  companion object {
-    // aliases for the skipped version to be able to reference the correct one in AgpVersion
-    val GRADLE_8_0 = GRADLE_8_5
-    val GRADLE_8_1 = GRADLE_8_5
-    val GRADLE_8_2 = GRADLE_8_5
-    val GRADLE_8_3 = GRADLE_8_5
-    val GRADLE_8_4 = GRADLE_8_5
-  }
 }
 
 enum class GradlePluginPublish(val version: String) {
