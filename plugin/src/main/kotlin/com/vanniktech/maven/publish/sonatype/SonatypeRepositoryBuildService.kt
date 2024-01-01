@@ -36,7 +36,7 @@ internal abstract class SonatypeRepositoryBuildService :
     val runAfterFailure: Boolean
 
     data class Close(
-      val searchForRepositoryIfNoIdPresent: Boolean
+      val searchForRepositoryIfNoIdPresent: Boolean,
     ) : EndOfBuildAction {
       override val runAfterFailure: Boolean = false
     }
@@ -65,7 +65,7 @@ internal abstract class SonatypeRepositoryBuildService :
 
   private var stagingRepositoryId: String? = null
     set(value) {
-      check (field != null && field != value) {
+      check(field != null && field != value) {
         "stagingRepositoryId was already set to '$field', new value '$value'"
       }
       field = value
