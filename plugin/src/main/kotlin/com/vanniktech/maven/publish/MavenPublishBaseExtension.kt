@@ -166,10 +166,10 @@ abstract class MavenPublishBaseExtension(
    * artifactIds like `[artifactId]-jvm`.
    */
   @Incubating
-  fun coordinates(groupId: String, artifactId: String, version: String) {
-    groupId(groupId)
-    artifactId(artifactId)
-    version(version)
+  fun coordinates(groupId: String? = null, artifactId: String? = null, version: String? = null) {
+    groupId?.also { groupId(it) }
+    artifactId?.also { artifactId(it) }
+    version?.also { version(it) }
   }
 
   private fun groupId(groupId: String) {
