@@ -105,7 +105,7 @@ fun KotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersio
 }
 
 fun AgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
-  assume().that(JavaVersion.current()).isLessThan(minJdkVersion)
+  assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
   assume().that(gradleVersion).isAtLeast(minGradleVersion)
   if (firstUnsupportedGradleVersion != null) {
     assume().that(gradleVersion).isLessThan(firstUnsupportedGradleVersion)
