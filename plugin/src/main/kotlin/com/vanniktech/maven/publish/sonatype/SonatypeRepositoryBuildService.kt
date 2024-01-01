@@ -23,6 +23,8 @@ internal abstract class SonatypeRepositoryBuildService :
 
   internal interface Params : BuildServiceParameters {
     val sonatypeHost: Property<SonatypeHost>
+    val groupId: Property<String>
+    val versionIsSnapshot: Property<Boolean>
     val repositoryUsername: Property<String>
     val repositoryPassword: Property<String>
     val automaticRelease: Property<Boolean>
@@ -42,10 +44,7 @@ internal abstract class SonatypeRepositoryBuildService :
     )
   }
 
-  // should only be accessed from CreateSonatypeRepositoryTask
-  // for all other use cases use MavenPublishBaseExtension
-  // the id of the staging repository that was created during this build
-  var stagingRepositoryId: String? = null
+  private var stagingRepositoryId: String? = null
     set(value) {
       if (field != null) {
         throw IllegalStateException("stagingRepositoryId was already set")
@@ -62,6 +61,41 @@ internal abstract class SonatypeRepositoryBuildService :
   var repositoryDropped: Boolean = false
 
   private var buildIsSuccess: Boolean = true
+
+  /**
+   * Is only be allowed to be called from task actions.
+   */
+  fun createStagingRepository() {
+    if (parameters.versionIsSnapshot.get()) {
+      return
+    }
+
+    if (stagingRepositoryId != null) {
+      return
+    }
+
+    this.stagingRepositoryId = nexus.createRepositoryForGroup(parameters.groupId.get())
+  }
+
+  internal fun publishingUrl(configCacheEnabled: Boolean): String {
+    return if (parameters.versionIsSnapshot.get()) {
+      require(stagingRepositoryId == null) {
+        "Staging repositories are not supported for SNAPSHOT versions."
+      }
+      "${parameters.sonatypeHost.get().rootUrl}/content/repositories/snapshots/"
+    } else {
+      val stagingRepositoryId = requireNotNull(stagingRepositoryId) {
+        if (configCacheEnabled) {
+          "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
+            "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
+        } else {
+          "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
+        }
+      }
+
+      "${parameters.sonatypeHost.get().rootUrl}/service/local/staging/deployByRepositoryId/$stagingRepositoryId/"
+    }
+  }
 
   override fun onFinish(event: FinishEvent) {
     if (event.result is FailureResult) {
@@ -92,6 +126,8 @@ internal abstract class SonatypeRepositoryBuildService :
 
     fun Project.registerSonatypeRepositoryBuildService(
       sonatypeHost: Provider<SonatypeHost>,
+      groupId: Provider<String>,
+      versionIsSnapshot: Provider<Boolean>,
       repositoryUsername: Provider<String>,
       repositoryPassword: Provider<String>,
       automaticRelease: Boolean,
@@ -105,6 +141,8 @@ internal abstract class SonatypeRepositoryBuildService :
       val service = gradle.sharedServices.registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {
         it.maxParallelUsages.set(1)
         it.parameters.sonatypeHost.set(sonatypeHost)
+        it.parameters.groupId.set(groupId)
+        it.parameters.versionIsSnapshot.set(versionIsSnapshot)
         it.parameters.repositoryUsername.set(repositoryUsername)
         it.parameters.repositoryPassword.set(repositoryPassword)
         it.parameters.automaticRelease.set(automaticRelease)
