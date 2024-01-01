@@ -23,20 +23,7 @@ internal abstract class DropSonatypeRepositoryTask : DefaultTask() {
   @TaskAction
   fun closeAndReleaseRepository() {
     val service = this.buildService.get()
-
-    // if repository was already dropped in this build this is a no-op
-    if (service.repositoryDropped) {
-      return
-    }
-
-    val manualStagingRepositoryId = this.manualStagingRepositoryId
-    if (manualStagingRepositoryId != null) {
-      service.nexus.dropStagingRepository(manualStagingRepositoryId)
-    } else {
-      service.nexus.dropCurrentStagingRepository()
-    }
-
-    service.repositoryDropped = true
+    service.shouldDropRepository(manualStagingRepositoryId)
   }
 
   companion object {
@@ -44,12 +31,14 @@ internal abstract class DropSonatypeRepositoryTask : DefaultTask() {
 
     fun TaskContainer.registerDropRepository(
       buildService: Provider<SonatypeRepositoryBuildService>,
+      createRepository: TaskProvider<CreateSonatypeRepositoryTask>,
     ): TaskProvider<DropSonatypeRepositoryTask> {
       return register(NAME, DropSonatypeRepositoryTask::class.java) {
         it.description = "Drops a staging repository on Sonatype OSS"
         it.group = "release"
         it.buildService.set(buildService)
         it.usesService(buildService)
+        it.mustRunAfter(createRepository)
       }
     }
   }
