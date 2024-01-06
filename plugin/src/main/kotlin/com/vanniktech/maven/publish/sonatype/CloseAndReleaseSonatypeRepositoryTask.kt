@@ -23,22 +23,7 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask : DefaultTask() {
   @TaskAction
   fun closeAndReleaseRepository() {
     val service = this.buildService.get()
-
-    // if repository was already closed in this build this is a no-op
-    if (service.repositoryClosed) {
-      return
-    }
-
-    val manualStagingRepositoryId = this.manualStagingRepositoryId
-    if (manualStagingRepositoryId != null) {
-      service.nexus.closeStagingRepository(manualStagingRepositoryId)
-      service.nexus.releaseStagingRepository(manualStagingRepositoryId)
-    } else {
-      val id = service.nexus.closeCurrentStagingRepository()
-      service.nexus.releaseStagingRepository(id)
-    }
-
-    service.repositoryClosed = true
+    service.shouldCloseAndReleaseRepository(manualStagingRepositoryId)
   }
 
   companion object {
@@ -46,12 +31,14 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask : DefaultTask() {
 
     fun TaskContainer.registerCloseAndReleaseRepository(
       buildService: Provider<SonatypeRepositoryBuildService>,
+      createRepository: TaskProvider<CreateSonatypeRepositoryTask>,
     ): TaskProvider<CloseAndReleaseSonatypeRepositoryTask> {
       return register(NAME, CloseAndReleaseSonatypeRepositoryTask::class.java) {
         it.description = "Closes and releases a staging repository on Sonatype OSS"
         it.group = "release"
         it.buildService.set(buildService)
         it.usesService(buildService)
+        it.mustRunAfter(createRepository)
       }
     }
   }
