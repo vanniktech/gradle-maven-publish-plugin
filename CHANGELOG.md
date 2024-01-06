@@ -1,5 +1,45 @@
 # Change Log
 
+## 0.27.0 *(2024-01-06)*
+
+- Added new publishing related tasks
+    - `releaseRepository` releases a staging repository at the end of the build
+      and can be executed in the same build as the publishing task. This allows
+      having automatic releases without permanently enabling them.
+    - `publishToMavenCentral` as alias for running `publishAllPublicationsToMavenCentralRepository`.
+    - `publishAndReleaseToMavenCentral` as alias for running both of the above.
+    - For more information [checkout the docs](https://vanniktech.github.io/gradle-maven-publish-plugin/central/#publishing-releases).
+- It is now possible to only pass a subset of the parameters to
+  `coordinates(...)` and leave the others at their default value.
+  Thanks to @sschuberth for the contribution.
+- Fixed `java-test-fixture` projects being broken with Gradle 8.6.
+- Deprecated `closeAndReleaseRepository` in favor of `releaseRepository`.
+
+#### Minimum supported versions
+- JDK 11
+- Gradle 7.6
+- Android Gradle Plugin 7.4.0
+- Kotlin Gradle Plugin 1.8.20
+
+#### Compatibility tested up to
+- JDK 21
+- Gradle 8.5
+- Gradle 8.6-rc-1
+- Android Gradle Plugin 8.2.1
+- Android Gradle Plugin 8.3.0-beta01
+- Android Gradle Plugin 8.4.0-alpha03
+- Kotlin Gradle Plugin 1.9.22
+- Kotlin Gradle Plugin 2.0.0-Beta2
+
+#### Configuration cache status
+
+When using **Gradle 8.1** or newer configuration cache is generally supported.
+
+Exceptions to that are:
+- Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+- Dokka does not support configuration cache
+
+
 ## 0.26.0 *(2023-12-19)*
 
 - It's now supported to call `configure(Platform)` from the main plugin to modify
