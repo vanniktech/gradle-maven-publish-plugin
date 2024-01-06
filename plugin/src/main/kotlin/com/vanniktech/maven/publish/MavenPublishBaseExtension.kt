@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerCloseAndReleaseRepository
+import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerReleaseRepository
 import com.vanniktech.maven.publish.sonatype.CreateSonatypeRepositoryTask.Companion.registerCreateRepository
 import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companion.registerDropRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
@@ -80,8 +81,21 @@ abstract class MavenPublishBaseExtension(
       }
     }
 
+    val releaseRepository = project.tasks.registerReleaseRepository(buildService, createRepository)
     project.tasks.registerCloseAndReleaseRepository(buildService, createRepository)
     project.tasks.registerDropRepository(buildService, createRepository)
+
+    project.tasks.register("publishToMavenCentral") {
+      it.description = "Publishes to a staging repository on Sonatype OSS"
+      it.group = "release"
+      it.dependsOn(project.tasks.named("publishAllPublicationsToMavenCentralRepository"))
+    }
+    project.tasks.register("publishAndReleaseToMavenCentral") {
+      it.description = "Publishes to a staging repository on Sonatype OSS and releases it to MavenCentral"
+      it.group = "release"
+      it.dependsOn(project.tasks.named("publishAllPublicationsToMavenCentralRepository"))
+      it.dependsOn(releaseRepository)
+    }
   }
 
   @JvmOverloads
