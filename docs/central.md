@@ -279,20 +279,24 @@ The publishing process for Maven Central consists of several steps
 4. The staging repository is released
 5. All artifacts in the released repository will be synchronized to maven central
 
-The plugin will always do step 1 to 3 and when automatic releases are enabled also take
-care of step 4.
+The plugin will always do steps 1 to 3. Step 4 is only taken care of if automatic releases are enabled.
 
-Regardless of whether it is done automatically or manually after the staging repository is released
-the artifacts will be synced to Maven Central. This process takes 10-30 minutes and when it is completed
+After the staging repository has been released, either manually or automatically, the artifacts will
+be synced to Maven Central. This process usually takes around 10-30 minutes and only when it completes
 the artifacts are available for download.
 
 ### Automatic release
 
-Run the following to let the plugin handle all steps automatically:
+Run the following tasks to let the plugin handle all steps automatically:
 
 ```
 ./gradlew publishAllPublicationsToMavenCentralRepository closeAndReleaseRepository --no-configuration-cache
 ```
+
+!!! note "Configuration cache"
+
+    Configuration caching when uploading releases is currently not possible. Supporting it is
+    blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
 
 It is also possible to permanently enable the automatic releases without having to specify `closeAndReleaseRepository`
 by adding an extra parameter in the DSL or setting a Gradle property
@@ -334,6 +338,11 @@ only do step 1 to 3:
 ```
 ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
 ```
+
+!!! note "Configuration cache"
+
+    Configuration caching when uploading releases is currently not possible. Supporting it is
+    blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
 
 ### Timeouts
 
