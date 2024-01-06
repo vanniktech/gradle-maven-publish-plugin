@@ -65,7 +65,7 @@ internal abstract class SonatypeRepositoryBuildService :
 
   private var stagingRepositoryId: String? = null
     set(value) {
-      check(field != null && field != value) {
+      check(field == null || field == value) {
         "stagingRepositoryId was already set to '$field', new value '$value'"
       }
       field = value
