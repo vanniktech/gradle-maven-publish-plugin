@@ -32,7 +32,26 @@ internal abstract class SonatypeRepositoryBuildService :
     val closeTimeoutSeconds: Property<Long>
   }
 
-  val nexus by lazy {
+  private sealed interface EndOfBuildAction {
+    val runAfterFailure: Boolean
+
+    data class Close(
+      val searchForRepositoryIfNoIdPresent: Boolean,
+    ) : EndOfBuildAction {
+      override val runAfterFailure: Boolean = false
+    }
+
+    data object ReleaseAfterClose : EndOfBuildAction {
+      override val runAfterFailure: Boolean = false
+    }
+
+    data class Drop(
+      override val runAfterFailure: Boolean,
+      val searchForRepositoryIfNoIdPresent: Boolean,
+    ) : EndOfBuildAction
+  }
+
+  private val nexus by lazy {
     Nexus(
       baseUrl = parameters.sonatypeHost.get().apiBaseUrl(),
       username = parameters.repositoryUsername.get(),
@@ -46,19 +65,13 @@ internal abstract class SonatypeRepositoryBuildService :
 
   private var stagingRepositoryId: String? = null
     set(value) {
-      if (field != null) {
-        throw IllegalStateException("stagingRepositoryId was already set")
+      check(field != null && field != value) {
+        "stagingRepositoryId was already set to '$field', new value '$value'"
       }
       field = value
     }
 
-  // should only be accessed from CloseAndReleaseSonatypeRepositoryTask
-  // indicates whether we already closed a staging repository to avoid doing it more than once in a build
-  var repositoryClosed: Boolean = false
-
-  // should only be accessed from DropSonatypeRepositoryTask
-  // indicates whether we already closed a staging repository to avoid doing it more than once in a build
-  var repositoryDropped: Boolean = false
+  private val endOfBuildActions = mutableSetOf<EndOfBuildAction>()
 
   private var buildIsSuccess: Boolean = true
 
@@ -74,7 +87,43 @@ internal abstract class SonatypeRepositoryBuildService :
       return
     }
 
-    this.stagingRepositoryId = nexus.createRepositoryForGroup(parameters.groupId.get())
+    stagingRepositoryId = nexus.createRepositoryForGroup(parameters.groupId.get())
+    endOfBuildActions += EndOfBuildAction.Close(searchForRepositoryIfNoIdPresent = false)
+    if (parameters.automaticRelease.get()) {
+      endOfBuildActions += EndOfBuildAction.ReleaseAfterClose
+    }
+    endOfBuildActions += EndOfBuildAction.Drop(
+      runAfterFailure = true,
+      searchForRepositoryIfNoIdPresent = false,
+    )
+  }
+
+  /**
+   * Is only be allowed to be called from task actions. Tasks calling this must run after tasks
+   * that call [createStagingRepository].
+   */
+  fun shouldCloseAndReleaseRepository(manualStagingRepositoryId: String?) {
+    if (manualStagingRepositoryId != null) {
+      stagingRepositoryId = manualStagingRepositoryId
+    }
+
+    endOfBuildActions += EndOfBuildAction.Close(searchForRepositoryIfNoIdPresent = true)
+    endOfBuildActions += EndOfBuildAction.ReleaseAfterClose
+  }
+
+  /**
+   * Is only be allowed to be called from task actions. Tasks calling this must run after tasks
+   * that call [createStagingRepository].
+   */
+  fun shouldDropRepository(manualStagingRepositoryId: String?) {
+    if (manualStagingRepositoryId != null) {
+      stagingRepositoryId = manualStagingRepositoryId
+    }
+
+    endOfBuildActions += EndOfBuildAction.Drop(
+      runAfterFailure = false,
+      searchForRepositoryIfNoIdPresent = true,
+    )
   }
 
   internal fun publishingUrl(configCacheEnabled: Boolean): String {
@@ -104,19 +153,45 @@ internal abstract class SonatypeRepositoryBuildService :
   }
 
   override fun close() {
-    val stagingRepositoryId = this.stagingRepositoryId
-    if (stagingRepositoryId != null) {
-      if (buildIsSuccess) {
+    if (buildIsSuccess) {
+      runEndOfBuildActions(endOfBuildActions.filter { !it.runAfterFailure })
+    } else {
+      // surround with try catch since failing again on clean up actions causes confusion
+      try {
+        runEndOfBuildActions(endOfBuildActions.filter { it.runAfterFailure })
+      } catch (e: IOException) {
+        if (buildIsSuccess) {
+          throw e
+        } else {
+          logger.info("Failed processing $stagingRepositoryId staging repository after previous build failure", e)
+        }
+      }
+    }
+  }
+
+  private fun runEndOfBuildActions(actions: List<EndOfBuildAction>) {
+    var stagingRepositoryId = stagingRepositoryId
+
+    val closeActions = actions.filterIsInstance<EndOfBuildAction.Close>()
+    if (closeActions.isNotEmpty()) {
+      if (stagingRepositoryId != null) {
         nexus.closeStagingRepository(stagingRepositoryId)
-        if (parameters.automaticRelease.get()) {
-          nexus.releaseStagingRepository(stagingRepositoryId)
-        }
-      } else {
-        try {
-          nexus.dropStagingRepository(stagingRepositoryId)
-        } catch (e: IOException) {
-          logger.info("Failed to drop staging repository $stagingRepositoryId", e)
-        }
+      } else if (closeActions.all { it.searchForRepositoryIfNoIdPresent }) {
+        stagingRepositoryId = nexus.closeCurrentStagingRepository()
+      }
+
+      if (stagingRepositoryId != null && actions.contains(EndOfBuildAction.ReleaseAfterClose)) {
+        nexus.releaseStagingRepository(stagingRepositoryId)
+      }
+    }
+
+    // there might be 2 drop actions but one of the runs on success, the other on failure
+    val dropAction = actions.filterIsInstance<EndOfBuildAction.Drop>().singleOrNull()
+    if (dropAction != null) {
+      if (stagingRepositoryId != null) {
+        nexus.dropStagingRepository(stagingRepositoryId)
+      } else if (dropAction.searchForRepositoryIfNoIdPresent) {
+        nexus.dropCurrentStagingRepository()
       }
     }
   }

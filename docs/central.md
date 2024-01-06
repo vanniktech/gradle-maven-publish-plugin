@@ -279,16 +279,26 @@ The publishing process for Maven Central consists of several steps
 4. The staging repository is released
 5. All artifacts in the released repository will be synchronized to maven central
 
-By running the following Gradle task the plugin will take care of steps 1 to 3 automatically:
+The plugin will always do steps 1 to 3. Step 4 is only taken care of if automatic releases are enabled.
+
+After the staging repository has been released, either manually or automatically, the artifacts will
+be synced to Maven Central. This process usually takes around 10-30 minutes and only when it completes
+the artifacts are available for download.
+
+### Automatic release
+
+Run the following tasks to let the plugin handle all steps automatically:
 
 ```
-./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
+./gradlew publishAllPublicationsToMavenCentralRepository closeAndReleaseRepository --no-configuration-cache
 ```
 
-The releasing step can be done manually by going to oss.sonatype.org (or s01.oss.sonatype.org) and
-clicking the button in the web UI or by executing `./gradlew closeAndReleaseRepository`.
+!!! note "Configuration cache"
 
-It is also possible to configure the plugin to perform this step automatically together with the first 3
+    Configuration caching when uploading releases is currently not possible. Supporting it is
+    blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+
+It is also possible to permanently enable the automatic releases without having to specify `closeAndReleaseRepository`
 by adding an extra parameter in the DSL or setting a Gradle property
 
 === "build.gradle"
@@ -309,9 +319,9 @@ by adding an extra parameter in the DSL or setting a Gradle property
     import com.vanniktech.maven.publish.SonatypeHost
 
     mavenPublishing {
-      publishToMavenCentral(SonatypeHost.DEFAULT, true)
+      publishToMavenCentral(SonatypeHost.DEFAULT, automaticRelease = true)
       // or when publishing to https://s01.oss.sonatype.org
-      publishToMavenCentral(SonatypeHost.S01, true)
+      publishToMavenCentral(SonatypeHost.S01, automaticRelease = true)
     }
     ```
 
@@ -321,11 +331,20 @@ by adding an extra parameter in the DSL or setting a Gradle property
     SONATYPE_AUTOMATIC_RELEASE=true
     ```
 
-Regardless of whether it is done automatically or manually after the staging repository is released the artifacts
-will be synced to Maven Central. This process takes 10-30 minutes and when it is completed
-the artifacts are available for download.
+### Manual release
 
-## Timeouts
+The release (step 4) can be done manually by running the following command, so that the plugin will
+only do step 1 to 3:
+```
+./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache
+```
+
+!!! note "Configuration cache"
+
+    Configuration caching when uploading releases is currently not possible. Supporting it is
+    blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+
+### Timeouts
 
 From time to time Sonatype tends to time out during staging operations. The default timeouts of the plugin
 are long already, but can be modified if needed. The timeout for HTTP requests can be modified with

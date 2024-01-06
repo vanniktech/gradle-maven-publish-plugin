@@ -81,8 +81,8 @@ abstract class MavenPublishBaseExtension(
       }
     }
 
-    project.tasks.registerCloseAndReleaseRepository(buildService)
-    project.tasks.registerDropRepository(buildService)
+    project.tasks.registerCloseAndReleaseRepository(buildService, createRepository)
+    project.tasks.registerDropRepository(buildService, createRepository)
   }
 
   @JvmOverloads
