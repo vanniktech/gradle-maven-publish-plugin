@@ -11,7 +11,6 @@ val javaPlatformPlugin = PluginSpec("java-platform")
 val versionCatalogPlugin = PluginSpec("version-catalog")
 val kotlinJvmPlugin = PluginSpec("org.jetbrains.kotlin.jvm")
 val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
-val kotlinJsPlugin = PluginSpec("org.jetbrains.kotlin.js")
 val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
 val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
@@ -119,27 +118,6 @@ fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
     SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
   ),
   basePluginConfig = "configure(new KotlinJvm(new JavadocJar.Empty(), true))",
-)
-
-fun kotlinJsProjectSpec(version: KotlinVersion) = ProjectSpec(
-  plugins = listOf(
-    kotlinJsPlugin.copy(version = version.value),
-  ),
-  group = "com.example",
-  artifactId = "test-artifact",
-  version = "1.0.0",
-  properties = defaultProperties,
-  sourceFiles = listOf(
-    SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
-  ),
-  basePluginConfig = "configure(new KotlinJs(new JavadocJar.Empty(), true))",
-  buildFileExtra = """
-    kotlin {
-        js("IR") {
-            nodejs()
-        }
-    }
-  """.trimIndent(),
 )
 
 fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(

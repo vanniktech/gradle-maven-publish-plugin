@@ -158,7 +158,7 @@ open class ArtifactSubject internal constructor(
     val notMatchingFiles = mutableListOf<Fact>()
 
     filesToFind.forEach { sourceFile ->
-      // fallback is a workaround for KotlinJs creating a main folder inside the jar
+      // fallback is a workaround for Kotlin creating a main folder inside the jar
       val entry = zipFiles.find { fileMatcher(sourceFile, it) }
       if (entry == null) {
         missingFiles.add(fileDescriptor(sourceFile))

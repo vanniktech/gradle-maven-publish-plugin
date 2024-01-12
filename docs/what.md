@@ -4,7 +4,6 @@ It is possible to configure publishing for the following Gradle plugins:
 - `com.android.library` as [single variant library](#android-library-single-variant) or
   as [multi variant library](#android-library-multiple-variants)
 - [`org.jetbrains.kotlin.jvm`](#kotlin-jvm-library)
-- [`org.jetbrains.kotlin.js`](#kotlin-js-library)
 - [`org.jetbrains.kotlin.multiplatform`](#kotlin-multiplatform-library)
 - [`java`](#java-library)
 - [`java-library`](#java-library)
@@ -178,44 +177,6 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
         javadocJar = JavadocJar.Dokka("dokkaHtml"),
         // whether to publish a sources jar
         sourcesJar = true,
-      ))
-    }
-    ```
-
-## Kotlin JS Library
-
-For projects using the `org.jetbrains.kotlin.js` plugin.
-
-=== "build.gradle"
-
-    ```groovy
-    import com.vanniktech.maven.publish.KotlinJs
-    import com.vanniktech.maven.publish.JavadocJar
-
-    mavenPublishing {
-      // the first parameter configures the -javadoc artifact, possible values:
-      // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an emprt jar
-      // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-      // sources publishing is always enabled by the Kotlin/JS plugin
-      configure(new KotlinJs(new JavadocJar.Dokka("dokkaHtml")))
-    }
-    ```
-
-=== "build.gradle.kts"
-
-    ```kotlin
-    import com.vanniktech.maven.publish.KotlinJs
-    import com.vanniktech.maven.publish.JavadocJar
-
-    mavenPublishing {
-      // sources publishing is always enabled by the Kotlin/JS plugin
-      configure(KotlinJs(
-        // configures the -javadoc artifact, possible values:
-        // - `JavadocJar.None()` don't publish this artifact
-        // - `JavadocJar.Empty()` publish an emprt jar
-        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-        javadocJar = JavadocJar.Dokka("dokkaHtml"),
       ))
     }
     ```

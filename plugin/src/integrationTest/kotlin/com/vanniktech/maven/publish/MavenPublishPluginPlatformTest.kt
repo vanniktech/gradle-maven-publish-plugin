@@ -289,38 +289,6 @@ class MavenPublishPluginPlatformTest {
   }
 
   @TestParameterInjectorTest
-  fun kotlinJsProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
-  ) {
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-
-    val project = kotlinJsProjectSpec(kotlinVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
-
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("klib").exists()
-    assertThat(result).artifact("klib").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
-    if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
-      assertThat(result).pom().matchesExpectedPom(
-        "klib",
-        kotlinStdlibJs(kotlinVersion),
-        kotlinDomApi(kotlinVersion),
-      )
-    } else {
-      assertThat(result).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion))
-    }
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
-    assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
-  }
-
-  @TestParameterInjectorTest
   fun kotlinMultiplatformProject(
     @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
   ) {
@@ -387,26 +355,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(nodejsResult).artifact("klib").isSigned()
     assertThat(nodejsResult).pom().exists()
     assertThat(nodejsResult).pom().isSigned()
-    if (kotlinVersion >= KotlinVersion.KT_1_9_20) {
-      assertThat(nodejsResult).pom().matchesExpectedPom(
-        "klib",
-        kotlinStdlibMppJs(kotlinVersion),
-        kotlinDomApi(kotlinVersion),
-      )
-    } else if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
-      assertThat(nodejsResult).pom().matchesExpectedPom(
-        "klib",
-        kotlinStdlibMppJs(kotlinVersion),
-        kotlinDomApi(kotlinVersion),
-        kotlinStdlibCommon(kotlinVersion),
-      )
-    } else {
-      assertThat(nodejsResult).pom().matchesExpectedPom(
-        "klib",
-        kotlinStdlibMppJs(kotlinVersion),
-        kotlinStdlibCommon(kotlinVersion),
-      )
-    }
+    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion), kotlinDomApi(kotlinVersion))
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).module().isSigned()
     assertThat(nodejsResult).sourcesJar().exists()
@@ -485,26 +434,7 @@ class MavenPublishPluginPlatformTest {
     assertThat(nodejsResult).artifact("klib").isSigned()
     assertThat(nodejsResult).pom().exists()
     assertThat(nodejsResult).pom().isSigned()
-    if (kotlinVersion >= KotlinVersion.KT_1_9_20) {
-      assertThat(nodejsResult).pom().matchesExpectedPom(
-        "klib",
-        kotlinStdlibMppJs(kotlinVersion),
-        kotlinDomApi(kotlinVersion),
-      )
-    } else if (kotlinVersion >= KotlinVersion.KT_1_9_0) {
-      assertThat(nodejsResult).pom().matchesExpectedPom(
-        "klib",
-        kotlinStdlibMppJs(kotlinVersion),
-        kotlinDomApi(kotlinVersion),
-        kotlinStdlibCommon(kotlinVersion),
-      )
-    } else {
-      assertThat(nodejsResult).pom().matchesExpectedPom(
-        "klib",
-        kotlinStdlibMppJs(kotlinVersion),
-        kotlinStdlibCommon(kotlinVersion),
-      )
-    }
+    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion), kotlinDomApi(kotlinVersion))
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).module().isSigned()
     assertThat(nodejsResult).sourcesJar().exists()
@@ -660,8 +590,6 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun versionCatalogProject() {
-    assume().that(gradleVersion).isAtLeast(GradleVersion.GRADLE_7_6)
-
     val project = versionCatalogProjectSpec()
     val result = project.run(fixtures, testProjectDir, testOptions)
 

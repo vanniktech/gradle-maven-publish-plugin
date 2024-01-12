@@ -2,7 +2,6 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.DocsType
@@ -11,11 +10,9 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
 import org.gradle.api.plugins.internal.JavaPluginHelper
 import org.gradle.api.plugins.internal.JvmPluginsHelper
-import org.gradle.api.plugins.jvm.internal.JvmPluginServices
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.internal.component.external.model.ProjectDerivedCapability
 import org.gradle.jvm.component.internal.DefaultJvmSoftwareComponent
 import org.gradle.jvm.tasks.Jar
@@ -287,14 +284,8 @@ data class KotlinMultiplatform @JvmOverloads constructor(
       it.withJavadocJar { javadocJarTask }
     }
 
-    if (project.isAtLeastKotlinVersion("org.jetbrains.kotlin.multiplatform", 1, 9, 0)) {
-      project.extensions.configure(KotlinMultiplatformExtension::class.java) {
-        it.withSourcesJar(sourcesJar)
-      }
-    } else {
-      check(sourcesJar) {
-        "Disabling sources publishing for Kotlin/Multiplatform is not supported until Kotlin 1.9.0"
-      }
+    project.extensions.configure(KotlinMultiplatformExtension::class.java) {
+      it.withSourcesJar(sourcesJar)
     }
   }
 }
@@ -335,61 +326,6 @@ data class KotlinJvm @JvmOverloads constructor(
     setupTestFixtures(project, sourcesJar)
   }
 }
-
-/**
- * To be used for `org.jetbrains.kotlin.js` projects. Applying this creates a publication for the component called
- * `kotlin`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will be
- * added to the publication.
- *
- * Equivalent Gradle set up:
- * ```
- * publications {
- *   create<MavenPublication>("maven") {
- *     from(components["kotlin"])
- *     artifact(project.tasks.named("kotlinSourcesJar"))
- *   }
- * }
- * ```
- * This does not include javadoc jars because there are no APIs for that available.
- */
-@Deprecated("The Kotlin/JS plugin has been deprecated in Kotlin 1.9.0")
-data class KotlinJs
-  @Deprecated(
-    "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20. " +
-      "Use the single or no-arg constructors instead.",
-  )
-  constructor(
-    override val javadocJar: JavadocJar,
-    override val sourcesJar: Boolean,
-  ) : Platform() {
-    @Suppress("DEPRECATION")
-    @JvmOverloads
-    constructor(
-      javadocJar: JavadocJar = JavadocJar.Empty(),
-    ) : this(javadocJar, true)
-
-    override fun configure(project: Project) {
-      check(project.plugins.hasPlugin("org.jetbrains.kotlin.js")) {
-        "Calling configure(KotlinJs(...)) requires the org.jetbrains.kotlin.js plugin to be applied"
-      }
-
-      // Create publication, since Kotlin/JS doesn't provide one by default.
-      // https://youtrack.jetbrains.com/issue/KT-41582
-      project.afterEvaluate {
-        project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
-          it.from(project.components.getByName("kotlin"))
-          if (project.isAtLeastKotlinVersion("org.jetbrains.kotlin.js", 1, 8, 20)) {
-            check(sourcesJar) {
-              "Disabling sources publishing for Kotlin/JS is not supported since Kotlin 1.8.20"
-            }
-          } else {
-            it.withKotlinSourcesJar(sourcesJar, project)
-          }
-          it.withJavadocJar { project.javadocJarTask(javadocJar) }
-        }
-      }
-    }
-  }
 
 /**
  * To be used for `java-platforms` projects. Applying this creates a publication for the component called
@@ -548,53 +484,43 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
     if (sourcesJar) {
       // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
       val testFixtureSourceSetName = "testFixtures"
-      if (GradleVersion.current() >= GradleVersion.version("8.1")) {
-        val extension = project.extensions.getByType(JavaPluginExtension::class.java)
-        val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
+      val extension = project.extensions.getByType(JavaPluginExtension::class.java)
+      val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
 
-        val sourceElements = if (GradleVersion.current() >= GradleVersion.version("8.6-rc-1")) {
-          JvmPluginsHelper.createDocumentationVariantWithArtifact(
-            testFixturesSourceSet.sourcesElementsConfigurationName,
-            testFixtureSourceSetName,
-            DocsType.SOURCES,
-            setOf(ProjectDerivedCapability(project, "testFixtures")),
-            testFixturesSourceSet.sourcesJarTaskName,
-            testFixturesSourceSet.allSource,
-            project as ProjectInternal,
-          )
-        } else {
-          JvmPluginsHelper::class.java.getMethod(
-            "createDocumentationVariantWithArtifact",
-            String::class.java,
-            String::class.java,
-            String::class.java,
-            List::class.java,
-            String::class.java,
-            Object::class.java,
-            ProjectInternal::class.java,
-          ).invoke(
-            null,
-            testFixturesSourceSet.sourcesElementsConfigurationName,
-            testFixtureSourceSetName,
-            DocsType.SOURCES,
-            listOf(ProjectDerivedCapability(project, "testFixtures")),
-            testFixturesSourceSet.sourcesJarTaskName,
-            testFixturesSourceSet.allSource,
-            project as ProjectInternal,
-          ) as Configuration
-        }
-
-        val component = JavaPluginHelper.getJavaComponent(project) as DefaultJvmSoftwareComponent
-        component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))
+      val sourceElements = if (GradleVersion.current() >= GradleVersion.version("8.6-rc-1")) {
+        JvmPluginsHelper.createDocumentationVariantWithArtifact(
+          testFixturesSourceSet.sourcesElementsConfigurationName,
+          testFixtureSourceSetName,
+          DocsType.SOURCES,
+          setOf(ProjectDerivedCapability(project, "testFixtures")),
+          testFixturesSourceSet.sourcesJarTaskName,
+          testFixturesSourceSet.allSource,
+          project as ProjectInternal,
+        )
       } else {
-        val services = project.serviceOf<JvmPluginServices>()
-        val action = Action<Any> {
-          it.javaClass.getMethod("withSourcesJar").invoke(it)
-          it.javaClass.getMethod("published").invoke(it)
-        }
-        val method = services.javaClass.getMethod("createJvmVariant", String::class.java, Action::class.java)
-        method.invoke(services, testFixtureSourceSetName, action)
+        JvmPluginsHelper::class.java.getMethod(
+          "createDocumentationVariantWithArtifact",
+          String::class.java,
+          String::class.java,
+          String::class.java,
+          List::class.java,
+          String::class.java,
+          Object::class.java,
+          ProjectInternal::class.java,
+        ).invoke(
+          null,
+          testFixturesSourceSet.sourcesElementsConfigurationName,
+          testFixtureSourceSetName,
+          DocsType.SOURCES,
+          listOf(ProjectDerivedCapability(project, "testFixtures")),
+          testFixturesSourceSet.sourcesJarTaskName,
+          testFixturesSourceSet.allSource,
+          project as ProjectInternal,
+        ) as Configuration
       }
+
+      val component = JavaPluginHelper.getJavaComponent(project) as DefaultJvmSoftwareComponent
+      component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))
     }
 
     // test fixtures can't be mapped to the POM because there is no equivalent concept in Maven

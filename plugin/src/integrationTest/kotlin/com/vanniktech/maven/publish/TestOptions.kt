@@ -25,33 +25,30 @@ enum class AgpVersion(
   val value: String,
   val minGradleVersion: GradleVersion,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
-  val minJdkVersion: JavaVersion = JavaVersion.VERSION_11,
+  val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
 ) {
   // minimum supported
-  AGP_7_4(
-    value = "7.4.0",
-    minGradleVersion = GradleVersion.GRADLE_7_6,
+  AGP_8_0(
+    value = "8.0.0",
+    minGradleVersion = GradleVersion.GRADLE_8_1,
   ),
 
   // stable
   AGP_8_2(
     value = "8.2.1",
-    minGradleVersion = GradleVersion.GRADLE_8_1,
-    minJdkVersion = JavaVersion.VERSION_17,
+    minGradleVersion = GradleVersion.GRADLE_8_2,
   ),
 
   // beta channel
   AGP_8_3(
     value = "8.3.0-beta01",
-    minGradleVersion = GradleVersion.GRADLE_8_1,
-    minJdkVersion = JavaVersion.VERSION_17,
+    minGradleVersion = GradleVersion.GRADLE_8_4,
   ),
 
   // canary channel
   AGP_8_4(
     value = "8.4.0-alpha03",
-    minGradleVersion = GradleVersion.GRADLE_8_1,
-    minJdkVersion = JavaVersion.VERSION_17,
+    minGradleVersion = GradleVersion.GRADLE_8_4,
   ),
 }
 
@@ -61,11 +58,6 @@ enum class KotlinVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
   // minimum supported
-  KT_1_8_20(
-    "1.8.20",
-    firstUnsupportedJdkVersion = JavaVersion.VERSION_20,
-  ),
-
   // stable
   KT_1_9_22("1.9.22"),
 
@@ -85,9 +77,9 @@ enum class GradleVersion(
   val firstUnsupportedJdkVersion: JavaVersion? = null,
 ) {
   // minimum supported
-  GRADLE_7_6(
-    value = "7.6",
-    firstUnsupportedJdkVersion = JavaVersion.VERSION_18,
+  GRADLE_8_1(
+    value = "8.1",
+    firstUnsupportedJdkVersion = JavaVersion.VERSION_20,
   ),
 
   // stable
@@ -103,10 +95,7 @@ enum class GradleVersion(
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
-    val GRADLE_8_0 = GRADLE_8_5
-    val GRADLE_8_1 = GRADLE_8_5
     val GRADLE_8_2 = GRADLE_8_5
-    val GRADLE_8_3 = GRADLE_8_5
     val GRADLE_8_4 = GRADLE_8_5
   }
 }

@@ -15,27 +15,11 @@ data class PomDependency(
   val optional: Boolean? = null,
 )
 
-fun kotlinStdlibCommon(version: KotlinVersion) = PomDependency(
-  "org.jetbrains.kotlin",
-  version.commonStdlibArtifactId,
-  version.value,
-  "compile",
-)
+fun kotlinStdlibCommon(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", version.value, "compile")
 
-private val KotlinVersion.commonStdlibArtifactId
-  get() = if (this < KotlinVersion.KT_1_9_20) "kotlin-stdlib-common" else "kotlin-stdlib"
+fun kotlinStdlibJdk(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", version.value, "compile")
 
-fun kotlinStdlibJdk(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", version.jdkStdlibArtifactId, version.value, "compile")
-
-private val KotlinVersion.jdkStdlibArtifactId
-  get() = if (this < KotlinVersion.KT_1_9_20) "kotlin-stdlib-jdk8" else "kotlin-stdlib"
-
-fun kotlinStdlibJs(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", version.jsStdlibArtifactId, version.value, "compile")
-
-private val KotlinVersion.jsStdlibArtifactId
-  get() = if (this < KotlinVersion.KT_1_9_20) "kotlin-stdlib-js" else "kotlin-stdlib"
-
-fun kotlinStdlibMppJs(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", version.value, "compile")
+fun kotlinStdlibJs(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", version.value, "compile")
 
 fun kotlinDomApi(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-dom-api-compat", version.value, "compile")
 
