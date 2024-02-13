@@ -13,8 +13,8 @@ open class MavenPublishPlugin : Plugin<Project> {
       val automaticRelease = project.findOptionalProperty("SONATYPE_AUTOMATIC_RELEASE").toBoolean()
       baseExtension.publishToMavenCentral(SonatypeHost.valueOf(sonatypeHost), automaticRelease)
     }
-    val releaseSigning = project.findOptionalProperty("RELEASE_SIGNING_ENABLED")?.toBoolean()
-    if (releaseSigning == true) {
+    val releaseSigning = project.findOptionalProperty("RELEASE_SIGNING_ENABLED").toBoolean()
+    if (releaseSigning) {
       baseExtension.signAllPublications()
     }
 

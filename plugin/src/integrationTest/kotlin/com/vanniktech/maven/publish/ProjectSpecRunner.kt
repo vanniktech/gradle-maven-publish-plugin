@@ -4,6 +4,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectories
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.writeText
 import org.gradle.testkit.runner.GradleRunner
 
@@ -57,7 +58,7 @@ private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOpti
       repositories {
         maven {
           name = "testFolder"
-          url = "${repo.toAbsolutePath()}"
+          url = "${repo.toAbsolutePath().invariantSeparatorsPathString}"
         }
       }
     }
