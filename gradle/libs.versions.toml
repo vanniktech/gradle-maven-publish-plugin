@@ -35,5 +35,5 @@ maven-model = "org.apache.maven:maven-model:3.9.6"
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.3.3" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.3.5" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
