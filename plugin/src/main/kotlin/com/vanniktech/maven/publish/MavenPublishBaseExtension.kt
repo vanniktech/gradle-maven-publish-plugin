@@ -171,7 +171,6 @@ abstract class MavenPublishBaseExtension(
    * Kotlin Multiplatform projects the given [artifactId] is used together with the platform targets resulting in
    * artifactIds like `[artifactId]-jvm`.
    */
-  @Incubating
   fun coordinates(groupId: String? = null, artifactId: String? = null, version: String? = null) {
     groupId?.also { groupId(it) }
     artifactId?.also { artifactId(it) }
@@ -234,7 +233,6 @@ abstract class MavenPublishBaseExtension(
    * See the [Gradle publishing guide](https://docs.gradle.org/current/userguide/publishing_maven.html#sec:modifying_the_generated_pom)
    * for how to use it.
    */
-  @Incubating
   fun pom(configure: Action<in MavenPom>) {
     project.mavenPublications { publication ->
       // TODO without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
@@ -350,7 +348,6 @@ abstract class MavenPublishBaseExtension(
    * Configures a [Platform] which will automatically set up the artifacts that should get published, including javadoc
    * and sources jars depending on the option.
    */
-  @Incubating
   fun configure(platform: Platform) {
     this.platform.set(platform)
     this.platform.finalizeValue()
