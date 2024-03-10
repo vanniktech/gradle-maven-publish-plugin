@@ -119,7 +119,7 @@ internal abstract class SonatypeRepositoryBuildService :
       return
     }
 
-    uploadId = if (parameters.sonatypeHost.get().centralPortal) {
+    uploadId = if (parameters.sonatypeHost.get().isCentralPortal) {
       UUID.randomUUID().toString()
     } else {
       nexus.createRepositoryForGroup(parameters.groupId.get())
@@ -143,7 +143,7 @@ internal abstract class SonatypeRepositoryBuildService :
     if (manualStagingRepositoryId != null) {
       publishId = manualStagingRepositoryId
     } else {
-      if (uploadId == null && parameters.sonatypeHost.get().centralPortal) {
+      if (uploadId == null && parameters.sonatypeHost.get().isCentralPortal) {
         error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
       }
     }
@@ -160,7 +160,7 @@ internal abstract class SonatypeRepositoryBuildService :
     if (manualStagingRepositoryId != null) {
       publishId = manualStagingRepositoryId
     } else {
-      if (parameters.sonatypeHost.get().centralPortal) {
+      if (parameters.sonatypeHost.get().isCentralPortal) {
         error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
       }
     }
@@ -178,7 +178,7 @@ internal abstract class SonatypeRepositoryBuildService :
       }
 
       val host = parameters.sonatypeHost.get()
-      require(!host.centralPortal) {
+      require(!host.isCentralPortal) {
         "Snapshots are not supported when publishing through the central portal."
       }
 
@@ -194,7 +194,7 @@ internal abstract class SonatypeRepositoryBuildService :
       }
 
       val host = parameters.sonatypeHost.get()
-      if (host.centralPortal) {
+      if (host.isCentralPortal) {
         "file://${parameters.rootBuildDirectory.get()}/publish/staging/$stagingRepositoryId"
       } else {
         "${host.rootUrl}/service/local/staging/deployByRepositoryId/$stagingRepositoryId/"
@@ -226,7 +226,7 @@ internal abstract class SonatypeRepositoryBuildService :
   }
 
   private fun runEndOfBuildActions(actions: List<EndOfBuildAction>) {
-    if (parameters.sonatypeHost.get().centralPortal) {
+    if (parameters.sonatypeHost.get().isCentralPortal) {
       runCentralPortalEndOfBuildActions(actions)
     } else {
       runNexusEndOfBuildActions(actions)

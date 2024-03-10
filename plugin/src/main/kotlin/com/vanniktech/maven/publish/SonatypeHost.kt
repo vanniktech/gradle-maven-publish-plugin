@@ -10,12 +10,12 @@ import java.io.Serializable
  */
 data class SonatypeHost internal constructor(
   internal val rootUrl: String,
-  internal val centralPortal: Boolean,
+  internal val isCentralPortal: Boolean,
 ) : Serializable {
-  constructor(rootUrl: String) : this(rootUrl, centralPortal = false)
+  constructor(rootUrl: String) : this(rootUrl, isCentralPortal = false)
 
   internal fun apiBaseUrl(): String {
-    return if (centralPortal) {
+    return if (isCentralPortal) {
       "$rootUrl/api/v1/"
     } else {
       "$rootUrl/service/local/"
@@ -32,12 +32,12 @@ data class SonatypeHost internal constructor(
     }
 
     @JvmField
-    val DEFAULT = SonatypeHost("https://oss.sonatype.org", centralPortal = false)
+    val DEFAULT = SonatypeHost("https://oss.sonatype.org", isCentralPortal = false)
 
     @JvmField
-    val S01 = SonatypeHost("https://s01.oss.sonatype.org", centralPortal = false)
+    val S01 = SonatypeHost("https://s01.oss.sonatype.org", isCentralPortal = false)
 
     @JvmField
-    val CENTRAL_PORTAL = SonatypeHost("https://central.sonatype.com", centralPortal = true)
+    val CENTRAL_PORTAL = SonatypeHost("https://central.sonatype.com", isCentralPortal = true)
   }
 }
