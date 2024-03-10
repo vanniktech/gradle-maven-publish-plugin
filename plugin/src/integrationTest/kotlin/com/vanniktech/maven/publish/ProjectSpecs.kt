@@ -199,7 +199,10 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
   )
 }
 
-fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
+fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(
+  agpVersion: AgpVersion,
+  kotlinVersion: KotlinVersion,
+): ProjectSpec {
   val baseProject = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
   return baseProject.copy(
     basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty()))",

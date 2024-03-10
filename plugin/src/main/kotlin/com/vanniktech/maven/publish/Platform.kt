@@ -274,14 +274,13 @@ data class KotlinMultiplatform internal constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean,
   val androidVariantsToPublish: List<String>,
-  val forceAndroidVariantsIfNotEmpty: Boolean
+  val forceAndroidVariantsIfNotEmpty: Boolean,
 ) : Platform() {
   @JvmOverloads constructor(
     javadocJar: JavadocJar = JavadocJar.Empty(),
     sourcesJar: Boolean = true,
     androidVariantsToPublish: List<String> = emptyList(),
   ) : this(javadocJar, sourcesJar, androidVariantsToPublish, forceAndroidVariantsIfNotEmpty = true)
-
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
