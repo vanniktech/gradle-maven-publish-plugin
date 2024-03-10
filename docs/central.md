@@ -77,6 +77,8 @@ This can be done through either the DSL or by setting Gradle properties.
       publishToMavenCentral(SonatypeHost.DEFAULT)
       // or when publishing to https://s01.oss.sonatype.org
       publishToMavenCentral(SonatypeHost.S01)
+      // or when publishing to https://central.sonatype.com/
+      publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 
       signAllPublications()
     }
@@ -91,6 +93,8 @@ This can be done through either the DSL or by setting Gradle properties.
       publishToMavenCentral(SonatypeHost.DEFAULT)
       // or when publishing to https://s01.oss.sonatype.org
       publishToMavenCentral(SonatypeHost.S01)
+      // or when publishing to https://central.sonatype.com/
+      publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 
       signAllPublications()
     }
@@ -102,6 +106,8 @@ This can be done through either the DSL or by setting Gradle properties.
     SONATYPE_HOST=DEFAULT
     # or when publishing to https://s01.oss.sonatype.org
     SONATYPE_HOST=S01
+    // or when publishing to https://central.sonatype.com/
+    SONATYPE_HOST=CENTRAL_PORTAL
 
     RELEASE_SIGNING_ENABLED=true
     ```
@@ -252,6 +258,11 @@ lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEpr64iB9b6YRkWil3EODiiLd9JS3V...9pip+B1QLwEdL
 ```
 
 ## Publishing snapshots
+
+!!! warning "Central Portal"
+
+    Publishing snapshots is not supported when using the Central Portal (central.sonatype.com).
+
 
 Snapshots can be published by setting the version to something ending with `-SNAPSHOT`
 and then running the following Gradle task:

@@ -45,6 +45,7 @@ dependencies {
   compileOnly(libs.kotlin.plugin)
   compileOnly(libs.android.plugin)
 
+  implementation(projects.centralPortal)
   implementation(projects.nexus)
 
   testImplementation(gradleTestKit())
@@ -60,6 +61,7 @@ val integrationTest by tasks.registering(Test::class) {
   dependsOn(
     tasks.publishToMavenLocal,
     projects.nexus.dependencyProject.tasks.publishToMavenLocal,
+    projects.centralPortal.dependencyProject.tasks.publishToMavenLocal,
   )
   mustRunAfter(tasks.test)
 
