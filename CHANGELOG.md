@@ -2,6 +2,8 @@
 
 ## 0.28.0 **UNRELEASED**
 
+- Added support for publishing through the new [Central Portal](https://central.sonatype.com). To use
+  this use the `CENTRAL_PORTAL` option when specifying the Sonatype host.
 - Removed support for the deprecated Kotlin/JS plugin.
 - Updated minimum supported Gradle, Android Gradle Plugin and Kotlin versions.
 
