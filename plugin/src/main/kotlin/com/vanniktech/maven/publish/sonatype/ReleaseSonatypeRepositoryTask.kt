@@ -11,7 +11,7 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.options.Option
 
-internal abstract class CloseAndReleaseSonatypeRepositoryTask : DefaultTask() {
+internal abstract class ReleaseSonatypeRepositoryTask : DefaultTask() {
   @get:Internal
   abstract val buildService: Property<SonatypeRepositoryBuildService>
 
@@ -28,34 +28,17 @@ internal abstract class CloseAndReleaseSonatypeRepositoryTask : DefaultTask() {
 
   companion object {
     private const val NAME = "releaseRepository"
-    private const val LEGACY_NAME = "closeAndReleaseRepository"
 
     fun TaskContainer.registerReleaseRepository(
       buildService: Provider<SonatypeRepositoryBuildService>,
       createRepository: TaskProvider<CreateSonatypeRepositoryTask>,
-    ): TaskProvider<CloseAndReleaseSonatypeRepositoryTask> {
-      return register(NAME, CloseAndReleaseSonatypeRepositoryTask::class.java) {
+    ): TaskProvider<ReleaseSonatypeRepositoryTask> {
+      return register(NAME, ReleaseSonatypeRepositoryTask::class.java) {
         it.description = "Releases a staging repository on Sonatype OSS"
         it.group = "release"
         it.buildService.set(buildService)
         it.usesService(buildService)
         it.mustRunAfter(createRepository)
-      }
-    }
-
-    fun TaskContainer.registerCloseAndReleaseRepository(
-      buildService: Provider<SonatypeRepositoryBuildService>,
-      createRepository: TaskProvider<CreateSonatypeRepositoryTask>,
-    ): TaskProvider<CloseAndReleaseSonatypeRepositoryTask> {
-      return register(LEGACY_NAME, CloseAndReleaseSonatypeRepositoryTask::class.java) {
-        it.description = "Closes and releases a staging repository on Sonatype OSS"
-        it.group = "release"
-        it.buildService.set(buildService)
-        it.usesService(buildService)
-        it.mustRunAfter(createRepository)
-        it.doLast { task ->
-          task.logger.warn("$LEGACY_NAME is deprecated and will be removed in a future release, use $NAME instead.")
-        }
       }
     }
   }

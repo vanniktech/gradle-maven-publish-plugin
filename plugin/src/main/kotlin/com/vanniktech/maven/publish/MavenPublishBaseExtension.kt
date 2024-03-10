@@ -1,9 +1,8 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerCloseAndReleaseRepository
-import com.vanniktech.maven.publish.sonatype.CloseAndReleaseSonatypeRepositoryTask.Companion.registerReleaseRepository
 import com.vanniktech.maven.publish.sonatype.CreateSonatypeRepositoryTask.Companion.registerCreateRepository
 import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companion.registerDropRepository
+import com.vanniktech.maven.publish.sonatype.ReleaseSonatypeRepositoryTask.Companion.registerReleaseRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
 import org.gradle.api.Action
@@ -86,7 +85,6 @@ abstract class MavenPublishBaseExtension(
     }
 
     val releaseRepository = project.tasks.registerReleaseRepository(buildService, createRepository)
-    project.tasks.registerCloseAndReleaseRepository(buildService, createRepository)
     project.tasks.registerDropRepository(buildService, createRepository)
 
     project.tasks.register("publishToMavenCentral") {
