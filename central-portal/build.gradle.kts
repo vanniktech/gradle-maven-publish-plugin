@@ -9,4 +9,5 @@ dependencies {
   implementation(libs.moshi)
   implementation(libs.retrofit)
   implementation(libs.retrofit.converter.moshi)
+  implementation(libs.retrofit.converter.scalars)
 }

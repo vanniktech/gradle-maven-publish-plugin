@@ -64,13 +64,17 @@ abstract class MavenPublishBaseExtension(
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       automaticRelease = automaticRelease,
+      // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
+      rootBuildDirectory = project.rootProject.layout.buildDirectory,
     )
 
     val configCacheEnabled = project.configurationCache()
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
       repo.setUrl(buildService.map { it.publishingUrl(configCacheEnabled) })
-      repo.credentials(PasswordCredentials::class.java)
+      if (!host.centralPortal) {
+        repo.credentials(PasswordCredentials::class.java)
+      }
     }
 
     val createRepository = project.tasks.registerCreateRepository(buildService)

@@ -3,8 +3,17 @@ package com.vanniktech.maven.publish.sonatype
 import com.vanniktech.maven.publish.BuildConfig
 import com.vanniktech.maven.publish.SonatypeHost
 import com.vanniktech.maven.publish.nexus.Nexus
+import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.util.Base64
+import java.util.UUID
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
@@ -30,6 +39,7 @@ internal abstract class SonatypeRepositoryBuildService :
     val automaticRelease: Property<Boolean>
     val okhttpTimeoutSeconds: Property<Long>
     val closeTimeoutSeconds: Property<Long>
+    val rootBuildDirectory: DirectoryProperty
   }
 
   private sealed interface EndOfBuildAction {
@@ -51,6 +61,19 @@ internal abstract class SonatypeRepositoryBuildService :
     ) : EndOfBuildAction
   }
 
+  private val centralPortal by lazy {
+    SonatypeCentralPortal(
+      baseUrl = parameters.sonatypeHost.get().apiBaseUrl(),
+      usertoken = Base64.getEncoder().encode(
+        "${parameters.repositoryUsername.get()}:${parameters.repositoryPassword.get()}".toByteArray(),
+      ).toString(Charsets.UTF_8),
+      userAgentName = BuildConfig.NAME,
+      userAgentVersion = BuildConfig.VERSION,
+      okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
+      closeTimeoutSeconds = parameters.closeTimeoutSeconds.get(),
+    )
+  }
+
   private val nexus by lazy {
     Nexus(
       baseUrl = parameters.sonatypeHost.get().apiBaseUrl(),
@@ -63,10 +86,19 @@ internal abstract class SonatypeRepositoryBuildService :
     )
   }
 
-  private var stagingRepositoryId: String? = null
+  // used for the publishing tasks
+  private var uploadId: String? = null
     set(value) {
       check(field == null || field == value) {
-        "stagingRepositoryId was already set to '$field', new value '$value'"
+        "uploadId was already set to '$field', new value '$value'"
+      }
+      field = value
+    }
+
+  private var publishId: String? = null
+    set(value) {
+      check(field == null || field == value) {
+        "publishId was already set to '$field', new value '$value'"
       }
       field = value
     }
@@ -83,11 +115,16 @@ internal abstract class SonatypeRepositoryBuildService :
       return
     }
 
-    if (stagingRepositoryId != null) {
+    if (uploadId != null) {
       return
     }
 
-    stagingRepositoryId = nexus.createRepositoryForGroup(parameters.groupId.get())
+    uploadId = if (parameters.sonatypeHost.get().centralPortal) {
+      UUID.randomUUID().toString()
+    } else {
+      nexus.createRepositoryForGroup(parameters.groupId.get())
+    }
+
     endOfBuildActions += EndOfBuildAction.Close(searchForRepositoryIfNoIdPresent = false)
     if (parameters.automaticRelease.get()) {
       endOfBuildActions += EndOfBuildAction.ReleaseAfterClose
@@ -104,7 +141,11 @@ internal abstract class SonatypeRepositoryBuildService :
    */
   fun shouldCloseAndReleaseRepository(manualStagingRepositoryId: String?) {
     if (manualStagingRepositoryId != null) {
-      stagingRepositoryId = manualStagingRepositoryId
+      publishId = manualStagingRepositoryId
+    } else {
+      if (uploadId == null && parameters.sonatypeHost.get().centralPortal) {
+        error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
+      }
     }
 
     endOfBuildActions += EndOfBuildAction.Close(searchForRepositoryIfNoIdPresent = true)
@@ -117,7 +158,11 @@ internal abstract class SonatypeRepositoryBuildService :
    */
   fun shouldDropRepository(manualStagingRepositoryId: String?) {
     if (manualStagingRepositoryId != null) {
-      stagingRepositoryId = manualStagingRepositoryId
+      publishId = manualStagingRepositoryId
+    } else {
+      if (parameters.sonatypeHost.get().centralPortal) {
+        error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
+      }
     }
 
     endOfBuildActions += EndOfBuildAction.Drop(
@@ -128,12 +173,18 @@ internal abstract class SonatypeRepositoryBuildService :
 
   internal fun publishingUrl(configCacheEnabled: Boolean): String {
     return if (parameters.versionIsSnapshot.get()) {
-      require(stagingRepositoryId == null) {
+      require(uploadId == null) {
         "Staging repositories are not supported for SNAPSHOT versions."
       }
-      "${parameters.sonatypeHost.get().rootUrl}/content/repositories/snapshots/"
+
+      val host = parameters.sonatypeHost.get()
+      require(!host.centralPortal) {
+        "Snapshots are not supported when publishing through the central portal."
+      }
+
+      "${host.rootUrl}/content/repositories/snapshots/"
     } else {
-      val stagingRepositoryId = requireNotNull(stagingRepositoryId) {
+      val stagingRepositoryId = requireNotNull(uploadId) {
         if (configCacheEnabled) {
           "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
             "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
@@ -142,7 +193,12 @@ internal abstract class SonatypeRepositoryBuildService :
         }
       }
 
-      "${parameters.sonatypeHost.get().rootUrl}/service/local/staging/deployByRepositoryId/$stagingRepositoryId/"
+      val host = parameters.sonatypeHost.get()
+      if (host.centralPortal) {
+        "file://${parameters.rootBuildDirectory.get()}/publish/staging/$stagingRepositoryId"
+      } else {
+        "${host.rootUrl}/service/local/staging/deployByRepositoryId/$stagingRepositoryId/"
+      }
     }
   }
 
@@ -163,14 +219,75 @@ internal abstract class SonatypeRepositoryBuildService :
         if (buildIsSuccess) {
           throw e
         } else {
-          logger.info("Failed processing $stagingRepositoryId staging repository after previous build failure", e)
+          logger.info("Failed processing $uploadId staging repository after previous build failure", e)
         }
       }
     }
   }
 
   private fun runEndOfBuildActions(actions: List<EndOfBuildAction>) {
-    var stagingRepositoryId = stagingRepositoryId
+    if (parameters.sonatypeHost.get().centralPortal) {
+      runCentralPortalEndOfBuildActions(actions)
+    } else {
+      runNexusEndOfBuildActions(actions)
+    }
+  }
+
+  private fun runCentralPortalEndOfBuildActions(actions: List<EndOfBuildAction>) {
+    val uploadId = uploadId
+
+    val closeActions = actions.filterIsInstance<EndOfBuildAction.Close>()
+    if (closeActions.isNotEmpty()) {
+      if (uploadId != null) {
+        val deploymentName = "${parameters.groupId.get()}-$uploadId"
+        val publishingType = if (actions.contains(EndOfBuildAction.ReleaseAfterClose)) {
+          "AUTOMATIC"
+        } else {
+          "USER_MANAGED"
+        }
+
+        val directory = File(publishingUrl(false).substringAfter("://"))
+        val zipFile = File("${directory.absolutePath}.zip")
+        val out = ZipOutputStream(FileOutputStream(zipFile))
+        directory.walkTopDown().forEach {
+          if (it.isDirectory) {
+            return@forEach
+          }
+          if (it.name.contains("maven-metadata")) {
+            return@forEach
+          }
+
+          val entry = ZipEntry(it.toRelativeString(directory))
+          out.putNextEntry(entry)
+          out.write(it.readBytes())
+          out.closeEntry()
+        }
+        out.close()
+
+        publishId = centralPortal.upload(deploymentName, publishingType, zipFile)
+      } else {
+        val publishId = publishId
+        if (publishId != null) {
+          centralPortal.publishDeployment(publishId)
+        } else if (closeActions.all { it.searchForRepositoryIfNoIdPresent }) {
+          error("A deployment id needs to be provided when publishing through Central Portal")
+        }
+      }
+    }
+
+    val dropAction = actions.filterIsInstance<EndOfBuildAction.Drop>().singleOrNull()
+    if (dropAction != null) {
+      val publishId = publishId
+      if (publishId != null) {
+        centralPortal.deleteDeployment(publishId)
+      } else if (dropAction.searchForRepositoryIfNoIdPresent) {
+        error("A deployment id needs to be provided when publishing through Central Portal")
+      }
+    }
+  }
+
+  private fun runNexusEndOfBuildActions(actions: List<EndOfBuildAction>) {
+    var stagingRepositoryId = uploadId ?: publishId
 
     val closeActions = actions.filterIsInstance<EndOfBuildAction.Close>()
     if (closeActions.isNotEmpty()) {
@@ -206,6 +323,7 @@ internal abstract class SonatypeRepositoryBuildService :
       repositoryUsername: Provider<String>,
       repositoryPassword: Provider<String>,
       automaticRelease: Boolean,
+      rootBuildDirectory: Provider<Directory>,
     ): Provider<SonatypeRepositoryBuildService> {
       val okhttpTimeout = project.providers.gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
         .map { it.toLong() }
@@ -223,6 +341,7 @@ internal abstract class SonatypeRepositoryBuildService :
         it.parameters.automaticRelease.set(automaticRelease)
         it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
         it.parameters.closeTimeoutSeconds.set(closeTimeout)
+        it.parameters.rootBuildDirectory.set(rootBuildDirectory)
       }
       project.serviceOf<BuildEventsListenerRegistry>().onTaskCompletion(service)
       return service

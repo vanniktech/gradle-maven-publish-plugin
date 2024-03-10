@@ -45,6 +45,7 @@ dependencies {
   compileOnly(libs.kotlin.plugin)
   compileOnly(libs.android.plugin)
 
+  implementation(projects.centralPortal)
   implementation(projects.nexus)
 
   testImplementation(gradleTestKit())

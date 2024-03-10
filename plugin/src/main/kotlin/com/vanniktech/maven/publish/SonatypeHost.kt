@@ -8,11 +8,18 @@ import java.io.Serializable
  *
  * https://central.sonatype.org/articles/2021/Feb/23/new-users-on-s01osssonatypeorg/
  */
-data class SonatypeHost(
+data class SonatypeHost internal constructor(
   internal val rootUrl: String,
+  internal val centralPortal: Boolean,
 ) : Serializable {
+  constructor(rootUrl: String) : this(rootUrl, centralPortal = false)
+
   internal fun apiBaseUrl(): String {
-    return "$rootUrl/service/local/"
+    return if (centralPortal) {
+      "$rootUrl/api/v1/"
+    } else {
+      "$rootUrl/service/local/"
+    }
   }
 
   companion object {
@@ -20,13 +27,17 @@ data class SonatypeHost(
     fun valueOf(sonatypeHost: String): SonatypeHost = when (sonatypeHost) {
       "DEFAULT" -> DEFAULT
       "S01" -> S01
+      "CENTRAL_PORTAL" -> CENTRAL_PORTAL
       else -> throw IllegalArgumentException("No SonatypeHost constant $sonatypeHost")
     }
 
     @JvmField
-    val DEFAULT = SonatypeHost("https://oss.sonatype.org")
+    val DEFAULT = SonatypeHost("https://oss.sonatype.org", centralPortal = false)
 
     @JvmField
-    val S01 = SonatypeHost("https://s01.oss.sonatype.org")
+    val S01 = SonatypeHost("https://s01.oss.sonatype.org", centralPortal = false)
+
+    @JvmField
+    val CENTRAL_PORTAL = SonatypeHost("https://central.sonatype.com", centralPortal = true)
   }
 }
