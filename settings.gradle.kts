@@ -22,5 +22,6 @@ gradleEnterprise {
 
 include(":plugin")
 include(":nexus")
+include(":central-portal")
 includeBuild("build-logic")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
