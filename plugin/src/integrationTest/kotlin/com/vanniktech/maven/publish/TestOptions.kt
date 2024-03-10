@@ -57,7 +57,6 @@ enum class KotlinVersion(
 
   // beta
   KT_2_0_0("2.0.0-Beta4"),
-  ;
 }
 
 enum class GradleVersion(
