@@ -61,6 +61,7 @@ val integrationTest by tasks.registering(Test::class) {
   dependsOn(
     tasks.publishToMavenLocal,
     projects.nexus.dependencyProject.tasks.publishToMavenLocal,
+    projects.centralPortal.dependencyProject.tasks.publishToMavenLocal,
   )
   mustRunAfter(tasks.test)
 
