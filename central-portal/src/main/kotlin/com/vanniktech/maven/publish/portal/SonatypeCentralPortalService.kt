@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish.portal
 
-import com.vanniktech.maven.publish.nexus.RepositoryActivity
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -34,11 +33,6 @@ internal interface SonatypeCentralPortalService {
     @Path("relativePath") relativePath: String,
   ): Call<ResponseBody>
 
-  @POST("publisher/deployments/files")
-  fun browseDeployments(
-    @Body input: FileRequest,
-  ): Call<List<RepositoryActivity>>
-
   @GET("publisher/published")
   fun getPublished(
     @Query("namespace") namespace: String,
@@ -60,7 +54,7 @@ internal interface SonatypeCentralPortalService {
   ): Call<String>
 
   @Streaming
-  @GET("publisher/deployment/download")
+  @GET("publisher/deployments/download")
   suspend fun getDeploymentDownload(
     @Query("relativePath") relativePath: String,
   ): Call<ResponseBody>

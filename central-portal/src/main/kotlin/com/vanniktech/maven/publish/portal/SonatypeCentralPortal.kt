@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish.portal
 
-import com.vanniktech.maven.publish.nexus.RepositoryActivity
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -97,15 +96,6 @@ class SonatypeCentralPortal(
     return destinationFile
   }
 
-  private fun browseDeployments(input: FileRequest): List<RepositoryActivity>? {
-    val listResponse = service.browseDeployments(input).execute()
-    if (listResponse.isSuccessful) {
-      return listResponse.body()
-    } else {
-      throw IOException("Failed to browse deployments for: $input msg: ${listResponse.errorBody()?.string()}")
-    }
-  }
-
   private fun getPublished(namespace: String, name: String, version: String): String? {
     val stringResponse = service.getPublished(namespace, name, version).execute()
     if (stringResponse.isSuccessful) {
@@ -119,22 +109,22 @@ class SonatypeCentralPortal(
     }
   }
 
-  private fun getStatus(deploymentId: String): DeploymentStatus? {
+  private fun getStatus(deploymentId: String): DeploymentStatus {
     val statusResponse = service.getStatus(deploymentId).execute()
     if (statusResponse.isSuccessful) {
-      return statusResponse.body()
+      return statusResponse.body()!!
     } else {
       throw IOException("Failed to get status for $deploymentId. msg: ${statusResponse.errorBody()?.string()}")
     }
   }
 
-  private fun upload(name: String?, publishingType: String?, file: File): String? {
+  private fun upload(name: String?, publishingType: String?, file: File): String {
     val uploadFile: RequestBody = file.asRequestBody("application/octet-stream".toMediaType())
     val multipart =
       MultipartBody.Part.createFormData("bundle", file.getName(), uploadFile)
     val uploadResponse = service.uploadBundle(name, publishingType, multipart).execute()
     if (uploadResponse.isSuccessful) {
-      return uploadResponse.body()
+      return uploadResponse.body()!!
     } else {
       throw IOException("Upload failed: ${uploadResponse.errorBody()?.string()}")
     }
