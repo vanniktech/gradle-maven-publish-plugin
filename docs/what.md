@@ -196,8 +196,10 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
       // - `JavadocJar.None()` don't publish this artifact
       // - `JavadocJar.Empty()` publish an emprt jar
       // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-      // sources publishing is always enabled by the Kotlin Multiplatform plugin
-      configure(new KotlinMultiplatform(new JavadocJar.Dokka("dokkaHtml")))
+      // the second whether to publish a sources jar
+      // the third parameters configures which Android library variants to publish if this project has an Android target
+      // defaults to "release" when using the main plugin and nothing for the base plugin
+      configure(new KotlinMultiplatform(new JavadocJar.Dokka("dokkaHtml"), true, ["debug", "release"]))
     }
     ```
 
@@ -215,6 +217,11 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
         // - `JavadocJar.Empty()` publish an emprt jar
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Dokka("dokkaHtml"),
+        // whether to publish a sources jar
+        sourcesJar = true,
+        // configure which Android library variants to publish if this project has an Android target
+        // defaults to "release" when using the main plugin and nothing for the base plugin
+        androidVariantsToPublish = listOf("debug", release"),
       ))
     }
     ```

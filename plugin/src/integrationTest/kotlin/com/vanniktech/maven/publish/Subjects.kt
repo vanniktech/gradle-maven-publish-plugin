@@ -114,6 +114,13 @@ open class ArtifactSubject internal constructor(
     }
   }
 
+  fun doesNotExist() {
+    if (artifact.exists()) {
+      val files = result.repo.toFile().walkTopDown().filter { it.isFile }.toList()
+      failWithActual(fact("expected not to exist", artifact), fact("but repo contained", files))
+    }
+  }
+
   fun isSigned() {
     val signedArtifact = artifact.resolveSibling("${artifact.name}.asc")
     if (!signedArtifact.exists()) {

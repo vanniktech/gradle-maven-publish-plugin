@@ -174,6 +174,8 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
       SourceFile("androidDebug", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
       SourceFile("androidRelease", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
     ),
+    // needs to explicitly specify release to match the main plugin default behavior
+    basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty(), true, [\"release\"]))",
     buildFileExtra = baseProject.buildFileExtra + """
 
         android {
@@ -187,12 +189,28 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
         }
 
         kotlin {
-          android {
-            publishLibraryVariants("release", "debug")
-          }
+          androidTarget {}
 
           jvmToolchain {
               languageVersion.set(JavaLanguageVersion.of("8"))
+          }
+        }
+    """.trimIndent(),
+  )
+}
+
+fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(
+  agpVersion: AgpVersion,
+  kotlinVersion: KotlinVersion,
+): ProjectSpec {
+  val baseProject = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
+  return baseProject.copy(
+    basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty()))",
+    buildFileExtra = baseProject.buildFileExtra + """
+
+        kotlin {
+          androidTarget {
+            publishLibraryVariants("release", "debug")
           }
         }
     """.trimIndent(),
