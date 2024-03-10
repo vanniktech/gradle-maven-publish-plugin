@@ -18,6 +18,7 @@ import org.gradle.jvm.component.internal.DefaultJvmSoftwareComponent
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 /**
  * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
@@ -269,10 +270,19 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
  *
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinMultiplatform @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true,
+data class KotlinMultiplatform internal constructor(
+  override val javadocJar: JavadocJar,
+  override val sourcesJar: Boolean,
+  val androidVariantsToPublish: List<String>,
+  val forceAndroidVariantsIfNotEmpty: Boolean
 ) : Platform() {
+  @JvmOverloads constructor(
+    javadocJar: JavadocJar = JavadocJar.Empty(),
+    sourcesJar: Boolean = true,
+    androidVariantsToPublish: List<String> = emptyList(),
+  ) : this(javadocJar, sourcesJar, androidVariantsToPublish, forceAndroidVariantsIfNotEmpty = true)
+
+
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
       "Calling configure(KotlinMultiplatform(...)) requires the org.jetbrains.kotlin.multiplatform plugin to be applied"
@@ -286,6 +296,16 @@ data class KotlinMultiplatform @JvmOverloads constructor(
 
     project.extensions.configure(KotlinMultiplatformExtension::class.java) {
       it.withSourcesJar(sourcesJar)
+
+      if (androidVariantsToPublish.isNotEmpty()) {
+        it.targets.configureEach { target ->
+          if (target is KotlinAndroidTarget) {
+            if (forceAndroidVariantsIfNotEmpty || target.publishLibraryVariants.isNullOrEmpty()) {
+              target.publishLibraryVariants = androidVariantsToPublish
+            }
+          }
+        }
+      }
     }
   }
 }

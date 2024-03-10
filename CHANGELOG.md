@@ -2,6 +2,9 @@
 
 ## 0.28.0 **UNRELEASED**
 
+- For Kotlin Multiplatform the main plugin will now automatically publish the
+  `release` variant if the project has an Android target.
+- Support specifying the Android variants to publish in `KotlinMultiplatform(...)`.
 - Updated minimum supported Gradle, Android Gradle Plugin and Kotlin versions.
 - Removed support for the deprecated Kotlin/JS plugin.
 - Removed the deprecated `closeAndReleaseRepository` task. Use `releaseRepository`, which
