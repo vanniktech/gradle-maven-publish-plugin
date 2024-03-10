@@ -2,8 +2,10 @@
 
 ## 0.28.0 **UNRELEASED**
 
-- Removed support for the deprecated Kotlin/JS plugin.
 - Updated minimum supported Gradle, Android Gradle Plugin and Kotlin versions.
+- Removed support for the deprecated Kotlin/JS plugin.
+- Removed the deprecated `closeAndReleaseRepository` task. Use `releaseRepository`, which
+  is functionally equivalent, instead.
 
 #### Minimum supported versions
 - JDK 11
