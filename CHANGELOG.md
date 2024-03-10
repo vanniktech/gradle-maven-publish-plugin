@@ -16,7 +16,7 @@
 - Gradle 8.6
 - Gradle 8.7-rc-2
 - Android Gradle Plugin 8.3.0
-- Android Gradle Plugin 8.4.0-alpha11
+- Android Gradle Plugin 8.4.0-alpha12
 - Kotlin Gradle Plugin 1.9.22
 - Kotlin Gradle Plugin 2.0.0-Beta4
 
