@@ -6,10 +6,10 @@ import java.util.concurrent.TimeUnit
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class SonatypeCentralPortal(
   private val baseUrl: String,
@@ -27,6 +27,7 @@ class SonatypeCentralPortal(
       .writeTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
       .build()
     val retrofit = Retrofit.Builder()
+      .addConverterFactory(ScalarsConverterFactory.create())
       .addConverterFactory(MoshiConverterFactory.create())
       .client(okHttpClient)
       .baseUrl(baseUrl)
@@ -35,7 +36,7 @@ class SonatypeCentralPortal(
     retrofit.create(SonatypeCentralPortalService::class.java)
   }
 
-  private fun deleteDeployment(deploymentId: String) {
+  fun deleteDeployment(deploymentId: String) {
     val deleteDeploymentResponse = service.deleteDeployment(deploymentId).execute()
     if (!deleteDeploymentResponse.isSuccessful) {
       throw IOException(
@@ -46,7 +47,7 @@ class SonatypeCentralPortal(
     }
   }
 
-  private fun publishDeployment(deploymentId: String) {
+  fun publishDeployment(deploymentId: String) {
     val publishDeploymentResponse = service.publishDeployment(deploymentId).execute()
     if (!publishDeploymentResponse.isSuccessful) {
       throw IOException(
@@ -118,10 +119,9 @@ class SonatypeCentralPortal(
     }
   }
 
-  private fun upload(name: String?, publishingType: String?, file: File): String {
-    val uploadFile: RequestBody = file.asRequestBody("application/octet-stream".toMediaType())
-    val multipart =
-      MultipartBody.Part.createFormData("bundle", file.getName(), uploadFile)
+  fun upload(name: String?, publishingType: String?, file: File): String {
+    val uploadFile = file.asRequestBody("application/octet-stream".toMediaType())
+    val multipart = MultipartBody.Part.createFormData("bundle", file.name, uploadFile)
     val uploadResponse = service.uploadBundle(name, publishingType, multipart).execute()
     if (uploadResponse.isSuccessful) {
       return uploadResponse.body()!!
