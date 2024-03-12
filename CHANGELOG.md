@@ -1,11 +1,12 @@
 # Change Log
 
-## 0.28.0 **UNRELEASED**
+## 0.28.0 *(2024-03-12)*
 
 - Added support for publishing through the new [Central Portal](https://central.sonatype.com). To use
   this use the `CENTRAL_PORTAL` option when specifying the Sonatype host.
 - For Kotlin Multiplatform the main plugin will now automatically publish the
-  `release` variant if the project has an Android target.
+  `release` variant if the project has an Android target and no variant was explicitly
+  specified through the Kotlin Gradle DSL.
 - Support specifying the Android variants to publish in `KotlinMultiplatform(...)`.
 - Updated minimum supported Gradle, Android Gradle Plugin and Kotlin versions.
 - Removed support for the deprecated Kotlin/JS plugin.
