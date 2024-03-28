@@ -79,6 +79,11 @@ enum class GradleVersion(
   GRADLE_8_7(
     value = "8.7",
   ),
+
+  // rc
+  GRADLE_8_8(
+    value = "8.8-20240328002759+0000",
+  ),
   ;
 
   companion object {
