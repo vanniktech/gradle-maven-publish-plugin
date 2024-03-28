@@ -12,7 +12,7 @@ internal class SonatypeCentralPortalOkHttpInterceptor(
     val requestBuilder = chain.request().newBuilder()
 
     requestBuilder.addHeader("Accept", "application/json") // request json by default, XML is returned else
-    requestBuilder.addHeader("Authorization", "UserToken $usertoken")
+    requestBuilder.addHeader("Authorization", "Bearer $usertoken")
     requestBuilder.addHeader("User-Agent", "$userAgentName/$userAgentVersion")
 
     return chain.proceed(requestBuilder.build())
