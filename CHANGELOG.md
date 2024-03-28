@@ -1,5 +1,30 @@
 # Change Log
 
+## 0.29.0 **UNRELEASED**
+
+
+#### Minimum supported versions
+- JDK 11
+- Gradle 8.1
+- Android Gradle Plugin 8.0.0
+- Kotlin Gradle Plugin 1.9.20
+
+#### Compatibility tested up to
+- JDK 21
+- Gradle 8.7
+- Android Gradle Plugin 8.3.1
+- Android Gradle Plugin 8.4.0-beta02
+- Android Gradle Plugin 8.5.0-alpha02
+- Kotlin Gradle Plugin 1.9.23
+- Kotlin Gradle Plugin 2.0.0-Beta5
+
+#### Configuration cache status
+
+Configuration cache is generally supported, except for:
+- Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+- Dokka does not support configuration cache
+
+
 ## 0.28.0 *(2024-03-12)*
 
 - Added support for publishing through the new [Central Portal](https://central.sonatype.com). To use
