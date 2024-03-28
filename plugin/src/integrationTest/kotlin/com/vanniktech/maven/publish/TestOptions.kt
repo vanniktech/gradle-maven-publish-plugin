@@ -41,13 +41,13 @@ enum class AgpVersion(
 
   // beta channel
   AGP_8_4(
-    value = "8.4.0-beta01",
+    value = "8.4.0-beta02",
     minGradleVersion = GradleVersion.GRADLE_8_6,
   ),
 
   // canary channel
   AGP_8_5(
-    value = "8.5.0-alpha01",
+    value = "8.5.0-alpha02",
     minGradleVersion = GradleVersion.GRADLE_8_6,
   ),
 }
@@ -76,19 +76,15 @@ enum class GradleVersion(
   ),
 
   // stable
-  GRADLE_8_6(
-    value = "8.6",
-  ),
-
-  // rc
   GRADLE_8_7(
-    value = "8.7-rc-4",
+    value = "8.7",
   ),
   ;
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
-    val GRADLE_8_4 = GRADLE_8_6
+    val GRADLE_8_4 = GRADLE_8_7
+    val GRADLE_8_6 = GRADLE_8_7
   }
 }
 

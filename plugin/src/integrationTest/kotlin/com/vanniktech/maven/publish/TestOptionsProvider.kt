@@ -21,6 +21,7 @@ internal class TestOptionsConfigProvider : TestParameterValuesProvider {
 internal class GradleVersionProvider : TestParameterValuesProvider {
   override fun provideValues(): ImmutableList<GradleVersion> {
     if (quickTestProperty.isNotBlank()) {
+
       return ImmutableList.of(GradleVersion.entries.last())
     }
     return ImmutableList.copyOf(GradleVersion.entries)
