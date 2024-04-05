@@ -9,15 +9,17 @@ pluginManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.16.2"
+  id("com.gradle.develocity") version "3.17"
 }
 
-gradleEnterprise {
-  buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
-    publishAlways()
-  }
+develocity {
+    buildScan {
+        termsOfUseUrl = "https://gradle.com/terms-of-service"
+        termsOfUseAgree = "yes"
+        // TODO: workaround for https://github.com/gradle/gradle/issues/22879.
+        val isCI = providers.environmentVariable("CI").isPresent
+        publishing.onlyIf { isCI }
+    }
 }
 
 include(":plugin")
