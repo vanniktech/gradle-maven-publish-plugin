@@ -32,7 +32,9 @@ jobs:
       - name: Accept Android SDK license
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
 
-      - uses: gradle/gradle-build-action@v3
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          validate-wrappers: true
 
       - name: Build with Gradle
         run: ./gradlew build --stacktrace -DtestConfigMethod=${{ matrix.test_config_method }}
