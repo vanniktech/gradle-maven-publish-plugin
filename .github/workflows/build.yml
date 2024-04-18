@@ -20,9 +20,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v2
-
       - name: Install JDK ${{ matrix.java_version }}
         uses: actions/setup-java@v4
         with:
@@ -32,7 +29,9 @@ jobs:
       - name: Accept Android SDK license
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
 
-      - uses: gradle/gradle-build-action@v3
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          validate-wrappers: true
 
       - name: Build with Gradle
         run: ./gradlew build --stacktrace -DtestConfigMethod=${{ matrix.test_config_method }}
