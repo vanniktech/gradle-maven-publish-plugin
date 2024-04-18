@@ -9,14 +9,13 @@ pluginManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.17.2"
+  id("com.gradle.develocity") version "3.17.2"
 }
 
-gradleEnterprise {
+develocity {
   buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
-    publishAlways()
+    termsOfUseUrl = "https://gradle.com/terms-of-service"
+    termsOfUseAgree = "yes"
   }
 }
 
