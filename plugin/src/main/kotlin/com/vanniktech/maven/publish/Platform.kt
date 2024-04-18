@@ -338,7 +338,7 @@ data class KotlinJvm @JvmOverloads constructor(
     // https://youtrack.jetbrains.com/issue/KT-41582
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
-      it.withKotlinSourcesJar(sourcesJar, project)
+      it.withJavaSourcesJar(sourcesJar, project)
       it.withJavadocJar { project.javadocJarTask(javadocJar) }
     }
 
@@ -469,26 +469,15 @@ sealed class JavadocJar {
 
 private const val PUBLICATION_NAME = "maven"
 
-private fun MavenPublication.withKotlinSourcesJar(enabled: Boolean, project: Project) {
-  val task = if (enabled) {
-    project.tasks.named("kotlinSourcesJar")
-  } else {
-    project.emptySourcesJar()
-  }
-  artifact(task)
-}
-
 private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Project) {
   if (enabled) {
     project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
   } else {
-    val task = project.emptySourcesJar()
+    val task = project.tasks.register("emptySourcesJar", Jar::class.java) {
+      it.archiveClassifier.set("sources")
+    }
     artifact(task)
   }
-}
-
-private fun Project.emptySourcesJar(): TaskProvider<*> = tasks.register("emptySourcesJar", Jar::class.java) {
-  it.archiveClassifier.set("sources")
 }
 
 private fun MavenPublication.withJavadocJar(factory: () -> TaskProvider<*>?) {
