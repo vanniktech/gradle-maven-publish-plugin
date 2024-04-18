@@ -12,11 +12,11 @@
 #### Compatibility tested up to
 - JDK 21
 - Gradle 8.7
-- Android Gradle Plugin 8.3.1
-- Android Gradle Plugin 8.4.0-beta02
-- Android Gradle Plugin 8.5.0-alpha02
+- Android Gradle Plugin 8.3.2
+- Android Gradle Plugin 8.4.0-rc02
+- Android Gradle Plugin 8.5.0-alpha05
 - Kotlin Gradle Plugin 1.9.23
-- Kotlin Gradle Plugin 2.0.0-Beta5
+- Kotlin Gradle Plugin 2.0.0-RC1
 
 #### Configuration cache status
 
