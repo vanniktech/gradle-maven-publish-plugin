@@ -359,9 +359,13 @@ abstract class MavenPublishBaseExtension(
 
   /**
    * Calls [configure] with a [Platform] chosen based on other applied Gradle plugins.
+   *
+   * Note: Passing `null` for [javadocJar] will result in the default behavior of determining
+   * the best option based on project type. For Android libraries
    */
   @Incubating
-  fun configureBasedOnAppliedPlugins() {
+  @JvmOverloads
+  fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: Boolean = true) {
     // has already been called before by the user or from finalizeDsl
     if (platform.isPresent) {
       return
@@ -372,8 +376,8 @@ abstract class MavenPublishBaseExtension(
         val variant = project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release"
         configure(
           KotlinMultiplatform(
-            javadocJar = defaultJavaDocOption(plainJavadocSupported = false),
-            sourcesJar = true,
+            javadocJar = defaultJavaDocOption(javadocJar, plainJavadocSupported = false),
+            sourcesJar = sourcesJar,
             androidVariantsToPublish = listOf(variant),
             forceAndroidVariantsIfNotEmpty = false,
           ),
@@ -381,18 +385,18 @@ abstract class MavenPublishBaseExtension(
       }
       project.plugins.hasPlugin("com.android.library") -> {
         val variant = project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release"
-        configure(AndroidSingleVariantLibrary(variant))
+        configure(AndroidSingleVariantLibrary(variant, sourcesJar, javadocJar))
       }
       project.plugins.hasPlugin("com.gradle.plugin-publish") ->
         configure(GradlePublishPlugin())
       project.plugins.hasPlugin("java-gradle-plugin") ->
-        configure(GradlePlugin(defaultJavaDocOption(plainJavadocSupported = true)))
+        configure(GradlePlugin(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
       project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
-        configure(KotlinJvm(defaultJavaDocOption(plainJavadocSupported = true)))
+        configure(KotlinJvm(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
       project.plugins.hasPlugin("java-library") ->
-        configure(JavaLibrary(defaultJavaDocOption(plainJavadocSupported = true)))
+        configure(JavaLibrary(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
       project.plugins.hasPlugin("java") ->
-        configure(JavaLibrary(defaultJavaDocOption(plainJavadocSupported = true)))
+        configure(JavaLibrary(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
       project.plugins.hasPlugin("java-platform") ->
         configure(JavaPlatform())
       project.plugins.hasPlugin("version-catalog") ->
@@ -401,8 +405,10 @@ abstract class MavenPublishBaseExtension(
     }
   }
 
-  private fun defaultJavaDocOption(plainJavadocSupported: Boolean): JavadocJar {
-    return if (project.plugins.hasPlugin("org.jetbrains.dokka") || project.plugins.hasPlugin("org.jetbrains.dokka-android")) {
+  private fun defaultJavaDocOption(javadocJar: Boolean, plainJavadocSupported: Boolean): JavadocJar {
+    return if (!javadocJar) {
+      JavadocJar.None()
+    } else if (project.plugins.hasPlugin("org.jetbrains.dokka") || project.plugins.hasPlugin("org.jetbrains.dokka-android")) {
       val dokkaTask = project.provider {
         val tasks = project.tasks.withType(DokkaTask::class.java)
         tasks.singleOrNull()?.name ?: "dokkaHtml"
