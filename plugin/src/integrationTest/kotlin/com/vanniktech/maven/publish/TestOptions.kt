@@ -78,7 +78,6 @@ enum class GradleVersion(
   // stable
   GRADLE_8_7(
     value = "8.7",
-    firstUnsupportedJdkVersion = JavaVersion.VERSION_22,
   ),
 
   // rc
