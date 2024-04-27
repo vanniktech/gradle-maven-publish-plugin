@@ -359,9 +359,6 @@ abstract class MavenPublishBaseExtension(
 
   /**
    * Calls [configure] with a [Platform] chosen based on other applied Gradle plugins.
-   *
-   * Note: Passing `null` for [javadocJar] will result in the default behavior of determining
-   * the best option based on project type. For Android libraries
    */
   @Incubating
   @JvmOverloads
