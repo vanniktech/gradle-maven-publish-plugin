@@ -238,7 +238,7 @@ abstract class MavenPublishBaseExtension(
    */
   fun pom(configure: Action<in MavenPom>) {
     project.mavenPublications { publication ->
-      if (GradleVersion.current() >= GradleVersion.version("8.8-20240328002759+0000")) {
+      if (GradleVersion.current() >= GradleVersion.version("8.8-rc-1")) {
         publication.pom(configure)
       } else {
         project.afterEvaluate {
