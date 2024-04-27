@@ -19,6 +19,7 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
+import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 
 abstract class MavenPublishBaseExtension(
@@ -152,7 +153,7 @@ abstract class MavenPublishBaseExtension(
       project.gradleSigning.sign(publication)
     }
 
-    // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
+    // TODO: https://youtrack.jetbrains.com/issue/KT-46466 https://github.com/gradle/gradle/issues/26091
     project.tasks.withType(AbstractPublishToMaven::class.java).configureEach { publishTask ->
       publishTask.dependsOn(project.tasks.withType(Sign::class.java))
     }
@@ -237,9 +238,12 @@ abstract class MavenPublishBaseExtension(
    */
   fun pom(configure: Action<in MavenPom>) {
     project.mavenPublications { publication ->
-      // TODO without afterEvaluate https://github.com/gradle/gradle/issues/12259 will happen
-      project.afterEvaluate {
+      if (GradleVersion.current() >= GradleVersion.version("8.8-rc-1")) {
         publication.pom(configure)
+      } else {
+        project.afterEvaluate {
+          publication.pom(configure)
+        }
       }
     }
   }

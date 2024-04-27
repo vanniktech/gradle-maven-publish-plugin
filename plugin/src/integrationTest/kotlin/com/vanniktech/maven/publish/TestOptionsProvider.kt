@@ -1,12 +1,12 @@
 package com.vanniktech.maven.publish
 
 import com.google.common.collect.ImmutableList
-import com.google.testing.junit.testparameterinjector.junit5.TestParameter.TestParameterValuesProvider
+import com.google.testing.junit.testparameterinjector.junit5.TestParameterValuesProvider
 
 private val quickTestProperty get() = System.getProperty("quickTest")
 
-internal class TestOptionsConfigProvider : TestParameterValuesProvider {
-  override fun provideValues(): ImmutableList<TestOptions.Config?> {
+internal class TestOptionsConfigProvider : TestParameterValuesProvider() {
+  override fun provideValues(context: Context?): List<*> {
     val property = System.getProperty("testConfigMethod")
     if (property.isNotBlank()) {
       return ImmutableList.of(TestOptions.Config.valueOf(property))
@@ -18,8 +18,8 @@ internal class TestOptionsConfigProvider : TestParameterValuesProvider {
   }
 }
 
-internal class GradleVersionProvider : TestParameterValuesProvider {
-  override fun provideValues(): ImmutableList<GradleVersion> {
+internal class GradleVersionProvider : TestParameterValuesProvider() {
+  override fun provideValues(context: Context?): List<*> {
     if (quickTestProperty.isNotBlank()) {
       return ImmutableList.of(GradleVersion.entries.last())
     }
@@ -27,8 +27,8 @@ internal class GradleVersionProvider : TestParameterValuesProvider {
   }
 }
 
-internal class AgpVersionProvider : TestParameterValuesProvider {
-  override fun provideValues(): ImmutableList<AgpVersion> {
+internal class AgpVersionProvider : TestParameterValuesProvider() {
+  override fun provideValues(context: Context?): List<*> {
     if (quickTestProperty.isNotBlank()) {
       return ImmutableList.of(AgpVersion.entries.last())
     }
@@ -36,8 +36,8 @@ internal class AgpVersionProvider : TestParameterValuesProvider {
   }
 }
 
-internal class KotlinVersionProvider : TestParameterValuesProvider {
-  override fun provideValues(): ImmutableList<KotlinVersion> {
+internal class KotlinVersionProvider : TestParameterValuesProvider() {
+  override fun provideValues(context: Context?): List<*> {
     if (quickTestProperty.isNotBlank()) {
       return ImmutableList.of(KotlinVersion.entries.last())
     }
