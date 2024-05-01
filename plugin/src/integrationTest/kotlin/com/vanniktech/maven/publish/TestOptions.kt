@@ -34,20 +34,14 @@ enum class AgpVersion(
   ),
 
   // stable
-  AGP_8_3(
-    value = "8.3.2",
-    minGradleVersion = GradleVersion.GRADLE_8_4,
-  ),
-
-  // beta channel
   AGP_8_4(
-    value = "8.4.0-rc02",
+    value = "8.4.0",
     minGradleVersion = GradleVersion.GRADLE_8_6,
   ),
 
   // canary channel
   AGP_8_5(
-    value = "8.5.0-alpha06",
+    value = "8.5.0-alpha07",
     minGradleVersion = GradleVersion.GRADLE_8_6,
   ),
 }
@@ -62,7 +56,7 @@ enum class KotlinVersion(
   KT_1_9_23("1.9.23"),
 
   // beta
-  KT_2_0_0("2.0.0-RC1"),
+  KT_2_0_0("2.0.0-RC2"),
 }
 
 enum class GradleVersion(
