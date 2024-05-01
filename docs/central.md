@@ -1,16 +1,13 @@
 # Maven Central
 
-This describes how to configure the plugin to publish to [Maven Central](https://search.maven.org/)
+This describes how to configure the plugin to publish to [Maven Central](https://central.sonatype.com/)
 the most common repository for opensource projects.
 
 ## Prerequisites
 
-1. An account for oss.sonatype.org or s01.oss.sonatype.org
-   1. Create an account in Sonatype's Jira [here](https://issues.sonatype.org/secure/Signup!default.jspa)
-   2. [Choose the coordinates]( https://central.sonatype.org/publish/requirements/coordinates/)
-   3. When using a personal domain as groupId [create a TXT record](https://central.sonatype.org/faq/how-to-set-txt-record)
-   4. [Create a ticket](https://issues.sonatype.org/secure/CreateIssue.jspa?pid=10134&issuetype=21)
-2. A GPG key that can be used to sign artifacts
+1. A [Central Portal account](https://central.sonatype.org/register/central-portal/#create-an-account)
+2. A [registered namespace](https://central.sonatype.org/register/namespace/)
+3. A GPG key that can be used to sign artifacts
    1. [Create a GPG key pair](https://central.sonatype.org/publish/requirements/gpg/#generating-a-key-pair)
    2. [Distribute the public key](https://central.sonatype.org/publish/requirements/gpg/#distributing-your-public-key)
 
