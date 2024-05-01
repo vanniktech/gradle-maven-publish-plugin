@@ -244,11 +244,24 @@ user home or to use environment variables for publishing from CI servers.
 
 ### In memory GPG key
 
-To obtain the in memory signing key run the following command. **Warning: this will print the private
-GPG key in plain text**
+To obtain the in memory signing key run the following command.
+
+!!! warning
+
+    This will print the private GPG key in plain text.
+
 ```sh
-gpg2 --export-secret-keys --armor <key id> <path to secring.gpg> | grep -v '\-\-' | grep -v '^=.' | tr -d '\n'
+gpg --export-secret-keys --armor <key id> | grep -v '\-\-' | grep -v '^=.' | tr -d '\n'
 ```
+
+!!! info
+
+    If you have a `secring.gpg` file that contains your key add the path to that
+    file after the `<key id>`:
+    ```sh
+    gpg --export-secret-keys --armor <key id>  <path to secring.gpg> | grep -v '\-\-' | grep -v '^=.' | tr -d '\n'
+    ```
+
 The result will be a very long single line string that looks like this
 ```
 lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEpr64iB9b6YRkWil3EODiiLd9JS3V...9pip+B1QLwEdLCEJA+3IIiw4qM5hnMw=
