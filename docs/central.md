@@ -8,8 +8,8 @@ the most common repository for opensource projects.
 1. A [Central Portal account](https://central.sonatype.org/register/central-portal/#create-an-account)
 2. A [registered namespace](https://central.sonatype.org/register/namespace/)
 3. A GPG key that can be used to sign artifacts
-   1. [Create a GPG key pair](https://central.sonatype.org/publish/requirements/gpg/#generating-a-key-pair)
-   2. [Distribute the public key](https://central.sonatype.org/publish/requirements/gpg/#distributing-your-public-key)
+    1. [Create a GPG key pair](https://central.sonatype.org/publish/requirements/gpg/#generating-a-key-pair)
+    2. [Distribute the public key](https://central.sonatype.org/publish/requirements/gpg/#distributing-your-public-key)
 
 ## Applying the plugin
 
