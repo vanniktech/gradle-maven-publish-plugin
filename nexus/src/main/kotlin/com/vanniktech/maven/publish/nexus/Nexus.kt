@@ -37,7 +37,7 @@ class Nexus(
     val stagingProfilesResponse = service.getStagingProfiles().execute()
 
     if (!stagingProfilesResponse.isSuccessful) {
-      throw IOException("Cannot get stagingProfiles for account $username: ${stagingProfilesResponse.errorBody()?.string()}")
+      throw IOException("Cannot get stagingProfiles for account $username: (${stagingProfilesResponse.code}) ${stagingProfilesResponse.errorBody()?.string()}")
     }
 
     return stagingProfilesResponse.body()?.data
