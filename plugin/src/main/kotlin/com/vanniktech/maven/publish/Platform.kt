@@ -12,7 +12,6 @@ import org.gradle.api.plugins.internal.JavaPluginHelper
 import org.gradle.api.plugins.internal.JvmPluginsHelper
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.internal.component.external.model.ProjectDerivedCapability
 import org.gradle.jvm.component.internal.DefaultJvmSoftwareComponent
 import org.gradle.jvm.tasks.Jar
