@@ -153,11 +153,6 @@ abstract class MavenPublishBaseExtension(
       project.gradleSigning.sign(publication)
     }
 
-    // TODO: https://youtrack.jetbrains.com/issue/KT-46466 https://github.com/gradle/gradle/issues/26091
-    project.tasks.withType(AbstractPublishToMaven::class.java).configureEach { publishTask ->
-      publishTask.dependsOn(project.tasks.withType(Sign::class.java))
-    }
-
     // TODO: https://youtrack.jetbrains.com/issue/KT-61313/ https://github.com/gradle/gradle/issues/26132
     project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
       project.tasks.withType(Sign::class.java).configureEach {
