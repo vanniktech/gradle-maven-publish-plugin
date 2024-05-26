@@ -12,7 +12,6 @@ import org.gradle.api.plugins.internal.JavaPluginHelper
 import org.gradle.api.plugins.internal.JvmPluginsHelper
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.internal.component.external.model.ProjectDerivedCapability
 import org.gradle.jvm.component.internal.DefaultJvmSoftwareComponent
 import org.gradle.jvm.tasks.Jar
@@ -66,7 +65,7 @@ data class JavaLibrary @JvmOverloads constructor(
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar { project.javadocJarTask(javadocJar) }
+      it.withJavadocJar(javadocJar, project)
     }
 
     setupTestFixtures(project, sourcesJar)
@@ -95,11 +94,9 @@ data class GradlePlugin @JvmOverloads constructor(
       "Calling configure(GradlePlugin(...)) requires the java-gradle-plugin to be applied"
     }
 
-    val javadocJarTask = project.javadocJarTask(javadocJar)
-
     project.mavenPublicationsWithoutPluginMarker {
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar { javadocJarTask }
+      it.withJavadocJar(javadocJar, project)
     }
   }
 }
@@ -287,10 +284,8 @@ data class KotlinMultiplatform internal constructor(
       "Calling configure(KotlinMultiplatform(...)) requires the org.jetbrains.kotlin.multiplatform plugin to be applied"
     }
 
-    val javadocJarTask = project.javadocJarTask(javadocJar)
-
     project.mavenPublications {
-      it.withJavadocJar { javadocJarTask }
+      it.withJavadocJar(javadocJar, project)
     }
 
     project.extensions.configure(KotlinMultiplatformExtension::class.java) {
@@ -339,7 +334,7 @@ data class KotlinJvm @JvmOverloads constructor(
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar { project.javadocJarTask(javadocJar) }
+      it.withJavadocJar(javadocJar, project)
     }
 
     setupTestFixtures(project, sourcesJar)
@@ -480,8 +475,8 @@ private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Proje
   }
 }
 
-private fun MavenPublication.withJavadocJar(factory: () -> TaskProvider<*>?) {
-  val task = factory()
+private fun MavenPublication.withJavadocJar(javadocJar: JavadocJar, project: Project) {
+  val task = project.javadocJarTask(name, javadocJar)
   if (task != null) {
     artifact(task)
   }

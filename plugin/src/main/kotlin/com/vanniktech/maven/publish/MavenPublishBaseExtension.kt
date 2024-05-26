@@ -12,7 +12,6 @@ import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
@@ -151,11 +150,6 @@ abstract class MavenPublishBaseExtension(
 
     project.mavenPublications { publication ->
       project.gradleSigning.sign(publication)
-    }
-
-    // TODO: https://youtrack.jetbrains.com/issue/KT-46466 https://github.com/gradle/gradle/issues/26091
-    project.tasks.withType(AbstractPublishToMaven::class.java).configureEach { publishTask ->
-      publishTask.dependsOn(project.tasks.withType(Sign::class.java))
     }
 
     // TODO: https://youtrack.jetbrains.com/issue/KT-61313/ https://github.com/gradle/gradle/issues/26132

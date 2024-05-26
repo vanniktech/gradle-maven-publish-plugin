@@ -14,33 +14,40 @@ open class JavadocJar : Jar() {
   }
 
   internal companion object {
-    internal fun Project.javadocJarTask(javadocJar: JavadocJarOption): TaskProvider<*>? {
+    internal fun Project.javadocJarTask(prefix: String, javadocJar: JavadocJarOption): TaskProvider<*>? {
       return when (javadocJar) {
         is JavadocJarOption.None -> null
-        is JavadocJarOption.Empty -> emptyJavadocJar()
-        is JavadocJarOption.Javadoc -> plainJavadocJar()
-        is JavadocJarOption.Dokka -> dokkaJavadocJar(javadocJar.taskName)
+        is JavadocJarOption.Empty -> emptyJavadocJar(prefix)
+        is JavadocJarOption.Javadoc -> plainJavadocJar(prefix)
+        is JavadocJarOption.Dokka -> dokkaJavadocJar(prefix, javadocJar.taskName)
       }
     }
 
-    private fun Project.emptyJavadocJar(): TaskProvider<*> = tasks.register("emptyJavadocJar", JavadocJar::class.java)
+    private fun Project.emptyJavadocJar(prefix: String): TaskProvider<*> = tasks.register(
+      "${prefix}EmptyJavadocJar",
+      JavadocJar::class.java,
+    ) {
+      it.archiveBaseName.set("$prefix-javadoc")
+    }
 
-    private fun Project.plainJavadocJar(): TaskProvider<*> {
-      return tasks.register("plainJavadocJar", JavadocJar::class.java) {
+    private fun Project.plainJavadocJar(prefix: String): TaskProvider<*> {
+      return tasks.register("${prefix}PlainJavadocJar", JavadocJar::class.java) {
         val task = tasks.named("javadoc")
         it.dependsOn(task)
         it.from(task)
+        it.archiveBaseName.set("$prefix-javadoc")
       }
     }
 
-    private fun Project.dokkaJavadocJar(taskName: DokkaTaskName): TaskProvider<*> {
-      return tasks.register("dokkaJavadocJar", JavadocJar::class.java) {
+    private fun Project.dokkaJavadocJar(prefix: String, taskName: DokkaTaskName): TaskProvider<*> {
+      return tasks.register("${prefix}DokkaJavadocJar", JavadocJar::class.java) {
         val task = when (taskName) {
           is ProviderDokkaTaskName -> taskName.value.flatMap { name -> tasks.named(name) }
           is StringDokkaTaskName -> tasks.named(taskName.value)
         }
         it.dependsOn(task)
         it.from(task)
+        it.archiveBaseName.set("$prefix-javadoc")
       }
     }
   }
