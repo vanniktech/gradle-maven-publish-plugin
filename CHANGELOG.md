@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.29.0 **UNRELEASED**
+## 0.29.0 *(2024-06-20)*
 
 - Added `configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean)`
   overload that allows disabling sources and javadoc jars without having to use
