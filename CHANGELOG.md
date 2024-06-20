@@ -2,6 +2,17 @@
 
 ## 0.29.0 **UNRELEASED**
 
+- Added `configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean)`
+  overload that allows disabling sources and javadoc jars without having to use
+  the more granular `Platform` APIs.
+- For Java library and Kotlin/JVM projects the Gradle module metadata now properly
+  includes the sources jar.
+- When running on Gradle 8.8 or newer the pom configuration is not applied in
+  `afterEvaluate` anymore, making manual overrides easier.
+- Fix potential issue with the javadoc jar tasks that can cause Gradle to disable
+  optimizations.
+- When staging profiles can't be loaded the status code of the response is added
+  to the error message.
 
 #### Minimum supported versions
 - JDK 11
@@ -11,13 +22,11 @@
 
 #### Compatibility tested up to
 - JDK 21
-- Gradle 8.7
-- Gradle 8.8-rc-1
-- Android Gradle Plugin 8.3.2
-- Android Gradle Plugin 8.4.0-rc02
-- Android Gradle Plugin 8.5.0-alpha05
-- Kotlin Gradle Plugin 1.9.23
-- Kotlin Gradle Plugin 2.0.0-RC1
+- Gradle 8.8
+- Android Gradle Plugin 8.5.0
+- Android Gradle Plugin 8.6.0-alpha06
+- Kotlin Gradle Plugin 2.0.0
+- Kotlin Gradle Plugin 2.0.20-Beta1
 
 #### Configuration cache status
 
