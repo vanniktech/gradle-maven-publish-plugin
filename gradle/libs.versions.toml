@@ -3,7 +3,7 @@ kotlin = "2.0.0"
 moshi = "1.15.1"
 retrofit = "2.11.0"
 junit = "5.10.2"
-truth = "1.4.2"
+truth = "1.4.4"
 maven-publish = "0.29.0-rc1"
 ktlint = "12.1.1"
 
