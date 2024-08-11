@@ -242,6 +242,14 @@ user home or to use environment variables for publishing from CI servers.
     ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=some_password
     ```
 
+!!! info
+
+    If you are using the new [Central Portal](https://central.sonatype.org/faq/what-is-different-between-central-portal-and-legacy-ossrh/) 
+    publishing (as opposed to OSSRH) your username and password will be [generated tokens](https://central.sonatype.org/publish/generate-portal-token/) 
+    and NOT your personal login. Note these carefully since they can only be displayed once. Also be sure to add your `mavenPublishin` configuration 
+    `publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)` .
+
+
 ### In memory GPG key
 
 To obtain the in memory signing key run the following command.
