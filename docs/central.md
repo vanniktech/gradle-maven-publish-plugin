@@ -246,7 +246,7 @@ user home or to use environment variables for publishing from CI servers.
 
     If you are using the new [Central Portal](https://central.sonatype.org/faq/what-is-different-between-central-portal-and-legacy-ossrh/) 
     publishing (as opposed to OSSRH) your username and password will be [generated tokens](https://central.sonatype.org/publish/generate-portal-token/) 
-    and NOT your personal login. Note these carefully since they can only be displayed once. Also be sure to add your `mavenPublishin` configuration 
+    and not your personal login. Note these carefully since they can only be displayed once. Also be sure to add your `mavenPublishing` configuration 
     `publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)` .
 
 
