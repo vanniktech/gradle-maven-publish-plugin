@@ -50,18 +50,26 @@ abstract class MavenPublishBaseExtension(
    *
    * @param host the instance of Sonatype OSSRH to use
    * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
+   * @param userName the username to use for Sonatype OSSRH, defaults to the `mavenCentralUsername` Gradle property
+   * @param password the password to use for Sonatype OSSRH, defaults to the `mavenCentralPassword` Gradle property
    */
   @JvmOverloads
-  fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT, automaticRelease: Boolean = false) {
+  fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT,
+                            automaticRelease: Boolean = false,
+                            userName: String? = null,
+                            password: String? = null) {
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
+
+    val userNameProvider = userName?.let { project.providers.provider { it } } ?: project.providers.gradleProperty("mavenCentralUsername")
+    val passwordProvider = password?.let { project.providers.provider { it } } ?: project.providers.gradleProperty("mavenCentralPassword")
 
     val buildService = project.registerSonatypeRepositoryBuildService(
       sonatypeHost = sonatypeHost,
       groupId = groupId,
       versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") },
-      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
-      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
+      repositoryUsername = userNameProvider,
+      repositoryPassword = passwordProvider,
       automaticRelease = automaticRelease,
       // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
       rootBuildDirectory = project.rootProject.layout.buildDirectory,
