@@ -31,7 +31,7 @@ jobs:
         run: |
           echo "ORG_GRADLE_PROJECT_VERSION_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
 
-      - uses: gradle/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
 
       - name: Publish
         run: ./gradlew publishAndReleaseToMavenCentral
