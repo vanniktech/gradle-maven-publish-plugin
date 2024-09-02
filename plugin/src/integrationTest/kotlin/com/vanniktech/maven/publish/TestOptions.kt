@@ -34,14 +34,14 @@ enum class AgpVersion(
   ),
 
   // stable
-  AGP_8_5(
-    value = "8.5.0",
+  AGP_8_6(
+    value = "8.6.0",
     minGradleVersion = GradleVersion.GRADLE_8_6,
   ),
 
   // canary channel
-  AGP_8_6(
-    value = "8.6.0-alpha06",
+  AGP_8_7(
+    value = "8.7.0-alpha08",
     minGradleVersion = GradleVersion.GRADLE_8_6,
   ),
 }
@@ -55,10 +55,7 @@ enum class KotlinVersion(
   KT_1_9_23("1.9.24"),
 
   // stable
-  KT_2_0_0("2.0.0"),
-
-  // beta
-  KT_2_0_20("2.0.20-Beta1"),
+  KT_2_0_20("2.0.20"),
 }
 
 enum class GradleVersion(
@@ -72,14 +69,14 @@ enum class GradleVersion(
   ),
 
   // stable
-  GRADLE_8_7(
-    value = "8.8",
+  GRADLE_8_10(
+    value = "8.10",
   ),
   ;
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
-    val GRADLE_8_6 = GRADLE_8_7
+    val GRADLE_8_6 = GRADLE_8_10
   }
 }
 
@@ -88,7 +85,7 @@ enum class GradlePluginPublish(val version: String) {
   GRADLE_PLUGIN_PUBLISH_1_0("1.0.0"),
 
   // stable
-  GRADLE_PLUGIN_PUBLISH_1_2("1.2.1"),
+  GRADLE_PLUGIN_PUBLISH_1_2("1.2.2"),
 }
 
 fun GradleVersion.assumeSupportedJdkVersion() {

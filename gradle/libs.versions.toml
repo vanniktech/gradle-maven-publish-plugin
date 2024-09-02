@@ -1,16 +1,16 @@
 [versions]
-kotlin = "2.0.0"
+kotlin = "2.0.20"
 moshi = "1.15.1"
 retrofit = "2.11.0"
-junit = "5.10.2"
-truth = "1.4.2"
-maven-publish = "0.29.0-rc1"
+junit = "5.11.0"
+truth = "1.4.4"
+maven-publish = "0.29.0"
 ktlint = "12.1.1"
 
 [libraries]
 okhttp = "com.squareup.okhttp3:okhttp:4.12.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:1.9.20"
-android-plugin = "com.android.tools.build:gradle:8.5.0"
+android-plugin = "com.android.tools.build:gradle:8.6.0"
 ktlint-plugin = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 maven-publish-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "maven-publish" }
 
@@ -31,10 +31,10 @@ testParameterInjector = "com.google.testparameterinjector:test-parameter-injecto
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 truth-java8 = { module = "com.google.truth.extensions:truth-java8-extension", version.ref = "truth" }
 truth-testKit = "com.autonomousapps:testkit-truth:1.1"
-maven-model = "org.apache.maven:maven-model:3.9.8"
+maven-model = "org.apache.maven:maven-model:3.9.9"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.3.5" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.4.0" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
