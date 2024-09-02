@@ -25,7 +25,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
-  private val buildEventsListenerRegistry: BuildEventsListenerRegistry
+  private val buildEventsListenerRegistry: BuildEventsListenerRegistry,
 ) {
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
