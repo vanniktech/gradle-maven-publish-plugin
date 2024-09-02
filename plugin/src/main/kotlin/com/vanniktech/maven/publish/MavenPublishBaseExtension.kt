@@ -5,6 +5,7 @@ import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companio
 import com.vanniktech.maven.publish.sonatype.ReleaseSonatypeRepositoryTask.Companion.registerReleaseRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
+import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
@@ -14,6 +15,7 @@ import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
@@ -21,8 +23,9 @@ import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
 import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 
-abstract class MavenPublishBaseExtension(
+abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
+  private val buildEventsListenerRegistry: BuildEventsListenerRegistry
 ) {
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
@@ -31,7 +34,7 @@ abstract class MavenPublishBaseExtension(
   internal val version: Property<String> = project.objects.property(String::class.java)
     .convention(project.provider { project.version.toString() })
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
-  internal val platform: Property<Platform> = project.objects.property(Platform::class.java)
+  private val platform: Property<Platform> = project.objects.property(Platform::class.java)
 
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
@@ -65,6 +68,7 @@ abstract class MavenPublishBaseExtension(
       automaticRelease = automaticRelease,
       // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
       rootBuildDirectory = project.rootProject.layout.buildDirectory,
+      buildEventsListenerRegistry = buildEventsListenerRegistry,
     )
 
     val configCacheEnabled = project.configurationCache()

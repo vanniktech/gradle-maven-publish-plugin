@@ -21,7 +21,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.build.event.BuildEventsListenerRegistry
-import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
@@ -324,6 +323,7 @@ internal abstract class SonatypeRepositoryBuildService :
       repositoryPassword: Provider<String>,
       automaticRelease: Boolean,
       rootBuildDirectory: Provider<Directory>,
+      buildEventsListenerRegistry: BuildEventsListenerRegistry,
     ): Provider<SonatypeRepositoryBuildService> {
       val okhttpTimeout = project.providers.gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
         .map { it.toLong() }
@@ -343,7 +343,7 @@ internal abstract class SonatypeRepositoryBuildService :
         it.parameters.closeTimeoutSeconds.set(closeTimeout)
         it.parameters.rootBuildDirectory.set(rootBuildDirectory)
       }
-      project.serviceOf<BuildEventsListenerRegistry>().onTaskCompletion(service)
+      buildEventsListenerRegistry.onTaskCompletion(service)
       return service
     }
   }
