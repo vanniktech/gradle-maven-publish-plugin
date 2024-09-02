@@ -63,9 +63,8 @@ enum class GradleVersion(
   val firstUnsupportedJdkVersion: JavaVersion? = null,
 ) {
   // minimum supported
-  GRADLE_8_1(
-    value = "8.1",
-    firstUnsupportedJdkVersion = JavaVersion.VERSION_20,
+  GRADLE_8_5(
+    value = "8.5",
   ),
 
   // stable
@@ -76,6 +75,7 @@ enum class GradleVersion(
 
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion
+    val GRADLE_8_1 = GRADLE_8_5
     val GRADLE_8_6 = GRADLE_8_10
   }
 }

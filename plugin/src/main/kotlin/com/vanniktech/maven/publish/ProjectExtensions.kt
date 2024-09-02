@@ -79,8 +79,3 @@ internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, 
     false
   }
 }
-
-@Suppress("UnstableApiUsage")
-internal fun Project.configurationCache(): Boolean {
-  return gradle.startParameter.isConfigurationCacheRequested
-}

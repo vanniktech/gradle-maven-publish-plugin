@@ -67,10 +67,9 @@ abstract class MavenPublishBaseExtension(
       rootBuildDirectory = project.rootProject.layout.buildDirectory,
     )
 
-    val configCacheEnabled = project.configurationCache()
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
-      repo.setUrl(buildService.map { it.publishingUrl(configCacheEnabled) })
+      repo.setUrl(buildService.map { it.publishingUrl() })
       if (!host.isCentralPortal) {
         repo.credentials(PasswordCredentials::class.java)
       }
