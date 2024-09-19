@@ -29,7 +29,11 @@ data class SonatypeHost internal constructor(
       "DEFAULT" -> DEFAULT
       "S01" -> S01
       "CENTRAL_PORTAL" -> CENTRAL_PORTAL
-      else -> throw IllegalArgumentException("No SonatypeHost constant $sonatypeHost")
+      else -> if (sonatypeHost.startsWith("https://")) {
+        SonatypeHost(sonatypeHost)
+      } else {
+        throw IllegalArgumentException("No SonatypeHost constant $sonatypeHost")
+      }
     }
 
     @JvmField
