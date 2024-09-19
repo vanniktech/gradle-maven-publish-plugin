@@ -22,7 +22,6 @@ open class MavenPublishPlugin : Plugin<Project> {
 
     // afterEvaluate is too late for AGP which doesn't allow configuration after finalizeDsl
     project.plugins.withId("com.android.library") {
-      @Suppress("UnstableApiUsage")
       project.androidComponents.finalizeDsl {
         baseExtension.configureBasedOnAppliedPlugins()
       }

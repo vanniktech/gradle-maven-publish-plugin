@@ -11,7 +11,9 @@ import java.util.Base64
 import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import javax.inject.Inject
 import org.gradle.api.Project
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logger
@@ -28,6 +30,10 @@ import org.gradle.tooling.events.OperationCompletionListener
 internal abstract class SonatypeRepositoryBuildService :
   BuildService<SonatypeRepositoryBuildService.Params>, AutoCloseable, OperationCompletionListener {
   private val logger: Logger = Logging.getLogger(SonatypeRepositoryBuildService::class.java)
+
+  @Suppress("UnstableApiUsage")
+  @get:Inject
+  internal abstract val buildFeatures: BuildFeatures
 
   internal interface Params : BuildServiceParameters {
     val sonatypeHost: Property<SonatypeHost>
@@ -170,7 +176,7 @@ internal abstract class SonatypeRepositoryBuildService :
     )
   }
 
-  internal fun publishingUrl(configCacheEnabled: Boolean): String {
+  internal fun publishingUrl(): String {
     return if (parameters.versionIsSnapshot.get()) {
       require(uploadId == null) {
         "Staging repositories are not supported for SNAPSHOT versions."
@@ -184,7 +190,8 @@ internal abstract class SonatypeRepositoryBuildService :
       "${host.rootUrl}/content/repositories/snapshots/"
     } else {
       val stagingRepositoryId = requireNotNull(uploadId) {
-        if (configCacheEnabled) {
+        @Suppress("UnstableApiUsage")
+        if (buildFeatures.configurationCache.active.get()) {
           "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
             "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
         } else {
@@ -245,7 +252,7 @@ internal abstract class SonatypeRepositoryBuildService :
           "USER_MANAGED"
         }
 
-        val directory = File(publishingUrl(false).substringAfter("://"))
+        val directory = File(publishingUrl().substringAfter("://"))
         val zipFile = File("${directory.absolutePath}.zip")
         val out = ZipOutputStream(FileOutputStream(zipFile))
         directory.walkTopDown().forEach {

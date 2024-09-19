@@ -33,7 +33,7 @@ open class MavenPublishBasePlugin : Plugin<Project> {
   }
 
   private companion object {
-    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("8.1")
+    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("8.5")
     val KOTLIN_PLUGIN_IDS = listOf(
       "org.jetbrains.kotlin.jvm",
       "org.jetbrains.kotlin.multiplatform",
