@@ -212,10 +212,9 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
 
 ## Secrets
 
-For the publishing to work the credentials for Sonatype OSS as well as for the
-GPG key that is used for signing need to provided. To keep them out of version
-control it is recommended to either put this into the `gradle.properties` file
-user home or to use environment variables for publishing from CI servers.
+When publishing, you need to provide your Sonatype OSS credentials and signing GPG key.
+To keep them out of version control, it is recommended to either put them in your user's
+home `gradle.properties` file or to use environment variables (when publishing from CI servers).
 
 === "~/.gradle/gradle.properties"
 
@@ -241,6 +240,9 @@ user home or to use environment variables for publishing from CI servers.
     # If key was created with a password.
     ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=some_password
     ```
+
+Note that the username/password here is *not* the same one you use to login; Sonatype publishing
+requires a username/password that was [generated via user tokens](https://central.sonatype.org/publish/generate-portal-token/).
 
 ### In memory GPG key
 
