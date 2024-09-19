@@ -190,6 +190,7 @@ data class AndroidSingleVariantLibrary @JvmOverloads constructor(
  * empty all variants will be published. Otherwise, only variants matching those filters will be included.
  *
  * Equivalent Gradle set up (AGP 7.1.1):
+ * ```
  * android {
  *   publishing {
  *    multipleVariants {
@@ -209,6 +210,7 @@ data class AndroidSingleVariantLibrary @JvmOverloads constructor(
  *     }
  *   }
  * }
+ * ```
  */
 data class AndroidMultiVariantLibrary @JvmOverloads constructor(
   override val sourcesJar: Boolean = true,
