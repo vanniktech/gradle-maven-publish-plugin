@@ -1,5 +1,31 @@
 # Change Log
 
+## 0.30.0 **UNRELEASED**
+
+- Remove usages of deprecated Gradle API that is scheduled to be removed in Gradle 9.0
+- Raised minimum supported Gradle version
+
+#### Minimum supported versions
+- JDK 11
+- Gradle 8.5
+- Android Gradle Plugin 8.0.0
+- Kotlin Gradle Plugin 1.9.20
+
+#### Compatibility tested up to
+- JDK 21
+- Gradle 8.10
+- Android Gradle Plugin 8.7.0
+- Android Gradle Plugin 8.8.0-alpha09
+- Kotlin Gradle Plugin 2.0.20
+- Kotlin Gradle Plugin 2.1.0-Beta1
+
+#### Configuration cache status
+
+Configuration cache is generally supported, except for:
+- Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+- Dokka does not support configuration cache
+
+
 ## 0.29.0 *(2024-06-20)*
 
 - Added `configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean)`
