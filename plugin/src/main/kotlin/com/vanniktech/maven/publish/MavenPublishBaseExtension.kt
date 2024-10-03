@@ -406,10 +406,16 @@ abstract class MavenPublishBaseExtension @Inject constructor(
   private fun defaultJavaDocOption(javadocJar: Boolean, plainJavadocSupported: Boolean): JavadocJar {
     return if (!javadocJar) {
       JavadocJar.None()
-    } else if (project.plugins.hasPlugin("org.jetbrains.dokka") || project.plugins.hasPlugin("org.jetbrains.dokka-android")) {
+    } else if (project.plugins.hasPlugin("org.jetbrains.dokka-javadoc")) {
+      JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
+    } else if (project.plugins.hasPlugin("org.jetbrains.dokka")) {
       val dokkaTask = project.provider {
         val tasks = project.tasks.withType(DokkaTask::class.java)
-        tasks.singleOrNull()?.name ?: "dokkaHtml"
+        if (tasks.size == 0) {
+          "dokkaGeneratePublicationHtml"
+        } else {
+          tasks.singleOrNull()?.name ?: "dokkaHtml"
+        }
       }
       JavadocJar.Dokka(dokkaTask)
     } else if (plainJavadocSupported) {

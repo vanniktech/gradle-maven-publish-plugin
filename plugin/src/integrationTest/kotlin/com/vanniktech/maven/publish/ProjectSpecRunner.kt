@@ -41,8 +41,8 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 }
 
 private fun supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
-  // TODO https://github.com/Kotlin/dokka/issues/2231
-  return !plugins.any { it.id == dokkaPlugin.id }
+  // TODO can always return true when dropping support for dokka 1
+  return plugins.none { it.id == dokkaPlugin.id && it.version!!.startsWith("1.")  }
 }
 
 private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOptions) {
@@ -187,6 +187,8 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
       appendLine("org.gradle.vfs.watch=false")
       appendLine("kotlin.compiler.execution.strategy=in-process")
       appendLine("kotlin.mpp.androidSourceSetLayoutVersion1.nowarn=true")
+      appendLine("org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled")
+      appendLine("org.jetbrains.dokka.experimental.gradle.pluginMode.noWarn=true")
       appendLine()
 
       if (options.config == TestOptions.Config.PROPERTIES) {

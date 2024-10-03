@@ -2,6 +2,12 @@
 
 ## 0.30.0 **UNRELEASED**
 
+- Add support for Dokka 2.0.0-Beta
+    - Supports `org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled`
+    - When `pluginMode` is set to `V2EnabledWithHelpers` the old v1 tasks are used
+    - Supports both `org.jetbrains.dokka` and `org.jetbrains.dokka-javadoc`
+    - If both are applied the javadoc output is published
+    - Removed support for the old `org.jetbrains.dokka-android` plugin
 - Remove usages of deprecated Gradle API that is scheduled to be removed in Gradle 9.0
 - Raised minimum supported Gradle version
 
@@ -23,7 +29,7 @@
 
 Configuration cache is generally supported, except for:
 - Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
-- Dokka does not support configuration cache
+- Dokka only supports configuration cache in `V2Enabled` mode
 
 
 ## 0.29.0 *(2024-06-20)*
