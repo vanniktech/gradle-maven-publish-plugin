@@ -42,7 +42,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 
 private fun supportsConfigCaching(plugins: List<PluginSpec>): Boolean {
   // TODO can always return true when dropping support for dokka 1
-  return plugins.none { it.id == dokkaPlugin.id && it.version!!.startsWith("1.")  }
+  return plugins.none { it.id == dokkaPlugin.id && it.version!!.startsWith("1.") }
 }
 
 private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOptions) {
