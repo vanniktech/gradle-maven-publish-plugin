@@ -29,7 +29,7 @@
 
 Configuration cache is generally supported, except for:
 - Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
-- Dokka only supports configuration cache in `V2Enabled` mode
+- When using Dokka until Dokka version 2.1.0 is out
 
 
 ## 0.29.0 *(2024-06-20)*
