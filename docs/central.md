@@ -210,6 +210,12 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
     POM_DEVELOPER_URL=https://github.com/username/
     ```
 
+!!! warning
+
+    It's discouraged to set `packaging` on the POM, since it can lead to errors
+    or unintended behavior. The value will be automatically set based on the
+    project type if needed.
+
 ## Secrets
 
 When publishing, you need to provide your Sonatype OSS credentials and signing GPG key.
