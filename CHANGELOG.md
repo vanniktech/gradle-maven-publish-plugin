@@ -7,6 +7,7 @@
     - Supports both `org.jetbrains.dokka` and `org.jetbrains.dokka-javadoc`
     - If both are applied the javadoc output is published
     - Removed support for the old `org.jetbrains.dokka-android` plugin
+- Support custom Sonatype hosts by providing a `https` url in `SONATYPE_HOST` Gradle property
 - Remove usages of deprecated Gradle API that is scheduled to be removed in Gradle 9.0
 - Raised minimum supported Gradle version
 
@@ -17,10 +18,10 @@
 - Kotlin Gradle Plugin 1.9.20
 
 #### Compatibility tested up to
-- JDK 21
-- Gradle 8.10
+- JDK 23
+- Gradle 8.10.2
 - Android Gradle Plugin 8.7.0
-- Android Gradle Plugin 8.8.0-alpha09
+- Android Gradle Plugin 8.8.0-alpha05
 - Kotlin Gradle Plugin 2.0.20
 - Kotlin Gradle Plugin 2.1.0-Beta1
 
