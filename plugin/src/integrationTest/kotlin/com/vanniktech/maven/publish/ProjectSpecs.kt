@@ -15,6 +15,8 @@ val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
 val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 val dokkaPlugin = PluginSpec("org.jetbrains.dokka", "1.8.10")
+val dokka2Plugin = PluginSpec("org.jetbrains.dokka", "2.0.0-Beta")
+val dokka2JavadocPlugin = PluginSpec("org.jetbrains.dokka-javadoc", "2.0.0-Beta")
 
 val fixtures = Paths.get("src/integrationTest/fixtures2").absolute()
 
