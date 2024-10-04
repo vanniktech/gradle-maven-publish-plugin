@@ -9,6 +9,7 @@
     - Removed support for the old `org.jetbrains.dokka-android` plugin
 - Remove usages of deprecated Gradle API that is scheduled to be removed in Gradle 9.0
 - Raised minimum supported Gradle version
+- Improve naming of javadoc jars
 
 #### Minimum supported versions
 - JDK 11
