@@ -4,7 +4,6 @@
 
 - Add support for Dokka 2.0.0-Beta
     - Supports `org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled`
-    - When `pluginMode` is set to `V2EnabledWithHelpers` the old v1 tasks are used
     - Supports both `org.jetbrains.dokka` and `org.jetbrains.dokka-javadoc`
     - If both are applied the javadoc output is published
     - Removed support for the old `org.jetbrains.dokka-android` plugin

@@ -409,15 +409,16 @@ abstract class MavenPublishBaseExtension @Inject constructor(
     } else if (project.plugins.hasPlugin("org.jetbrains.dokka-javadoc")) {
       JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
     } else if (project.plugins.hasPlugin("org.jetbrains.dokka")) {
-      val dokkaTask = project.provider {
-        val tasks = project.tasks.withType(DokkaTask::class.java)
-        if (tasks.size == 0) {
-          "dokkaGeneratePublicationHtml"
-        } else {
+      // only dokka v2 has an extension
+      if (project.extensions.findByName("dokka") != null) {
+        JavadocJar.Dokka("dokkaGeneratePublicationHtml")
+      } else {
+        val dokkaTask = project.provider {
+          val tasks = project.tasks.withType(DokkaTask::class.java)
           tasks.singleOrNull()?.name ?: "dokkaHtml"
         }
+        JavadocJar.Dokka(dokkaTask)
       }
-      JavadocJar.Dokka(dokkaTask)
     } else if (plainJavadocSupported) {
       project.tasks.withType(Javadoc::class.java).configureEach {
         val options = it.options as StandardJavadocDocletOptions
