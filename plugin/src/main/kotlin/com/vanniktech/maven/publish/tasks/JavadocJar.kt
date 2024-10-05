@@ -27,7 +27,7 @@ open class JavadocJar : Jar() {
       "${prefix}EmptyJavadocJar",
       JavadocJar::class.java,
     ) {
-      it.archiveBaseName.set("$prefix-javadoc")
+      it.archiveBaseName.set("${project.name}-$prefix-javadoc")
     }
 
     private fun Project.plainJavadocJar(prefix: String): TaskProvider<*> {
@@ -35,7 +35,7 @@ open class JavadocJar : Jar() {
         val task = tasks.named("javadoc")
         it.dependsOn(task)
         it.from(task)
-        it.archiveBaseName.set("$prefix-javadoc")
+        it.archiveBaseName.set("${project.name}-$prefix-javadoc")
       }
     }
 
@@ -47,7 +47,7 @@ open class JavadocJar : Jar() {
         }
         it.dependsOn(task)
         it.from(task)
-        it.archiveBaseName.set("$prefix-javadoc")
+        it.archiveBaseName.set("${project.name}-$prefix-javadoc")
       }
     }
   }
