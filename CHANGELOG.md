@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.30.0 **UNRELEASED**
+## 0.30.0 *(2024-10-13)*
 
 - Add support for Dokka 2.0.0-Beta
     - Supports `org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled`
@@ -30,7 +30,7 @@
 
 Configuration cache is generally supported, except for:
 - Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
-- When using Dokka until Dokka version 2.1.0 is out
+- When using Dokka 1.x or Dokka 2.x without `V2Enabled`
 
 
 ## 0.29.0 *(2024-06-20)*
