@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+
+- Allow mavenCentralUsername and mavenCentralPassword to be set from any property type for added flexibility.
+
 ## 0.30.0 *(2024-10-13)*
 
 - Add support for Dokka 2.0.0-Beta

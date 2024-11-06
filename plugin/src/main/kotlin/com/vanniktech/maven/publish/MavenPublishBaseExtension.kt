@@ -63,8 +63,8 @@ abstract class MavenPublishBaseExtension @Inject constructor(
       sonatypeHost = sonatypeHost,
       groupId = groupId,
       versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") },
-      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
-      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
+      repositoryUsername = project.provider { project.properties["mavenCentralUsername"]?.toString() },
+      repositoryPassword = project.provider { project.properties["mavenCentralPassword"]?.toString() },
       automaticRelease = automaticRelease,
       // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
       rootBuildDirectory = project.rootProject.layout.buildDirectory,
