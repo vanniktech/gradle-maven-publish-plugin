@@ -103,7 +103,7 @@ This can be done through either the DSL or by setting Gradle properties.
     SONATYPE_HOST=DEFAULT
     # or when publishing to https://s01.oss.sonatype.org
     SONATYPE_HOST=S01
-    // or when publishing to https://central.sonatype.com/
+    # or when publishing to https://central.sonatype.com/
     SONATYPE_HOST=CENTRAL_PORTAL
 
     RELEASE_SIGNING_ENABLED=true
