@@ -183,11 +183,11 @@ internal abstract class SonatypeRepositoryBuildService :
       }
 
       val host = parameters.sonatypeHost.get()
-      require(!host.isCentralPortal) {
-        "Snapshots are not supported when publishing through the central portal."
+      if (host.isCentralPortal) {
+        "${host.rootUrl}/repository/maven-snapshots/"
+      } else {
+        "${host.rootUrl}/content/repositories/snapshots/"
       }
-
-      "${host.rootUrl}/content/repositories/snapshots/"
     } else {
       val stagingRepositoryId = requireNotNull(uploadId) {
         @Suppress("UnstableApiUsage")
