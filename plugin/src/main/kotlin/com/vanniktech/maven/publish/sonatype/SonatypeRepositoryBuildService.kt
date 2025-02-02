@@ -332,10 +332,10 @@ internal abstract class SonatypeRepositoryBuildService :
       rootBuildDirectory: Provider<Directory>,
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
     ): Provider<SonatypeRepositoryBuildService> {
-      val okhttpTimeout = project.providers.gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
+      val okhttpTimeout = project.provider<String> { project.properties["SONATYPE_CONNECT_TIMEOUT_SECONDS"]?.toString() }
         .map { it.toLong() }
         .orElse(60)
-      val closeTimeout = project.providers.gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
+      val closeTimeout = project.provider<String> { project.properties["SONATYPE_CLOSE_TIMEOUT_SECONDS"]?.toString() }
         .map { it.toLong() }
         .orElse(60 * 15)
       val service = gradle.sharedServices.registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {
