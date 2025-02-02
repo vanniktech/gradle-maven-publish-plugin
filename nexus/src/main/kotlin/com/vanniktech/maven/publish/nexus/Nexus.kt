@@ -58,26 +58,21 @@ class Nexus(
       return allProfiles[0]
     }
 
-    val candidateProfiles = allProfiles.filter { group == it.name }
-      .ifEmpty { allProfiles.filter { group.startsWith(it.name) } }
-      .ifEmpty { allProfiles.filter { group.commonPrefixWith(it.name).isNotEmpty() } }
-
-    if (candidateProfiles.isEmpty()) {
-      throw IllegalArgumentException(
-        "No matching staging profile found in account $username. It is expected that the account contains a staging " +
-          "profile that matches or is the start of $group. " +
-          "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}",
-      )
+    val exactMatch = allProfiles.find { group == it.name }
+    if (exactMatch != null) {
+      return exactMatch
     }
 
-    if (candidateProfiles.size > 1) {
-      throw IllegalArgumentException(
-        "More than 1 matching staging profile found in account $username. " +
-          "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}",
-      )
+    val longestPrefixMatch = allProfiles.maxByOrNull { group.commonPrefixWith(it.name).length }
+    if (longestPrefixMatch != null) {
+      return longestPrefixMatch
     }
 
-    return candidateProfiles[0]
+    throw IllegalArgumentException(
+      "No matching staging profile found in account $username. It is expected that the account contains a staging " +
+        "profile that matches or is the start of $group. " +
+        "Available profiles are: ${allProfiles.joinToString(separator = ", ") { it.name }}",
+    )
   }
 
   private fun createStagingRepository(group: String, profile: StagingProfile): String {
