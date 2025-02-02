@@ -1,5 +1,33 @@
 # Change Log
 
+## 0.31.0 **UNRELEASED**
+
+- Add support for publishing snapshots to Central Portal.
+- Add support for multiple matching staging profiles by taking the one with the longest
+  matching prefix.
+
+#### Minimum supported versions
+- JDK 11
+- Gradle 8.5
+- Android Gradle Plugin 8.0.0
+- Kotlin Gradle Plugin 1.9.20
+
+#### Compatibility tested up to
+- JDK 23
+- Gradle 8.12.1
+- Android Gradle Plugin 8.8.0
+- Android Gradle Plugin 8.9.0-beta01
+- Android Gradle Plugin 8.10.0-alpha02
+- Kotlin Gradle Plugin 2.1.10
+- Kotlin Gradle Plugin 2.1.20-Beta2
+
+#### Configuration cache status
+
+Configuration cache is generally supported, except for:
+- Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+- When using Dokka 1.x or Dokka 2.x without `V2Enabled`
+
+
 ## 0.30.0 *(2024-10-13)*
 
 - Add support for Dokka 2.0.0-Beta
