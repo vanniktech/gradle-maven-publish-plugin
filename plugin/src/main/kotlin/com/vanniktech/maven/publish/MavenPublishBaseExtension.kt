@@ -9,6 +9,7 @@ import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
@@ -59,10 +60,12 @@ abstract class MavenPublishBaseExtension @Inject constructor(
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
 
+    val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
+
     val buildService = project.registerSonatypeRepositoryBuildService(
       sonatypeHost = sonatypeHost,
       groupId = groupId,
-      versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") },
+      versionIsSnapshot = versionIsSnapshot,
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       automaticRelease = automaticRelease,
@@ -74,7 +77,10 @@ abstract class MavenPublishBaseExtension @Inject constructor(
     project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
       repo.setUrl(buildService.map { it.publishingUrl() })
-      if (!host.isCentralPortal) {
+    }
+
+    project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java) { repo ->
+      if (repo.name == "mavenCentral" && (!host.isCentralPortal || versionIsSnapshot.get())) {
         repo.credentials(PasswordCredentials::class.java)
       }
     }

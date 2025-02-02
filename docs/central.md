@@ -277,11 +277,6 @@ lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEpr64iB9b6YRkWil3EODiiLd9JS3V...9pip+B1QLwEdL
 
 ## Publishing snapshots
 
-!!! warning "Central Portal"
-
-    Publishing snapshots is not supported when using the Central Portal (central.sonatype.com).
-
-
 Snapshots can be published by setting the version to something ending with `-SNAPSHOT`
 and then running the following Gradle task:
 
@@ -290,8 +285,9 @@ and then running the following Gradle task:
 ```
 
 The snapshot will be automatically available in Sonatype's
-[snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/) (or the
-[S01 snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots/)) directly after the
+[snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/), or the
+[S01 snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots/), or the
+[Central Portal snapshot repository](https://central.sonatype.com/repository/maven-snapshots/) directly after the
 task finished.
 
 Signing is not required for snapshot builds, but if the configuration is present the build
