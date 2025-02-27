@@ -5,7 +5,7 @@ retrofit = "2.11.0"
 junit = "5.11.4"
 truth = "1.4.4"
 maven-publish = "0.30.0"
-ktlint = "12.1.2"
+ktlint = "12.2.0"
 
 [libraries]
 okhttp = "com.squareup.okhttp3:okhttp:4.12.0"
