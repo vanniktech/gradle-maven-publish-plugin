@@ -10,7 +10,7 @@ ktlint = "12.2.0"
 [libraries]
 okhttp = "com.squareup.okhttp3:okhttp:4.12.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:2.0.0"
-android-plugin = "com.android.tools.build:gradle:8.8.0"
+android-plugin = "com.android.tools.build:gradle:8.8.2"
 ktlint-plugin = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 maven-publish-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "maven-publish" }
 
