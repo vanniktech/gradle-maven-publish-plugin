@@ -259,7 +259,7 @@ To obtain the in memory signing key run the following command.
     This will print the private GPG key in plain text.
 
 ```sh
-gpg --export-secret-keys --armor <key id> | grep -v '\-\-' | grep -v '^=.' | tr -d '\n'
+gpg --export-secret-keys --armor <key id>
 ```
 
 !!! info
@@ -267,13 +267,22 @@ gpg --export-secret-keys --armor <key id> | grep -v '\-\-' | grep -v '^=.' | tr 
     If you have a `secring.gpg` file that contains your key add the path to that
     file after the `<key id>`:
     ```sh
-    gpg --export-secret-keys --armor <key id>  <path to secring.gpg> | grep -v '\-\-' | grep -v '^=.' | tr -d '\n'
+    gpg --export-secret-keys --armor <key id>  <path to secring.gpg>
     ```
 
-The result will be a very long single line string that looks like this
+The result will be a long, multi-line string that looks like this
 ```
-lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEpr64iB9b6YRkWil3EODiiLd9JS3V...9pip+B1QLwEdLCEJA+3IIiw4qM5hnMw=
+-----BEGIN PGP PRIVATE KEY BLOCK-----
+
+lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEp
+r64iB9b6YRkWil3EODiiLd9JS3V9pip+B1QLw
+...
+EdLCEJA+3IIiw4qM5hnMw=
+=s83f
+-----END PGP PRIVATE KEY BLOCK-----
 ```
+
+Make sure to copy this string in its entirety.
 
 ## Publishing snapshots
 
