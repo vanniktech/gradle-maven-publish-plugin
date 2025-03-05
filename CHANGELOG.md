@@ -15,8 +15,7 @@
 #### Compatibility tested up to
 - JDK 23
 - Gradle 8.13
-- Android Gradle Plugin 8.8.2
-- Android Gradle Plugin 8.9.0-rc01
+- Android Gradle Plugin 8.9.0
 - Android Gradle Plugin 8.10.0-alpha07
 - Kotlin Gradle Plugin 2.1.10
 - Kotlin Gradle Plugin 2.1.20-RC
