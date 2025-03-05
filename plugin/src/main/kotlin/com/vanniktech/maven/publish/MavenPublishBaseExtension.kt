@@ -79,11 +79,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
       repo.setUrl(buildService.map { it.publishingUrl() })
     }
 
-    project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java) { repo ->
-      if (repo.name == "mavenCentral" && (!host.isCentralPortal || versionIsSnapshot.get())) {
-        repo.credentials(PasswordCredentials::class.java)
-      }
-    }
+    configureCredentials { versionIsSnapshot.get() }
 
     val createRepository = project.tasks.registerCreateRepository(buildService)
 
@@ -231,6 +227,8 @@ abstract class MavenPublishBaseExtension @Inject constructor(
     project.mavenPublications {
       it.version = this.version.get()
     }
+
+    configureCredentials { version.endsWith("-SNAPSHOT") }
   }
 
   /**
@@ -406,6 +404,14 @@ abstract class MavenPublishBaseExtension @Inject constructor(
       project.plugins.hasPlugin("version-catalog") ->
         configure(VersionCatalog())
       else -> project.logger.warn("No compatible plugin found in project ${project.path} for publishing")
+    }
+  }
+
+  private inline fun configureCredentials(crossinline versionIsSnapshot: () -> Boolean) {
+    project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java) { repo ->
+      if (repo.name == "mavenCentral" && (!sonatypeHost.get().isCentralPortal || versionIsSnapshot())) {
+        repo.credentials(PasswordCredentials::class.java)
+      }
     }
   }
 
