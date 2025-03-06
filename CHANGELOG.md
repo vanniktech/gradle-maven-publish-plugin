@@ -1,8 +1,10 @@
 # Change Log
 
-## 0.31.0 **UNRELEASED**
+## 0.31.0 *(2025-03-06)*
 
 - Add support for publishing snapshots to Central Portal.
+    - Make sure to enable snapshots for your namespace on central.sonatype.com.
+    - Thanks to @solrudev for the contribution.
 - Add support for multiple matching staging profiles by taking the one with the longest
   matching prefix.
 
