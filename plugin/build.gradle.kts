@@ -83,6 +83,9 @@ val integrationTest by tasks.registering(Test::class) {
     "java.base/java.util=ALL-UNNAMED",
   )
 
+  // We must provide the plugin version here instead of using `withPluginClasspath` for GradleRunner. As there are
+  // various AGP / KGP and other plugins tested in the matrix, `withPluginClasspath` will mess the whole classpath.
+  systemProperty("com.vanniktech.publish.version", project.property("VERSION_NAME").toString())
   systemProperty("testConfigMethod", System.getProperty("testConfigMethod"))
   systemProperty("quickTest", System.getProperty("quickTest"))
 
