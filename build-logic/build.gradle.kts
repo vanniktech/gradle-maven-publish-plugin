@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ir.backend.js.compile
-
 plugins { `kotlin-dsl` }
 
 dependencies {
