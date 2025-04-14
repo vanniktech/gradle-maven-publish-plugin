@@ -26,6 +26,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
 
   val result = GradleRunner.create()
     .withGradleVersion(options.gradleVersion.value)
+    .withPluginClasspath()
     .withProjectDir(project.toFile())
     .withDebug(true)
     .withArguments(arguments)
@@ -82,12 +83,11 @@ private fun ProjectSpec.pluginsBlock(options: TestOptions) = buildString {
     }
   }
 
-  val pluginVersion = System.getProperty("com.vanniktech.publish.version")
   when (options.config) {
-    TestOptions.Config.BASE -> appendLine(" id \"com.vanniktech.maven.publish.base\" version \"${pluginVersion}\"")
+    TestOptions.Config.BASE -> appendLine(" id \"com.vanniktech.maven.publish.base\"")
     TestOptions.Config.DSL,
     TestOptions.Config.PROPERTIES,
-    -> appendLine(" id \"com.vanniktech.maven.publish\" version \"${pluginVersion}\"")
+    -> appendLine(" id \"com.vanniktech.maven.publish\"")
   }
 
   appendLine("}")

@@ -83,7 +83,6 @@ val integrationTest by tasks.registering(Test::class) {
     "java.base/java.util=ALL-UNNAMED",
   )
 
-  systemProperty("com.vanniktech.publish.version", project.property("VERSION_NAME").toString())
   systemProperty("testConfigMethod", System.getProperty("testConfigMethod"))
   systemProperty("quickTest", System.getProperty("quickTest"))
 
