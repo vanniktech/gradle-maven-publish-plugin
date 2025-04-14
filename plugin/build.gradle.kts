@@ -94,6 +94,9 @@ val integrationTest by tasks.registering(Test::class) {
 }
 
 val quickIntegrationTest by tasks.registering {
+  description = "Runs the integration tests quickly."
+  group = "verification"
+
   dependsOn(integrationTest)
   System.setProperty("quickTest", "true")
 }
