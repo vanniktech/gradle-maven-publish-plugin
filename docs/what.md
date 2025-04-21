@@ -27,9 +27,9 @@ For projects using the `com.android.library` plugin. This will publish all varia
       // the second whether to publish a javadoc jar
       configure(new AndroidMultiVariantLibrary(true, true))
       // or to limit which build types to include
-      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"]))
+      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"] as Set))
       // or to limit which flavors to include, the map key is a flavor dimension, the set contains the flavors
-      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"], ["store": ["google", "samsung"]]))
+      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"] as Set, ["store": ["google", "samsung"] as Set]))
     }
     ```
 
