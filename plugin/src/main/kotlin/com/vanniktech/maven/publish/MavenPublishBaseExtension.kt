@@ -32,6 +32,8 @@ abstract class MavenPublishBaseExtension @Inject constructor(
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
   internal val groupId: Property<String> = project.objects.property(String::class.java)
     .convention(project.provider { project.group.toString() })
+  internal val artifactId: Property<String> = project.objects.property(String::class.java)
+    .convention(project.provider { project.name.toString() })
   internal val version: Property<String> = project.objects.property(String::class.java)
     .convention(project.provider { project.version.toString() })
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
@@ -81,7 +83,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
 
     configureCredentials { versionIsSnapshot.get() }
 
-    val createRepository = project.tasks.registerCreateRepository(buildService)
+    val createRepository = project.tasks.registerCreateRepository(buildService, groupId, artifactId, version)
 
     project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
       if (publishTask.name.endsWith("ToMavenCentralRepository")) {
@@ -190,6 +192,9 @@ abstract class MavenPublishBaseExtension @Inject constructor(
   }
 
   private fun artifactId(artifactId: String) {
+    this.artifactId.set(artifactId)
+    this.artifactId.finalizeValueOnRead()
+
     // skip the plugin marker artifact which has its own artifact id based on the plugin id
     project.mavenPublicationsWithoutPluginMarker {
       // the multiplatform plugin creates its own publications, so it is ok to use hasPlugin in here

@@ -110,12 +110,16 @@ internal abstract class SonatypeRepositoryBuildService :
 
   private val endOfBuildActions = mutableSetOf<EndOfBuildAction>()
 
+  private val coordinates = mutableSetOf<Triple<String, String, String>>()
+
   private var buildIsSuccess: Boolean = true
 
   /**
    * Is only be allowed to be called from task actions.
    */
-  fun createStagingRepository() {
+  fun createStagingRepository(group: String, artifactId: String, version: String) {
+    coordinates.add(Triple(group, artifactId, version))
+
     if (parameters.versionIsSnapshot.get()) {
       return
     }
@@ -245,7 +249,15 @@ internal abstract class SonatypeRepositoryBuildService :
     val closeActions = actions.filterIsInstance<EndOfBuildAction.Close>()
     if (closeActions.isNotEmpty()) {
       if (uploadId != null) {
-        val deploymentName = "${parameters.groupId.get()}-$uploadId"
+        val deploymentName = if (coordinates.size == 1) {
+          val coordinate = coordinates.single()
+          "${coordinate.first}-${coordinate.second}-${coordinate.third}"
+        } else if (coordinates.distinctBy { it.first + it.third }.size == 1) {
+          val coordinate = coordinates.first()
+          "${coordinate.first}-${coordinate.third}"
+        } else {
+          "${parameters.groupId.get()}-$uploadId"
+        }
         val publishingType = if (actions.contains(EndOfBuildAction.ReleaseAfterClose)) {
           "AUTOMATIC"
         } else {
