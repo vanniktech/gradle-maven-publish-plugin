@@ -10,6 +10,8 @@ jobs:
 
     runs-on: ubuntu-latest
     if: github.repository == 'vanniktech/gradle-maven-publish-plugin'
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -42,8 +44,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          body: ${{ env.RELEASE_NOTES }}
+        run: gh release create "${{ github.ref_name }}" --notes "${{ env.RELEASE_NOTES }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ env.RELEASE_NOTES != '' }}
