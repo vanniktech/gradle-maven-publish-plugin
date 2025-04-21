@@ -39,7 +39,6 @@ val integrationTestImplementation = configurations["integrationTestImplementatio
 
 dependencies {
   api(gradleApi())
-  api(libs.kotlin.stdlib)
 
   compileOnly(libs.dokka)
   compileOnly(libs.kotlin.plugin)
