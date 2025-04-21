@@ -1,5 +1,6 @@
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val libs = the<LibrariesForLibs>()
@@ -25,6 +26,7 @@ java {
 tasks.withType(KotlinCompile::class.java) {
   compilerOptions {
     jvmTarget.set(JvmTarget.JVM_11)
+    languageVersion.set(KotlinVersion.KOTLIN_1_9)
   }
 }
 
