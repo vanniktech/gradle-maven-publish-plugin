@@ -1,5 +1,32 @@
 # Change Log
 
+## 0.32.0 **UNRELEASED**
+
+- Fix an issue where the wrong staging profile for (s01.)oss.sonatype.org was selected
+  when publishing to Maven Central.
+
+
+#### Minimum supported versions
+- JDK 11
+- Gradle 8.5
+- Android Gradle Plugin 8.0.0
+- Kotlin Gradle Plugin 1.9.20
+
+#### Compatibility tested up to
+- JDK 23
+- Gradle 8.13
+- Android Gradle Plugin 8.9.0
+- Android Gradle Plugin 8.10.0-alpha07
+- Kotlin Gradle Plugin 2.1.10
+- Kotlin Gradle Plugin 2.1.20-RC
+
+#### Configuration cache status
+
+Configuration cache is generally supported, except for:
+- Publishing releases to Maven Central (snapshots are fine), blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+- When using Dokka 1.x or Dokka 2.x without `V2Enabled`
+
+
 ## 0.31.0 *(2025-03-06)*
 
 - Add support for publishing snapshots to Central Portal.
