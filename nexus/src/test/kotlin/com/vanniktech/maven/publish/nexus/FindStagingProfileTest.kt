@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class FindStagingProfileTest {
-
   @Test
   fun emptyList() {
     val profiles = emptyList<StagingProfile>()
