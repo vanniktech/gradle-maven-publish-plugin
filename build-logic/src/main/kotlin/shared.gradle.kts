@@ -26,7 +26,7 @@ java {
 tasks.withType(KotlinCompile::class.java) {
   compilerOptions {
     jvmTarget.set(JvmTarget.JVM_11)
-    languageVersion.set(KotlinVersion.KOTLIN_1_9)
+    languageVersion.set(KotlinVersion.KOTLIN_1_8)
   }
 }
 
