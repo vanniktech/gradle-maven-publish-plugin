@@ -60,8 +60,8 @@ dependencies {
 val integrationTest by tasks.registering(Test::class) {
   dependsOn(
     tasks.publishToMavenLocal,
-    projects.nexus.dependencyProject.tasks.publishToMavenLocal,
-    projects.centralPortal.dependencyProject.tasks.publishToMavenLocal,
+    project(projects.nexus.path).tasks.publishToMavenLocal,
+    project(projects.centralPortal.path).tasks.publishToMavenLocal,
   )
   mustRunAfter(tasks.test)
 
@@ -74,6 +74,7 @@ val integrationTest by tasks.registering(Test::class) {
   useJUnitPlatform()
   testLogging.showStandardStreams = true
   maxHeapSize = "2g"
+  maxParallelForks = Runtime.getRuntime().availableProcessors()
   jvmArgs(
     "--add-opens",
     "java.base/java.lang.invoke=ALL-UNNAMED",
@@ -83,6 +84,8 @@ val integrationTest by tasks.registering(Test::class) {
     "java.base/java.util=ALL-UNNAMED",
   )
 
+  // We must provide the plugin version here instead of using `withPluginClasspath` for GradleRunner. As there are
+  // various AGP / KGP and other plugins tested in the matrix, `withPluginClasspath` will mess the whole classpath.
   systemProperty("com.vanniktech.publish.version", project.property("VERSION_NAME").toString())
   systemProperty("testConfigMethod", System.getProperty("testConfigMethod"))
   systemProperty("quickTest", System.getProperty("quickTest"))
@@ -95,6 +98,9 @@ val integrationTest by tasks.registering(Test::class) {
 }
 
 val quickIntegrationTest by tasks.registering {
+  description = "Runs the integration tests quickly."
+  group = "verification"
+
   dependsOn(integrationTest)
   System.setProperty("quickTest", "true")
 }
