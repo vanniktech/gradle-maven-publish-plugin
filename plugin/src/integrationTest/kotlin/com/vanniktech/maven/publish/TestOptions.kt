@@ -32,6 +32,7 @@ enum class AgpVersion(
     value = "8.0.0",
     minGradleVersion = GradleVersion.GRADLE_8_1,
   ),
+
   // latest versions of each type
   AGP_STABLE(IntegrationTestBuildConfig.ANDROID_GRADLE_STABLE, GradleVersion.GRADLE_STABLE),
   AGP_RC(IntegrationTestBuildConfig.ANDROID_GRADLE_RC, GradleVersion.GRADLE_STABLE),
@@ -46,6 +47,7 @@ enum class KotlinVersion(
 ) {
   // minimum supported
   KT_1_9_24("1.9.24"),
+
   // latest versions of each type
   KOTLIN_STABLE(IntegrationTestBuildConfig.KOTLIN_STABLE),
   KOTLIN_RC(IntegrationTestBuildConfig.KOTLIN_RC),
@@ -62,6 +64,7 @@ enum class GradleVersion(
     value = "8.5",
     firstUnsupportedJdkVersion = JavaVersion.VERSION_22,
   ),
+
   // latest versions of each type
   GRADLE_STABLE(IntegrationTestBuildConfig.GRADLE_STABLE),
   GRADLE_RC(IntegrationTestBuildConfig.GRADLE_RC),
@@ -79,6 +82,7 @@ enum class GradleVersion(
 enum class GradlePluginPublish(val version: String) {
   // minimum supported
   GRADLE_PLUGIN_PUBLISH_MIN("1.0.0"),
+
   // latest versions of each type
   GRADLE_PLUGIN_PUBLISH_STABLE(IntegrationTestBuildConfig.GRADLE_PUBLISH_STABLE),
   GRADLE_PLUGIN_PUBLISH_RC(IntegrationTestBuildConfig.GRADLE_PUBLISH_RC),
