@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        java_version: [17, 23]
+        java_version: [11, 17, 23]
         test_config_method: ["DSL", "PROPERTIES", "BASE"]
 
     steps:
@@ -27,7 +27,7 @@ jobs:
           java-version: ${{ matrix.java_version }}
 
       - name: Accept Android SDK license
-        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
+        run: echo -e "24333f8a63b6825ea9c5514f83c2829b004d1fee\n" > "$ANDROID_HOME/licenses/android-sdk-license"
 
       - uses: gradle/actions/setup-gradle@v4
 
