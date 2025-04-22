@@ -2,9 +2,12 @@
 
 ## 0.32.0 **UNRELEASED**
 
+- Improve names of Central Portal deployments.
 - Fix an issue where the wrong staging profile for (s01.)oss.sonatype.org was selected
   when publishing to Maven Central.
 - Fix incompatibility with Kotlin 1.9.x when used through compiled plugins.
+- Fix an issue with detecting whether configuration cache is enabled which lead to a not
+  actionable error message.
 
 
 #### Minimum supported versions
