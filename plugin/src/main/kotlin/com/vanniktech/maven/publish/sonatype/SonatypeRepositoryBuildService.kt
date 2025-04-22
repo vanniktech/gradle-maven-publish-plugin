@@ -39,7 +39,7 @@ internal abstract class SonatypeRepositoryBuildService :
     val okhttpTimeoutSeconds: Property<Long>
     val closeTimeoutSeconds: Property<Long>
     val rootBuildDirectory: DirectoryProperty
-    val isConfigurationCacheActive: Property<Boolean>
+    val configurationCacheActive: Property<Boolean>
   }
 
   private sealed interface EndOfBuildAction {
@@ -189,7 +189,7 @@ internal abstract class SonatypeRepositoryBuildService :
       }
     } else {
       val stagingRepositoryId = requireNotNull(uploadId) {
-        if (parameters.isConfigurationCacheActive.get()) {
+        if (parameters.configurationCacheActive.get()) {
           "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
             "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
         } else {
@@ -356,7 +356,7 @@ internal abstract class SonatypeRepositoryBuildService :
         it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
         it.parameters.closeTimeoutSeconds.set(closeTimeout)
         it.parameters.rootBuildDirectory.set(rootBuildDirectory)
-        it.parameters.isConfigurationCacheActive.set(isConfigurationCacheActive)
+        it.parameters.configurationCacheActive.set(isConfigurationCacheActive)
       }
       buildEventsListenerRegistry.onTaskCompletion(service)
       return service
