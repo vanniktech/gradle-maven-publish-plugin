@@ -51,7 +51,7 @@ internal abstract class SonatypeRepositoryBuildService :
       override val runAfterFailure: Boolean = false
     }
 
-    data object ReleaseAfterClose : EndOfBuildAction {
+    object ReleaseAfterClose : EndOfBuildAction {
       override val runAfterFailure: Boolean = false
     }
 

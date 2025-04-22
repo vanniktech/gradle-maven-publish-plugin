@@ -234,7 +234,7 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun dokka() {
-    val kotlinVersion = KotlinVersion.entries.last()
+    val kotlinVersion = KotlinVersion.values().last()
     val original = kotlinJvmProjectSpec(kotlinVersion)
     val project = original.copy(
       plugins = original.plugins + dokkaPlugin,
@@ -255,7 +255,7 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun dokka2() {
-    val kotlinVersion = KotlinVersion.entries.last()
+    val kotlinVersion = KotlinVersion.values().last()
     val original = kotlinJvmProjectSpec(kotlinVersion)
     val project = original.copy(
       plugins = original.plugins + dokka2Plugin,
@@ -276,7 +276,7 @@ class MavenPublishPluginSpecialCaseTest {
 
   @TestParameterInjectorTest
   fun dokka2Javadoc() {
-    val kotlinVersion = KotlinVersion.entries.last()
+    val kotlinVersion = KotlinVersion.values().last()
     val original = kotlinJvmProjectSpec(kotlinVersion)
     val project = original.copy(
       plugins = original.plugins + dokka2JavadocPlugin,
