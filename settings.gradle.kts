@@ -22,6 +22,20 @@ develocity {
   }
 }
 
+dependencyResolutionManagement {
+  versionCatalogs {
+    create("alpha") {
+      from(files("gradle/alpha.versions.toml"))
+    }
+    create("beta") {
+      from(files("gradle/beta.versions.toml"))
+    }
+    create("rc") {
+      from(files("gradle/rc.versions.toml"))
+    }
+  }
+}
+
 include(":plugin")
 include(":nexus")
 include(":central-portal")

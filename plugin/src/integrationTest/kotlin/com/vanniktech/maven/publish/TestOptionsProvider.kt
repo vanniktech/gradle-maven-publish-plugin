@@ -23,7 +23,7 @@ internal class GradleVersionProvider : TestParameterValuesProvider() {
     if (quickTestProperty.isNotBlank()) {
       return ImmutableList.of(GradleVersion.entries.last())
     }
-    return ImmutableList.copyOf(GradleVersion.entries)
+    return ImmutableList.copyOf(GradleVersion.entries.distinctBy { it.value })
   }
 }
 
@@ -32,7 +32,7 @@ internal class AgpVersionProvider : TestParameterValuesProvider() {
     if (quickTestProperty.isNotBlank()) {
       return ImmutableList.of(AgpVersion.entries.last())
     }
-    return ImmutableList.copyOf(AgpVersion.entries)
+    return ImmutableList.copyOf(AgpVersion.entries.distinctBy { it.value })
   }
 }
 
@@ -41,6 +41,15 @@ internal class KotlinVersionProvider : TestParameterValuesProvider() {
     if (quickTestProperty.isNotBlank()) {
       return ImmutableList.of(KotlinVersion.entries.last())
     }
-    return ImmutableList.copyOf(KotlinVersion.entries)
+    return ImmutableList.copyOf(KotlinVersion.entries.distinctBy { it.value })
+  }
+}
+
+internal class GradlePluginPublishVersionProvider : TestParameterValuesProvider() {
+  override fun provideValues(context: Context?): List<*> {
+    if (quickTestProperty.isNotBlank()) {
+      return ImmutableList.of(GradlePluginPublish.entries.last())
+    }
+    return ImmutableList.copyOf(GradlePluginPublish.entries.distinctBy { it.version })
   }
 }
