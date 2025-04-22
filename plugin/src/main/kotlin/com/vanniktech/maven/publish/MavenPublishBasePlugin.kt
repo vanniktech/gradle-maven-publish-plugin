@@ -30,9 +30,11 @@ open class MavenPublishBasePlugin : Plugin<Project> {
             error("You need Kotlin version 1.9.20 or newer")
           }
         } catch (_: NoClassDefFoundError) {
-          error("Detected Kotlin plugin $pluginId but was not able to access Kotlin plugin classes. Please make sure " +
-            "that the Kotlin plugin and the publish plugin are applied to the same project. In many cases this means " +
-            "you need to add both the root project with `apply false`.")
+          error(
+            "Detected Kotlin plugin $pluginId but was not able to access Kotlin plugin classes. Please make sure " +
+              "that the Kotlin plugin and the publish plugin are applied to the same project. In many cases this means " +
+              "you need to add both the root project with `apply false`.",
+          )
         }
       }
     }
