@@ -48,7 +48,7 @@ internal class KotlinVersionProvider : TestParameterValuesProvider() {
 internal class GradlePluginPublishVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (quickTestProperty.isNotBlank()) {
-      return ImmutableList.of(GradlePluginPublish.entries.last())
+      return ImmutableList.of(GradlePluginPublish.values().last())
     }
     return ImmutableList.copyOf(GradlePluginPublish.values().distinctBy { it.version })
   }
