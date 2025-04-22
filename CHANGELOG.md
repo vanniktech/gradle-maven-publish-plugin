@@ -4,7 +4,7 @@
 
 - Fix an issue where the wrong staging profile for (s01.)oss.sonatype.org was selected
   when publishing to Maven Central.
-
+- Improve error message when not being able to detect Kotlin plugin.
 
 #### Minimum supported versions
 - JDK 11

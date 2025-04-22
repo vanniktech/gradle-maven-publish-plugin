@@ -25,8 +25,14 @@ open class MavenPublishBasePlugin : Plugin<Project> {
     }
     KOTLIN_PLUGIN_IDS.forEach { pluginId ->
       plugins.withId(pluginId) {
-        if (!isAtLeastKotlinVersion(pluginId, 1, 9, 20)) {
-          error("You need Kotlin version 1.9.20 or newer")
+        try {
+          if (!isAtLeastKotlinVersion(pluginId, 1, 9, 20)) {
+            error("You need Kotlin version 1.9.20 or newer")
+          }
+        } catch (_: NoClassDefFoundError) {
+          error("Detected Kotlin plugin $pluginId but was not able to access Kotlin plugin classes. Please make sure " +
+            "that the Kotlin plugin and the publish plugin are applied to the same project. In many cases this means " +
+            "you need to add both the root project with `apply false`.")
         }
       }
     }
