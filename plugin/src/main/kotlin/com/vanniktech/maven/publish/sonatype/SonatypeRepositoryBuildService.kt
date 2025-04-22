@@ -344,7 +344,6 @@ internal abstract class SonatypeRepositoryBuildService :
         it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
         it.parameters.closeTimeoutSeconds.set(closeTimeout)
         it.parameters.rootBuildDirectory.set(rootBuildDirectory)
-        it.parameters.rootBuildDirectory.set(rootBuildDirectory)
         it.parameters.isConfigurationCacheActive.set(isConfigurationCacheActive)
       }
       buildEventsListenerRegistry.onTaskCompletion(service)
