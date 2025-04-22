@@ -6,6 +6,7 @@
 - Fix an issue where the wrong staging profile for (s01.)oss.sonatype.org was selected
   when publishing to Maven Central.
 - Fix incompatibility with Kotlin 1.9.x when used through compiled plugins.
+- Improve error message when not being able to detect Kotlin plugin.
 - Fix an issue with detecting whether configuration cache is enabled which lead to a not
   actionable error message.
 
