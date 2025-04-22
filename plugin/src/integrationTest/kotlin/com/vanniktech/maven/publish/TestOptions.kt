@@ -33,6 +33,7 @@ enum class AgpVersion(
   AGP_MIN(
     value = "8.0.0",
     minGradleVersion = GradleVersion.GRADLE_8_1,
+    firstUnsupportedGradleVersion = GradleVersion.GRADLE_ALPHA,
   ),
 
   // latest versions of each type
