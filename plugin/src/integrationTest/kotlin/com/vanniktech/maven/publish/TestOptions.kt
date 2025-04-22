@@ -1,7 +1,7 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.IntegrationTestBuildConfig as Versions
 import com.google.common.truth.TruthJUnit.assume
+import com.vanniktech.maven.publish.IntegrationTestBuildConfig as Versions
 import org.gradle.api.JavaVersion
 
 data class TestOptions(
