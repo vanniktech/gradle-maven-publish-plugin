@@ -14,42 +14,42 @@ internal class TestOptionsConfigProvider : TestParameterValuesProvider() {
     if (quickTestProperty.isNotBlank()) {
       return ImmutableList.of(TestOptions.Config.BASE)
     }
-    return ImmutableList.copyOf(TestOptions.Config.entries)
+    return ImmutableList.copyOf(TestOptions.Config.values())
   }
 }
 
 internal class GradleVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (quickTestProperty.isNotBlank()) {
-      return ImmutableList.of(GradleVersion.entries.last())
+      return ImmutableList.of(GradleVersion.values().last())
     }
-    return ImmutableList.copyOf(GradleVersion.entries.distinctBy { it.value })
+    return ImmutableList.copyOf(GradleVersion.values().distinctBy { it.value })
   }
 }
 
 internal class AgpVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (quickTestProperty.isNotBlank()) {
-      return ImmutableList.of(AgpVersion.entries.last())
+      return ImmutableList.of(AgpVersion.values().last())
     }
-    return ImmutableList.copyOf(AgpVersion.entries.distinctBy { it.value })
+    return ImmutableList.copyOf(AgpVersion.values().distinctBy { it.value })
   }
 }
 
 internal class KotlinVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (quickTestProperty.isNotBlank()) {
-      return ImmutableList.of(KotlinVersion.entries.last())
+      return ImmutableList.of(KotlinVersion.values().last())
     }
-    return ImmutableList.copyOf(KotlinVersion.entries.distinctBy { it.value })
+    return ImmutableList.copyOf(KotlinVersion.values().distinctBy { it.value })
   }
 }
 
 internal class GradlePluginPublishVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (quickTestProperty.isNotBlank()) {
-      return ImmutableList.of(GradlePluginPublish.entries.last())
+      return ImmutableList.of(GradlePluginPublish.values().last())
     }
-    return ImmutableList.copyOf(GradlePluginPublish.entries.distinctBy { it.version })
+    return ImmutableList.copyOf(GradlePluginPublish.values().distinctBy { it.version })
   }
 }
