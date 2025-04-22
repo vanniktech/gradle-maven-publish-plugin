@@ -136,7 +136,7 @@ class MavenPublishPluginPlatformTest {
 
   @TestParameterInjectorTest
   fun javaGradlePluginWithPluginPublishProject(
-    @TestParameter gradlePluginPublish: GradlePluginPublish,
+    @TestParameter(valuesProvider = GradlePluginPublishVersionProvider::class) gradlePluginPublish: GradlePluginPublish,
   ) {
     val project = javaGradlePluginWithGradlePluginPublish(gradlePluginPublish)
     val result = project.run(fixtures, testProjectDir, testOptions)

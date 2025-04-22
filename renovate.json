@@ -1,5 +1,33 @@
 {
   "extends": [
     "config:base"
+  ],
+  "ignoreUnstable": false,
+  "packageRules": [
+    {
+      "matchPackagePatterns": [".*"],
+      "allowedVersions": "!/(alpha|Alpha|ALPHA|beta|Beta|BETA|rc|RC|milestone|SNAPSHOT)/"
+    },
+    {
+      "matchFileNames": ["**/alpha.versions.toml"],
+      "allowedVersions": "!/(SNAPSHOT)/"
+    },
+    {
+      "matchFileNames": ["**/beta.versions.toml"],
+      "allowedVersions": "!/(alpha|Alpha|ALPHA|milestone|SNAPSHOT)/"
+    },
+    {
+      "matchFileNames": ["**/rc.versions.toml"],
+      "allowedVersions": "!/(alpha|Alpha|ALPHA|beta|Beta|BETA|milestone|SNAPSHOT)/"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["\\.versions.toml$"],
+      "matchStrings": ["(^|\n)(?<depName>gradle) *= *\"(?<currentValue>.*)\""],
+      "depNameTemplate": "gradle",
+      "datasourceTemplate": "gradle-version"
+    }
   ]
 }
