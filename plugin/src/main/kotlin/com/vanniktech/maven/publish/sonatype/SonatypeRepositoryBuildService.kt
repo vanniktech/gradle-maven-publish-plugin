@@ -11,9 +11,7 @@ import java.util.Base64
 import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import javax.inject.Inject
 import org.gradle.api.Project
-import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logger
@@ -31,10 +29,6 @@ internal abstract class SonatypeRepositoryBuildService :
   BuildService<SonatypeRepositoryBuildService.Params>, AutoCloseable, OperationCompletionListener {
   private val logger: Logger = Logging.getLogger(SonatypeRepositoryBuildService::class.java)
 
-  @Suppress("UnstableApiUsage")
-  @get:Inject
-  internal abstract val buildFeatures: BuildFeatures
-
   internal interface Params : BuildServiceParameters {
     val sonatypeHost: Property<SonatypeHost>
     val groupId: Property<String>
@@ -45,6 +39,7 @@ internal abstract class SonatypeRepositoryBuildService :
     val okhttpTimeoutSeconds: Property<Long>
     val closeTimeoutSeconds: Property<Long>
     val rootBuildDirectory: DirectoryProperty
+    val isConfigurationCacheActive: Property<Boolean>
   }
 
   private sealed interface EndOfBuildAction {
@@ -190,8 +185,7 @@ internal abstract class SonatypeRepositoryBuildService :
       }
     } else {
       val stagingRepositoryId = requireNotNull(uploadId) {
-        @Suppress("UnstableApiUsage")
-        if (buildFeatures.configurationCache.active.get()) {
+        if (parameters.isConfigurationCacheActive.get()) {
           "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
             "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
         } else {
@@ -331,6 +325,7 @@ internal abstract class SonatypeRepositoryBuildService :
       automaticRelease: Boolean,
       rootBuildDirectory: Provider<Directory>,
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
+      isConfigurationCacheActive: Provider<Boolean>,
     ): Provider<SonatypeRepositoryBuildService> {
       val okhttpTimeout = project.providers.gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
         .map { it.toLong() }
@@ -349,6 +344,8 @@ internal abstract class SonatypeRepositoryBuildService :
         it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
         it.parameters.closeTimeoutSeconds.set(closeTimeout)
         it.parameters.rootBuildDirectory.set(rootBuildDirectory)
+        it.parameters.rootBuildDirectory.set(rootBuildDirectory)
+        it.parameters.isConfigurationCacheActive.set(isConfigurationCacheActive)
       }
       buildEventsListenerRegistry.onTaskCompletion(service)
       return service

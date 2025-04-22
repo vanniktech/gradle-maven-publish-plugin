@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
@@ -28,6 +29,9 @@ abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
   private val buildEventsListenerRegistry: BuildEventsListenerRegistry,
 ) {
+  @get:Inject
+  internal abstract val buildFeatures: BuildFeatures
+
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
   internal val groupId: Property<String> = project.objects.property(String::class.java)
@@ -72,6 +76,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
       // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
       rootBuildDirectory = project.rootProject.layout.buildDirectory,
       buildEventsListenerRegistry = buildEventsListenerRegistry,
+      isConfigurationCacheActive = buildFeatures.configurationCache.active,
     )
 
     project.gradlePublishing.repositories.maven { repo ->
