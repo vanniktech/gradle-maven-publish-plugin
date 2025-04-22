@@ -57,6 +57,7 @@ enum class KotlinVersion(
 
 enum class GradleVersion(
   val value: String,
+  val minJdkVersion: JavaVersion = JavaVersion.VERSION_1_8,
   val firstUnsupportedJdkVersion: JavaVersion? = null,
 ) {
   // minimum supported
@@ -69,7 +70,7 @@ enum class GradleVersion(
   GRADLE_STABLE(IntegrationTestBuildConfig.GRADLE_STABLE),
   GRADLE_RC(IntegrationTestBuildConfig.GRADLE_RC),
   GRADLE_BETA(IntegrationTestBuildConfig.GRADLE_BETA),
-  GRADLE_ALPHA(IntegrationTestBuildConfig.GRADLE_ALPHA),
+  GRADLE_ALPHA(IntegrationTestBuildConfig.GRADLE_ALPHA, minJdkVersion = JavaVersion.VERSION_17),
   ;
 
   companion object {
@@ -91,6 +92,7 @@ enum class GradlePluginPublish(val version: String) {
 }
 
 fun GradleVersion.assumeSupportedJdkVersion() {
+  assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
   if (firstUnsupportedJdkVersion != null) {
     assume().that(JavaVersion.current()).isLessThan(firstUnsupportedJdkVersion)
   }
