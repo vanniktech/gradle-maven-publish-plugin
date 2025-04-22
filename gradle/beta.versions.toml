@@ -1,7 +1,7 @@
 [versions]
 gradle = "8.13"
 kotlin = "2.2.0-Beta1"
-android-gradle = "8.9.0"
+android-gradle = "8.10.0-rc02"
 gradle-plugin-publish = "1.3.1"
 
 [plugins]

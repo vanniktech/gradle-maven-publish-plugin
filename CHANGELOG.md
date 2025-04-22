@@ -4,6 +4,7 @@
 
 - Fix an issue where the wrong staging profile for (s01.)oss.sonatype.org was selected
   when publishing to Maven Central.
+- Fix incompatibility with Kotlin 1.9.x when used through compiled plugins.
 
 
 #### Minimum supported versions

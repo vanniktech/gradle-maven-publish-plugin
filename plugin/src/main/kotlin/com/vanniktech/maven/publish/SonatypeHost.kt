@@ -8,7 +8,6 @@ import java.io.Serializable
  *
  * https://central.sonatype.org/articles/2021/Feb/23/new-users-on-s01osssonatypeorg/
  */
-@ConsistentCopyVisibility
 data class SonatypeHost internal constructor(
   internal val rootUrl: String,
   internal val isCentralPortal: Boolean,
