@@ -6,19 +6,19 @@
   "packageRules": [
     {
       "matchPackagePatterns": [".*"],
-      "allowedVersions": "!/(alpha|Alpha|ALPHA|beta|Beta|BETA|rc|RC|milestone|SNAPSHOT)/"
+      "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-beta|-Beta|-BETA|-rc|-RC|-milestone|-m|-SNAPSHOT)/"
     },
     {
       "matchFileNames": ["**/alpha.versions.toml"],
-      "allowedVersions": "!/(SNAPSHOT)/"
+      "allowedVersions": "!/(-SNAPSHOT)/"
     },
     {
       "matchFileNames": ["**/beta.versions.toml"],
-      "allowedVersions": "!/(alpha|Alpha|ALPHA|milestone|SNAPSHOT)/"
+      "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-milestone|-m|-SNAPSHOT)/"
     },
     {
       "matchFileNames": ["**/rc.versions.toml"],
-      "allowedVersions": "!/(alpha|Alpha|ALPHA|beta|Beta|BETA|milestone|SNAPSHOT)/"
+      "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-beta|-Beta|-BETA|-milestone|-m|-SNAPSHOT)/"
     }
   ],
   "customManagers": [
