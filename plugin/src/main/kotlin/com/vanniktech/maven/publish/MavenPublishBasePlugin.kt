@@ -26,7 +26,7 @@ open class MavenPublishBasePlugin : Plugin<Project> {
     KOTLIN_PLUGIN_IDS.forEach { pluginId ->
       plugins.withId(pluginId) {
         try {
-          if (!isAtLeastKotlinVersion(pluginId, 1, 9, 20)) {
+          if (!isAtLeastKgpVersion(pluginId, 1, 9, 20)) {
             error("You need Kotlin version 1.9.20 or newer")
           }
         } catch (_: NoClassDefFoundError) {
