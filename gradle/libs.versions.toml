@@ -20,9 +20,6 @@ android-plugin = "com.android.tools.build:gradle:8.9.2"
 ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:12.2.0"
 maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.31.0"
 
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
