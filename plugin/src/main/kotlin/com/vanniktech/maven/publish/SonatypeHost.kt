@@ -8,11 +8,11 @@ import java.io.Serializable
  *
  * https://central.sonatype.org/articles/2021/Feb/23/new-users-on-s01osssonatypeorg/
  */
-data class SonatypeHost internal constructor(
+public data class SonatypeHost internal constructor(
   internal val rootUrl: String,
   internal val isCentralPortal: Boolean,
 ) : Serializable {
-  constructor(rootUrl: String) : this(rootUrl, isCentralPortal = false)
+  public constructor(rootUrl: String) : this(rootUrl, isCentralPortal = false)
 
   internal fun apiBaseUrl(): String {
     return if (isCentralPortal) {
@@ -22,9 +22,9 @@ data class SonatypeHost internal constructor(
     }
   }
 
-  companion object {
+  public companion object {
     @JvmStatic
-    fun valueOf(sonatypeHost: String): SonatypeHost = when (sonatypeHost) {
+    public fun valueOf(sonatypeHost: String): SonatypeHost = when (sonatypeHost) {
       "DEFAULT" -> DEFAULT
       "S01" -> S01
       "CENTRAL_PORTAL" -> CENTRAL_PORTAL
@@ -36,12 +36,12 @@ data class SonatypeHost internal constructor(
     }
 
     @JvmField
-    val DEFAULT = SonatypeHost("https://oss.sonatype.org", isCentralPortal = false)
+    public val DEFAULT: SonatypeHost = SonatypeHost("https://oss.sonatype.org", isCentralPortal = false)
 
     @JvmField
-    val S01 = SonatypeHost("https://s01.oss.sonatype.org", isCentralPortal = false)
+    public val S01: SonatypeHost = SonatypeHost("https://s01.oss.sonatype.org", isCentralPortal = false)
 
     @JvmField
-    val CENTRAL_PORTAL = SonatypeHost("https://central.sonatype.com", isCentralPortal = true)
+    public val CENTRAL_PORTAL: SonatypeHost = SonatypeHost("https://central.sonatype.com", isCentralPortal = true)
   }
 }

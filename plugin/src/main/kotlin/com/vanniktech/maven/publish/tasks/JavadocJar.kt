@@ -8,7 +8,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 
-open class JavadocJar : Jar() {
+public open class JavadocJar : Jar() {
   init {
     archiveClassifier.set("javadoc")
   }

@@ -25,7 +25,7 @@ import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
 import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 
-abstract class MavenPublishBaseExtension @Inject constructor(
+public abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
   private val buildEventsListenerRegistry: BuildEventsListenerRegistry,
 ) {
@@ -62,7 +62,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
    * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
    */
   @JvmOverloads
-  fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT, automaticRelease: Boolean = false) {
+  public fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT, automaticRelease: Boolean = false) {
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
 
@@ -114,7 +114,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
 
   @JvmOverloads
   @JvmSynthetic
-  fun publishToMavenCentral(host: String, automaticRelease: Boolean = false) {
+  public fun publishToMavenCentral(host: String, automaticRelease: Boolean = false) {
     publishToMavenCentral(SonatypeHost.valueOf(host), automaticRelease)
   }
 
@@ -145,7 +145,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
    * More information about signing as well as different ways to provide credentials
    * can be found in the [Gradle documentation](https://docs.gradle.org/current/userguide/signing_plugin.html)
    */
-  fun signAllPublications() {
+  public fun signAllPublications() {
     signing.set(true)
     signing.finalizeValue()
 
@@ -180,7 +180,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
    * Kotlin Multiplatform projects the given [artifactId] is used together with the platform targets resulting in
    * artifactIds like `[artifactId]-jvm`.
    */
-  fun coordinates(groupId: String? = null, artifactId: String? = null, version: String? = null) {
+  public fun coordinates(groupId: String? = null, artifactId: String? = null, version: String? = null) {
     groupId?.also { groupId(it) }
     artifactId?.also { artifactId(it) }
     version?.also { version(it) }
@@ -247,7 +247,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
    * See the [Gradle publishing guide](https://docs.gradle.org/current/userguide/publishing_maven.html#sec:modifying_the_generated_pom)
    * for how to use it.
    */
-  fun pom(configure: Action<in MavenPom>) {
+  public fun pom(configure: Action<in MavenPom>) {
     project.mavenPublications { publication ->
       if (GradleVersion.current() >= GradleVersion.version("8.8-rc-1")) {
         publication.pom(configure)
@@ -263,7 +263,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
    * Configures the POM through Gradle properties.
    */
   @Incubating
-  fun pomFromGradleProperties() {
+  public fun pomFromGradleProperties() {
     pomFromProperties.set(true)
     pomFromProperties.finalizeValue()
 
@@ -365,7 +365,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
    * Configures a [Platform] which will automatically set up the artifacts that should get published, including javadoc
    * and sources jars depending on the option.
    */
-  fun configure(platform: Platform) {
+  public fun configure(platform: Platform) {
     this.platform.set(platform)
     this.platform.finalizeValue()
 
@@ -377,7 +377,7 @@ abstract class MavenPublishBaseExtension @Inject constructor(
    */
   @Incubating
   @JvmOverloads
-  fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: Boolean = true) {
+  public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: Boolean = true) {
     // has already been called before by the user or from finalizeDsl
     if (platform.isPresent) {
       return
