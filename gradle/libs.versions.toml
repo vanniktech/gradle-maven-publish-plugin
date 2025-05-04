@@ -11,20 +11,14 @@ moshi = "1.15.2"
 
 retrofit = "2.11.0"
 
-junit = "5.11.4"
-
 truth = "1.4.4"
-
-maven-publish = "0.31.0"
-
-ktlint = "12.2.0"
 
 [libraries]
 okhttp = "com.squareup.okhttp3:okhttp:4.12.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:2.0.0"
 android-plugin = "com.android.tools.build:gradle:8.9.2"
-ktlint-plugin = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
-maven-publish-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "maven-publish" }
+ktlint-plugin = "org.jlleitschuh.gradle:ktlint-gradle:12.2.0"
+maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.31.0"
 bcv = "org.jetbrains.kotlinx:binary-compatibility-validator:0.17.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
@@ -39,7 +33,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-jupiter = "org.junit.jupiter:junit-jupiter:5.11.4"
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.18"
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 truth-java8 = { module = "com.google.truth.extensions:truth-java8-extension", version.ref = "truth" }
@@ -47,9 +41,4 @@ truth-testKit = "com.autonomousapps:testkit-truth:1.1"
 maven-model = "org.apache.maven:maven-model:3.9.9"
 
 [plugins]
-kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "maven-publish" }
-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.6.4" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
-android-library = { id = "com.android.library", version.ref = "android-gradle" }
-gradle-plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-plugin-publish" }
+buildconfig = "com.github.gmazzo.buildconfig:5.6.3"
