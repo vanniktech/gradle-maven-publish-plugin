@@ -414,11 +414,11 @@ public class VersionCatalog : Platform() {
 /**
  * Specifies how the javadoc jar should be created.
  */
-public sealed class JavadocJar {
+public sealed interface JavadocJar {
   /**
    * Do not create a javadoc jar. This option is not compatible with Maven Central.
    */
-  public class None : JavadocJar() {
+  public class None : JavadocJar {
     override fun equals(other: Any?): Boolean = other is None
 
     override fun hashCode(): Int = this::class.hashCode()
@@ -427,7 +427,7 @@ public sealed class JavadocJar {
   /**
    * Creates an empty javadoc jar to satisfy maven central requirements.
    */
-  public class Empty : JavadocJar() {
+  public class Empty : JavadocJar {
     override fun equals(other: Any?): Boolean = other is Empty
 
     override fun hashCode(): Int = this::class.hashCode()
@@ -436,7 +436,7 @@ public sealed class JavadocJar {
   /**
    * Creates a regular javadoc jar using Gradle's default `javadoc` task.
    */
-  public class Javadoc : JavadocJar() {
+  public class Javadoc : JavadocJar {
     override fun equals(other: Any?): Boolean = other is Javadoc
 
     override fun hashCode(): Int = this::class.hashCode()
@@ -448,7 +448,7 @@ public sealed class JavadocJar {
    */
   public class Dokka private constructor(
     internal val taskName: DokkaTaskName,
-  ) : JavadocJar() {
+  ) : JavadocJar {
     internal sealed interface DokkaTaskName
 
     internal data class StringDokkaTaskName(val value: String) : DokkaTaskName
