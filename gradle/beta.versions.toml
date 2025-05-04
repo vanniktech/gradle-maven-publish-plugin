@@ -1,7 +1,7 @@
 [versions]
 gradle = "8.14"
 
-kotlin = "2.2.0-Beta1"
+kotlin = "2.2.0-Beta2"
 
 android-gradle = "8.10.0-rc04"
 
