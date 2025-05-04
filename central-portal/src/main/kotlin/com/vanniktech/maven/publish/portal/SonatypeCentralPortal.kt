@@ -11,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
-class SonatypeCentralPortal(
+public class SonatypeCentralPortal(
   private val baseUrl: String,
   private val usertoken: String,
   userAgentName: String,
@@ -36,7 +36,7 @@ class SonatypeCentralPortal(
     retrofit.create(SonatypeCentralPortalService::class.java)
   }
 
-  fun deleteDeployment(deploymentId: String) {
+  public fun deleteDeployment(deploymentId: String) {
     val deleteDeploymentResponse = service.deleteDeployment(deploymentId).execute()
     if (!deleteDeploymentResponse.isSuccessful) {
       throw IOException(
@@ -47,7 +47,7 @@ class SonatypeCentralPortal(
     }
   }
 
-  fun publishDeployment(deploymentId: String) {
+  public fun publishDeployment(deploymentId: String) {
     val publishDeploymentResponse = service.publishDeployment(deploymentId).execute()
     if (!publishDeploymentResponse.isSuccessful) {
       throw IOException(
@@ -119,7 +119,7 @@ class SonatypeCentralPortal(
     }
   }
 
-  fun upload(name: String?, publishingType: String?, file: File): String {
+  public fun upload(name: String?, publishingType: String?, file: File): String {
     val uploadFile = file.asRequestBody("application/octet-stream".toMediaType())
     val multipart = MultipartBody.Part.createFormData("bundle", file.name, uploadFile)
     val uploadResponse = service.uploadBundle(name, publishingType, multipart).execute()

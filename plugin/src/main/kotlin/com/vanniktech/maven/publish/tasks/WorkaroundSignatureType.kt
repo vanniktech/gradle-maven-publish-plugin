@@ -11,11 +11,11 @@ import org.gradle.plugins.signing.signatory.Signatory
 import org.gradle.plugins.signing.type.AbstractSignatureType
 import org.gradle.plugins.signing.type.SignatureType
 
-class WorkaroundSignatureType(
+public class WorkaroundSignatureType(
   @Nested
-  val actual: SignatureType,
+  public val actual: SignatureType,
   @Internal
-  val directory: Provider<Directory>,
+  public val directory: Provider<Directory>,
 ) : AbstractSignatureType() {
   override fun fileFor(toSign: File): File {
     val original = super.fileFor(toSign)

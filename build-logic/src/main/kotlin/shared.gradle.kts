@@ -24,6 +24,10 @@ java {
   targetCompatibility = JavaVersion.VERSION_11
 }
 
+kotlin {
+  explicitApi()
+}
+
 tasks.withType(KotlinCompile::class.java) {
   compilerOptions {
     jvmTarget.set(JvmTarget.JVM_11)
