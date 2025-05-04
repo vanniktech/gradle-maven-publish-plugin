@@ -8,7 +8,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-class Nexus(
+public class Nexus(
   private val baseUrl: String,
   private val username: String,
   password: String,
@@ -67,7 +67,7 @@ class Nexus(
     return id
   }
 
-  fun createRepositoryForGroup(group: String): String {
+  public fun createRepositoryForGroup(group: String): String {
     val profile = findStagingProfile(group)
     return createStagingRepository(group, profile)
   }
@@ -201,18 +201,18 @@ class Nexus(
     }
   }
 
-  fun closeCurrentStagingRepository(): String {
+  public fun closeCurrentStagingRepository(): String {
     val stagingRepository = findStagingRepository()
     closeStagingRepository(stagingRepository)
     return stagingRepository.repositoryId
   }
 
-  fun closeStagingRepository(repositoryId: String) {
+  public fun closeStagingRepository(repositoryId: String) {
     val stagingRepository = getStagingRepository(repositoryId)
     closeStagingRepository(stagingRepository)
   }
 
-  fun releaseStagingRepository(repositoryId: String) {
+  public fun releaseStagingRepository(repositoryId: String) {
     println("Releasing repository: $repositoryId")
     val response = service.releaseRepository(
       TransitionRepositoryInput(
@@ -230,7 +230,7 @@ class Nexus(
     println("Repository $repositoryId released")
   }
 
-  fun dropStagingRepository(repositoryId: String) {
+  public fun dropStagingRepository(repositoryId: String) {
     val response = service.dropRepository(
       TransitionRepositoryInput(
         TransitionRepositoryInputData(
@@ -244,12 +244,12 @@ class Nexus(
     }
   }
 
-  fun dropCurrentStagingRepository() {
+  public fun dropCurrentStagingRepository() {
     val stagingRepository = findStagingRepository()
     dropStagingRepository(stagingRepository.repositoryId)
   }
 
-  companion object {
+  public companion object {
     private const val PROGRESS_1 = "\u2839"
     private const val PROGRESS_2 = "\u2838"
     private const val PROGRESS_3 = "\u2834"

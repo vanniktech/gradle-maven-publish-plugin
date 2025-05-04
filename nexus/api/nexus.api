@@ -1,0 +1,14 @@
+public final class com/vanniktech/maven/publish/nexus/Nexus {
+	public static final field Companion Lcom/vanniktech/maven/publish/nexus/Nexus$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJ)V
+	public final fun closeCurrentStagingRepository ()Ljava/lang/String;
+	public final fun closeStagingRepository (Ljava/lang/String;)V
+	public final fun createRepositoryForGroup (Ljava/lang/String;)Ljava/lang/String;
+	public final fun dropCurrentStagingRepository ()V
+	public final fun dropStagingRepository (Ljava/lang/String;)V
+	public final fun releaseStagingRepository (Ljava/lang/String;)V
+}
+
+public final class com/vanniktech/maven/publish/nexus/Nexus$Companion {
+}
+

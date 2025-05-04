@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
  * will automatically set up the artifacts that should get published, including javadoc and sources jars depending
  * on the option.
  */
-sealed class Platform {
-  abstract val javadocJar: JavadocJar
-  abstract val sourcesJar: Boolean
+public sealed class Platform {
+  public abstract val javadocJar: JavadocJar
+  public abstract val sourcesJar: Boolean
 
   internal abstract fun configure(project: Project)
 }
@@ -53,7 +53,7 @@ sealed class Platform {
  * }
  ```
  */
-data class JavaLibrary @JvmOverloads constructor(
+public data class JavaLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true,
 ) : Platform() {
@@ -85,7 +85,7 @@ data class JavaLibrary @JvmOverloads constructor(
  * }
 ```
  */
-data class GradlePlugin @JvmOverloads constructor(
+public data class GradlePlugin @JvmOverloads constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean = true,
 ) : Platform() {
@@ -104,7 +104,7 @@ data class GradlePlugin @JvmOverloads constructor(
 /**
  * To be used for `com.gradle.plugin-publish` projects. Uses the default publication that gets created by that plugin.
  */
-class GradlePublishPlugin : Platform() {
+public class GradlePublishPlugin : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.Javadoc()
   override val sourcesJar: Boolean = true
 
@@ -148,7 +148,7 @@ class GradlePublishPlugin : Platform() {
  * }
  *```
  */
-data class AndroidSingleVariantLibrary @JvmOverloads constructor(
+public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
   val variant: String = "release",
   override val sourcesJar: Boolean = true,
   val publishJavadocJar: Boolean = true,
@@ -212,7 +212,7 @@ data class AndroidSingleVariantLibrary @JvmOverloads constructor(
  * }
  * ```
  */
-data class AndroidMultiVariantLibrary @JvmOverloads constructor(
+public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
   override val sourcesJar: Boolean = true,
   val publishJavadocJar: Boolean = true,
   val includedBuildTypeValues: Set<String> = emptySet(),
@@ -269,13 +269,13 @@ data class AndroidMultiVariantLibrary @JvmOverloads constructor(
  *
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinMultiplatform internal constructor(
+public data class KotlinMultiplatform internal constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean,
   val androidVariantsToPublish: List<String>,
   val forceAndroidVariantsIfNotEmpty: Boolean,
 ) : Platform() {
-  @JvmOverloads constructor(
+  @JvmOverloads public constructor(
     javadocJar: JavadocJar = JavadocJar.Empty(),
     sourcesJar: Boolean = true,
     androidVariantsToPublish: List<String> = emptyList(),
@@ -322,7 +322,7 @@ data class KotlinMultiplatform internal constructor(
  * ```
  * This does not include javadoc jars because there are no APIs for that available.
  */
-data class KotlinJvm @JvmOverloads constructor(
+public data class KotlinJvm @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true,
 ) : Platform() {
@@ -358,7 +358,7 @@ data class KotlinJvm @JvmOverloads constructor(
  * }
  * ```
  */
-class JavaPlatform : Platform() {
+public class JavaPlatform : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.None()
   override val sourcesJar: Boolean = false
 
@@ -392,7 +392,7 @@ class JavaPlatform : Platform() {
  * }
  * ```
  */
-class VersionCatalog : Platform() {
+public class VersionCatalog : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.None()
   override val sourcesJar: Boolean = false
 
@@ -414,11 +414,11 @@ class VersionCatalog : Platform() {
 /**
  * Specifies how the javadoc jar should be created.
  */
-sealed class JavadocJar {
+public sealed class JavadocJar {
   /**
    * Do not create a javadoc jar. This option is not compatible with Maven Central.
    */
-  class None : JavadocJar() {
+  public class None : JavadocJar() {
     override fun equals(other: Any?): Boolean = other is None
 
     override fun hashCode(): Int = this::class.hashCode()
@@ -427,7 +427,7 @@ sealed class JavadocJar {
   /**
    * Creates an empty javadoc jar to satisfy maven central requirements.
    */
-  class Empty : JavadocJar() {
+  public class Empty : JavadocJar() {
     override fun equals(other: Any?): Boolean = other is Empty
 
     override fun hashCode(): Int = this::class.hashCode()
@@ -436,7 +436,7 @@ sealed class JavadocJar {
   /**
    * Creates a regular javadoc jar using Gradle's default `javadoc` task.
    */
-  class Javadoc : JavadocJar() {
+  public class Javadoc : JavadocJar() {
     override fun equals(other: Any?): Boolean = other is Javadoc
 
     override fun hashCode(): Int = this::class.hashCode()
@@ -446,7 +446,7 @@ sealed class JavadocJar {
    * Creates a javadoc jar using Dokka's output. The argument is the name of the dokka task that should be used
    * for that purpose.
    */
-  class Dokka private constructor(
+  public class Dokka private constructor(
     internal val taskName: DokkaTaskName,
   ) : JavadocJar() {
     internal sealed interface DokkaTaskName
@@ -455,8 +455,8 @@ sealed class JavadocJar {
 
     internal data class ProviderDokkaTaskName(val value: Provider<String>) : DokkaTaskName
 
-    constructor(taskName: String) : this(StringDokkaTaskName(taskName))
-    constructor(taskName: Provider<String>) : this(ProviderDokkaTaskName(taskName))
+    public constructor(taskName: String) : this(StringDokkaTaskName(taskName))
+    public constructor(taskName: Provider<String>) : this(ProviderDokkaTaskName(taskName))
 
     override fun equals(other: Any?): Boolean = other is Dokka && taskName == other.taskName
 
