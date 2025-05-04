@@ -87,7 +87,7 @@ public final class com/vanniktech/maven/publish/JavaPlatform : com/vanniktech/ma
 	public fun hashCode ()I
 }
 
-public abstract class com/vanniktech/maven/publish/JavadocJar {
+public abstract interface class com/vanniktech/maven/publish/JavadocJar {
 }
 
 public final class com/vanniktech/maven/publish/JavadocJar$Dokka : com/vanniktech/maven/publish/JavadocJar {
