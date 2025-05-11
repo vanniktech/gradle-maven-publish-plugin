@@ -56,8 +56,8 @@ enum class KotlinVersion(
   // latest versions of each type
   KOTLIN_STABLE(Versions.KOTLIN_STABLE, firstUnsupportedGradleVersion = GradleVersion.GRADLE_ALPHA),
   KOTLIN_RC(Versions.KOTLIN_RC, firstUnsupportedGradleVersion = GradleVersion.GRADLE_ALPHA),
-  KOTLIN_BETA(Versions.KOTLIN_BETA, firstUnsupportedGradleVersion = GradleVersion.GRADLE_ALPHA),
-  KOTLIN_ALPHA(Versions.KOTLIN_ALPHA, firstUnsupportedGradleVersion = GradleVersion.GRADLE_ALPHA),
+  KOTLIN_BETA(Versions.KOTLIN_BETA),
+  KOTLIN_ALPHA(Versions.KOTLIN_ALPHA),
 }
 
 enum class GradleVersion(

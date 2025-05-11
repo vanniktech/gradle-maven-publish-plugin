@@ -492,15 +492,21 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
       val extension = project.extensions.getByType(JavaPluginExtension::class.java)
       val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
 
+      val projectInternal = project as ProjectInternal
+      val projectDerivedCapability = if (GradleVersion.current() >= GradleVersion.version("9.0-milestone-6")) {
+        ProjectDerivedCapability::class.java.getConstructor(ProjectInternal::class.java, String::class.java)
+      } else {
+        ProjectDerivedCapability::class.java.getConstructor(Project::class.java, String::class.java)
+      }.newInstance(projectInternal, "testFixtures")
       val sourceElements = if (GradleVersion.current() >= GradleVersion.version("8.6-rc-1")) {
         JvmPluginsHelper.createDocumentationVariantWithArtifact(
           testFixturesSourceSet.sourcesElementsConfigurationName,
           testFixtureSourceSetName,
           DocsType.SOURCES,
-          setOf(ProjectDerivedCapability(project, "testFixtures")),
+          setOf(projectDerivedCapability),
           testFixturesSourceSet.sourcesJarTaskName,
           testFixturesSourceSet.allSource,
-          project as ProjectInternal,
+          projectInternal,
         )
       } else {
         JvmPluginsHelper::class.java.getMethod(
@@ -517,10 +523,10 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
           testFixturesSourceSet.sourcesElementsConfigurationName,
           testFixtureSourceSetName,
           DocsType.SOURCES,
-          listOf(ProjectDerivedCapability(project, "testFixtures")),
+          listOf(projectDerivedCapability),
           testFixturesSourceSet.sourcesJarTaskName,
           testFixturesSourceSet.allSource,
-          project as ProjectInternal,
+          projectInternal,
         ) as Configuration
       }
 
