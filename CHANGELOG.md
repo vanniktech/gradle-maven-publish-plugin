@@ -9,7 +9,7 @@
 - Improve error message when not being able to detect Kotlin plugin.
 - Fix an issue with detecting whether configuration cache is enabled which lead to a not
   actionable error message.
-
+- Fix compatibility with Gradle 9.0.
 
 #### Minimum supported versions
 - JDK 11
@@ -22,9 +22,10 @@
 - Gradle 8.14
 - Gradle 9.0-milestone-6
 - Android Gradle Plugin 8.10.0
-- Android Gradle Plugin 8.10.0-alpha07
-- Kotlin Gradle Plugin 2.1.10
-- Kotlin Gradle Plugin 2.1.20-RC
+- Android Gradle Plugin 8.11.0-alpha10
+- Kotlin Gradle Plugin 2.1.20
+- Kotlin Gradle Plugin 2.1.21-RC2
+- Kotlin Gradle Plugin 2.2.0-Beta2
 
 #### Configuration cache status
 
