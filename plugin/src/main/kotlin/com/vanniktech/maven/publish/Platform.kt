@@ -503,7 +503,7 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
           testFixturesSourceSet.sourcesElementsConfigurationName,
           testFixtureSourceSetName,
           DocsType.SOURCES,
-           setOf(projectDerivedCapability),
+          setOf(projectDerivedCapability),
           testFixturesSourceSet.sourcesJarTaskName,
           testFixturesSourceSet.allSource,
           projectInternal,
