@@ -26,6 +26,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 
 private val ISOLATED_PROJECT_VIEW_GRADLE_VERSION = GradleVersion.version("8.8")
+private val SETTINGS_DIRECTORY_GRADLE_VERSION = GradleVersion.version("8.13")
 
 public abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
@@ -70,11 +71,16 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
 
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
 
+    val gradleVersion = GradleVersion.current()
     // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
-    val rootBuildDirectory = if (GradleVersion.current() >= ISOLATED_PROJECT_VIEW_GRADLE_VERSION) {
-      project.providers.provider { project.isolated.rootProject.projectDirectory.dir("build") }
-    } else {
-      project.rootProject.layout.buildDirectory
+    val rootBuildDirectory = when {
+      gradleVersion >= SETTINGS_DIRECTORY_GRADLE_VERSION -> {
+        project.providers.provider { project.layout.settingsDirectory.dir("build") }
+      }
+      gradleVersion >= ISOLATED_PROJECT_VIEW_GRADLE_VERSION -> {
+        project.providers.provider { project.isolated.rootProject.projectDirectory.dir("build") }
+      }
+      else -> project.rootProject.layout.buildDirectory
     }
 
     val buildService = project.registerSonatypeRepositoryBuildService(
