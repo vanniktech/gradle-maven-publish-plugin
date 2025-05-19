@@ -25,8 +25,8 @@ import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
 import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 
-private val ISOLATED_PROJECT_VIEW_GRADLE_VERSION = GradleVersion.version("8.8")
-private val SETTINGS_DIRECTORY_GRADLE_VERSION = GradleVersion.version("8.13")
+private val ISOLATED_PROJECT_VIEW_GRADLE_VERSION = GradleVersion.version("8.8-rc-1")
+private val SETTINGS_DIRECTORY_GRADLE_VERSION = GradleVersion.version("8.13-rc-1")
 
 public abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
@@ -74,11 +74,11 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     val gradleVersion = GradleVersion.current()
     // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
     val rootBuildDirectory = when {
-      gradleVersion >= SETTINGS_DIRECTORY_GRADLE_VERSION -> {
-        project.providers.provider { project.layout.settingsDirectory.dir("build") }
+      gradleVersion >= SETTINGS_DIRECTORY_GRADLE_VERSION -> project.provider {
+        project.layout.settingsDirectory.dir("build")
       }
-      gradleVersion >= ISOLATED_PROJECT_VIEW_GRADLE_VERSION -> {
-        project.providers.provider { project.isolated.rootProject.projectDirectory.dir("build") }
+      gradleVersion >= ISOLATED_PROJECT_VIEW_GRADLE_VERSION -> project.provider {
+        project.isolated.rootProject.projectDirectory.dir("build")
       }
       else -> project.rootProject.layout.buildDirectory
     }
