@@ -25,6 +25,9 @@ import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
 import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 
+private val ISOLATED_PROJECT_VIEW_GRADLE_VERSION = GradleVersion.version("8.8-rc-1")
+private val SETTINGS_DIRECTORY_GRADLE_VERSION = GradleVersion.version("8.13-rc-1")
+
 public abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
   private val buildEventsListenerRegistry: BuildEventsListenerRegistry,
@@ -68,6 +71,18 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
 
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
 
+    val gradleVersion = GradleVersion.current()
+    // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
+    val rootBuildDirectory = when {
+      gradleVersion >= SETTINGS_DIRECTORY_GRADLE_VERSION -> project.provider {
+        project.layout.settingsDirectory.dir("build")
+      }
+      gradleVersion >= ISOLATED_PROJECT_VIEW_GRADLE_VERSION -> project.provider {
+        project.isolated.rootProject.projectDirectory.dir("build")
+      }
+      else -> project.rootProject.layout.buildDirectory
+    }
+
     val buildService = project.registerSonatypeRepositoryBuildService(
       sonatypeHost = sonatypeHost,
       groupId = groupId,
@@ -75,8 +90,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       automaticRelease = automaticRelease,
-      // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
-      rootBuildDirectory = project.rootProject.layout.buildDirectory,
+      rootBuildDirectory = rootBuildDirectory,
       buildEventsListenerRegistry = buildEventsListenerRegistry,
       isConfigurationCacheActive = buildFeatures.configurationCache.active,
     )
@@ -153,11 +167,11 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     project.gradleSigning.setRequired(version.map { !it.endsWith("-SNAPSHOT") })
 
     // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
-    val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
-    if (inMemoryKey != null) {
-      val inMemoryKeyId = project.findOptionalProperty("signingInMemoryKeyId")
-      val inMemoryKeyPassword = project.findOptionalProperty("signingInMemoryKeyPassword").orEmpty()
-      project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId, inMemoryKey, inMemoryKeyPassword)
+    val inMemoryKey = project.providers.gradleProperty("signingInMemoryKey")
+    if (inMemoryKey.isPresent) {
+      val inMemoryKeyId = project.providers.gradleProperty("signingInMemoryKeyId")
+      val inMemoryKeyPassword = project.providers.gradleProperty("signingInMemoryKeyPassword").orElse("")
+      project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId.orNull, inMemoryKey.get(), inMemoryKeyPassword.get())
     }
 
     project.mavenPublications { publication ->
