@@ -38,7 +38,7 @@ testParameterInjector = "com.google.testparameterinjector:test-parameter-injecto
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 truth-java8 = { module = "com.google.truth.extensions:truth-java8-extension", version.ref = "truth" }
 truth-testKit = "com.autonomousapps:testkit-truth:1.1"
-maven-model = "org.apache.maven:maven-model:3.9.9"
+maven-model = "org.apache.maven:maven-model:3.9.10"
 
 [plugins]
 buildconfig = "com.github.gmazzo.buildconfig:5.6.5"
