@@ -84,6 +84,13 @@ dependencies {
   lintChecks(libs.androidx.gradlePluginLints)
 }
 
+tasks.whenTaskAdded {
+  if (name.contains("lint") && this::class.java.name.contains("com.android.build")) {
+    // TODO: lints can be run on Java 17 or above, remove this once we bump the min Java version to 17.
+    enabled = JavaVersion.current() >= JavaVersion.VERSION_17
+  }
+}
+
 val integrationTest by tasks.registering(Test::class) {
   dependsOn(
     tasks.publishToMavenLocal,
