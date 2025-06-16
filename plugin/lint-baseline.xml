@@ -111,15 +111,4 @@
             column="23"/>
     </issue>
 
-    <issue
-        id="WithTypeWithoutConfigureEach"
-        message="Avoid passing a closure to withType, use withType().configureEach instead"
-        errorLine1="    project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java) { repo ->"
-        errorLine2="                                          ~~~~~~~~">
-        <location
-            file="src/main/kotlin/com/vanniktech/maven/publish/MavenPublishBaseExtension.kt"
-            line="421"
-            column="43"/>
-    </issue>
-
 </issues>

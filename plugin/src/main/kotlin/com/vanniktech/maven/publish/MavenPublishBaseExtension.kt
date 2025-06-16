@@ -418,7 +418,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   }
 
   private inline fun configureCredentials(crossinline versionIsSnapshot: () -> Boolean) {
-    project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java) { repo ->
+    project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java).configureEach { repo ->
       if (repo.name == "mavenCentral" && (!sonatypeHost.get().isCentralPortal || versionIsSnapshot())) {
         repo.credentials(PasswordCredentials::class.java)
       }
