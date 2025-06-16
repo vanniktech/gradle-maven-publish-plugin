@@ -2,6 +2,7 @@ plugins {
   id("shared")
   id("java-gradle-plugin")
   alias(libs.plugins.buildconfig)
+  alias(libs.plugins.android.lint)
 }
 
 gradlePlugin {
@@ -56,6 +57,12 @@ buildConfig {
   }
 }
 
+lint {
+  baseline = file("lint-baseline.xml")
+  ignoreTestSources = true
+  warningsAsErrors = true
+}
+
 dependencies {
   api(gradleApi())
 
@@ -73,6 +80,8 @@ dependencies {
   testImplementation(libs.truth.java8)
   testImplementation(libs.truth.testKit)
   testImplementation(libs.maven.model)
+
+  lintChecks(libs.androidx.gradlePluginLints)
 }
 
 val integrationTest by tasks.registering(Test::class) {

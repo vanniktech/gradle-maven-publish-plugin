@@ -40,5 +40,8 @@ truth-java8 = { module = "com.google.truth.extensions:truth-java8-extension", ve
 truth-testKit = "com.autonomousapps:testkit-truth:1.1"
 maven-model = "org.apache.maven:maven-model:3.9.9"
 
+androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0-alpha05"
+
 [plugins]
 buildconfig = "com.github.gmazzo.buildconfig:5.6.5"
+android-lint = "com.android.lint:8.10.1"
