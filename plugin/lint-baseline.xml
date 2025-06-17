@@ -2,17 +2,6 @@
 <issues format="6" by="lint 8.10.1" type="baseline" client="gradle" dependencies="false" name="AGP (8.10.1)" variant="all" version="8.10.1">
 
     <issue
-        id="GradleProjectIsolation"
-        message="Use providers.gradleProperty instead of findProperty"
-        errorLine1="internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()"
-        errorLine2="                                                                  ~~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/com/vanniktech/maven/publish/ProjectExtensions.kt"
-            line="19"
-            column="67"/>
-    </issue>
-
-    <issue
         id="InternalGradleApiUsage"
         message="Avoid using internal Gradle APIs"
         errorLine1="import org.gradle.api.internal.project.ProjectInternal"
