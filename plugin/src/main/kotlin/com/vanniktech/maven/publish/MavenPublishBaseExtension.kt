@@ -75,8 +75,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       automaticRelease = automaticRelease,
-      // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
-      rootBuildDirectory = project.rootProject.layout.buildDirectory,
+      rootBuildDirectory = project.rootProjectBuildDirCompat(),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
       isConfigurationCacheActive = buildFeatures.configurationCache.active,
     )

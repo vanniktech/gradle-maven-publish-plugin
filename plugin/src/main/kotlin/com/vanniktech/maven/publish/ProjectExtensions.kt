@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package com.vanniktech.maven.publish
 
 import com.android.build.api.AndroidPluginVersion
@@ -5,10 +7,13 @@ import com.android.build.api.variant.AndroidComponentsExtension
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningExtension
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 
 internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
@@ -77,5 +82,15 @@ internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, 
   } catch (e: NoClassDefFoundError) {
     // was added in 7.0
     false
+  }
+}
+
+internal fun Project.rootProjectBuildDirCompat(): Provider<Directory> {
+  // TODO: remove this when Gradle 8.8 is the minimum supported version.
+  return if (GradleVersion.current() > GradleVersion.version("8.8")) {
+    isolated.rootProject.projectDirectory.dir(provider { "build" })
+  } else {
+    @Suppress("GradleProjectIsolation")
+    rootProject.layout.buildDirectory
   }
 }

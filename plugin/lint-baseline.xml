@@ -3,23 +3,12 @@
 
     <issue
         id="GradleProjectIsolation"
-        message="Use isolated.rootProject instead of getRootProject"
-        errorLine1="      rootBuildDirectory = project.rootProject.layout.buildDirectory,"
-        errorLine2="                                   ~~~~~~~~~~~">
-        <location
-            file="src/main/kotlin/com/vanniktech/maven/publish/MavenPublishBaseExtension.kt"
-            line="79"
-            column="36"/>
-    </issue>
-
-    <issue
-        id="GradleProjectIsolation"
         message="Use providers.gradleProperty instead of findProperty"
         errorLine1="internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()"
         errorLine2="                                                                  ~~~~~~~~~~~~">
         <location
             file="src/main/kotlin/com/vanniktech/maven/publish/ProjectExtensions.kt"
-            line="14"
+            line="19"
             column="67"/>
     </issue>
 
