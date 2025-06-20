@@ -73,8 +73,8 @@ enum class GradleVersion(
 
   // latest versions of each type
   GRADLE_STABLE(Versions.GRADLE_STABLE),
-  GRADLE_RC(Versions.GRADLE_RC),
-  GRADLE_BETA(Versions.GRADLE_BETA),
+  GRADLE_RC(Versions.GRADLE_RC, minJdkVersion = JavaVersion.VERSION_17),
+  GRADLE_BETA(Versions.GRADLE_BETA, minJdkVersion = JavaVersion.VERSION_17),
   GRADLE_ALPHA(Versions.GRADLE_ALPHA, minJdkVersion = JavaVersion.VERSION_17),
   ;
 
