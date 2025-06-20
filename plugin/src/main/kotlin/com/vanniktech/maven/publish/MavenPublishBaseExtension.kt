@@ -92,12 +92,11 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       "your account remove the SonatypeHost parameter and update your user token to one created in " +
       "the Central Portal.\n" +
       "If you are already calling this method with CENTRAL_PORTAL, you can simply remove the parameter.",
-    replaceWith = ReplaceWith("publishToMavenCentral()")
+    replaceWith = ReplaceWith("publishToMavenCentral()"),
   )
   public fun publishToMavenCentral(host: SonatypeHost) {
     @Suppress("DEPRECATION")
     publishToMavenCentral(host, automaticRelease = false)
-
   }
 
   /**
@@ -124,7 +123,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       "your account remove the SonatypeHost parameter and update your user token to one created in " +
       "the Central Portal.\n" +
       "If you are already calling this method with CENTRAL_PORTAL, you can simply remove the parameter.",
-    replaceWith = ReplaceWith("publishToMavenCentral()")
+    replaceWith = ReplaceWith("publishToMavenCentral()"),
   )
   public fun publishToMavenCentral(host: SonatypeHost, automaticRelease: Boolean) {
     sonatypeHost.set(host)

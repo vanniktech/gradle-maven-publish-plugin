@@ -168,8 +168,9 @@ public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public final fun publishToMavenCentral (Lcom/vanniktech/maven/publish/SonatypeHost;Z)V
 	public final synthetic fun publishToMavenCentral (Ljava/lang/String;)V
 	public final synthetic fun publishToMavenCentral (Ljava/lang/String;Z)V
-	public static synthetic fun publishToMavenCentral$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Lcom/vanniktech/maven/publish/SonatypeHost;ZILjava/lang/Object;)V
+	public final fun publishToMavenCentral (Z)V
 	public static synthetic fun publishToMavenCentral$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Ljava/lang/String;ZILjava/lang/Object;)V
+	public static synthetic fun publishToMavenCentral$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;ZILjava/lang/Object;)V
 	public final fun signAllPublications ()V
 }
 
