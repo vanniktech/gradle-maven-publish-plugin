@@ -5,6 +5,7 @@ import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companio
 import com.vanniktech.maven.publish.sonatype.ReleaseSonatypeRepositoryTask.Companion.registerReleaseRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
+import com.vanniktech.maven.publish.workaround.rootProjectBuildDir
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -24,7 +25,6 @@ import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
 import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
-
 
 public abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
@@ -76,7 +76,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       automaticRelease = automaticRelease,
-      rootBuildDirectory = project.rootProjectBuildDirCompat(),
+      rootBuildDirectory = project.rootProjectBuildDir(),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
       isConfigurationCacheActive = buildFeatures.configurationCache.active,
     )

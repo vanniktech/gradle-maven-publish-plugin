@@ -2,20 +2,13 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
+import com.vanniktech.maven.publish.workaround.addTestFixturesSourcesJar
+import com.vanniktech.maven.publish.workaround.fixTestFixturesMetadata
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.DocsType
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
-import org.gradle.api.plugins.internal.JavaPluginHelper
-import org.gradle.api.plugins.internal.JvmPluginsHelper
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.internal.component.external.model.ProjectDerivedCapability
-import org.gradle.jvm.component.internal.DefaultJvmSoftwareComponent
 import org.gradle.jvm.tasks.Jar
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
@@ -487,51 +480,7 @@ private fun MavenPublication.withJavadocJar(javadocJar: JavadocJar, project: Pro
 private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
   project.plugins.withId("java-test-fixtures") {
     if (sourcesJar) {
-      // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
-      val testFixtureSourceSetName = "testFixtures"
-      val extension = project.extensions.getByType(JavaPluginExtension::class.java)
-      val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
-
-      val projectInternal = project as ProjectInternal
-      val projectDerivedCapability = if (GradleVersion.current() >= GradleVersion.version("9.0-milestone-6")) {
-        ProjectDerivedCapability::class.java.getConstructor(ProjectInternal::class.java, String::class.java)
-      } else {
-        ProjectDerivedCapability::class.java.getConstructor(Project::class.java, String::class.java)
-      }.newInstance(projectInternal, "testFixtures")
-      val sourceElements = if (GradleVersion.current() >= GradleVersion.version("8.6-rc-1")) {
-        JvmPluginsHelper.createDocumentationVariantWithArtifact(
-          testFixturesSourceSet.sourcesElementsConfigurationName,
-          testFixtureSourceSetName,
-          DocsType.SOURCES,
-          setOf(projectDerivedCapability),
-          testFixturesSourceSet.sourcesJarTaskName,
-          testFixturesSourceSet.allSource,
-          projectInternal,
-        )
-      } else {
-        JvmPluginsHelper::class.java.getMethod(
-          "createDocumentationVariantWithArtifact",
-          String::class.java,
-          String::class.java,
-          String::class.java,
-          List::class.java,
-          String::class.java,
-          Object::class.java,
-          ProjectInternal::class.java,
-        ).invoke(
-          null,
-          testFixturesSourceSet.sourcesElementsConfigurationName,
-          testFixtureSourceSetName,
-          DocsType.SOURCES,
-          listOf(projectDerivedCapability),
-          testFixturesSourceSet.sourcesJarTaskName,
-          testFixturesSourceSet.allSource,
-          projectInternal,
-        ) as Configuration
-      }
-
-      val component = JavaPluginHelper.getJavaComponent(project) as DefaultJvmSoftwareComponent
-      component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))
+      addTestFixturesSourcesJar(project)
     }
 
     // test fixtures can't be mapped to the POM because there is no equivalent concept in Maven
@@ -541,13 +490,7 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
       it.suppressPomMetadataWarningsFor("testFixturesSourcesElements")
     }
 
-    project.afterEvaluate {
-      // Gradle will put the project group and version into capabilities instead of using
-      // the publication, this can lead to invalid published metadata
-      // TODO remove after https://github.com/gradle/gradle/issues/23354 is resolved
-      project.group = project.baseExtension.groupId.get()
-      project.version = project.baseExtension.version.get()
-    }
+    fixTestFixturesMetadata(project)
   }
 }
 
