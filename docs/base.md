@@ -27,8 +27,11 @@ Add the plugin to any Gradle project that should be published
 ## General configuration
 
 Follow the steps of the [Maven Central](central.md) or [other Maven repositories](other.md) guides.
-Note that the `SONATYPE_HOST`, `SONATYPE_AUTOMATIC_RELEASE` and `RELEASE_SIGNING_ENABLED` are not
-considered by the base plugin and the appropriate DSL methods need to be called.
+
+!!! note
+
+    The `mavenCentralPublishing`, `mavenCentralAutomaticPublishing` and `signAllPublications` properties are not
+    considered by the base plugin and the appropriate DSL methods need to be called.
 
 For the pom configuration via Gradle properties the following needs to be enabled in the DSL:
 

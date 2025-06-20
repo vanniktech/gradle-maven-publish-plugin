@@ -76,15 +76,15 @@ This can be done through either the DSL or by setting Gradle properties.
 === "gradle.properties"
 
     ```properties
-    SONATYPE_HOST=CENTRAL_PORTAL
+    mavenCentralPublishing=true
 
-    RELEASE_SIGNING_ENABLED=true
+    signAllPublications=true
     ```
 
 ## Configuring the POM
 
 The pom is published alongside the project and contains the project coordinates
-as well as some general information about the project like an url and the used
+as well as some general information about the project like a url and the used
 license.
 
 This configuration also determines the coordinates (`group:artifactId:version`) used to consume the library.
@@ -351,7 +351,7 @@ For automatic publishing use one of the following options
     Add the following to `gradle.properties` to make any publish task also take care of
     step 3.
     ```properties
-    SONATYPE_AUTOMATIC_RELEASE=true
+    mavenCentralAutomaticPublishing=true
     ```
 
     To publish use
@@ -363,3 +363,4 @@ For automatic publishing use one of the following options
 
     Configuration caching when uploading releases is currently not possible. Supporting it is
     blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+

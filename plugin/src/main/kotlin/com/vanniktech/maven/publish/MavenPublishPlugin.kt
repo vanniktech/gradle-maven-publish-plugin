@@ -8,13 +8,12 @@ public open class MavenPublishPlugin : Plugin<Project> {
     project.plugins.apply(MavenPublishBasePlugin::class.java)
     val baseExtension = project.baseExtension
 
-    val sonatypeHost = project.findOptionalProperty("SONATYPE_HOST")
-    if (!sonatypeHost.isNullOrBlank()) {
-      val automaticRelease = project.findOptionalProperty("SONATYPE_AUTOMATIC_RELEASE").toBoolean()
-      baseExtension.publishToMavenCentral(SonatypeHost.valueOf(sonatypeHost), automaticRelease)
+    val sonatypeHost = project.sonatypeHost()
+    if (sonatypeHost != null) {
+      baseExtension.publishToMavenCentral(sonatypeHost, project.automaticRelease())
     }
-    val releaseSigning = project.findOptionalProperty("RELEASE_SIGNING_ENABLED").toBoolean()
-    if (releaseSigning) {
+
+    if (project.signAllPublications()) {
       baseExtension.signAllPublications()
     }
 
@@ -31,5 +30,47 @@ public open class MavenPublishPlugin : Plugin<Project> {
       // will no-op if it was already called
       baseExtension.configureBasedOnAppliedPlugins()
     }
+  }
+
+  @Suppress("DEPRECATION")
+  private fun Project.sonatypeHost(): SonatypeHost? {
+    val central = providers.gradleProperty("mavenCentralPublishing").orNull
+    if (central != null) {
+      return if (central.toBoolean()) {
+        SonatypeHost.CENTRAL_PORTAL
+      } else {
+        null
+      }
+    }
+    val sonatypeHost = providers.gradleProperty("SONATYPE_HOST").getOrElse("")
+    return if (!sonatypeHost.isNullOrBlank()) {
+       SonatypeHost.valueOf(sonatypeHost)
+    } else {
+       null
+    }
+  }
+
+  private fun Project.automaticRelease(): Boolean {
+    val automatic = providers.gradleProperty("mavenCentralAutomaticPublishing").orNull
+    if (automatic != null) {
+      return automatic.toBoolean()
+    }
+    val sonatypeAutomatic = providers.gradleProperty("SONATYPE_AUTOMATIC_RELEASE").orNull
+    if (sonatypeAutomatic != null) {
+      return sonatypeAutomatic.toBoolean()
+    }
+    return false
+  }
+
+  private fun Project.signAllPublications(): Boolean {
+    val sign = providers.gradleProperty("signAllPublications").orNull
+    if (sign != null) {
+      return sign.toBoolean()
+    }
+    val singRelease = providers.gradleProperty("RELEASE_SIGNING_ENABLED").orNull
+    if (singRelease != null) {
+      return singRelease.toBoolean()
+    }
+    return false
   }
 }
