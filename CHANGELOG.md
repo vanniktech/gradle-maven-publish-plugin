@@ -1,6 +1,9 @@
 # Change Log
 
-## 0.32.0 **UNRELEASED**
+## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.32.0...HEAD) *(2025-xx-xx)*
+
+
+## [0.32.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.32.0) *(2025-05-15)*
 
 - Improve names of Central Portal deployments.
 - Fix an issue where the wrong staging profile for (s01.)oss.sonatype.org was selected
@@ -34,7 +37,7 @@ Configuration cache is generally supported, except for:
 - When using Dokka 1.x or Dokka 2.x without `V2Enabled`
 
 
-## 0.31.0 *(2025-03-06)*
+## [0.31.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.31.0) *(2025-03-06)*
 
 - Add support for publishing snapshots to Central Portal.
     - Make sure to enable snapshots for your namespace on central.sonatype.com.
@@ -63,7 +66,7 @@ Configuration cache is generally supported, except for:
 - When using Dokka 1.x or Dokka 2.x without `V2Enabled`
 
 
-## 0.30.0 *(2024-10-13)*
+## [0.30.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.30.0) *(2024-10-13)*
 
 - Add support for Dokka 2.0.0-Beta
     - Supports `org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled`
@@ -96,7 +99,7 @@ Configuration cache is generally supported, except for:
 - When using Dokka 1.x or Dokka 2.x without `V2Enabled`
 
 
-## 0.29.0 *(2024-06-20)*
+## [0.29.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.29.0) *(2024-06-20)*
 
 - Added `configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean)`
   overload that allows disabling sources and javadoc jars without having to use
@@ -131,7 +134,7 @@ Configuration cache is generally supported, except for:
 - Dokka does not support configuration cache
 
 
-## 0.28.0 *(2024-03-12)*
+## [0.28.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.28.0) *(2024-03-12)*
 
 - Added support for publishing through the new [Central Portal](https://central.sonatype.com). To use
   this use the `CENTRAL_PORTAL` option when specifying the Sonatype host.
@@ -166,7 +169,7 @@ Configuration cache is generally supported, except for:
 - Dokka does not support configuration cache
 
 
-## 0.27.0 *(2024-01-06)*
+## [0.27.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.27.0) *(2024-01-06)*
 
 - Added new publishing related tasks
     - `releaseRepository` releases a staging repository at the end of the build
@@ -206,7 +209,7 @@ Exceptions to that are:
 - Dokka does not support configuration cache
 
 
-## 0.26.0 *(2023-12-19)*
+## [0.26.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.26.0) *(2023-12-19)*
 
 - It's now supported to call `configure(Platform)` from the main plugin to modify
   what is getting published. [Check out the docs for more details](https://vanniktech.github.io/gradle-maven-publish-plugin/what/)
@@ -246,23 +249,23 @@ Exceptions to that are:
 - Dokka does not support configuration cache
 
 
-## 0.25.3 *(2023-07-01)*
+## [0.25.3](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.25.3) *(2023-07-01)*
 
 - Gradle 8.2: Fix error for projects that use the `java-test-fixtures` plugin.
 - Fix issue for Kotlin Multiplatform projects when running tests and having signing enabled.
 
 
-## 0.25.2 *(2023-04-16)*
+## [0.25.2](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.25.2) *(2023-04-16)*
 
 - Fix javadoc jar being empty when using dokka.
 
 
-## 0.25.1 *(2023-03-24)*
+## [0.25.1](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.25.1) *(2023-03-24)*
 
 - Fix snapshot publishing being broken.
 
 
-## 0.25.0 *(2023-03-23)*
+## [0.25.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.25.0) *(2023-03-23)*
 
 - The `createStagingRepository` task now uses the worker API which allows the project to built
   in parallel to the creation of the staging repository.
@@ -288,14 +291,14 @@ Configuration cache is supported starting with **Gradle 7.6+** except for:
 - Kotlin Multiplatform projects, blocked by [KT-49933](https://youtrack.jetbrains.com/issue/KT-49933).
 
 
-## 0.24.0 *(2023-01-29)*
+## [0.24.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.24.0) *(2023-01-29)*
 
 - Support arbitrary Sonatype hosts instead of just oss.sonatype.org and s01.oss.sonatype.org.
 - Support adjusting timeouts for Sonatype related requests and operations. [See docs](https://vanniktech.github.io/gradle-maven-publish-plugin/central/#timeouts)
 - Internal change on how the sources jar is created.
 
 
-## 0.23.2 *(2023-01-17)*
+## [0.23.2](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.23.2) *(2023-01-17)*
 
 - Fix signing when using Gradle 8.0.
 - Finding a matching staging profile in Sonatype is more lenient. If there is just one that one will always be used.
@@ -304,13 +307,13 @@ Configuration cache is supported starting with **Gradle 7.6+** except for:
   and `project.version` are now being set again for those projects. [#490](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/490)
 
 
-## 0.23.1 *(2022-12-30)*
+## [0.23.1](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.23.1) *(2022-12-30)*
 
 - Also support publishing sources for the `java-test-fixtures` plugin in Kotlin/JVM projects.
 - Suppress Gradle warnings when publishing a project that uses `java-test-fixtures`.
 
 
-## 0.23.0 *(2022-12-29)*
+## [0.23.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.23.0) *(2022-12-29)*
 
 Updated docs can be found on [the new website](https://vanniktech.github.io/gradle-maven-publish-plugin/).
 
@@ -339,7 +342,7 @@ Updated docs can be found on [the new website](https://vanniktech.github.io/grad
 - The plugin now requires using JDK 11+ to run Gradle.
 
 
-## 0.22.0 *(2022-09-09)*
+## [0.22.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.22.0) *(2022-09-09)*
 
 - **NEW**: When publishing to maven central by setting `SONATYPE_HOST` or calling `publishToMavenCentral(...)` the plugin will now explicitly create a staging repository on Sonatype. This avoids issues where a single build would create multiple repositories
 - The above change means that the plugin supports parallel builds and it is not neccessary anymore to use `--no-parallel` and `--no-daemon` together with `publish`
@@ -364,7 +367,7 @@ mavenPublishing {
 - added wokaround for Kotlin multiplatform builds reporting disabled build optimizations (see [KT-46466](https://youtrack.jetbrains.com/issue/KT-46466))
 
 
-## 0.21.0 *(2022-07-11)*
+## [0.21.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.21.0) *(2022-07-11)*
 
 Minimum supported Gradle version is now 7.2.0
 
@@ -417,7 +420,7 @@ The deprecated `mavenPublish` extension has been removed. Take a look at the
 changelog for 0.20.0 for replacements.
 
 
-## 0.20.0 *(2022-06-02)*
+## [0.20.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.20.0) *(2022-06-02)*
 
 **Upcoming behavior change**
 
@@ -471,7 +474,7 @@ Added support to set the following pom values through properties (thanks to @jar
 - fixed and improved error messages for `closeAndReleaseRepository`
 
 
-## 0.19.0 *(2022-02-26)*
+## [0.19.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.19.0) *(2022-02-26)*
 
 - **Behavior Change:** When using version 7.1.0 or newer of the Android Gradle Plugin we will now publish all variants
 of a library unless `androidVariantToPublish` was set in the DSL. This means that for example both `debug` and `release`
@@ -485,7 +488,7 @@ APIs under the hood.
 - The integration with Sonatype Nexus has been extracted into it's own artifact and is available as `com.vanniktech:nexus:<version>`
 
 
-## 0.18.0 *(2021-09-13)*
+## [0.18.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.18.0) *(2021-09-13)*
 
 - The minimum supported Kotlin version is now `1.4.30`
 - It's now possible to specify `SONATYPE_HOST` as a Gradle property, e.g.
@@ -495,12 +498,12 @@ APIs under the hood.
 - Removed checks for presence of properties that aren't used by this plugin anymore
 
 
-## 0.17.0 *(2021-07-04)*
+## [0.17.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.17.0) *(2021-07-04)*
 
 - Removed the deprecated `uploadArchives` and `installArchives` tasks. Use `publish` and `publishToMavenLocal` instead.
 
 
-## 0.16.0 *(2021-06-20)*
+## [0.16.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.16.0) *(2021-06-20)*
 
 - Add `pomFromGradleProperties` API to base plugin. This configures the pom in the same way the regular plugin does.
 - Add the ability to remove the default `mavenCentral` repository, by setting `sonatypeHost` to `null`
@@ -510,7 +513,7 @@ APIs under the hood.
 - The deprecated `nexusOptions` and `nexus {}` methods were removed. `closeAndReleaseRepository` is automatically configured.
 
 
-## 0.15.1 *(2021-05-02)*
+## [0.15.1](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.15.1) *(2021-05-02)*
 
 - The `closeAndReleaseRepository` task was mistakenly expecting the wrong Gradle properties. The README and changelog also mentioned the wrong properties. The correct ones are `mavenCentralUsername` and `mavenCentralPassword` or for environment variables: `ORG_GRADLE_PROJECT_mavenCentralUsername` and `ORG_GRADLE_PROJECT_mavenCentralPassword`.
 - Fix `signing` not being configurable until `afterEvaluate`
@@ -518,7 +521,7 @@ APIs under the hood.
 - Fix `statingProfile` in `nexusOptions` not being optional which causes an error when running `closeAndReleaseRepository`
 
 
-## 0.15.0 *(2021-04-24)*
+## [0.15.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.15.0) *(2021-04-24)*
 
 - **BREAKING**: Removed support for deprecated `RELEASE_REPOSITORY_URL`, `SNAPSHOT_REPOSITORY_URL`, `SONATYPE_NEXUS_USERNAME`, `SONATYPE_NEXUS_PASSWORD` environment variables and properties.
   For safety reasons the project will fail when finding these. Use `mavenCentralUsername` and `mavenCentralPassword` Gradle properties or
@@ -531,19 +534,19 @@ APIs under the hood.
   The API is not final yet, but we're happy to receive feedback.
 
 
-## 0.14.2 *(2021-02-14)*
+## [0.14.2](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.14.2) *(2021-02-14)*
 
 - fix artifact id in Kotlin Multiplatform projects being incorrect
 - fix `closeAndReleaseRepository` requiring callers to pass `--repository`
 
 
-## 0.14.1 *(2021-02-11)*
+## [0.14.1](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.14.1) *(2021-02-11)*
 
 - fix false positive deprecation warnings
 - fix typos in deprecation warnings
 
 
-## 0.14.0 *(2021-02-10)*
+## [0.14.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.14.0) *(2021-02-10)*
 
 - enable publishing Kotlin/JS projects
 - fixed compatibility with Kotlin Multiplatform projects using Kotlin 1.4.30
@@ -553,14 +556,14 @@ APIs under the hood.
 - minimum supported Gradle version is now 6.6
 
 
-## 0.13.0 *(2020-09-07)*
+## [0.13.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.13.0) *(2020-09-07)*
 
 - remove setting Dokka outputDirectory [\#160](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/160) ([gabrielittner](https://github.com/gabrielittner))
 - change how closeAndReleaseRepository is created to avoid ClassCastException [\#157](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/157) ([gabrielittner](https://github.com/gabrielittner))
 - Dokka 1.4 compatibility [\#155](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/155) ([gabrielittner](https://github.com/gabrielittner))
 
 
-## 0.12.0 *(2020-07-07)*
+## [0.12.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.12.0) *(2020-07-07)*
 
 - only create one closeAndRelease task, add new property for the profile [\#148](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/148) ([gabrielittner](https://github.com/gabrielittner))
 - fix AndroidJavadocs task [\#147](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/147) ([gabrielittner](https://github.com/gabrielittner))
@@ -573,17 +576,17 @@ APIs under the hood.
 Kudos to [gabrielittner](https://github.com/gabrielittner).
 
 
-## 0.11.1 *(2020-03-30)*
+## [0.11.1](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.11.1) *(2020-03-30)*
 
 - Pom packaging is not written [\#82](https://github.com/vanniktech/gradle-maven-publish-plugin/issues/82)
 
 
-## 0.11.0 *(2020-03-30)*
+## [0.11.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.11.0) *(2020-03-30)*
 
 - Actually the same as 0.10.0 since I forgot to pull master before building :/
 
 
-## 0.10.0 *(2020-03-22)*
+## [0.10.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.10.0) *(2020-03-22)*
 
 - update mpp integrationt test [\#124](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/124) ([gabrielittner](https://github.com/gabrielittner))
 - allow to override group and version in build files [\#123](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/123) ([gabrielittner](https://github.com/gabrielittner))
@@ -597,7 +600,7 @@ Kudos to [gabrielittner](https://github.com/gabrielittner).
 Again, huge thanks to [gabrielittner](https://github.com/gabrielittner) for all of his work in this release.
 
 
-## 0.9.0 *(2020-02-08)*
+## [0.9.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.9.0) *(2020-02-08)*
 
 - merge Utils into ProjectExtensions [\#108](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/108) ([gabrielittner](https://github.com/gabrielittner))
 - initial Kotlin Multiplatform support [\#105](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/105) ([gabrielittner](https://github.com/gabrielittner))
@@ -620,14 +623,14 @@ Again, huge thanks to [gabrielittner](https://github.com/gabrielittner) for all 
 Huge thanks to [gabrielittner](https://github.com/gabrielittner) for all of his work in this release.
 
 
-## 0.8.0 *(2019-02-18)*
+## [0.8.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.8.0) *(2019-02-18)*
 
 - Change docs format for Kotlin project docs [\#45](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/45) ([Ilya-Gh](https://github.com/Ilya-Gh))
 - Add missing backticks in README.md [\#43](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/43) ([Egorand](https://github.com/Egorand))
 - Generate javadocs for Kotlin project with Dokka [\#37](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/37) ([Ilya-Gh](https://github.com/Ilya-Gh))
 
 
-## 0.7.0 *(2018-01-15)*
+## [0.7.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.7.0) *(2018-01-15)*
 
 - Remove duplicate jar task from archives configuration [\#39](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/39) ([marcphilipp](https://github.com/marcphilipp))
 - Remove sudo: false from travis config. [\#36](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/36) ([vanniktech](https://github.com/vanniktech))
@@ -644,13 +647,13 @@ Huge thanks to [gabrielittner](https://github.com/gabrielittner) for all of his 
 Thanks to @gabrielittner @marcphilipp @budius & @WellingtonCosta for their contributions.
 
 
-## 0.6.0 *(2018-09-11)*
+## [0.6.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.6.0) *(2018-09-11)*
 
 - Configure pom of installArchives task. [\#20](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/20) ([gabrielittner](https://github.com/gabrielittner))
 - Update Plugin Publish Plugin to 0.10.0 [\#19](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/19) ([vanniktech](https://github.com/vanniktech))
 
 
-## 0.5.0 *(2018-08-16)*
+## [0.5.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.5.0) *(2018-08-16)*
 
 - Add installArchives task to allow installing android library projects to local maven. [\#17](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/17) ([vanniktech](https://github.com/vanniktech))
 - Fix a typo in README [\#16](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/16) ([Egorand](https://github.com/Egorand))
@@ -658,23 +661,23 @@ Thanks to @gabrielittner @marcphilipp @budius & @WellingtonCosta for their contr
 - fix README not actually setting properties [\#14](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/14) ([gabrielittner](https://github.com/gabrielittner))
 
 
-## 0.4.0 *(2018-06-30)*
+## [0.4.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.4.0) *(2018-06-30)*
 
 - Remove checks for username and password. [\#12](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/12) ([vanniktech](https://github.com/vanniktech))
 
 
-## 0.3.0 *(2018-06-29)*
+## [0.3.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.3.0) *(2018-06-29)*
 
 - Make it possible to specify the release URL as a project property. [\#9](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/9) ([swankjesse](https://github.com/swankjesse))
 - Package up the groovy doc in case the groovy plugin is applied. For Java plugins also add the jar archive. [\#4](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/4) ([vanniktech](https://github.com/vanniktech))
 - Unify setup, improve a few things and bump versions. [\#3](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/3) ([vanniktech](https://github.com/vanniktech))
 
 
-## 0.2.0 *(2018-05-26)*
+## [0.2.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.2.0) *(2018-05-26)*
 
 - Throw exception when missing username or password only when executing the task. [\#2](https://github.com/vanniktech/gradle-maven-publish-plugin/pull/2) ([vanniktech](https://github.com/vanniktech))
 
 
-## 0.1.0 *(2018-05-25)*
+## [0.1.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.1.0) *(2018-05-25)*
 
 - Initial release

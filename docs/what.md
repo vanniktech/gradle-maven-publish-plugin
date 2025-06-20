@@ -116,7 +116,7 @@ For projects using the `java-library` plugin.
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Javadoc()` to publish standard javadocs
       // the second whether to publish a sources jar
       configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
@@ -133,7 +133,7 @@ For projects using the `java-library` plugin.
       configure(JavaLibrary(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
-        // - `JavadocJar.Empty()` publish an emprt jar
+        // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Javadoc()` to publish standard javadocs
         javadocJar = JavadocJar.Javadoc(),
         // whether to publish a sources jar
@@ -155,7 +155,7 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
       // the second whether to publish a sources jar
       configure(new KotlinJvm(new JavadocJar.Dokka("dokkaHtml"), true))
@@ -172,7 +172,7 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
       configure(KotlinJvm(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
-        // - `JavadocJar.Empty()` publish an emprt jar
+        // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Dokka("dokkaHtml"),
         // whether to publish a sources jar
@@ -194,7 +194,7 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
     mavenPublishing {
       // the parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
       // the second whether to publish a sources jar
       // the third parameters configures which Android library variants to publish if this project has an Android target
@@ -214,7 +214,7 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
       configure(KotlinMultiplatform(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
-        // - `JavadocJar.Empty()` publish an emprt jar
+        // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Dokka("dokkaHtml"),
         // whether to publish a sources jar
@@ -240,7 +240,7 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Javadoc()` to publish standard javadocs
       // the second whether to publish a sources jar
       configure(new GradlePlugin(new JavadocJar.Javadoc(), true))
@@ -257,7 +257,7 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
       configure(GradlePlugin(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
-        // - `JavadocJar.Empty()` publish an emprt jar
+        // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Javadoc()` to publish standard javadocs
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Javadoc(),
