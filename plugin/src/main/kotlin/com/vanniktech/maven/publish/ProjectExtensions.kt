@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package com.vanniktech.maven.publish
 
 import com.android.build.api.AndroidPluginVersion
@@ -11,6 +13,9 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 
+@Suppress(
+  "GradleProjectIsolation",
+) // TODO: we can't call 'providers.gradleProperty' instead due to https://github.com/gradle/gradle/issues/23572.
 internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
 
 internal inline val Project.baseExtension: MavenPublishBaseExtension

@@ -2,6 +2,7 @@ plugins {
   id("shared")
   id("java-gradle-plugin")
   alias(libs.plugins.buildconfig)
+  alias(libs.plugins.android.lint)
 }
 
 gradlePlugin {
@@ -56,6 +57,12 @@ buildConfig {
   }
 }
 
+lint {
+  baseline = file("lint-baseline.xml")
+  ignoreTestSources = true
+  warningsAsErrors = true
+}
+
 dependencies {
   api(gradleApi())
 
@@ -73,6 +80,15 @@ dependencies {
   testImplementation(libs.truth.java8)
   testImplementation(libs.truth.testKit)
   testImplementation(libs.maven.model)
+
+  lintChecks(libs.androidx.gradlePluginLints)
+}
+
+tasks.whenTaskAdded {
+  if (name.contains("lint") && this::class.java.name.contains("com.android.build")) {
+    // TODO: lints can be run on Java 17 or above, remove this once we bump the min Java version to 17.
+    enabled = JavaVersion.current() >= JavaVersion.VERSION_17
+  }
 }
 
 val integrationTest by tasks.registering(Test::class) {

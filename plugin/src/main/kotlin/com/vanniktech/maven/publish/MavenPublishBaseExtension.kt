@@ -5,6 +5,7 @@ import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companio
 import com.vanniktech.maven.publish.sonatype.ReleaseSonatypeRepositoryTask.Companion.registerReleaseRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
+import com.vanniktech.maven.publish.workaround.rootProjectBuildDir
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -24,9 +25,6 @@ import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
 import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
-
-private val ISOLATED_PROJECT_VIEW_GRADLE_VERSION = GradleVersion.version("8.8-rc-1")
-private val SETTINGS_DIRECTORY_GRADLE_VERSION = GradleVersion.version("8.13-rc-1")
 
 public abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
@@ -71,18 +69,6 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
 
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
 
-    val gradleVersion = GradleVersion.current()
-    // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
-    val rootBuildDirectory = when {
-      gradleVersion >= SETTINGS_DIRECTORY_GRADLE_VERSION -> project.provider {
-        project.layout.settingsDirectory.dir("build")
-      }
-      gradleVersion >= ISOLATED_PROJECT_VIEW_GRADLE_VERSION -> project.provider {
-        project.isolated.rootProject.projectDirectory.dir("build")
-      }
-      else -> project.rootProject.layout.buildDirectory
-    }
-
     val buildService = project.registerSonatypeRepositoryBuildService(
       sonatypeHost = sonatypeHost,
       groupId = groupId,
@@ -90,7 +76,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       automaticRelease = automaticRelease,
-      rootBuildDirectory = rootBuildDirectory,
+      rootBuildDirectory = project.rootProjectBuildDir(),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
       isConfigurationCacheActive = buildFeatures.configurationCache.active,
     )
@@ -432,7 +418,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   }
 
   private inline fun configureCredentials(crossinline versionIsSnapshot: () -> Boolean) {
-    project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java) { repo ->
+    project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java).configureEach { repo ->
       if (repo.name == "mavenCentral" && (!sonatypeHost.get().isCentralPortal || versionIsSnapshot())) {
         repo.credentials(PasswordCredentials::class.java)
       }
