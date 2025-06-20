@@ -36,14 +36,14 @@ public data class SonatypeHost internal constructor(
     }
 
     @Deprecated(
-      message = "OSSRH is deprecated, migrate to CENTRAL_PORTAL instead. " +
+      message = "OSSRH will be shut down after June 30, 2025. Migrate to CENTRAL_PORTAL instead. " +
         "See more info at https://central.sonatype.org/news/20250326_ossrh_sunset.",
     )
     @JvmField
     public val DEFAULT: SonatypeHost = SonatypeHost("https://oss.sonatype.org", isCentralPortal = false)
 
     @Deprecated(
-      message = "OSSRH is deprecated, migrate to CENTRAL_PORTAL instead. " +
+      message = "OSSRH will be shut down after June 30, 2025. Migrate to CENTRAL_PORTAL instead. " +
         "See more info at https://central.sonatype.org/news/20250326_ossrh_sunset.",
     )
     @JvmField
