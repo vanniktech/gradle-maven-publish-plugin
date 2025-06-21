@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-  kapt(libs.moshi.codegen)
+  ksp(libs.moshi.codegen)
 
   implementation(libs.okhttp)
   implementation(libs.moshi)
