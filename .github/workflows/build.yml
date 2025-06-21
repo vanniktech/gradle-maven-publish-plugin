@@ -37,6 +37,7 @@ jobs:
 
       - name: Run ktlint
         run: ./kotlinw ktlint.main.kts --fail-on-changes
+        if: ${{ matrix.java_version != '11' }}
 
       - name: Build with Gradle
         run: ./gradlew build --stacktrace -DtestConfigMethod=${{ matrix.test_config_method }}
