@@ -276,10 +276,12 @@ will still be signed.
 
 The publishing process for Maven Central consists of several steps
 
-1. *Plugin*: The artifacts are uploaded to a new deployment
-2. *Sonatype*: The deployment is validated
-3. *Plugin/Manual*: The deployment is published to Maven Central
-4. *Sonatype* The published artifacts are available in Maven Central
+| Step | Who            | What                                           |
+|------|----------------|------------------------------------------------|
+| 1    | Plugin         | The artifacts are uploaded to a new deployment |
+| 2    | Central Portal | The deployment is validated |
+| 3    | You or plugin  | The deployment is published to Maven Central |
+| 4    | Central Portal | The published artifacts are available in Maven Central |
 
 !!! note
 

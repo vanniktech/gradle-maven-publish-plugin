@@ -1,8 +1,10 @@
 # Configuring what to publish
 
 It is possible to configure publishing for the following Gradle plugins:
+
 - `com.android.library` as [single variant library](#android-library-single-variant) or
   as [multi variant library](#android-library-multiple-variants)
+- [`com.android.fused-library`](#android-fused-library)
 - [`org.jetbrains.kotlin.jvm`](#kotlin-jvm-library)
 - [`org.jetbrains.kotlin.multiplatform`](#kotlin-multiplatform-library)
 - [`java`](#java-library)
