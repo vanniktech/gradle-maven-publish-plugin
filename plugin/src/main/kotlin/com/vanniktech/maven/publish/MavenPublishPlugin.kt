@@ -8,9 +8,8 @@ public open class MavenPublishPlugin : Plugin<Project> {
     project.plugins.apply(MavenPublishBasePlugin::class.java)
     val baseExtension = project.baseExtension
 
-    val sonatypeHost = project.sonatypeHost()
-    if (sonatypeHost != null) {
-      baseExtension.publishToMavenCentral(sonatypeHost, project.automaticRelease())
+    if (project.sonatypeHost()) {
+      baseExtension.publishToMavenCentral(project.automaticRelease())
     }
 
     if (project.signAllPublications()) {
@@ -36,21 +35,12 @@ public open class MavenPublishPlugin : Plugin<Project> {
   }
 
   @Suppress("DEPRECATION")
-  private fun Project.sonatypeHost(): SonatypeHost? {
+  private fun Project.sonatypeHost(): Boolean {
     val central = providers.gradleProperty("mavenCentralPublishing").orNull
     if (central != null) {
-      return if (central.toBoolean()) {
-        SonatypeHost.CENTRAL_PORTAL
-      } else {
-        null
-      }
+      return central.toBoolean()
     }
-    val sonatypeHost = providers.gradleProperty("SONATYPE_HOST").getOrElse("")
-    return if (!sonatypeHost.isNullOrBlank()) {
-      SonatypeHost.valueOf(sonatypeHost)
-    } else {
-      null
-    }
+    return providers.gradleProperty("SONATYPE_HOST").orNull == "CENTRAL_PORTAL"
   }
 
   private fun Project.automaticRelease(): Boolean {
@@ -58,11 +48,7 @@ public open class MavenPublishPlugin : Plugin<Project> {
     if (automatic != null) {
       return automatic.toBoolean()
     }
-    val sonatypeAutomatic = providers.gradleProperty("SONATYPE_AUTOMATIC_RELEASE").orNull
-    if (sonatypeAutomatic != null) {
-      return sonatypeAutomatic.toBoolean()
-    }
-    return false
+    return providers.gradleProperty("SONATYPE_AUTOMATIC_RELEASE").orNull.toBoolean()
   }
 
   private fun Project.signAllPublications(): Boolean {
@@ -70,10 +56,6 @@ public open class MavenPublishPlugin : Plugin<Project> {
     if (sign != null) {
       return sign.toBoolean()
     }
-    val singRelease = providers.gradleProperty("RELEASE_SIGNING_ENABLED").orNull
-    if (singRelease != null) {
-      return singRelease.toBoolean()
-    }
-    return false
+    return providers.gradleProperty("RELEASE_SIGNING_ENABLED").orNull.toBoolean()
   }
 }
