@@ -1,9 +1,9 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.central.DropMavenCentralDeploymentTask.Companion.registerDropMavenCentralDeploymentTask
 import com.vanniktech.maven.publish.central.EnableAutomaticMavenCentralPublishingTask.Companion.registerEnableAutomaticMavenCentralPublishingTask
 import com.vanniktech.maven.publish.central.MavenCentralBuildService.Companion.registerMavenCentralBuildService
 import com.vanniktech.maven.publish.central.PrepareMavenCentralPublishingTask.Companion.registerPrepareMavenCentralPublishingTask
-import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companion.registerDropRepository
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
 import com.vanniktech.maven.publish.workaround.rootProjectBuildDir
 import javax.inject.Inject
@@ -100,8 +100,6 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       }
     }
 
-    project.tasks.registerDropRepository(buildService)
-
     project.tasks.register("publishToMavenCentral") {
       it.description = "Publishes to Maven Central"
       it.group = "publishing"
@@ -113,6 +111,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       it.dependsOn(project.tasks.named("publishAllPublicationsToMavenCentralRepository"))
       it.dependsOn(enableAutomaticTask)
     }
+
+    project.tasks.registerDropMavenCentralDeploymentTask(buildService)
   }
 
   /**

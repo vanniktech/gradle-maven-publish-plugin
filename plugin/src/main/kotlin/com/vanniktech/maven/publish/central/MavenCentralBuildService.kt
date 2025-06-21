@@ -48,13 +48,7 @@ internal abstract class MavenCentralBuildService :
     )
   }
 
-  private var publishId: String? = null
-    set(value) {
-      check(field == null || field == value) {
-        "publishId was already set to '$field', new value '$value'"
-      }
-      field = value
-    }
+  private var deploymentId: String? = null
 
   private val endOfBuildActions = mutableSetOf<EndOfBuildAction>()
 
@@ -89,12 +83,8 @@ internal abstract class MavenCentralBuildService :
    * Is only allowed to be called from task actions. Tasks calling this must run after tasks
    * that call [registerProject].
    */
-  fun shouldDropRepository(manualStagingRepositoryId: String?) {
-    if (manualStagingRepositoryId != null) {
-      publishId = manualStagingRepositoryId
-    } else {
-      error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
-    }
+  fun dropDeployment(deploymentId: String) {
+    this.deploymentId = deploymentId
 
     endOfBuildActions += EndOfBuildAction.Drop(runAfterFailure = false)
   }
@@ -155,14 +145,14 @@ internal abstract class MavenCentralBuildService :
       }
       out.close()
 
-      publishId = centralPortal.upload(deploymentName, publishingType, zipFile)
+      deploymentId = centralPortal.upload(deploymentName, publishingType, zipFile)
     }
 
     val dropAction = actions.filterIsInstance<EndOfBuildAction.Drop>().singleOrNull()
     if (dropAction != null) {
-      val publishId = publishId
-      if (publishId != null) {
-        centralPortal.deleteDeployment(publishId)
+      val id = deploymentId
+      if (id != null) {
+        centralPortal.deleteDeployment(id)
       }
     }
   }
