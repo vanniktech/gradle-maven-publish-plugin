@@ -16,8 +16,6 @@ ij_kotlin_allow_trailing_comma_on_call_site=true
 ktlint_standard_annotation=disabled
 # too aggressive in wrapping and indenting the expression in an assignment
 ktlint_standard_multiline-expression-wrapping=disabled
-# depends on the previous one
-ktlint_standard_string-template-indent=disabled
 # make ktlint less eager to wrap function signatures and expression bodies
 ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than=unset
 ktlint_function_signature_body_expression_wrapping=default

@@ -75,7 +75,8 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   ),
-  buildFileExtra = """
+  buildFileExtra =
+    """
     gradlePlugin {
         plugins {
             mavenPublishPlugin {
@@ -85,7 +86,7 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
             }
         }
     }
-  """.trimIndent(),
+    """.trimIndent(),
   basePluginConfig = "configure(new GradlePlugin(new JavadocJar.Empty(), true))",
 )
 
@@ -137,7 +138,8 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
     SourceFile("nodeJsMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
   ),
   basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty()))",
-  buildFileExtra = """
+  buildFileExtra =
+    """
     kotlin {
         jvm()
         js("nodeJs", "IR") {
@@ -164,7 +166,7 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
             }
         }
     }
-  """.trimIndent(),
+    """.trimIndent(),
 )
 
 fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
@@ -178,26 +180,27 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
     ),
     // needs to explicitly specify release to match the main plugin default behavior
     basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty(), true, [\"release\"]))",
-    buildFileExtra = baseProject.buildFileExtra + """
+    buildFileExtra = baseProject.buildFileExtra +
+      """
 
-        android {
-          compileSdkVersion = 31
-          namespace = "com.test"
+      android {
+        compileSdkVersion = 31
+        namespace = "com.test"
 
-          // resolves config cache issue, can be removed when AGP 8 becomes the minimum supported version
-          buildFeatures {
-              shaders = false
-          }
+        // resolves config cache issue, can be removed when AGP 8 becomes the minimum supported version
+        buildFeatures {
+            shaders = false
         }
+      }
 
-        kotlin {
-          androidTarget {}
+      kotlin {
+        androidTarget {}
 
-          jvmToolchain {
-              languageVersion.set(JavaLanguageVersion.of("8"))
-          }
+        jvmToolchain {
+            languageVersion.set(JavaLanguageVersion.of("8"))
         }
-    """.trimIndent(),
+      }
+      """.trimIndent(),
   )
 }
 
@@ -208,14 +211,15 @@ fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(
   val baseProject = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
   return baseProject.copy(
     basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty()))",
-    buildFileExtra = baseProject.buildFileExtra + """
+    buildFileExtra = baseProject.buildFileExtra +
+      """
 
-        kotlin {
-          androidTarget {
-            publishLibraryVariants("release", "debug")
-          }
+      kotlin {
+        androidTarget {
+          publishLibraryVariants("release", "debug")
         }
-    """.trimIndent(),
+      }
+      """.trimIndent(),
   )
 }
 
@@ -231,7 +235,8 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   ),
   basePluginConfig = "configure(new AndroidSingleVariantLibrary(\"release\", true, true))",
-  buildFileExtra = """
+  buildFileExtra =
+    """
     android {
         namespace "com.test.library"
         compileSdkVersion 29
@@ -248,7 +253,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
         it.enabled = false
       }
     }
-  """.trimIndent(),
+    """.trimIndent(),
 )
 
 fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
@@ -258,14 +263,15 @@ fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: Kotli
     sourceFiles = plainAndroidProject.sourceFiles + listOf(
       SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
     ),
-    buildFileExtra = plainAndroidProject.buildFileExtra + """
+    buildFileExtra = plainAndroidProject.buildFileExtra +
+      """
 
       kotlin {
           jvmToolchain {
               languageVersion.set(JavaLanguageVersion.of("8"))
           }
       }
-    """.trimIndent(),
+      """.trimIndent(),
   )
 }
 
@@ -279,14 +285,15 @@ fun javaPlatformProjectSpec() = ProjectSpec(
   properties = defaultProperties,
   sourceFiles = emptyList(),
   basePluginConfig = "configure(new JavaPlatform())",
-  buildFileExtra = """
+  buildFileExtra =
+    """
     dependencies {
         constraints {
             api 'commons-httpclient:commons-httpclient:3.1'
             runtime 'org.postgresql:postgresql:42.2.5'
         }
     }
-  """.trimIndent(),
+    """.trimIndent(),
 )
 
 fun versionCatalogProjectSpec() = ProjectSpec(
@@ -299,11 +306,12 @@ fun versionCatalogProjectSpec() = ProjectSpec(
   properties = defaultProperties,
   sourceFiles = emptyList(),
   basePluginConfig = "configure(new VersionCatalog())",
-  buildFileExtra = """
+  buildFileExtra =
+    """
     catalog {
         versionCatalog {
             library('my-lib', 'com.mycompany:mylib:1.2')
         }
     }
-  """.trimIndent(),
+    """.trimIndent(),
 )

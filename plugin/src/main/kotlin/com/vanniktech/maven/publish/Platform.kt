@@ -444,9 +444,13 @@ public sealed interface JavadocJar {
   ) : JavadocJar {
     internal sealed interface DokkaTaskName
 
-    internal data class StringDokkaTaskName(val value: String) : DokkaTaskName
+    internal data class StringDokkaTaskName(
+      val value: String,
+    ) : DokkaTaskName
 
-    internal data class ProviderDokkaTaskName(val value: Provider<String>) : DokkaTaskName
+    internal data class ProviderDokkaTaskName(
+      val value: Provider<String>,
+    ) : DokkaTaskName
 
     public constructor(taskName: String) : this(StringDokkaTaskName(taskName))
     public constructor(taskName: Provider<String>) : this(ProviderDokkaTaskName(taskName))
@@ -494,8 +498,10 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
   }
 }
 
-private class MissingVariantException(name: String) : RuntimeException(
-  "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
-    " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
-    " extension object to something that matches the variant that ought to be published.",
-)
+private class MissingVariantException(
+  name: String,
+) : RuntimeException(
+    "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
+      " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
+      " extension object to something that matches the variant that ought to be published.",
+  )
