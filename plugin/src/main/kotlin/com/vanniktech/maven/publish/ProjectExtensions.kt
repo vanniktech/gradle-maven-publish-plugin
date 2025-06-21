@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package com.vanniktech.maven.publish
 
 import com.android.build.api.AndroidPluginVersion
@@ -11,6 +13,9 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
 
+@Suppress(
+  "GradleProjectIsolation",
+) // TODO: we can't call 'providers.gradleProperty' instead due to https://github.com/gradle/gradle/issues/23572.
 internal fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
 
 internal inline val Project.baseExtension: MavenPublishBaseExtension
@@ -51,12 +56,7 @@ internal fun Project.javaVersion(): JavaVersion {
   return JavaVersion.current()
 }
 
-internal fun Project.isAtLeastKotlinVersion(
-  id: String,
-  major: Int,
-  minor: Int,
-  patch: Int,
-): Boolean {
+internal fun Project.isAtLeastKotlinVersion(id: String, major: Int, minor: Int, patch: Int): Boolean {
   val plugin = project.plugins.getPlugin(id) as KotlinBasePlugin
   val elements = plugin.pluginVersion.takeWhile { it != '-' }.split(".")
   val kgpMajor = elements[0].toInt()
@@ -64,18 +64,17 @@ internal fun Project.isAtLeastKotlinVersion(
   val kgpPatch = elements[2].toInt()
   return kgpMajor > major ||
     (
-      kgpMajor == major && (
-        kgpMinor > minor ||
-          (kgpMinor == minor && kgpPatch >= patch)
-      )
+      kgpMajor == major &&
+        (
+          kgpMinor > minor ||
+            (kgpMinor == minor && kgpPatch >= patch)
+        )
     )
 }
 
-internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, patch: Int): Boolean {
-  return try {
-    androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch)
-  } catch (e: NoClassDefFoundError) {
-    // was added in 7.0
-    false
-  }
+internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, patch: Int): Boolean = try {
+  androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch)
+} catch (e: NoClassDefFoundError) {
+  // was added in 7.0
+  false
 }

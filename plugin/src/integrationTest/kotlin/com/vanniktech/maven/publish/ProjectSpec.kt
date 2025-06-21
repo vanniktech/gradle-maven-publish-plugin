@@ -38,7 +38,5 @@ data class SourceFile(
   val sourceSetFolder: String,
   val file: String,
 ) {
-  fun resolveIn(root: Path): Path {
-    return root.resolve("src/$sourceSet/$sourceSetFolder/$file")
-  }
+  fun resolveIn(root: Path): Path = root.resolve("src/$sourceSet/$sourceSetFolder/$file")
 }

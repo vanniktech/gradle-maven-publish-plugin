@@ -33,7 +33,7 @@ enum class AgpVersion(
   AGP_MIN(
     value = "8.0.0",
     minGradleVersion = GradleVersion.GRADLE_8_1,
-    firstUnsupportedGradleVersion = GradleVersion.GRADLE_ALPHA,
+    firstUnsupportedGradleVersion = GradleVersion.GRADLE_RC,
   ),
 
   // latest versions of each type
@@ -51,11 +51,11 @@ enum class KotlinVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
   // minimum supported
-  KOTLIN_MIN("1.9.24", firstUnsupportedGradleVersion = GradleVersion.GRADLE_ALPHA),
+  KOTLIN_MIN("1.9.24", firstUnsupportedGradleVersion = GradleVersion.GRADLE_RC),
 
   // latest versions of each type
-  KOTLIN_STABLE(Versions.KOTLIN_STABLE, firstUnsupportedGradleVersion = GradleVersion.GRADLE_ALPHA),
-  KOTLIN_RC(Versions.KOTLIN_RC, firstUnsupportedGradleVersion = GradleVersion.GRADLE_ALPHA),
+  KOTLIN_STABLE(Versions.KOTLIN_STABLE, firstUnsupportedGradleVersion = GradleVersion.GRADLE_RC),
+  KOTLIN_RC(Versions.KOTLIN_RC),
   KOTLIN_BETA(Versions.KOTLIN_BETA),
   KOTLIN_ALPHA(Versions.KOTLIN_ALPHA),
 }
@@ -73,8 +73,8 @@ enum class GradleVersion(
 
   // latest versions of each type
   GRADLE_STABLE(Versions.GRADLE_STABLE),
-  GRADLE_RC(Versions.GRADLE_RC),
-  GRADLE_BETA(Versions.GRADLE_BETA),
+  GRADLE_RC(Versions.GRADLE_RC, minJdkVersion = JavaVersion.VERSION_17),
+  GRADLE_BETA(Versions.GRADLE_BETA, minJdkVersion = JavaVersion.VERSION_17),
   GRADLE_ALPHA(Versions.GRADLE_ALPHA, minJdkVersion = JavaVersion.VERSION_17),
   ;
 
@@ -85,7 +85,9 @@ enum class GradleVersion(
   }
 }
 
-enum class GradlePluginPublish(val version: String) {
+enum class GradlePluginPublish(
+  val version: String,
+) {
   // minimum supported
   GRADLE_PLUGIN_PUBLISH_MIN("1.0.0"),
 

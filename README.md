@@ -19,6 +19,7 @@ default configuration and allows the most customization.
 The output of the following Gradle plugins is supported to be published with this plugin:
 
 - `com.android.library`
+- `com.android.fused-library`
 - `org.jetbrains.kotlin.jvm`
 - `org.jetbrains.kotlin.multiplatform`
 - `java`
@@ -40,9 +41,8 @@ plugin directly integrate with, so why should you use this plugin?
   that works regardless of whether this is a Gradle plugin, an Android library or a Kotlin Multiplatform project. This
   is especially useful for projects that combine multiple of these.
 - **Maven central integration**. The plugin makes it easy to configure publishing to Maven Central with dedicated
-  APIs to set it up and configure everything that is required. It also avoids issues like having multiple staging
-  repositories on Sonatype OSS and supports automatic releasing without requiring any interaction with the web
-  interface.
+  APIs to set it up and configure everything that is required. It also supports automatic releasing without requiring
+  any interaction with the web interface.
 - **In memory GPG signing keys**. Easily sign artifacts on CI by simply setting the required environment variables,
   no extra setup required.
 - **Gradle property based config**. Easily configure the plugin with Gradle properties that will apply to all

@@ -1,8 +1,10 @@
 # Configuring what to publish
 
 It is possible to configure publishing for the following Gradle plugins:
+
 - `com.android.library` as [single variant library](#android-library-single-variant) or
   as [multi variant library](#android-library-multiple-variants)
+- [`com.android.fused-library`](#android-fused-library)
 - [`org.jetbrains.kotlin.jvm`](#kotlin-jvm-library)
 - [`org.jetbrains.kotlin.multiplatform`](#kotlin-multiplatform-library)
 - [`java`](#java-library)
@@ -103,6 +105,46 @@ the specified variant instead of publishing all of them.
     }
     ```
 
+
+## Android Fused Library
+
+For projects using the `com.android.fused-library` plugin.
+
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+
+    mavenPublishing {
+      configure(new AndroidFusedLibrary())
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    import com.vanniktech.maven.publish.AndroidFusedLibrary
+
+    mavenPublishing {
+      configure(AndroidFusedLibrary())
+    }
+    ```
+
+!!! warning
+
+    Support for Android fused libraries is considered experimental and might break
+    with future Android Gradle plugin updates.
+
+!!! warning
+
+    Signing is currently unsupported for Android fused libraries.
+
+!!! info
+
+    Configuring source and javadoc publishing is currently not possible and the
+    plugin will always publush empty jars for them.
+
+
 ## Java Library
 
 For projects using the `java-library` plugin.
@@ -116,7 +158,7 @@ For projects using the `java-library` plugin.
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Javadoc()` to publish standard javadocs
       // the second whether to publish a sources jar
       configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
@@ -133,7 +175,7 @@ For projects using the `java-library` plugin.
       configure(JavaLibrary(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
-        // - `JavadocJar.Empty()` publish an emprt jar
+        // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Javadoc()` to publish standard javadocs
         javadocJar = JavadocJar.Javadoc(),
         // whether to publish a sources jar
@@ -155,7 +197,7 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
       // the second whether to publish a sources jar
       configure(new KotlinJvm(new JavadocJar.Dokka("dokkaHtml"), true))
@@ -172,7 +214,7 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
       configure(KotlinJvm(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
-        // - `JavadocJar.Empty()` publish an emprt jar
+        // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Dokka("dokkaHtml"),
         // whether to publish a sources jar
@@ -194,7 +236,7 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
     mavenPublishing {
       // the parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
       // the second whether to publish a sources jar
       // the third parameters configures which Android library variants to publish if this project has an Android target
@@ -214,7 +256,7 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
       configure(KotlinMultiplatform(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
-        // - `JavadocJar.Empty()` publish an emprt jar
+        // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Dokka("dokkaHtml"),
         // whether to publish a sources jar
@@ -240,7 +282,7 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an emprt jar
+      // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Javadoc()` to publish standard javadocs
       // the second whether to publish a sources jar
       configure(new GradlePlugin(new JavadocJar.Javadoc(), true))
@@ -257,7 +299,7 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
       configure(GradlePlugin(
         // configures the -javadoc artifact, possible values:
         // - `JavadocJar.None()` don't publish this artifact
-        // - `JavadocJar.Empty()` publish an emprt jar
+        // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Javadoc()` to publish standard javadocs
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
         javadocJar = JavadocJar.Javadoc(),

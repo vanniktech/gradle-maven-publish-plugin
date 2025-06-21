@@ -1,23 +1,21 @@
-root = true
+root=true
 
 [*]
-indent_size = 2
-charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
+indent_size=2
+charset=utf-8
+trim_trailing_whitespace=true
+insert_final_newline=true
 
 [*.{kt,kts}]
 ij_kotlin_imports_layout=*
 
-ij_kotlin_allow_trailing_comma = true
-ij_kotlin_allow_trailing_comma_on_call_site = true
+ij_kotlin_allow_trailing_comma=true
+ij_kotlin_allow_trailing_comma_on_call_site=true
 
 # makes constructor annotations indent the whole class
-ktlint_standard_annotation = disabled
+ktlint_standard_annotation=disabled
 # too aggressive in wrapping and indenting the expression in an assignment
-ktlint_standard_multiline-expression-wrapping = disabled
-# depends on the previous one
-ktlint_standard_string-template-indent = disabled
+ktlint_standard_multiline-expression-wrapping=disabled
 # make ktlint less eager to wrap function signatures and expression bodies
-ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 4
+ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than=unset
 ktlint_function_signature_body_expression_wrapping=default

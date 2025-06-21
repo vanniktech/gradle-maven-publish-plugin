@@ -32,14 +32,12 @@ internal abstract class ReleaseSonatypeRepositoryTask : DefaultTask() {
     fun TaskContainer.registerReleaseRepository(
       buildService: Provider<SonatypeRepositoryBuildService>,
       createRepository: TaskProvider<CreateSonatypeRepositoryTask>,
-    ): TaskProvider<ReleaseSonatypeRepositoryTask> {
-      return register(NAME, ReleaseSonatypeRepositoryTask::class.java) {
-        it.description = "Releases a staging repository on Sonatype OSS"
-        it.group = "release"
-        it.buildService.set(buildService)
-        it.usesService(buildService)
-        it.mustRunAfter(createRepository)
-      }
+    ): TaskProvider<ReleaseSonatypeRepositoryTask> = register(NAME, ReleaseSonatypeRepositoryTask::class.java) {
+      it.description = "Releases a staging repository on Sonatype OSS"
+      it.group = "release"
+      it.buildService.set(buildService)
+      it.usesService(buildService)
+      it.mustRunAfter(createRepository)
     }
   }
 }

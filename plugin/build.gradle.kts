@@ -2,6 +2,7 @@ plugins {
   id("shared")
   id("java-gradle-plugin")
   alias(libs.plugins.buildconfig)
+  alias(libs.plugins.android.lint)
 }
 
 gradlePlugin {
@@ -37,23 +38,81 @@ buildConfig {
   buildConfigField("String", "VERSION", "\"${project.findProperty("VERSION_NAME") ?: "dev"}\"")
 
   sourceSets.getByName(integrationTestSourceSet.name) {
-    buildConfigField("GRADLE_ALPHA", alpha.versions.gradle.asProvider().get())
-    buildConfigField("GRADLE_BETA", beta.versions.gradle.asProvider().get())
-    buildConfigField("GRADLE_RC", rc.versions.gradle.asProvider().get())
-    buildConfigField("GRADLE_STABLE", libs.versions.gradle.asProvider().get())
-    buildConfigField("ANDROID_GRADLE_ALPHA", alpha.versions.android.gradle.get())
-    buildConfigField("ANDROID_GRADLE_BETA", beta.versions.android.gradle.get())
-    buildConfigField("ANDROID_GRADLE_RC", rc.versions.android.gradle.get())
-    buildConfigField("ANDROID_GRADLE_STABLE", libs.versions.android.gradle.get())
+    buildConfigField(
+      "GRADLE_ALPHA",
+      alpha.versions.gradle
+        .asProvider()
+        .get(),
+    )
+    buildConfigField(
+      "GRADLE_BETA",
+      beta.versions.gradle
+        .asProvider()
+        .get(),
+    )
+    buildConfigField(
+      "GRADLE_RC",
+      rc.versions.gradle
+        .asProvider()
+        .get(),
+    )
+    buildConfigField(
+      "GRADLE_STABLE",
+      libs.versions.gradle
+        .asProvider()
+        .get(),
+    )
+    buildConfigField(
+      "ANDROID_GRADLE_ALPHA",
+      alpha.versions.android.gradle
+        .get(),
+    )
+    buildConfigField(
+      "ANDROID_GRADLE_BETA",
+      beta.versions.android.gradle
+        .get(),
+    )
+    buildConfigField(
+      "ANDROID_GRADLE_RC",
+      rc.versions.android.gradle
+        .get(),
+    )
+    buildConfigField(
+      "ANDROID_GRADLE_STABLE",
+      libs.versions.android.gradle
+        .get(),
+    )
     buildConfigField("KOTLIN_ALPHA", alpha.versions.kotlin.get())
     buildConfigField("KOTLIN_BETA", beta.versions.kotlin.get())
     buildConfigField("KOTLIN_RC", rc.versions.kotlin.get())
     buildConfigField("KOTLIN_STABLE", libs.versions.kotlin.get())
-    buildConfigField("GRADLE_PUBLISH_ALPHA", alpha.versions.gradle.plugin.publish.get())
-    buildConfigField("GRADLE_PUBLISH_BETA", beta.versions.gradle.plugin.publish.get())
-    buildConfigField("GRADLE_PUBLISH_RC", rc.versions.gradle.plugin.publish.get())
-    buildConfigField("GRADLE_PUBLISH_STABLE", libs.versions.gradle.plugin.publish.get())
+    buildConfigField(
+      "GRADLE_PUBLISH_ALPHA",
+      alpha.versions.gradle.plugin.publish
+        .get(),
+    )
+    buildConfigField(
+      "GRADLE_PUBLISH_BETA",
+      beta.versions.gradle.plugin.publish
+        .get(),
+    )
+    buildConfigField(
+      "GRADLE_PUBLISH_RC",
+      rc.versions.gradle.plugin.publish
+        .get(),
+    )
+    buildConfigField(
+      "GRADLE_PUBLISH_STABLE",
+      libs.versions.gradle.plugin.publish
+        .get(),
+    )
   }
+}
+
+lint {
+  baseline = file("lint-baseline.xml")
+  ignoreTestSources = true
+  warningsAsErrors = true
 }
 
 dependencies {
@@ -75,6 +134,15 @@ dependencies {
   testImplementation(libs.truth.java8)
   testImplementation(libs.truth.testKit)
   testImplementation(libs.maven.model)
+
+  lintChecks(libs.androidx.gradlePluginLints)
+}
+
+tasks.whenTaskAdded {
+  if (name.contains("lint") && this::class.java.name.contains("com.android.build")) {
+    // TODO: lints can be run on Java 17 or above, remove this once we bump the min Java version to 17.
+    enabled = JavaVersion.current() >= JavaVersion.VERSION_17
+  }
 }
 
 val integrationTest by tasks.registering(Test::class) {

@@ -18,13 +18,15 @@ public class Nexus(
   private val closeTimeoutSeconds: Long,
 ) {
   private val service by lazy {
-    val okHttpClient = OkHttpClient.Builder()
+    val okHttpClient = OkHttpClient
+      .Builder()
       .addInterceptor(NexusOkHttpInterceptor(username, password, userAgentName, userAgentVersion))
       .connectTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
       .readTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
       .writeTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
       .build()
-    val retrofit = Retrofit.Builder()
+    val retrofit = Retrofit
+      .Builder()
       .addConverterFactory(MoshiConverterFactory.create())
       .client(okHttpClient)
       .baseUrl(baseUrl)
@@ -180,9 +182,13 @@ public class Nexus(
         val properties = try {
           val response = service.getRepositoryActivity(repositoryId).execute()
           if (response.isSuccessful) {
-            response.body()?.find { it.name == "close" }
-              ?.events?.find { it.name == "ruleFailed" }
-              ?.properties?.filter { it.name == "failureMessage" }
+            response
+              .body()
+              ?.find { it.name == "close" }
+              ?.events
+              ?.find { it.name == "ruleFailed" }
+              ?.properties
+              ?.filter { it.name == "failureMessage" }
           } else {
             emptyList()
           }
@@ -214,14 +220,15 @@ public class Nexus(
 
   public fun releaseStagingRepository(repositoryId: String) {
     println("Releasing repository: $repositoryId")
-    val response = service.releaseRepository(
-      TransitionRepositoryInput(
-        TransitionRepositoryInputData(
-          stagedRepositoryIds = listOf(repositoryId),
-          autoDropAfterRelease = true,
+    val response = service
+      .releaseRepository(
+        TransitionRepositoryInput(
+          TransitionRepositoryInputData(
+            stagedRepositoryIds = listOf(repositoryId),
+            autoDropAfterRelease = true,
+          ),
         ),
-      ),
-    ).execute()
+      ).execute()
 
     if (!response.isSuccessful) {
       throw IOException("Cannot release repository: ${response.errorBody()?.string()}")
@@ -231,13 +238,14 @@ public class Nexus(
   }
 
   public fun dropStagingRepository(repositoryId: String) {
-    val response = service.dropRepository(
-      TransitionRepositoryInput(
-        TransitionRepositoryInputData(
-          stagedRepositoryIds = listOf(repositoryId),
+    val response = service
+      .dropRepository(
+        TransitionRepositoryInput(
+          TransitionRepositoryInputData(
+            stagedRepositoryIds = listOf(repositoryId),
+          ),
         ),
-      ),
-    ).execute()
+      ).execute()
 
     if (!response.isSuccessful) {
       throw IOException("Cannot drop repository: ${response.errorBody()?.string()}")

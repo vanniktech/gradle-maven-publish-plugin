@@ -2,20 +2,14 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
+import com.vanniktech.maven.publish.workaround.addTestFixturesSourcesJar
+import com.vanniktech.maven.publish.workaround.fixTestFixturesMetadata
+import org.gradle.api.Incubating
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.DocsType
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
-import org.gradle.api.plugins.internal.JavaPluginHelper
-import org.gradle.api.plugins.internal.JvmPluginsHelper
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.internal.component.external.model.ProjectDerivedCapability
-import org.gradle.jvm.component.internal.DefaultJvmSoftwareComponent
 import org.gradle.jvm.tasks.Jar
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
@@ -258,6 +252,42 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
 }
 
 /**
+ * To be used for `com.android.fused-library` projects. Applying this creates a publication for the library with
+ * empty source and javadoc jars.
+ *
+ * Equivalent Gradle set up:
+ * ```
+ * publishing {
+ *   publications {
+ *     register<MavenPublication>("maven") {
+ *       from(components["fusedLibraryComponent"])
+ *     }
+ *   }
+ * }
+ * ```
+ */
+@Incubating
+public class AndroidFusedLibrary : Platform() {
+  override val sourcesJar: Boolean = false
+  override val javadocJar: JavadocJar = JavadocJar.Empty()
+
+  override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("com.android.fused-library")) {
+      "Calling configure(AndroidFusedLibrary(...)) requires the com.android.fused-library plugin to be applied"
+    }
+
+    project.mavenPublications {
+      it.withJavadocJar(javadocJar, project, configureArchives = true)
+      it.withJavaSourcesJar(sourcesJar, project, configureArchives = true)
+    }
+  }
+
+  override fun equals(other: Any?): Boolean = other is AndroidFusedLibrary
+
+  override fun hashCode(): Int = this::class.hashCode()
+}
+
+/**
  * To be used for `org.jetbrains.kotlin.multiplatform` projects. Uses the default publications that gets created by
  * that plugin, including the automatically created `-sources` jars. Depending on the passed parameters for [javadocJar],
  * `-javadoc` will be added to the publications.
@@ -451,9 +481,13 @@ public sealed interface JavadocJar {
   ) : JavadocJar {
     internal sealed interface DokkaTaskName
 
-    internal data class StringDokkaTaskName(val value: String) : DokkaTaskName
+    internal data class StringDokkaTaskName(
+      val value: String,
+    ) : DokkaTaskName
 
-    internal data class ProviderDokkaTaskName(val value: Provider<String>) : DokkaTaskName
+    internal data class ProviderDokkaTaskName(
+      val value: Provider<String>,
+    ) : DokkaTaskName
 
     public constructor(taskName: String) : this(StringDokkaTaskName(taskName))
     public constructor(taskName: Provider<String>) : this(ProviderDokkaTaskName(taskName))
@@ -466,72 +500,38 @@ public sealed interface JavadocJar {
 
 private const val PUBLICATION_NAME = "maven"
 
-private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Project) {
+private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Project, configureArchives: Boolean = false) {
   if (enabled) {
     project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
   } else {
     val task = project.tasks.register("emptySourcesJar", Jar::class.java) {
       it.archiveClassifier.set("sources")
+      if (configureArchives) {
+        it.archiveBaseName.set(project.name)
+        it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
+      }
     }
     artifact(task)
   }
 }
 
-private fun MavenPublication.withJavadocJar(javadocJar: JavadocJar, project: Project) {
+private fun MavenPublication.withJavadocJar(javadocJar: JavadocJar, project: Project, configureArchives: Boolean = false) {
   val task = project.javadocJarTask(name, javadocJar)
   if (task != null) {
     artifact(task)
+
+    if (configureArchives) {
+      task.configure {
+        it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
+      }
+    }
   }
 }
 
 private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
   project.plugins.withId("java-test-fixtures") {
     if (sourcesJar) {
-      // TODO: remove after https://github.com/gradle/gradle/issues/20539 is resolved
-      val testFixtureSourceSetName = "testFixtures"
-      val extension = project.extensions.getByType(JavaPluginExtension::class.java)
-      val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
-
-      val projectInternal = project as ProjectInternal
-      val projectDerivedCapability = if (GradleVersion.current() >= GradleVersion.version("9.0-milestone-6")) {
-        ProjectDerivedCapability::class.java.getConstructor(ProjectInternal::class.java, String::class.java)
-      } else {
-        ProjectDerivedCapability::class.java.getConstructor(Project::class.java, String::class.java)
-      }.newInstance(projectInternal, "testFixtures")
-      val sourceElements = if (GradleVersion.current() >= GradleVersion.version("8.6-rc-1")) {
-        JvmPluginsHelper.createDocumentationVariantWithArtifact(
-          testFixturesSourceSet.sourcesElementsConfigurationName,
-          testFixtureSourceSetName,
-          DocsType.SOURCES,
-          setOf(projectDerivedCapability),
-          testFixturesSourceSet.sourcesJarTaskName,
-          testFixturesSourceSet.allSource,
-          projectInternal,
-        )
-      } else {
-        JvmPluginsHelper::class.java.getMethod(
-          "createDocumentationVariantWithArtifact",
-          String::class.java,
-          String::class.java,
-          String::class.java,
-          List::class.java,
-          String::class.java,
-          Object::class.java,
-          ProjectInternal::class.java,
-        ).invoke(
-          null,
-          testFixturesSourceSet.sourcesElementsConfigurationName,
-          testFixtureSourceSetName,
-          DocsType.SOURCES,
-          listOf(projectDerivedCapability),
-          testFixturesSourceSet.sourcesJarTaskName,
-          testFixturesSourceSet.allSource,
-          projectInternal,
-        ) as Configuration
-      }
-
-      val component = JavaPluginHelper.getJavaComponent(project) as DefaultJvmSoftwareComponent
-      component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))
+      addTestFixturesSourcesJar(project)
     }
 
     // test fixtures can't be mapped to the POM because there is no equivalent concept in Maven
@@ -541,18 +541,14 @@ private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
       it.suppressPomMetadataWarningsFor("testFixturesSourcesElements")
     }
 
-    project.afterEvaluate {
-      // Gradle will put the project group and version into capabilities instead of using
-      // the publication, this can lead to invalid published metadata
-      // TODO remove after https://github.com/gradle/gradle/issues/23354 is resolved
-      project.group = project.baseExtension.groupId.get()
-      project.version = project.baseExtension.version.get()
-    }
+    fixTestFixturesMetadata(project)
   }
 }
 
-private class MissingVariantException(name: String) : RuntimeException(
-  "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
-    " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
-    " extension object to something that matches the variant that ought to be published.",
-)
+private class MissingVariantException(
+  name: String,
+) : RuntimeException(
+    "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
+      " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
+      " extension object to something that matches the variant that ought to be published.",
+  )

@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: JDK ${{ matrix.java_version }}, Config ${{ matrix.test_config_method }}
@@ -30,6 +34,10 @@ jobs:
         run: echo -e "24333f8a63b6825ea9c5514f83c2829b004d1fee\n" > "$ANDROID_HOME/licenses/android-sdk-license"
 
       - uses: gradle/actions/setup-gradle@v4
+
+      - name: Run ktlint
+        run: ./kotlinw ktlint.main.kts --fail-on-changes
+        if: ${{ matrix.java_version != '11' }}
 
       - name: Build with Gradle
         run: ./gradlew build --stacktrace -DtestConfigMethod=${{ matrix.test_config_method }}

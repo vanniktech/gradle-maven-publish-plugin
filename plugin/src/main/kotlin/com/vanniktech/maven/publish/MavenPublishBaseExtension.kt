@@ -5,6 +5,7 @@ import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companio
 import com.vanniktech.maven.publish.sonatype.ReleaseSonatypeRepositoryTask.Companion.registerReleaseRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
+import com.vanniktech.maven.publish.workaround.rootProjectBuildDir
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -34,14 +35,41 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
 
   private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
-  internal val groupId: Property<String> = project.objects.property(String::class.java)
+  internal val groupId: Property<String> = project.objects
+    .property(String::class.java)
     .convention(project.provider { project.group.toString() })
-  internal val artifactId: Property<String> = project.objects.property(String::class.java)
+  internal val artifactId: Property<String> = project.objects
+    .property(String::class.java)
     .convention(project.provider { project.name.toString() })
-  internal val version: Property<String> = project.objects.property(String::class.java)
+  internal val version: Property<String> = project.objects
+    .property(String::class.java)
     .convention(project.provider { project.version.toString() })
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val platform: Property<Platform> = project.objects.property(Platform::class.java)
+
+  /**
+   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
+   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
+   * `publish` task.
+   *
+   * When the [automaticRelease] parameter is `true` the created deployment will be released automatically to
+   * Maven Central without any additional manual steps needed. When [automaticRelease] is not set or `false`
+   * the deployment has to be manually released through the [Central Portal website](https://central.sonatype.com/publishing/deployments).
+   *
+   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
+   * repository instead.
+   *
+   * This expects you provide the username and password of a user token through Gradle properties called
+   * `mavenCentralUsername` and `mavenCentralPassword`. See [here](https://central.sonatype.org/publish/generate-portal-token/)
+   * for how to obtain a user token.
+   *
+   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
+   */
+  @JvmOverloads
+  public fun publishToMavenCentral(automaticRelease: Boolean = false) {
+    @Suppress("DEPRECATION")
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease)
+  }
 
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
@@ -61,8 +89,46 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * @param host the instance of Sonatype OSSRH to use
    * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
    */
-  @JvmOverloads
-  public fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT, automaticRelease: Boolean = false) {
+  @Deprecated(
+    message = "OSSRH will be shut down after June 30, 2025. Migrate to Central Portal instead. " +
+      "See more info at https://central.sonatype.org/news/20250326_ossrh_sunset . After migrating " +
+      "your account remove the SonatypeHost parameter and update your user token to one created in " +
+      "the Central Portal.\n" +
+      "If you are already calling this method with CENTRAL_PORTAL, you can simply remove the parameter.",
+    replaceWith = ReplaceWith("publishToMavenCentral()"),
+  )
+  public fun publishToMavenCentral(host: SonatypeHost) {
+    @Suppress("DEPRECATION")
+    publishToMavenCentral(host, automaticRelease = false)
+  }
+
+  /**
+   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
+   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
+   * `publish` task. As part of running publish the plugin will automatically create a staging repository on Sonatype
+   * to which all artifacts will be published. At the end of the build this staging repository will be automatically
+   * closed. When the [automaticRelease] parameter is `true` the staging repository will also be released
+   * automatically afterwards.
+   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
+   * repository instead.
+   *
+   * This expects you provide your Sonatype username and password through Gradle properties called
+   * `mavenCentralUsername` and `mavenCentralPassword`.
+   *
+   * The `closeAndReleaseRepository` task is automatically configured for Sonatype OSSRH using the same credentials.
+   *
+   * @param host the instance of Sonatype OSSRH to use
+   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
+   */
+  @Deprecated(
+    message = "OSSRH will be shut down after June 30, 2025. Migrate to Central Portal instead. " +
+      "See more info at https://central.sonatype.org/news/20250326_ossrh_sunset . After migrating " +
+      "your account remove the SonatypeHost parameter and update your user token to one created in " +
+      "the Central Portal.\n" +
+      "If you are already calling this method with CENTRAL_PORTAL, you can simply remove the parameter.",
+    replaceWith = ReplaceWith("publishToMavenCentral()"),
+  )
+  public fun publishToMavenCentral(host: SonatypeHost, automaticRelease: Boolean) {
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
 
@@ -75,8 +141,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       automaticRelease = automaticRelease,
-      // TODO: stop accessing rootProject https://github.com/gradle/gradle/pull/26635
-      rootBuildDirectory = project.rootProject.layout.buildDirectory,
+      rootBuildDirectory = project.rootProjectBuildDir(),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
       isConfigurationCacheActive = buildFeatures.configurationCache.active,
     )
@@ -86,7 +151,13 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       repo.setUrl(buildService.map { it.publishingUrl() })
     }
 
-    configureCredentials { versionIsSnapshot.get() }
+    project.afterEvaluate { project ->
+      project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java).configureEach { repo ->
+        if (repo.name == "mavenCentral" && (!sonatypeHost.get().isCentralPortal || versionIsSnapshot.get())) {
+          repo.credentials(PasswordCredentials::class.java)
+        }
+      }
+    }
 
     val createRepository = project.tasks.registerCreateRepository(buildService, groupId, artifactId, version)
 
@@ -153,11 +224,11 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     project.gradleSigning.setRequired(version.map { !it.endsWith("-SNAPSHOT") })
 
     // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
-    val inMemoryKey = project.findOptionalProperty("signingInMemoryKey")
-    if (inMemoryKey != null) {
-      val inMemoryKeyId = project.findOptionalProperty("signingInMemoryKeyId")
-      val inMemoryKeyPassword = project.findOptionalProperty("signingInMemoryKeyPassword").orEmpty()
-      project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId, inMemoryKey, inMemoryKeyPassword)
+    val inMemoryKey = project.providers.gradleProperty("signingInMemoryKey")
+    if (inMemoryKey.isPresent) {
+      val inMemoryKeyId = project.providers.gradleProperty("signingInMemoryKeyId")
+      val inMemoryKeyPassword = project.providers.gradleProperty("signingInMemoryKeyPassword").orElse("")
+      project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId.orNull, inMemoryKey.get(), inMemoryKeyPassword.get())
     }
 
     project.mavenPublications { publication ->
@@ -237,8 +308,6 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     project.mavenPublications {
       it.version = this.version.get()
     }
-
-    configureCredentials { version.endsWith("-SNAPSHOT") }
   }
 
   /**
@@ -399,6 +468,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         val variant = project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release"
         configure(AndroidSingleVariantLibrary(variant, sourcesJar, javadocJar))
       }
+      project.plugins.hasPlugin("com.android.fused-library") -> {
+        configure(AndroidFusedLibrary())
+      }
       project.plugins.hasPlugin("com.gradle.plugin-publish") ->
         configure(GradlePublishPlugin())
       project.plugins.hasPlugin("java-gradle-plugin") ->
@@ -414,14 +486,6 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       project.plugins.hasPlugin("version-catalog") ->
         configure(VersionCatalog())
       else -> project.logger.warn("No compatible plugin found in project ${project.path} for publishing")
-    }
-  }
-
-  private inline fun configureCredentials(crossinline versionIsSnapshot: () -> Boolean) {
-    project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java) { repo ->
-      if (repo.name == "mavenCentral" && (!sonatypeHost.get().isCentralPortal || versionIsSnapshot())) {
-        repo.credentials(PasswordCredentials::class.java)
-      }
     }
   }
 

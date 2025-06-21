@@ -3,22 +3,35 @@ package com.vanniktech.maven.publish.nexus
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-internal data class StagingProfile(val id: String, val name: String)
+internal data class StagingProfile(
+  val id: String,
+  val name: String,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class StagingProfilesResponse(val data: List<StagingProfile>)
+internal data class StagingProfilesResponse(
+  val data: List<StagingProfile>,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class CreateRepositoryInputData(val description: String)
+internal data class CreateRepositoryInputData(
+  val description: String,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class CreateRepositoryInput(val data: CreateRepositoryInputData)
+internal data class CreateRepositoryInput(
+  val data: CreateRepositoryInputData,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class CreatedRepository(val stagedRepositoryId: String)
+internal data class CreatedRepository(
+  val stagedRepositoryId: String,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class CreateRepositoryResponse(val data: CreatedRepository)
+internal data class CreateRepositoryResponse(
+  val data: CreatedRepository,
+)
 
 @JsonClass(generateAdapter = true)
 internal data class Repository(
@@ -29,19 +42,35 @@ internal data class Repository(
 )
 
 @JsonClass(generateAdapter = true)
-internal data class RepositoryEventProperty(val name: String, val value: String)
+internal data class RepositoryEventProperty(
+  val name: String,
+  val value: String,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class RepositoryEvent(val name: String, val properties: List<RepositoryEventProperty>)
+internal data class RepositoryEvent(
+  val name: String,
+  val properties: List<RepositoryEventProperty>,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class RepositoryActivity(val name: String, val events: List<RepositoryEvent>)
+internal data class RepositoryActivity(
+  val name: String,
+  val events: List<RepositoryEvent>,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class ProfileRepositoriesResponse(val data: List<Repository>)
+internal data class ProfileRepositoriesResponse(
+  val data: List<Repository>,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class TransitionRepositoryInputData(val stagedRepositoryIds: List<String>, val autoDropAfterRelease: Boolean? = null)
+internal data class TransitionRepositoryInputData(
+  val stagedRepositoryIds: List<String>,
+  val autoDropAfterRelease: Boolean? = null,
+)
 
 @JsonClass(generateAdapter = true)
-internal data class TransitionRepositoryInput(val data: TransitionRepositoryInputData)
+internal data class TransitionRepositoryInput(
+  val data: TransitionRepositoryInputData,
+)
