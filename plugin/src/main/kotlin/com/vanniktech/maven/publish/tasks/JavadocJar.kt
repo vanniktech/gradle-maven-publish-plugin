@@ -15,11 +15,10 @@ public open class JavadocJar : Jar() {
 
   internal companion object {
     internal fun Project.javadocJarTask(prefix: String, javadocJar: JavadocJarOption): TaskProvider<out Jar>? = when (javadocJar) {
-        is JavadocJarOption.None -> null
-        is JavadocJarOption.Empty -> emptyJavadocJar(prefix)
-        is JavadocJarOption.Javadoc -> plainJavadocJar(prefix)
-        is JavadocJarOption.Dokka -> dokkaJavadocJar(prefix, javadocJar.taskName)
-      }
+      is JavadocJarOption.None -> null
+      is JavadocJarOption.Empty -> emptyJavadocJar(prefix)
+      is JavadocJarOption.Javadoc -> plainJavadocJar(prefix)
+      is JavadocJarOption.Dokka -> dokkaJavadocJar(prefix, javadocJar.taskName)
     }
 
     private fun Project.emptyJavadocJar(prefix: String): TaskProvider<out Jar> = tasks.register(

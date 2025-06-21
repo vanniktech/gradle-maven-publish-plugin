@@ -288,12 +288,13 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   ),
   basePluginConfig = "configure(new AndroidFusedLibrary())",
-  buildFileExtra = """
+  buildFileExtra =
+    """
     androidFusedLibrary {
         namespace = "com.test.library"
         minSdk = 29
     }
-  """.trimIndent(),
+    """.trimIndent(),
 )
 
 fun javaPlatformProjectSpec() = ProjectSpec(
