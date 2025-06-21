@@ -292,14 +292,8 @@ The publishing process for Maven Central consists of several steps
 
 Run the following Gradle task:
 ```sh
-./gradlew publishToMavenCentral --no-configuration-cache
+./gradlew publishToMavenCentral
 ```
-
-!!! note "Configuration cache"
-
-    Configuration caching when uploading releases is currently not possible. Supporting it is
-    blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
-
 
 Afterward go to [Deployments on the Central Portal website](https://central.sonatype.com/publishing/deployments)
 and click "Publish" on the deployment.
@@ -312,7 +306,7 @@ For automatic publishing use one of the following options
 
     Instead of running `publishToMavenCentral` as described above use:
     ```sh
-    ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+    ./gradlew publishAndReleaseToMavenCentral
     ```
 
 === "build.gradle"
@@ -328,7 +322,7 @@ For automatic publishing use one of the following options
 
     To publish use
     ```sh
-    ./gradlew publishToMavenCentral --no-configuration-cache
+    ./gradlew publishToMavenCentral
     ```
 
 === "build.gradle.kts"
@@ -345,7 +339,7 @@ For automatic publishing use one of the following options
 
     To publish use
     ```sh
-    ./gradlew publishToMavenCentral --no-configuration-cache
+    ./gradlew publishToMavenCentral
     ```
 
 === "gradle.properties"
@@ -358,11 +352,5 @@ For automatic publishing use one of the following options
 
     To publish use
     ```sh
-    ./gradlew publishToMavenCentral --no-configuration-cache
+    ./gradlew publishToMavenCentral
     ```
-
-!!! note "Configuration cache"
-
-    Configuration caching when uploading releases is currently not possible. Supporting it is
-    blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
-
