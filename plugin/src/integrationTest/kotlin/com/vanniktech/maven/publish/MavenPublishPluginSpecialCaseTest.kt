@@ -170,17 +170,18 @@ class MavenPublishPluginSpecialCaseTest {
       group = null,
       artifactId = null,
       version = null,
-      buildFileExtra = """
+      buildFileExtra =
+        """
         group = "com.example.test2"
         version = "3.2.1"
-      """.trimIndent(),
+        """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     val resultSpec = project.copy(
       group = "com.example.test2",
       // the project name is used as default value for the artifact id
-      artifactId = "default-root-project-name",
+      artifactId = "module",
       version = "3.2.1",
     )
     val actualResult = result.copy(projectSpec = resultSpec)

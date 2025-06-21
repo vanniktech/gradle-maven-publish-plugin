@@ -26,7 +26,9 @@ import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 
 internal abstract class SonatypeRepositoryBuildService :
-  BuildService<SonatypeRepositoryBuildService.Params>, AutoCloseable, OperationCompletionListener {
+  BuildService<SonatypeRepositoryBuildService.Params>,
+  AutoCloseable,
+  OperationCompletionListener {
   private val logger: Logger = Logging.getLogger(SonatypeRepositoryBuildService::class.java)
 
   internal interface Params : BuildServiceParameters {
@@ -64,9 +66,11 @@ internal abstract class SonatypeRepositoryBuildService :
   private val centralPortal by lazy {
     SonatypeCentralPortal(
       baseUrl = parameters.sonatypeHost.get().apiBaseUrl(),
-      usertoken = Base64.getEncoder().encode(
-        "${parameters.repositoryUsername.get()}:${parameters.repositoryPassword.get()}".toByteArray(),
-      ).toString(Charsets.UTF_8),
+      usertoken = Base64
+        .getEncoder()
+        .encode(
+          "${parameters.repositoryUsername.get()}:${parameters.repositoryPassword.get()}".toByteArray(),
+        ).toString(Charsets.UTF_8),
       userAgentName = BuildConfig.NAME,
       userAgentVersion = BuildConfig.VERSION,
       okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
@@ -175,34 +179,32 @@ internal abstract class SonatypeRepositoryBuildService :
     )
   }
 
-  internal fun publishingUrl(): String {
-    return if (parameters.versionIsSnapshot.get()) {
-      require(uploadId == null) {
-        "Staging repositories are not supported for SNAPSHOT versions."
-      }
+  internal fun publishingUrl(): String = if (parameters.versionIsSnapshot.get()) {
+    require(uploadId == null) {
+      "Staging repositories are not supported for SNAPSHOT versions."
+    }
 
-      val host = parameters.sonatypeHost.get()
-      if (host.isCentralPortal) {
-        "${host.rootUrl}/repository/maven-snapshots/"
-      } else {
-        "${host.rootUrl}/content/repositories/snapshots/"
-      }
+    val host = parameters.sonatypeHost.get()
+    if (host.isCentralPortal) {
+      "${host.rootUrl}/repository/maven-snapshots/"
     } else {
-      val stagingRepositoryId = requireNotNull(uploadId) {
-        if (parameters.configurationCacheActive.get()) {
-          "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
-            "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
-        } else {
-          "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
-        }
-      }
-
-      val host = parameters.sonatypeHost.get()
-      if (host.isCentralPortal) {
-        "file://${parameters.rootBuildDirectory.get()}/publish/staging/$stagingRepositoryId"
+      "${host.rootUrl}/content/repositories/snapshots/"
+    }
+  } else {
+    val stagingRepositoryId = requireNotNull(uploadId) {
+      if (parameters.configurationCacheActive.get()) {
+        "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
+          "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
       } else {
-        "${host.rootUrl}/service/local/staging/deployByRepositoryId/$stagingRepositoryId/"
+        "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
       }
+    }
+
+    val host = parameters.sonatypeHost.get()
+    if (host.isCentralPortal) {
+      "file://${parameters.rootBuildDirectory.get()}/publish/staging/$stagingRepositoryId"
+    } else {
+      "${host.rootUrl}/service/local/staging/deployByRepositoryId/$stagingRepositoryId/"
     }
   }
 
@@ -339,10 +341,12 @@ internal abstract class SonatypeRepositoryBuildService :
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
       isConfigurationCacheActive: Provider<Boolean>,
     ): Provider<SonatypeRepositoryBuildService> {
-      val okhttpTimeout = project.providers.gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
+      val okhttpTimeout = project.providers
+        .gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
         .map { it.toLong() }
         .orElse(60)
-      val closeTimeout = project.providers.gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
+      val closeTimeout = project.providers
+        .gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
         .map { it.toLong() }
         .orElse(60 * 15)
       val service = gradle.sharedServices.registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {

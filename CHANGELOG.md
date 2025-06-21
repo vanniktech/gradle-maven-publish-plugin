@@ -2,6 +2,61 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.32.0...HEAD) *(2025-xx-xx)*
 
+> [!CAUTION]
+> Sonatype OSSRH (oss.sonatype.org and s01.oss.sonatype.org) will be shut down on June 30, 2025.
+>
+> Migration steps:
+> 1. Sign in to the [Central Portal](https://central.sonatype.com) with your existing Sonatype account
+> 2. Go to [Namespaces](https://central.sonatype.com/publishing/namespaces) and click "Migrate Namespace"
+>    for the relevant namespace. Confirm the migration and wait for it to complete.
+> 3. Optional: If you want to publish snapshots of your project tap the 3 dots next to your namespace and
+>    select "Enable SNAPSHOTs"
+> 4. Go to [Account](https://central.sonatype.com/account) and select "Generate User Token". Use the shown
+>    "Username" and "Password" as values for `mavenCentralUsername` and `mavenCentralPassword`.
+> 5. Configure this plugin to publish to Central Portal. Either update your `SONATYPE_HOST` property from
+>    `DEFAULT` or `S01` to `CENTRAL_PORTAL` or call `publishToMavenCentral()`/`publishToMavenCentral(automaticRelease)`
+>    without a `SonatypeHost` parameter.
+
+**BREAKING**
+- `publishToMavenCentral()` and `publishToMavenCentral(automaticRelease)` without `SonatypeHost` will
+  now publish through the Central Portal.
+- Deprecated overloads of `publishToMavenCentral` that take a `SonatypeHost` parameter.
+- Deprecated `SonatypeHost`.
+
+New
+- Basic experimental support for `com.android.fused-library`. There are currently several limitations
+  on the Android Gradle plugin side which make signing as well as publishing sources/javadocs not possible.
+
+Improvements
+- Added new Gradle properties
+  - `mavenCentralPublishing=true` replaces `SONATYPE_HOST=CENTRAL_PORTAL`
+  - `mavenCentralAutomaticPublishing=true` replaces `SONATYPE_AUTOMATIC_RELEASE=true`
+  - `signAllPublications=true` replaces `RELEASE_SIGNING_ENABLED=true`
+  - Note: The old properties continue to work and there are no plans to remove them
+- The base plugin is now compatible with isolated projects as long as `pomFromGradleProperties()` is
+  not called.
+- Resolve issue that caused `version` to be read too early when publishing to
+  Central Portal.
+
+
+Thanks to @Goooler and @solrudev for their contributions to this release.
+
+#### Minimum supported versions
+- JDK 11
+- Gradle 8.5
+- Android Gradle Plugin 8.0.0
+- Kotlin Gradle Plugin 1.9.20
+
+#### Compatibility tested up to
+- JDK 24
+- Gradle 8.14.2
+- Gradle 9.0-rc1
+- Android Gradle Plugin 8.10.0
+- Android Gradle Plugin 8.11.0-rc02
+- Android Gradle Plugin 8.12.0-alpha06
+- Kotlin Gradle Plugin 2.1.21
+- Kotlin Gradle Plugin 2.2.0-RC3
+
 
 ## [0.32.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.32.0) *(2025-05-15)*
 
@@ -40,8 +95,8 @@ Configuration cache is generally supported, except for:
 ## [0.31.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.31.0) *(2025-03-06)*
 
 - Add support for publishing snapshots to Central Portal.
-    - Make sure to enable snapshots for your namespace on central.sonatype.com.
-    - Thanks to @solrudev for the contribution.
+  - Make sure to enable snapshots for your namespace on central.sonatype.com.
+  - Thanks to @solrudev for the contribution.
 - Add support for multiple matching staging profiles by taking the one with the longest
   matching prefix.
 
@@ -69,10 +124,10 @@ Configuration cache is generally supported, except for:
 ## [0.30.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.30.0) *(2024-10-13)*
 
 - Add support for Dokka 2.0.0-Beta
-    - Supports `org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled`
-    - Supports both `org.jetbrains.dokka` and `org.jetbrains.dokka-javadoc`
-    - If both are applied the javadoc output is published
-    - Removed support for the old `org.jetbrains.dokka-android` plugin
+  - Supports `org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled`
+  - Supports both `org.jetbrains.dokka` and `org.jetbrains.dokka-javadoc`
+  - If both are applied the javadoc output is published
+  - Removed support for the old `org.jetbrains.dokka-android` plugin
 - Support custom Sonatype hosts by providing a `https` url in `SONATYPE_HOST` Gradle property
 - Remove usages of deprecated Gradle API that is scheduled to be removed in Gradle 9.0
 - Raised minimum supported Gradle version
@@ -172,12 +227,12 @@ Configuration cache is generally supported, except for:
 ## [0.27.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.27.0) *(2024-01-06)*
 
 - Added new publishing related tasks
-    - `releaseRepository` releases a staging repository at the end of the build
-      and can be executed in the same build as the publishing task. This allows
-      having automatic releases without permanently enabling them.
-    - `publishToMavenCentral` as alias for running `publishAllPublicationsToMavenCentralRepository`.
-    - `publishAndReleaseToMavenCentral` as alias for running both of the above.
-    - For more information [checkout the docs](https://vanniktech.github.io/gradle-maven-publish-plugin/central/#publishing-releases).
+  - `releaseRepository` releases a staging repository at the end of the build
+    and can be executed in the same build as the publishing task. This allows
+    having automatic releases without permanently enabling them.
+  - `publishToMavenCentral` as alias for running `publishAllPublicationsToMavenCentralRepository`.
+  - `publishAndReleaseToMavenCentral` as alias for running both of the above.
+  - For more information [checkout the docs](https://vanniktech.github.io/gradle-maven-publish-plugin/central/#publishing-releases).
 - It is now possible to only pass a subset of the parameters to
   `coordinates(...)` and leave the others at their default value.
   Thanks to @sschuberth for the contribution.
@@ -326,11 +381,11 @@ Updated docs can be found on [the new website](https://vanniktech.github.io/grad
 - `project.group` and `project.version` will still be used as default values for group and version if the
   `GROUP`/`VERSION_NAME` Gradle properties do not exist and `coordinates` was not called, however there are 2
   **behavior changes**:
-    - The `GROUP` and `VERSION_NAME` Gradle properties take precedence over `project.group` and `project.version` instead
-      of being overwritten by them. If you need to define the properties but replace them for some projects,
-      please use the new `coordinates` method instead.
-    - The `GROUP` and `VERSION_NAME` Gradle properties will not be explicitly set as `project.group` and
-      `project.version` anymore.
+  - The `GROUP` and `VERSION_NAME` Gradle properties take precedence over `project.group` and `project.version` instead
+    of being overwritten by them. If you need to define the properties but replace them for some projects,
+    please use the new `coordinates` method instead.
+  - The `GROUP` and `VERSION_NAME` Gradle properties will not be explicitly set as `project.group` and
+    `project.version` anymore.
 - **NEW**: Added `dropRepository` task that will drop a Sonatype staging repository. It is possible to specify
   which repository to drop by adding a `--repository` parameter with the id of the staging repository that was
   printed during `publish`. If no repository is specified and there is only one staging repository, that one
@@ -477,13 +532,13 @@ Added support to set the following pom values through properties (thanks to @jar
 ## [0.19.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.19.0) *(2022-02-26)*
 
 - **Behavior Change:** When using version 7.1.0 or newer of the Android Gradle Plugin we will now publish all variants
-of a library unless `androidVariantToPublish` was set in the DSL. This means that for example both `debug` and `release`
-or all flavors.
+  of a library unless `androidVariantToPublish` was set in the DSL. This means that for example both `debug` and `release`
+  or all flavors.
 - Deprecated `androidVariantToPublish`. In the future the main plugin will always publish all variants of an Android
-library. If you need to publish only one variant or a subset take a look at the [base plugin](README.md#base-plugin)
-APIs.
+  library. If you need to publish only one variant or a subset take a look at the [base plugin](README.md#base-plugin)
+  APIs.
 - Base plugin: Added `AndroidSingleVariantLibrary` and `AndroidMultiVariantLibrary` options that use the new AGP 7.1
-APIs under the hood.
+  APIs under the hood.
 - Base plugin: Deprecated `AndroidLibrary` option in favor of the above
 - The integration with Sonatype Nexus has been extracted into it's own artifact and is available as `com.vanniktech:nexus:<version>`
 

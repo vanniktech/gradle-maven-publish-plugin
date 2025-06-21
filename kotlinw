@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+ROOT_DIR="$(dirname "$0")"
+
+KOTLIN_VERSION="$(grep -m 1 '^kotlin \?=' "$ROOT_DIR/gradle/libs.versions.toml" | cut -d'"' -f2)"
+
+INSTALLATION_DIR="${HOME}/.kotlinw/${KOTLIN_VERSION}"
+BINARY_DIR="${INSTALLATION_DIR}/kotlinc/bin"
+
+if [ ! -f "${BINARY_DIR}/kotlin" ]; then
+  echo "Downloading Kotlin ${KOTLIN_VERSION}"
+  mkdir -p "${INSTALLATION_DIR}"
+  temp_file=$(mktemp /tmp/kotlin.zip.XXXXXX)
+  curl -sLo "${temp_file}" "https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_VERSION}/kotlin-compiler-${KOTLIN_VERSION}.zip"
+  unzip -q "${temp_file}" -d "${INSTALLATION_DIR}"
+  rm -f "${temp_file}"
+fi
+
+# this works around an issue where the Kotlin compiler used by ktlint accesses code that JDK 12+ don't allow access to
+export JAVA_OPTS="--add-opens java.base/java.lang=ALL-UNNAMED"
+
+SCRIPT_FILE="$1"
+# will remove the first element of the $@ arguments array since we read it already above
+shift
+# uses kotlinc instead of kotlin because the latter doesn't allow specifying a jvm target and defaults to Java 8
+# the -- between SCRIPT_FILE and the other arguments is there so that the arguments are treated as arguments to the
+# script and not to kotlinc
+"${BINARY_DIR}/kotlinc" "-script" "$SCRIPT_FILE" "--" "${@}"

@@ -20,13 +20,15 @@ public class SonatypeCentralPortal(
   private val closeTimeoutSeconds: Long,
 ) {
   private val service by lazy {
-    val okHttpClient = OkHttpClient.Builder()
+    val okHttpClient = OkHttpClient
+      .Builder()
       .addInterceptor(SonatypeCentralPortalOkHttpInterceptor(usertoken, userAgentName, userAgentVersion))
       .connectTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
       .readTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
       .writeTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
       .build()
-    val retrofit = Retrofit.Builder()
+    val retrofit = Retrofit
+      .Builder()
       .addConverterFactory(ScalarsConverterFactory.create())
       .addConverterFactory(MoshiConverterFactory.create())
       .client(okHttpClient)

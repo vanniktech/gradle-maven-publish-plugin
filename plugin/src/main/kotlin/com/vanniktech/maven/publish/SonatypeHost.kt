@@ -8,18 +8,21 @@ import java.io.Serializable
  *
  * https://central.sonatype.org/articles/2021/Feb/23/new-users-on-s01osssonatypeorg/
  */
+@Deprecated(
+  message = "OSSRH will be shut down after June 30, 2025. Use the publishToMavenCentral() method" +
+    "without a SonatypeHost parameter instead. " +
+    "See more info at https://central.sonatype.org/news/20250326_ossrh_sunset.",
+)
 public data class SonatypeHost internal constructor(
   internal val rootUrl: String,
   internal val isCentralPortal: Boolean,
 ) : Serializable {
   public constructor(rootUrl: String) : this(rootUrl, isCentralPortal = false)
 
-  internal fun apiBaseUrl(): String {
-    return if (isCentralPortal) {
-      "$rootUrl/api/v1/"
-    } else {
-      "$rootUrl/service/local/"
-    }
+  internal fun apiBaseUrl(): String = if (isCentralPortal) {
+    "$rootUrl/api/v1/"
+  } else {
+    "$rootUrl/service/local/"
   }
 
   public companion object {

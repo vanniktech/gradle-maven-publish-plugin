@@ -203,13 +203,14 @@ class MavenPublishPluginPlatformTest {
   @TestParameterInjectorTest
   fun javaLibraryWithToolchainProject() {
     val project = javaLibraryProjectSpec().copy(
-      buildFileExtra = """
+      buildFileExtra =
+        """
         java {
             toolchain {
                 languageVersion = JavaLanguageVersion.of(8)
             }
         }
-      """.trimIndent(),
+        """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -681,6 +682,38 @@ class MavenPublishPluginPlatformTest {
     assertThat(result).sourcesJar().containsAllSourceFiles()
     assertThat(result).javadocJar().exists()
     assertThat(result).javadocJar().isSigned()
+  }
+
+  @TestParameterInjectorTest
+  fun androidFusedLibraryProject(
+    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
+  ) {
+    agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    assume().that(agpVersion).isAtLeast(AgpVersion.AGP_ALPHA)
+
+    val project = androidFusedLibraryProjectSpec(agpVersion)
+    // TODO: signing plugin currently unsupported
+    val result = project.run(fixtures, testProjectDir, testOptions.copy(signing = TestOptions.Signing.NO_SIGNING))
+
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact("aar").exists()
+    // TODO: signing plugin currently unsupported
+    // assertThat(result).artifact("aar").isSigned()
+    assertThat(result).pom().exists()
+    // TODO: signing plugin currently unsupported
+    // assertThat(result).pom().isSigned()
+    assertThat(result).pom().matchesExpectedPom("aar")
+    assertThat(result).module().exists()
+    // TODO: signing plugin currently unsupported
+    // assertThat(result).module().isSigned()
+    assertThat(result).sourcesJar().exists()
+    // TODO: signing plugin currently unsupported
+    // assertThat(result).sourcesJar().isSigned()
+    // TODO: actual sources jar currently unsupported
+    // assertThat(result).sourcesJar().containsAllSourceFiles()
+    assertThat(result).javadocJar().exists()
+    // TODO: signing plugin currently unsupported
+    // assertThat(result).javadocJar().isSigned()
   }
 
   @TestParameterInjectorTest

@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectories
 import kotlin.io.path.invariantSeparatorsPathString
@@ -10,21 +11,23 @@ import org.gradle.testkit.runner.GradleRunner
 
 fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectResult {
   val project = temp.resolve("project").apply { createDirectories() }
+  val module = project.resolve("module").apply { createDirectories() }
   val repo = temp.resolve("repo").apply { createDirectories() }
 
-  writeBuildFile(project.resolve("build.gradle"), repo, options)
+  writeBuildFile(module.resolve("build.gradle"), repo, options)
   writeSettingFile(project.resolve("settings.gradle"))
   writeGradleProperties(project.resolve("gradle.properties"), options)
-  writeSourceFiles(fixtures, project)
+  writeSourceFiles(fixtures, module)
   fixtures.resolve("test-secring.gpg").copyTo(project.resolve("test-secring.gpg"))
 
-  val task = ":publishAllPublicationsToTestFolderRepository"
+  val task = ":module:publishAllPublicationsToTestFolderRepository"
   val arguments = mutableListOf(task, "--stacktrace")
   if (supportsConfigCaching()) {
     arguments.add("--configuration-cache")
   }
 
-  val result = GradleRunner.create()
+  val result = GradleRunner
+    .create()
     .withGradleVersion(options.gradleVersion.value)
     .withProjectDir(project.toFile())
     .withDebug(true)
@@ -35,7 +38,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     result = result,
     task = task,
     projectSpec = this,
-    project = project,
+    project = module,
     repo = repo,
   )
 }
@@ -93,18 +96,17 @@ private fun ProjectSpec.pluginsBlock(options: TestOptions) = buildString {
   appendLine("}")
 }
 
-private fun ProjectSpec.publishingBlock(options: TestOptions): String {
-  return when (options.config) {
-    TestOptions.Config.PROPERTIES -> {
-      """
-        mavenPublishing {
-        }
-      """.trimIndent()
+private fun ProjectSpec.publishingBlock(options: TestOptions): String = when (options.config) {
+  TestOptions.Config.PROPERTIES -> {
+    """
+    mavenPublishing {
     }
-    TestOptions.Config.BASE,
-    TestOptions.Config.DSL,
-    -> listOfNotNull(
-      """
+    """.trimIndent()
+  }
+  TestOptions.Config.BASE,
+  TestOptions.Config.DSL,
+  -> listOfNotNull(
+    """
 
        mavenPublishing {
          ${if (options.config == TestOptions.Config.BASE) basePluginConfig else ""}
@@ -114,47 +116,46 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String {
 
          pom {
       """,
-      "    name = \"${properties["POM_NAME"]}\"".takeIf { properties.containsKey("POM_NAME") },
-      "    description = \"${properties["POM_DESCRIPTION"]}\"".takeIf { properties.containsKey("POM_DESCRIPTION") },
-      "    inceptionYear = \"${properties["POM_INCEPTION_YEAR"]}\"".takeIf { properties.containsKey("POM_INCEPTION_YEAR") },
-      "    url = \"${properties["POM_URL"]}\"".takeIf { properties.containsKey("POM_URL") },
-      """
-            licenses {
-              license {
-                name = "${properties["POM_LICENCE_NAME"]}"
-                url = "${properties["POM_LICENCE_URL"]}"
-                distribution = "${properties["POM_LICENCE_DIST"]}"
-              }
-            }
-      """.trimIndent().takeIf {
-        properties.containsKey("POM_LICENCE_NAME")
-      },
-      """
-            developers {
-              developer {
-                id = "${properties["POM_DEVELOPER_ID"]}"
-                name = "${properties["POM_DEVELOPER_NAME"]}"
-                url = "${properties["POM_DEVELOPER_URL"]}"
-              }
-            }
-      """.trimIndent().takeIf {
-        properties.containsKey("POM_DEVELOPER_ID")
-      },
-      """
-            scm {
-              url = "${properties["POM_SCM_URL"]}"
-              connection = "${properties["POM_SCM_CONNECTION"]}"
-              developerConnection = "${properties["POM_SCM_DEV_CONNECTION"]}"
-            }
-      """.trimIndent().takeIf {
-        properties.containsKey("POM_SCM_URL")
-      },
-      """
-         }
-       }
-      """.trimIndent(),
-    ).joinToString(separator = "\n")
-  }
+    "    name = \"${properties["POM_NAME"]}\"".takeIf { properties.containsKey("POM_NAME") },
+    "    description = \"${properties["POM_DESCRIPTION"]}\"".takeIf { properties.containsKey("POM_DESCRIPTION") },
+    "    inceptionYear = \"${properties["POM_INCEPTION_YEAR"]}\"".takeIf { properties.containsKey("POM_INCEPTION_YEAR") },
+    "    url = \"${properties["POM_URL"]}\"".takeIf { properties.containsKey("POM_URL") },
+    """
+    licenses {
+      license {
+        name = "${properties["POM_LICENCE_NAME"]}"
+        url = "${properties["POM_LICENCE_URL"]}"
+        distribution = "${properties["POM_LICENCE_DIST"]}"
+      }
+    }
+    """.trimIndent().takeIf {
+      properties.containsKey("POM_LICENCE_NAME")
+    },
+    """
+    developers {
+      developer {
+        id = "${properties["POM_DEVELOPER_ID"]}"
+        name = "${properties["POM_DEVELOPER_NAME"]}"
+        url = "${properties["POM_DEVELOPER_URL"]}"
+      }
+    }
+    """.trimIndent().takeIf {
+      properties.containsKey("POM_DEVELOPER_ID")
+    },
+    """
+    scm {
+      url = "${properties["POM_SCM_URL"]}"
+      connection = "${properties["POM_SCM_CONNECTION"]}"
+      developerConnection = "${properties["POM_SCM_DEV_CONNECTION"]}"
+    }
+    """.trimIndent().takeIf {
+      properties.containsKey("POM_SCM_URL")
+    },
+    """
+      }
+    }
+    """.trimIndent(),
+  ).joinToString(separator = "\n")
 }
 
 private fun writeSettingFile(path: Path) {
@@ -178,6 +179,7 @@ private fun writeSettingFile(path: Path) {
 
     rootProject.name = "default-root-project-name"
 
+    include(":module")
     """.trimIndent(),
   )
 }
@@ -191,6 +193,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
       appendLine("kotlin.mpp.androidSourceSetLayoutVersion1.nowarn=true")
       appendLine("org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled")
       appendLine("org.jetbrains.dokka.experimental.gradle.pluginMode.noWarn=true")
+      appendLine("android.experimental.fusedLibrarySupport=true")
       appendLine()
 
       if (options.config == TestOptions.Config.PROPERTIES) {
@@ -226,7 +229,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
         TestOptions.Signing.GPG_KEY -> {
           appendLine("signing.keyId=B89C4055")
           appendLine("signing.password=test")
-          appendLine("signing.secretKeyRingFile=test-secring.gpg")
+          appendLine("signing.secretKeyRingFile=${path.parent.absolutePathString()}/test-secring.gpg")
         }
         TestOptions.Signing.IN_MEMORY_KEY -> {
           appendLine(
