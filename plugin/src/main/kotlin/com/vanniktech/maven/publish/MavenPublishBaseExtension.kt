@@ -1,9 +1,9 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.sonatype.CreateSonatypeRepositoryTask.Companion.registerCreateRepository
+import com.vanniktech.maven.publish.central.EnableAutomaticMavenCentralPublishingTask.Companion.registerEnableAutomaticMavenCentralPublishingTask
+import com.vanniktech.maven.publish.central.MavenCentralBuildService.Companion.registerMavenCentralBuildService
+import com.vanniktech.maven.publish.central.PrepareMavenCentralPublishingTask.Companion.registerPrepareMavenCentralPublishingTask
 import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companion.registerDropRepository
-import com.vanniktech.maven.publish.sonatype.ReleaseSonatypeRepositoryTask.Companion.registerReleaseRepository
-import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
 import javax.inject.Inject
 import org.gradle.api.Action
@@ -80,20 +80,20 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       }
     }
 
-    val buildService = project.registerSonatypeRepositoryBuildService(
+    val buildService = project.registerMavenCentralBuildService(
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
     )
 
-    val createRepository = project.tasks.registerCreateRepository(buildService, groupId, artifactId, version, localRepository)
-    val releaseRepository = project.tasks.registerReleaseRepository(buildService)
+    val prepareTask = project.tasks.registerPrepareMavenCentralPublishingTask(buildService, groupId, artifactId, version, localRepository)
+    val enableAutomaticTask = project.tasks.registerEnableAutomaticMavenCentralPublishingTask(buildService)
 
     project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
       if (publishTask.name.endsWith("ToMavenCentralRepository")) {
-        publishTask.dependsOn(createRepository)
+        publishTask.dependsOn(prepareTask)
         if (automaticRelease) {
-          publishTask.dependsOn(releaseRepository)
+          publishTask.dependsOn(enableAutomaticTask)
         }
       }
     }
@@ -101,15 +101,15 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     project.tasks.registerDropRepository(buildService)
 
     project.tasks.register("publishToMavenCentral") {
-      it.description = "Publishes to a staging repository on Sonatype OSS"
-      it.group = "release"
+      it.description = "Publishes to Maven Central"
+      it.group = "publishing"
       it.dependsOn(project.tasks.named("publishAllPublicationsToMavenCentralRepository"))
     }
     project.tasks.register("publishAndReleaseToMavenCentral") {
-      it.description = "Publishes to a staging repository on Sonatype OSS and releases it to MavenCentral"
-      it.group = "release"
+      it.description = "Publishes to Maven Central and automatically triggers release"
+      it.group = "publishing"
       it.dependsOn(project.tasks.named("publishAllPublicationsToMavenCentralRepository"))
-      it.dependsOn(releaseRepository)
+      it.dependsOn(enableAutomaticTask)
     }
   }
 
