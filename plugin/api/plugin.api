@@ -1,3 +1,11 @@
+public final class com/vanniktech/maven/publish/AndroidFusedLibrary : com/vanniktech/maven/publish/Platform {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
+	public fun getSourcesJar ()Z
+	public fun hashCode ()I
+}
+
 public final class com/vanniktech/maven/publish/AndroidMultiVariantLibrary : com/vanniktech/maven/publish/Platform {
 	public fun <init> ()V
 	public fun <init> (Z)V

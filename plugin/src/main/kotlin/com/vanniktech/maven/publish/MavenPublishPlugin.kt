@@ -26,6 +26,9 @@ public open class MavenPublishPlugin : Plugin<Project> {
         baseExtension.configureBasedOnAppliedPlugins()
       }
     }
+    project.plugins.withId("com.android.fused-library") {
+      baseExtension.configureBasedOnAppliedPlugins()
+    }
 
     project.afterEvaluate {
       // will no-op if it was already called

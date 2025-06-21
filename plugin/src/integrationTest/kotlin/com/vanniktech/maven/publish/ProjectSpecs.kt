@@ -13,6 +13,7 @@ val kotlinJvmPlugin = PluginSpec("org.jetbrains.kotlin.jvm")
 val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
 val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
+val androidFusedLibraryPlugin = PluginSpec("com.android.fused-library")
 val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 val dokkaPlugin = PluginSpec("org.jetbrains.dokka", "1.8.10")
 val dokka2Plugin = PluginSpec("org.jetbrains.dokka", "2.0.0-Beta")
@@ -268,6 +269,26 @@ fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: Kotli
     """.trimIndent(),
   )
 }
+
+fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
+  plugins = listOf(
+    androidFusedLibraryPlugin.copy(version = version.value),
+  ),
+  group = "com.example",
+  artifactId = "test-artifact",
+  version = "1.0.0",
+  properties = defaultProperties,
+  sourceFiles = listOf(
+    SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
+  ),
+  basePluginConfig = "configure(new AndroidFusedLibrary())",
+  buildFileExtra = """
+    androidFusedLibrary {
+        namespace = "com.test.library"
+        minSdk = 29
+    }
+  """.trimIndent(),
+)
 
 fun javaPlatformProjectSpec() = ProjectSpec(
   plugins = listOf(

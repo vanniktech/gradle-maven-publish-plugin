@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectories
 import kotlin.io.path.invariantSeparatorsPathString
@@ -10,15 +11,16 @@ import org.gradle.testkit.runner.GradleRunner
 
 fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectResult {
   val project = temp.resolve("project").apply { createDirectories() }
+  val module = project.resolve("module").apply { createDirectories() }
   val repo = temp.resolve("repo").apply { createDirectories() }
 
-  writeBuildFile(project.resolve("build.gradle"), repo, options)
+  writeBuildFile(module.resolve("build.gradle"), repo, options)
   writeSettingFile(project.resolve("settings.gradle"))
   writeGradleProperties(project.resolve("gradle.properties"), options)
-  writeSourceFiles(fixtures, project)
+  writeSourceFiles(fixtures, module)
   fixtures.resolve("test-secring.gpg").copyTo(project.resolve("test-secring.gpg"))
 
-  val task = ":publishAllPublicationsToTestFolderRepository"
+  val task = ":module:publishAllPublicationsToTestFolderRepository"
   val arguments = mutableListOf(task, "--stacktrace")
   if (supportsConfigCaching()) {
     arguments.add("--configuration-cache")
@@ -35,7 +37,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     result = result,
     task = task,
     projectSpec = this,
-    project = project,
+    project = module,
     repo = repo,
   )
 }
@@ -178,6 +180,7 @@ private fun writeSettingFile(path: Path) {
 
     rootProject.name = "default-root-project-name"
 
+    include(":module")
     """.trimIndent(),
   )
 }
@@ -191,6 +194,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
       appendLine("kotlin.mpp.androidSourceSetLayoutVersion1.nowarn=true")
       appendLine("org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled")
       appendLine("org.jetbrains.dokka.experimental.gradle.pluginMode.noWarn=true")
+      appendLine("android.experimental.fusedLibrarySupport=true")
       appendLine()
 
       if (options.config == TestOptions.Config.PROPERTIES) {
@@ -226,7 +230,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
         TestOptions.Signing.GPG_KEY -> {
           appendLine("signing.keyId=B89C4055")
           appendLine("signing.password=test")
-          appendLine("signing.secretKeyRingFile=test-secring.gpg")
+          appendLine("signing.secretKeyRingFile=${path.parent.absolutePathString()}/test-secring.gpg")
         }
         TestOptions.Signing.IN_MEMORY_KEY -> {
           appendLine(
