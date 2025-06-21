@@ -44,9 +44,9 @@ public open class MavenPublishPlugin : Plugin<Project> {
     }
     val sonatypeHost = providers.gradleProperty("SONATYPE_HOST").getOrElse("")
     return if (!sonatypeHost.isNullOrBlank()) {
-       SonatypeHost.valueOf(sonatypeHost)
+      SonatypeHost.valueOf(sonatypeHost)
     } else {
-       null
+      null
     }
   }
 
