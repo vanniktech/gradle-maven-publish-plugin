@@ -60,7 +60,7 @@ public data class JavaLibrary @JvmOverloads constructor(
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar(javadocJar, project)
+      it.withJavadocJar(javadocJar, project, multipleTasks = false)
     }
 
     setupTestFixtures(project, sourcesJar)
@@ -91,7 +91,7 @@ public data class GradlePlugin @JvmOverloads constructor(
 
     project.mavenPublicationsWithoutPluginMarker {
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar(javadocJar, project)
+      it.withJavadocJar(javadocJar, project, multipleTasks = false)
     }
   }
 }
@@ -278,7 +278,7 @@ public class AndroidFusedLibrary : Platform() {
     }
 
     project.mavenPublications {
-      it.withJavadocJar(javadocJar, project, configureArchives = true)
+      it.withJavadocJar(javadocJar, project, multipleTasks = false, configureArchives = true)
       it.withJavaSourcesJar(sourcesJar, project, configureArchives = true)
     }
   }
@@ -318,7 +318,7 @@ public data class KotlinMultiplatform internal constructor(
     }
 
     project.mavenPublications {
-      it.withJavadocJar(javadocJar, project)
+      it.withJavadocJar(javadocJar, project, multipleTasks = true)
     }
 
     project.extensions.configure(KotlinMultiplatformExtension::class.java) {
@@ -367,7 +367,7 @@ public data class KotlinJvm @JvmOverloads constructor(
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar(javadocJar, project)
+      it.withJavadocJar(javadocJar, project, multipleTasks = false)
     }
 
     setupTestFixtures(project, sourcesJar)
@@ -529,8 +529,13 @@ private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Proje
   }
 }
 
-private fun MavenPublication.withJavadocJar(javadocJar: JavadocJar, project: Project, configureArchives: Boolean = false) {
-  val task = project.javadocJarTask(name, javadocJar)
+private fun MavenPublication.withJavadocJar(
+  javadocJar: JavadocJar,
+  project: Project,
+  multipleTasks: Boolean,
+  configureArchives: Boolean = false,
+) {
+  val task = project.javadocJarTask(javadocJar, prefix = name.takeIf { multipleTasks })
   if (task != null) {
     artifact(task)
 
