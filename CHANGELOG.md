@@ -24,6 +24,11 @@
 - Deprecated `SonatypeHost`.
 
 Improvements
+- Added new Gradle properties
+   - `mavenCentralPublishing=true` replaces `SONATYPE_HOST=CENTRAL_PORTAL`
+   - `mavenCentralAutomaticPublishing=true` replaces `SONATYPE_AUTOMATIC_RELEASE=true`
+   - `signAllPublications=true` replaces `RELEASE_SIGNING_ENABLED=true`
+   - Note: The old properties continue to work and there are no plans to remove them
 - The base plugin is now compatible with isolated projects as long as `pomFromGradleProperties()` is
   not called.
 
