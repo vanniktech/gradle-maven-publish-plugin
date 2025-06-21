@@ -2,6 +2,8 @@ package com.vanniktech.maven.publish.sonatype
 
 import com.vanniktech.maven.publish.BuildConfig
 import com.vanniktech.maven.publish.central.EndOfBuildAction
+import com.vanniktech.maven.publish.central.MavenCentralCoordinates
+import com.vanniktech.maven.publish.central.MavenCentralProject
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
 import java.io.File
 import java.io.FileOutputStream
@@ -75,15 +77,17 @@ internal abstract class SonatypeRepositoryBuildService :
 
   private val endOfBuildActions = mutableSetOf<EndOfBuildAction>()
 
-  private val coordinates = mutableSetOf<Triple<String, String, String>>()
+  private val projectsToPublish = mutableSetOf<MavenCentralProject>()
 
   private var buildIsSuccess: Boolean = true
 
   /**
    * Is only be allowed to be called from task actions.
    */
-  fun createStagingRepository(group: String, artifactId: String, version: String) {
-    coordinates.add(Triple(group, artifactId, version))
+  fun registerProject(group: String, artifactId: String, version: String) {
+    val coordinates = MavenCentralCoordinates(group, artifactId, version)
+    val project = MavenCentralProject(coordinates)
+    projectsToPublish.add(project)
 
     if (parameters.versionIsSnapshot.get()) {
       return
@@ -107,7 +111,7 @@ internal abstract class SonatypeRepositoryBuildService :
 
   /**
    * Is only be allowed to be called from task actions. Tasks calling this must run after tasks
-   * that call [createStagingRepository].
+   * that call [registerProject].
    */
   fun shouldCloseAndReleaseRepository(manualStagingRepositoryId: String?) {
     if (manualStagingRepositoryId != null) {
@@ -124,7 +128,7 @@ internal abstract class SonatypeRepositoryBuildService :
 
   /**
    * Is only be allowed to be called from task actions. Tasks calling this must run after tasks
-   * that call [createStagingRepository].
+   * that call [registerProject].
    */
   fun shouldDropRepository(manualStagingRepositoryId: String?) {
     if (manualStagingRepositoryId != null) {
@@ -178,15 +182,18 @@ internal abstract class SonatypeRepositoryBuildService :
     val closeActions = actions.filterIsInstance<EndOfBuildAction.Close>()
     if (closeActions.isNotEmpty()) {
       if (uploadId != null) {
+        val coordinates = projectsToPublish.map { it.coordinates }.toSet()
         val deploymentName = if (coordinates.size == 1) {
           val coordinate = coordinates.single()
-          "${coordinate.first}-${coordinate.second}-${coordinate.third}"
-        } else if (coordinates.distinctBy { it.first + it.third }.size == 1) {
+          "${coordinate.group}-${coordinate.artifactId}-${coordinate.version}"
+        } else if (coordinates.distinctBy { it.group + it.version }.size == 1) {
           val coordinate = coordinates.first()
-          "${coordinate.first}-${coordinate.third}"
+          "${coordinate.group}-${coordinate.version}"
         } else {
-          "${parameters.groupId.get()}-$uploadId"
+          val coordinate = coordinates.first()
+          "${coordinate.group}-$uploadId"
         }
+
         val publishingType = if (actions.contains(EndOfBuildAction.ReleaseAfterClose)) {
           "AUTOMATIC"
         } else {
