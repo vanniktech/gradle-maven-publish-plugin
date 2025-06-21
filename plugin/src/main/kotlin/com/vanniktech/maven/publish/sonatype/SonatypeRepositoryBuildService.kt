@@ -9,16 +9,12 @@ import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.USER_MANAGED
 import java.io.File
 import java.io.IOException
-import java.net.URI
 import java.util.Base64
-import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -32,10 +28,7 @@ internal abstract class SonatypeRepositoryBuildService :
   BuildService<SonatypeRepositoryBuildService.Params>,
   AutoCloseable,
   OperationCompletionListener {
-  private val logger: Logger = Logging.getLogger(SonatypeRepositoryBuildService::class.java)
-
   internal interface Params : BuildServiceParameters {
-    val versionIsSnapshot: Property<Boolean>
     val repositoryUsername: Property<String>
     val repositoryPassword: Property<String>
     val okhttpTimeoutSeconds: Property<Long>
@@ -58,15 +51,6 @@ internal abstract class SonatypeRepositoryBuildService :
     )
   }
 
-  // used for the publishing tasks
-  private var uploadId: String? = null
-    set(value) {
-      check(field == null || field == value) {
-        "uploadId was already set to '$field', new value '$value'"
-      }
-      field = value
-    }
-
   private var publishId: String? = null
     set(value) {
       check(field == null || field == value) {
@@ -82,36 +66,30 @@ internal abstract class SonatypeRepositoryBuildService :
   private var buildIsSuccess: Boolean = true
 
   /**
-   * Is only be allowed to be called from task actions.
+   * Is only allowed to be called from task actions.
    */
-  fun registerProject(group: String, artifactId: String, version: String) {
+  fun registerProject(group: String, artifactId: String, version: String, localRepository: File) {
+    if (version.endsWith("-SNAPSHOT")) {
+      return
+    }
+
     val coordinates = MavenCentralCoordinates(group, artifactId, version)
-    val project = MavenCentralProject(coordinates)
+    val project = MavenCentralProject(coordinates, localRepository)
     projectsToPublish.add(project)
-
-    if (parameters.versionIsSnapshot.get()) {
-      return
-    }
-
-    if (uploadId != null) {
-      return
-    }
-
-    uploadId = UUID.randomUUID().toString()
 
     endOfBuildActions += EndOfBuildAction.Upload
     endOfBuildActions += EndOfBuildAction.Drop(runAfterFailure = true)
   }
 
   /**
-   * Is only be allowed to be called from task actions.
+   * Is only allowed to be called from task actions.
    */
   fun enableAutomaticPublishing() {
     endOfBuildActions += EndOfBuildAction.Publish
   }
 
   /**
-   * Is only be allowed to be called from task actions. Tasks calling this must run after tasks
+   * Is only allowed to be called from task actions. Tasks calling this must run after tasks
    * that call [registerProject].
    */
   fun shouldDropRepository(manualStagingRepositoryId: String?) {
@@ -122,21 +100,6 @@ internal abstract class SonatypeRepositoryBuildService :
     }
 
     endOfBuildActions += EndOfBuildAction.Drop(runAfterFailure = false)
-  }
-
-  internal fun publishingUrl(): URI = if (parameters.versionIsSnapshot.get()) {
-    error { "Staging repositories are not supported for SNAPSHOT versions." }
-  } else {
-    val id = requireNotNull(uploadId) {
-      "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
-    }
-
-    parameters
-      .rootBuildDirectory
-      .get()
-      .asFile
-      .resolve("publish/staging/$id")
-      .toURI()
   }
 
   override fun onFinish(event: FinishEvent) {
@@ -152,19 +115,12 @@ internal abstract class SonatypeRepositoryBuildService :
       // surround with try catch since failing again on cleanup actions causes confusion
       try {
         runEndOfBuildActions(endOfBuildActions.filter { it.runAfterFailure })
-      } catch (e: IOException) {
-        if (buildIsSuccess) {
-          throw e
-        } else {
-          logger.info("Failed processing $uploadId staging repository after previous build failure", e)
-        }
+      } catch (_: IOException) {
       }
     }
   }
 
   private fun runEndOfBuildActions(actions: List<EndOfBuildAction>) {
-    val uploadId = uploadId
-
     if (actions.contains(EndOfBuildAction.Upload)) {
       val coordinates = projectsToPublish.map { it.coordinates }.toSet()
       val deploymentName = if (coordinates.size == 1) {
@@ -175,7 +131,7 @@ internal abstract class SonatypeRepositoryBuildService :
         "${coordinate.group}-${coordinate.version}"
       } else {
         val coordinate = coordinates.first()
-        "${coordinate.group}-$uploadId"
+        "${coordinate.group}-${System.currentTimeMillis()}"
       }
 
       val publishingType = if (actions.contains(EndOfBuildAction.Publish)) {
@@ -184,18 +140,22 @@ internal abstract class SonatypeRepositoryBuildService :
         USER_MANAGED
       }
 
-      val directory = File(publishingUrl())
-      val zipFile = File("${directory.absolutePath}.zip")
+      val zipFile = parameters.rootBuildDirectory
+        .file("publish/$deploymentName-${System.currentTimeMillis()}.zip")
+        .get()
+        .asFile
       val out = ZipOutputStream(zipFile.outputStream())
-      directory
-        .walkTopDown()
-        .filter { it.isFile && !it.name.contains("maven-metadata") }
-        .forEach {
-          val entry = ZipEntry(it.toRelativeString(directory))
-          out.putNextEntry(entry)
-          out.write(it.readBytes())
-          out.closeEntry()
-        }
+      projectsToPublish.forEach { project ->
+        project.localRepository
+          .walkTopDown()
+          .filter { it.isFile && !it.name.contains("maven-metadata") }
+          .forEach {
+            val entry = ZipEntry(it.toRelativeString(project.localRepository))
+            out.putNextEntry(entry)
+            out.write(it.readBytes())
+            out.closeEntry()
+          }
+      }
       out.close()
 
       publishId = centralPortal.upload(deploymentName, publishingType, zipFile)
@@ -214,7 +174,6 @@ internal abstract class SonatypeRepositoryBuildService :
     private const val NAME = "sonatype-repository-build-service"
 
     fun Project.registerSonatypeRepositoryBuildService(
-      versionIsSnapshot: Provider<Boolean>,
       repositoryUsername: Provider<String>,
       repositoryPassword: Provider<String>,
       rootBuildDirectory: Provider<Directory>,
@@ -230,7 +189,6 @@ internal abstract class SonatypeRepositoryBuildService :
         .orElse(60 * 15)
       val service = gradle.sharedServices.registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {
         it.maxParallelUsages.set(1)
-        it.parameters.versionIsSnapshot.set(versionIsSnapshot)
         it.parameters.repositoryUsername.set(repositoryUsername)
         it.parameters.repositoryPassword.set(repositoryPassword)
         it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
