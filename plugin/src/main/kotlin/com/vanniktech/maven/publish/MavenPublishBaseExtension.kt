@@ -5,7 +5,6 @@ import com.vanniktech.maven.publish.sonatype.DropSonatypeRepositoryTask.Companio
 import com.vanniktech.maven.publish.sonatype.ReleaseSonatypeRepositoryTask.Companion.registerReleaseRepository
 import com.vanniktech.maven.publish.sonatype.SonatypeRepositoryBuildService.Companion.registerSonatypeRepositoryBuildService
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
-import com.vanniktech.maven.publish.workaround.rootProjectBuildDir
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -65,15 +64,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     mavenCentral.set(true)
     mavenCentral.finalizeValue()
 
+    val localRepository = project.layout.buildDirectory.dir("publishing/mavenCentral")
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
-
-    val buildService = project.registerSonatypeRepositoryBuildService(
-      versionIsSnapshot = versionIsSnapshot,
-      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
-      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
-      rootBuildDirectory = project.rootProjectBuildDir(),
-      buildEventsListenerRegistry = buildEventsListenerRegistry,
-    )
 
     val repository = project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
@@ -84,11 +76,17 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         repository.setUrl("https://central.sonatype.com/repository/maven-snapshots/")
         repository.credentials(PasswordCredentials::class.java)
       } else {
-        repository.setUrl(buildService.map { it.publishingUrl() })
+        repository.setUrl("file://${localRepository.get()}")
       }
     }
 
-    val createRepository = project.tasks.registerCreateRepository(buildService, groupId, artifactId, version)
+    val buildService = project.registerSonatypeRepositoryBuildService(
+      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
+      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
+      buildEventsListenerRegistry = buildEventsListenerRegistry,
+    )
+
+    val createRepository = project.tasks.registerCreateRepository(buildService, groupId, artifactId, version, localRepository)
     val releaseRepository = project.tasks.registerReleaseRepository(buildService)
 
     project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
