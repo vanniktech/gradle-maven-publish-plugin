@@ -68,16 +68,14 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
       group: Provider<String>,
       artifactId: Provider<String>,
       version: Provider<String>,
-    ): TaskProvider<CreateSonatypeRepositoryTask> {
-      return register(NAME, CreateSonatypeRepositoryTask::class.java) {
-        it.description = "Create a staging repository on Sonatype OSS"
-        it.group = "release"
-        it.projectGroup.set(group)
-        it.artifactId.set(artifactId)
-        it.version.set(version)
-        it.buildService.set(buildService)
-        it.usesService(buildService)
-      }
+    ): TaskProvider<CreateSonatypeRepositoryTask> = register(NAME, CreateSonatypeRepositoryTask::class.java) {
+      it.description = "Create a staging repository on Sonatype OSS"
+      it.group = "release"
+      it.projectGroup.set(group)
+      it.artifactId.set(artifactId)
+      it.version.set(version)
+      it.buildService.set(buildService)
+      it.usesService(buildService)
     }
   }
 }

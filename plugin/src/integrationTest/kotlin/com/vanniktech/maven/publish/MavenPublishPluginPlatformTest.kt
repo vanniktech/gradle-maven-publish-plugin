@@ -203,13 +203,14 @@ class MavenPublishPluginPlatformTest {
   @TestParameterInjectorTest
   fun javaLibraryWithToolchainProject() {
     val project = javaLibraryProjectSpec().copy(
-      buildFileExtra = """
+      buildFileExtra =
+        """
         java {
             toolchain {
                 languageVersion = JavaLanguageVersion.of(8)
             }
         }
-      """.trimIndent(),
+        """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 

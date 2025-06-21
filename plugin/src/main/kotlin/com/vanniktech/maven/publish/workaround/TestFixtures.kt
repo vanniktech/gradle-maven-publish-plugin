@@ -44,25 +44,26 @@ internal fun addTestFixturesSourcesJar(project: Project) {
       projectInternal,
     )
   } else {
-    JvmPluginsHelper::class.java.getMethod(
-      "createDocumentationVariantWithArtifact",
-      String::class.java,
-      String::class.java,
-      String::class.java,
-      List::class.java,
-      String::class.java,
-      Object::class.java,
-      ProjectInternal::class.java,
-    ).invoke(
-      null,
-      testFixturesSourceSet.sourcesElementsConfigurationName,
-      testFixtureSourceSetName,
-      DocsType.SOURCES,
-      listOf(projectDerivedCapability),
-      testFixturesSourceSet.sourcesJarTaskName,
-      testFixturesSourceSet.allSource,
-      projectInternal,
-    ) as Configuration
+    JvmPluginsHelper::class.java
+      .getMethod(
+        "createDocumentationVariantWithArtifact",
+        String::class.java,
+        String::class.java,
+        String::class.java,
+        List::class.java,
+        String::class.java,
+        Object::class.java,
+        ProjectInternal::class.java,
+      ).invoke(
+        null,
+        testFixturesSourceSet.sourcesElementsConfigurationName,
+        testFixtureSourceSetName,
+        DocsType.SOURCES,
+        listOf(projectDerivedCapability),
+        testFixturesSourceSet.sourcesJarTaskName,
+        testFixturesSourceSet.allSource,
+        projectInternal,
+      ) as Configuration
   }
 
   val component = JavaPluginHelper.getJavaComponent(project) as DefaultJvmSoftwareComponent

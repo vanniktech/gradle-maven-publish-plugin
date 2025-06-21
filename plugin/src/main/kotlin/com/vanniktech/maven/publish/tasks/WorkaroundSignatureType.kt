@@ -27,9 +27,7 @@ public class WorkaroundSignatureType(
     return super.sign(signatory, toSign)
   }
 
-  override fun getExtension(): String {
-    return actual.extension
-  }
+  override fun getExtension(): String = actual.extension
 
   override fun sign(signatory: Signatory?, toSign: InputStream?, destination: OutputStream?) {
     actual.sign(signatory, toSign, destination)

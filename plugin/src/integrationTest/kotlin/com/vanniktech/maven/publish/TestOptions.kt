@@ -85,7 +85,9 @@ enum class GradleVersion(
   }
 }
 
-enum class GradlePluginPublish(val version: String) {
+enum class GradlePluginPublish(
+  val version: String,
+) {
   // minimum supported
   GRADLE_PLUGIN_PUBLISH_MIN("1.0.0"),
 

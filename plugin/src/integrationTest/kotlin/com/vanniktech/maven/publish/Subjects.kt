@@ -35,56 +35,45 @@ class ProjectResultSubject private constructor(
 
     fun projectResult() = BUILD_RESULT_SUBJECT_FACTORY
 
-    fun assertThat(actual: ProjectResult): ProjectResultSubject {
-      return assertAbout(projectResult()).that(actual)
-    }
+    fun assertThat(actual: ProjectResult): ProjectResultSubject = assertAbout(projectResult()).that(actual)
   }
 
-  fun outcome(): BuildTaskSubject {
-    return check("outcome").about(buildResults())
-      .that(result.result)
-      .task(result.task)
-  }
+  fun outcome(): BuildTaskSubject = check("outcome")
+    .about(buildResults())
+    .that(result.result)
+    .task(result.task)
 
-  fun artifact(extension: String): ArtifactSubject {
-    return check("artifact").about(artifact())
-      .that(artifactPath("", extension) to result)
-  }
+  fun artifact(extension: String): ArtifactSubject = check("artifact")
+    .about(artifact())
+    .that(artifactPath("", extension) to result)
 
-  fun artifact(qualifier: String, extension: String): ArtifactSubject {
-    return check("artifact").about(artifact())
-      .that(artifactPath("-$qualifier", extension) to result)
-  }
+  fun artifact(qualifier: String, extension: String): ArtifactSubject = check("artifact")
+    .about(artifact())
+    .that(artifactPath("-$qualifier", extension) to result)
 
-  fun sourcesJar(): SourcesJarSubject {
-    return check("sourcesJar").about(sourcesJarSubject())
-      .that(artifactPath("-sources", "jar") to result)
-  }
+  fun sourcesJar(): SourcesJarSubject = check("sourcesJar")
+    .about(sourcesJarSubject())
+    .that(artifactPath("-sources", "jar") to result)
 
-  fun sourcesJar(qualifier: String): SourcesJarSubject {
-    return check("sourcesJar").about(sourcesJarSubject())
-      .that(artifactPath("-$qualifier-sources", "jar") to result)
-  }
+  fun sourcesJar(qualifier: String): SourcesJarSubject = check("sourcesJar")
+    .about(sourcesJarSubject())
+    .that(artifactPath("-$qualifier-sources", "jar") to result)
 
-  fun javadocJar(): ArtifactSubject {
-    return check("javadocJar").about(artifact())
-      .that(artifactPath("-javadoc", "jar") to result)
-  }
+  fun javadocJar(): ArtifactSubject = check("javadocJar")
+    .about(artifact())
+    .that(artifactPath("-javadoc", "jar") to result)
 
-  fun javadocJar(qualifier: String): ArtifactSubject {
-    return check("javadocJar").about(artifact())
-      .that(artifactPath("-$qualifier-javadoc", "jar") to result)
-  }
+  fun javadocJar(qualifier: String): ArtifactSubject = check("javadocJar")
+    .about(artifact())
+    .that(artifactPath("-$qualifier-javadoc", "jar") to result)
 
-  fun pom(): PomSubject {
-    return check("pom").about(pomSubject())
-      .that(artifactPath("", "pom") to result)
-  }
+  fun pom(): PomSubject = check("pom")
+    .about(pomSubject())
+    .that(artifactPath("", "pom") to result)
 
-  fun module(): ArtifactSubject {
-    return check("module").about(artifact())
-      .that(artifactPath("", "module") to result)
-  }
+  fun module(): ArtifactSubject = check("module")
+    .about(artifact())
+    .that(artifactPath("", "module") to result)
 
   private fun artifactPath(suffix: String, extension: String): Path = with(result.projectSpec) {
     return result.repo
@@ -109,14 +98,22 @@ open class ArtifactSubject internal constructor(
 
   fun exists() {
     if (!artifact.exists()) {
-      val files = result.repo.toFile().walkTopDown().filter { it.isFile }.toList()
+      val files = result.repo
+        .toFile()
+        .walkTopDown()
+        .filter { it.isFile }
+        .toList()
       failWithActual(fact("expected to exist", artifact), fact("but repo contained", files))
     }
   }
 
   fun doesNotExist() {
     if (artifact.exists()) {
-      val files = result.repo.toFile().walkTopDown().filter { it.isFile }.toList()
+      val files = result.repo
+        .toFile()
+        .walkTopDown()
+        .filter { it.isFile }
+        .toList()
       failWithActual(fact("expected not to exist", artifact), fact("but repo contained", files))
     }
   }
@@ -156,7 +153,8 @@ open class ArtifactSubject internal constructor(
     fileContent: (T) -> String?,
   ) {
     val zip = ZipFile(artifact.toFile())
-    val zipFiles = zip.entries()
+    val zipFiles = zip
+      .entries()
       .toList()
       .filter { zipEntry -> !zipEntry.isDirectory && filesToIgnore.none { zipEntry.name.contains(it) } }
       .toMutableList()
@@ -172,7 +170,11 @@ open class ArtifactSubject internal constructor(
       } else {
         zipFiles.remove(entry)
 
-        val content = zip.getInputStream(entry)?.reader()?.buffered()?.readText()
+        val content = zip
+          .getInputStream(entry)
+          ?.reader()
+          ?.buffered()
+          ?.readText()
         val expectedContent = fileContent(sourceFile)
         if (expectedContent != null && expectedContent != content) {
           notMatchingFiles += fact("expected ${fileDescriptor(sourceFile)} to equal", expectedContent)

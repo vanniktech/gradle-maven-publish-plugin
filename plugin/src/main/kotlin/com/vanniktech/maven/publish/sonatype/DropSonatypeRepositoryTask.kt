@@ -32,14 +32,12 @@ internal abstract class DropSonatypeRepositoryTask : DefaultTask() {
     fun TaskContainer.registerDropRepository(
       buildService: Provider<SonatypeRepositoryBuildService>,
       createRepository: TaskProvider<CreateSonatypeRepositoryTask>,
-    ): TaskProvider<DropSonatypeRepositoryTask> {
-      return register(NAME, DropSonatypeRepositoryTask::class.java) {
-        it.description = "Drops a staging repository on Sonatype OSS"
-        it.group = "release"
-        it.buildService.set(buildService)
-        it.usesService(buildService)
-        it.mustRunAfter(createRepository)
-      }
+    ): TaskProvider<DropSonatypeRepositoryTask> = register(NAME, DropSonatypeRepositoryTask::class.java) {
+      it.description = "Drops a staging repository on Sonatype OSS"
+      it.group = "release"
+      it.buildService.set(buildService)
+      it.usesService(buildService)
+      it.mustRunAfter(createRepository)
     }
   }
 }

@@ -170,10 +170,11 @@ class MavenPublishPluginSpecialCaseTest {
       group = null,
       artifactId = null,
       version = null,
-      buildFileExtra = """
+      buildFileExtra =
+        """
         group = "com.example.test2"
         version = "3.2.1"
-      """.trimIndent(),
+        """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 

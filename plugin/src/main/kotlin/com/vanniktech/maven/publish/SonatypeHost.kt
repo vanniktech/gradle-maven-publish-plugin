@@ -19,12 +19,10 @@ public data class SonatypeHost internal constructor(
 ) : Serializable {
   public constructor(rootUrl: String) : this(rootUrl, isCentralPortal = false)
 
-  internal fun apiBaseUrl(): String {
-    return if (isCentralPortal) {
-      "$rootUrl/api/v1/"
-    } else {
-      "$rootUrl/service/local/"
-    }
+  internal fun apiBaseUrl(): String = if (isCentralPortal) {
+    "$rootUrl/api/v1/"
+  } else {
+    "$rootUrl/service/local/"
   }
 
   public companion object {
