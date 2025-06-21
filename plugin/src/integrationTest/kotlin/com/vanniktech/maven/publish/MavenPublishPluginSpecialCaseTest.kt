@@ -180,7 +180,7 @@ class MavenPublishPluginSpecialCaseTest {
     val resultSpec = project.copy(
       group = "com.example.test2",
       // the project name is used as default value for the artifact id
-      artifactId = "default-root-project-name",
+      artifactId = "module",
       version = "3.2.1",
     )
     val actualResult = result.copy(projectSpec = resultSpec)

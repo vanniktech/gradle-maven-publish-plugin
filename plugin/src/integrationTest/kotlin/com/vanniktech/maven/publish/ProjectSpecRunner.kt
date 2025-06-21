@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.copyTo
 import kotlin.io.path.createDirectories
 import kotlin.io.path.invariantSeparatorsPathString
@@ -36,7 +37,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     result = result,
     task = task,
     projectSpec = this,
-    project = project,
+    project = module,
     repo = repo,
   )
 }
@@ -229,7 +230,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
         TestOptions.Signing.GPG_KEY -> {
           appendLine("signing.keyId=B89C4055")
           appendLine("signing.password=test")
-          appendLine("signing.secretKeyRingFile=test-secring.gpg")
+          appendLine("signing.secretKeyRingFile=${path.parent.absolutePathString()}/test-secring.gpg")
         }
         TestOptions.Signing.IN_MEMORY_KEY -> {
           appendLine(
