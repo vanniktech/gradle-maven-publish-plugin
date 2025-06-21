@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish.sonatype
 
+import com.vanniktech.maven.publish.central.MavenCentralBuildService
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -13,7 +14,7 @@ import org.gradle.api.tasks.options.Option
 
 internal abstract class DropSonatypeRepositoryTask : DefaultTask() {
   @get:Internal
-  abstract val buildService: Property<SonatypeRepositoryBuildService>
+  abstract val buildService: Property<MavenCentralBuildService>
 
   @Option(option = "repository", description = "Specify which staging repository to drop.")
   @Input
@@ -28,13 +29,12 @@ internal abstract class DropSonatypeRepositoryTask : DefaultTask() {
   companion object {
     private const val NAME = "dropRepository"
 
-    fun TaskContainer.registerDropRepository(
-      buildService: Provider<SonatypeRepositoryBuildService>,
-    ): TaskProvider<DropSonatypeRepositoryTask> = register(NAME, DropSonatypeRepositoryTask::class.java) {
-      it.description = "Drops a staging repository on Sonatype OSS"
-      it.group = "release"
-      it.buildService.set(buildService)
-      it.usesService(buildService)
-    }
+    fun TaskContainer.registerDropRepository(buildService: Provider<MavenCentralBuildService>): TaskProvider<DropSonatypeRepositoryTask> =
+      register(NAME, DropSonatypeRepositoryTask::class.java) {
+        it.description = "Drops a staging repository on Sonatype OSS"
+        it.group = "release"
+        it.buildService.set(buildService)
+        it.usesService(buildService)
+      }
   }
 }
