@@ -10,7 +10,6 @@ plugins {
   id("org.jetbrains.kotlin.jvm")
   id("org.jetbrains.kotlin.kapt")
   id("com.vanniktech.maven.publish")
-  id("org.jlleitschuh.gradle.ktlint")
   id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
