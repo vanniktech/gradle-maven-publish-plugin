@@ -240,19 +240,21 @@ home `gradle.properties` file or to use environment variables (when publishing f
     ORG_GRADLE_PROJECT_mavenCentralPassword=the_password
 
     # see below for how to obtain this
-    ORG_GRADLE_PROJECT_signingInMemoryKey=exported_ascii_armored_key
-    # Optional
+    ORG_GRADLE_PROJECT_signingInMemoryKey=single_line_exported_ascii_armored_key
+    # Optional: the SHORT version of the KEY ID
     ORG_GRADLE_PROJECT_signingInMemoryKeyId=12345678
     # If key was created with a password.
     ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=some_password
     ```
 
-Note that the username/password here is *not* the same one you use to login; Sonatype publishing
+Please note that the username/password here is *not* the same one you use to login; Sonatype publishing
 requires a username/password that was generated via user tokens. The user token needs to be obtained on [Sonatype OSS](https://central.sonatype.org/publish/generate-token/) or the [Central Portal](https://central.sonatype.org/publish/generate-portal-token/) depending on where you publish.
 
-### In memory GPG key
+Also note that the `signingInMemoryKeyId` is the short version (the last 8 characters of the long key ID).
 
-To obtain the in memory signing key run the following command.
+### In-memory GPG key
+
+To obtain the in-memory signing key run the following command.
 
 !!! warning
 
@@ -282,7 +284,7 @@ EdLCEJA+3IIiw4qM5hnMw=
 -----END PGP PRIVATE KEY BLOCK-----
 ```
 
-Make sure to copy this string in its entirety.
+The in-memory value needs to be a single line without newlines and header/footer (`BEGIN/END PRIVATE KEY`). Remove these either by hand or by relying on grep to cut these: `grep -v '\-\-' | grep -v '^=.' | tr -d '\n'`.
 
 ## Publishing snapshots
 
