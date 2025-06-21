@@ -47,6 +47,30 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
    * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
+   * `publish` task.
+   *
+   * When the [automaticRelease] parameter is `true` the created deployment will be released automatically to
+   * Maven Central without any additional manual steps needed. When [automaticRelease] is not set or `false`
+   * the deployment has to be manually released through the [Central Portal website](https://central.sonatype.com/publishing/deployments).
+   *
+   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
+   * repository instead.
+   *
+   * This expects you provide the username and password of a user token through Gradle properties called
+   * `mavenCentralUsername` and `mavenCentralPassword`. See [here](https://central.sonatype.org/publish/generate-portal-token/)
+   * for how to obtain a user token.
+   *
+   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
+   */
+  @JvmOverloads
+  public fun publishToMavenCentral(automaticRelease: Boolean = false) {
+    @Suppress("DEPRECATION")
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease)
+  }
+
+  /**
+   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
+   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
    * `publish` task. As part of running publish the plugin will automatically create a staging repository on Sonatype
    * to which all artifacts will be published. At the end of the build this staging repository will be automatically
    * closed. When the [automaticRelease] parameter is `true` the staging repository will also be released
@@ -62,8 +86,46 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * @param host the instance of Sonatype OSSRH to use
    * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
    */
-  @JvmOverloads
-  public fun publishToMavenCentral(host: SonatypeHost = SonatypeHost.DEFAULT, automaticRelease: Boolean = false) {
+  @Deprecated(
+    message = "OSSRH will be shut down after June 30, 2025. Migrate to Central Portal instead. " +
+      "See more info at https://central.sonatype.org/news/20250326_ossrh_sunset . After migrating " +
+      "your account remove the SonatypeHost parameter and update your user token to one created in " +
+      "the Central Portal.\n" +
+      "If you are already calling this method with CENTRAL_PORTAL, you can simply remove the parameter.",
+    replaceWith = ReplaceWith("publishToMavenCentral()"),
+  )
+  public fun publishToMavenCentral(host: SonatypeHost) {
+    @Suppress("DEPRECATION")
+    publishToMavenCentral(host, automaticRelease = false)
+  }
+
+  /**
+   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
+   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
+   * `publish` task. As part of running publish the plugin will automatically create a staging repository on Sonatype
+   * to which all artifacts will be published. At the end of the build this staging repository will be automatically
+   * closed. When the [automaticRelease] parameter is `true` the staging repository will also be released
+   * automatically afterwards.
+   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
+   * repository instead.
+   *
+   * This expects you provide your Sonatype username and password through Gradle properties called
+   * `mavenCentralUsername` and `mavenCentralPassword`.
+   *
+   * The `closeAndReleaseRepository` task is automatically configured for Sonatype OSSRH using the same credentials.
+   *
+   * @param host the instance of Sonatype OSSRH to use
+   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
+   */
+  @Deprecated(
+    message = "OSSRH will be shut down after June 30, 2025. Migrate to Central Portal instead. " +
+      "See more info at https://central.sonatype.org/news/20250326_ossrh_sunset . After migrating " +
+      "your account remove the SonatypeHost parameter and update your user token to one created in " +
+      "the Central Portal.\n" +
+      "If you are already calling this method with CENTRAL_PORTAL, you can simply remove the parameter.",
+    replaceWith = ReplaceWith("publishToMavenCentral()"),
+  )
+  public fun publishToMavenCentral(host: SonatypeHost, automaticRelease: Boolean) {
     sonatypeHost.set(host)
     sonatypeHost.finalizeValue()
 

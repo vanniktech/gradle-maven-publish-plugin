@@ -43,22 +43,6 @@ To modify these defaults it is possible to call `configure` in the DSL. For
 more check out the [what to publish page](what.md) which contains a detailed
 description of available options for each project type.
 
-=== "build.gradle"
-
-    ```groovy
-    mavenPublishing {
-      configure(...)
-    }
-    ```
-
-=== "build.gradle.kts"
-
-    ```kotlin
-    mavenPublishing {
-      configure(...)
-    }
-    ```
-
 ## Configuring Maven Central
 
 After applying the plugin the first step is to enable publishing to Maven Central
@@ -71,11 +55,7 @@ This can be done through either the DSL or by setting Gradle properties.
     import com.vanniktech.maven.publish.SonatypeHost
 
     mavenPublishing {
-      publishToMavenCentral(SonatypeHost.DEFAULT)
-      // or when publishing to https://s01.oss.sonatype.org
-      publishToMavenCentral(SonatypeHost.S01)
-      // or when publishing to https://central.sonatype.com/
-      publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+      publishToMavenCentral()
 
       signAllPublications()
     }
@@ -87,11 +67,7 @@ This can be done through either the DSL or by setting Gradle properties.
     import com.vanniktech.maven.publish.SonatypeHost
 
     mavenPublishing {
-      publishToMavenCentral(SonatypeHost.DEFAULT)
-      // or when publishing to https://s01.oss.sonatype.org
-      publishToMavenCentral(SonatypeHost.S01)
-      // or when publishing to https://central.sonatype.com/
-      publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+      publishToMavenCentral()
 
       signAllPublications()
     }
@@ -100,19 +76,15 @@ This can be done through either the DSL or by setting Gradle properties.
 === "gradle.properties"
 
     ```properties
-    SONATYPE_HOST=DEFAULT
-    # or when publishing to https://s01.oss.sonatype.org
-    SONATYPE_HOST=S01
-    # or when publishing to https://central.sonatype.com/
-    SONATYPE_HOST=CENTRAL_PORTAL
+    mavenCentralPublishing=true
 
-    RELEASE_SIGNING_ENABLED=true
+    signAllPublications=true
     ```
 
 ## Configuring the POM
 
 The pom is published alongside the project and contains the project coordinates
-as well as some general information about the project like an url and the used
+as well as some general information about the project like a url and the used
 license.
 
 This configuration also determines the coordinates (`group:artifactId:version`) used to consume the library.
@@ -290,14 +262,11 @@ Snapshots can be published by setting the version to something ending with `-SNA
 and then running the following Gradle task:
 
 ```
-./gradlew publishAllPublicationsToMavenCentralRepository
+./gradlew publishToMavenCentral
 ```
 
-The snapshot will be automatically available in Sonatype's
-[snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/), or the
-[S01 snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots/), or the
-[Central Portal snapshot repository](https://central.sonatype.com/repository/maven-snapshots/) directly after the
-task finished.
+The snapshot will be automatically available in the [Central Portal snapshot repository](https://central.sonatype.com/repository/maven-snapshots/) directly
+after the task finished.
 
 Signing is not required for snapshot builds, but if the configuration is present the build
 will still be signed.
@@ -307,69 +276,20 @@ will still be signed.
 
 The publishing process for Maven Central consists of several steps
 
-1. A staging repository is created on Sonatype OSS
-2. The artifacts are uploaded/published to this staging repository
-3. The staging repository is closed
-4. The staging repository is released
-5. All artifacts in the released repository will be synchronized to maven central
+1. *Plugin*: The artifacts are uploaded to a new deployment
+2. *Sonatype*: The deployment is validated
+3. *Plugin/Manual*: The deployment is published to Maven Central
+4. *Sonatype* The published artifacts are available in Maven Central
 
-The plugin will always do steps 1 to 3. Step 4 is only taken care of if automatic releases are enabled.
+!!! note
 
-After the staging repository has been released, either manually or automatically, the artifacts will
-be synced to Maven Central. This process usually takes around 10-30 minutes and only when it completes
-the artifacts are available for download.
+    Step 4 can take 10 to 30 minutes and only after it completed the published
+    artifacts will be available for download.
 
-### Automatic release
+### Uploading with manual publishing
 
-Run the following task to let the plugin handle all steps automatically:
-
-```
-./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
-```
-
-!!! note "Configuration cache"
-
-    Configuration caching when uploading releases is currently not possible. Supporting it is
-    blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
-
-It is possible to permanently enable the automatic releases so that regular publishing tasks
-like `publish` and `publishToMavenCentral` will also always do the release step:
-
-=== "build.gradle"
-
-    ```groovy
-    import com.vanniktech.maven.publish.SonatypeHost
-
-    mavenPublishing {
-      publishToMavenCentral(SonatypeHost.DEFAULT, true)
-      // or when publishing to https://s01.oss.sonatype.org
-      publishToMavenCentral(SonatypeHost.S01, true)
-    }
-    ```
-
-=== "build.gradle.kts"
-
-    ```kotlin
-    import com.vanniktech.maven.publish.SonatypeHost
-
-    mavenPublishing {
-      publishToMavenCentral(SonatypeHost.DEFAULT, automaticRelease = true)
-      // or when publishing to https://s01.oss.sonatype.org
-      publishToMavenCentral(SonatypeHost.S01, automaticRelease = true)
-    }
-    ```
-
-=== "gradle.properties"
-
-    ```properties
-    SONATYPE_AUTOMATIC_RELEASE=true
-    ```
-
-### Manual release
-
-The release (step 4) can be done manually by running the following command, so that the plugin will
-only do step 1 to 3:
-```
+Run the following Gradle task:
+```sh
 ./gradlew publishToMavenCentral --no-configuration-cache
 ```
 
@@ -378,16 +298,69 @@ only do step 1 to 3:
     Configuration caching when uploading releases is currently not possible. Supporting it is
     blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
 
-### Timeouts
 
-From time to time Sonatype tends to time out during staging operations. The default timeouts of the plugin
-are long already, but can be modified if needed. The timeout for HTTP requests can be modified with
-`SONATYPE_CONNECT_TIMEOUT_SECONDS` which defaults to 1 minute. After a staging repository gets closed,
-Sonatype will run several validations on it and the plugin needs to wait for those to finish, before it can
-release the repository. The timeout for how long it is waiting for the close operation to finish can be
-modified by `SONATYPE_CLOSE_TIMEOUT_SECONDS` and defaults to 15 minutes.
+Afterward go to [Deployments on the Central Portal website](https://central.sonatype.com/publishing/deployments)
+and click "Publish" on the deployment.
 
-```properties
-SONATYPE_CONNECT_TIMEOUT_SECONDS=60
-SONATYPE_CLOSE_TIMEOUT_SECONDS=900
-```
+### Uploading with automatic publishing
+
+For automatic publishing use one of the following options
+
+=== "Command"
+
+    Instead of running `publishToMavenCentral` as described above use:
+    ```sh
+    ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+    ```
+
+=== "build.gradle"
+
+    When calling `publishToMavenCentral` in the DSL add `true` as a parameter.
+    ```groovy
+    mavenPublishing {
+      publishToMavenCentral(true)
+
+      // rest of publishing config
+    }
+    ```
+
+    To publish use
+    ```sh
+    ./gradlew publishToMavenCentral --no-configuration-cache
+    ```
+
+=== "build.gradle.kts"
+
+    When calling `publishToMavenCentral` in the DSL add `automaticRelease = true` as a parameter to
+    make any publish task also take care of step 3.
+    ```properties
+    mavenPublishing {
+      publishToMavenCentral(automaticRelease = true)
+
+      // rest of publishing config
+    }
+    ```
+
+    To publish use
+    ```sh
+    ./gradlew publishToMavenCentral --no-configuration-cache
+    ```
+
+=== "gradle.properties"
+
+    Add the following to `gradle.properties` to make any publish task also take care of
+    step 3.
+    ```properties
+    mavenCentralAutomaticPublishing=true
+    ```
+
+    To publish use
+    ```sh
+    ./gradlew publishToMavenCentral --no-configuration-cache
+    ```
+
+!!! note "Configuration cache"
+
+    Configuration caching when uploading releases is currently not possible. Supporting it is
+    blocked by [Gradle issue #22779](https://github.com/gradle/gradle/issues/22779).
+
