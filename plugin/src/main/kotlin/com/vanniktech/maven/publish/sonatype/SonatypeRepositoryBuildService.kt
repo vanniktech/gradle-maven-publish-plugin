@@ -1,8 +1,6 @@
 package com.vanniktech.maven.publish.sonatype
 
 import com.vanniktech.maven.publish.BuildConfig
-import com.vanniktech.maven.publish.SonatypeHost
-import com.vanniktech.maven.publish.nexus.Nexus
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
 import java.io.File
 import java.io.FileOutputStream
@@ -32,7 +30,6 @@ internal abstract class SonatypeRepositoryBuildService :
   private val logger: Logger = Logging.getLogger(SonatypeRepositoryBuildService::class.java)
 
   internal interface Params : BuildServiceParameters {
-    val sonatypeHost: Property<SonatypeHost>
     val groupId: Property<String>
     val versionIsSnapshot: Property<Boolean>
     val repositoryUsername: Property<String>
@@ -41,7 +38,6 @@ internal abstract class SonatypeRepositoryBuildService :
     val okhttpTimeoutSeconds: Property<Long>
     val closeTimeoutSeconds: Property<Long>
     val rootBuildDirectory: DirectoryProperty
-    val configurationCacheActive: Property<Boolean>
   }
 
   private sealed interface EndOfBuildAction {
@@ -65,24 +61,12 @@ internal abstract class SonatypeRepositoryBuildService :
 
   private val centralPortal by lazy {
     SonatypeCentralPortal(
-      baseUrl = parameters.sonatypeHost.get().apiBaseUrl(),
+      baseUrl = "https://central.sonatype.com",
       usertoken = Base64
         .getEncoder()
         .encode(
           "${parameters.repositoryUsername.get()}:${parameters.repositoryPassword.get()}".toByteArray(),
         ).toString(Charsets.UTF_8),
-      userAgentName = BuildConfig.NAME,
-      userAgentVersion = BuildConfig.VERSION,
-      okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
-      closeTimeoutSeconds = parameters.closeTimeoutSeconds.get(),
-    )
-  }
-
-  private val nexus by lazy {
-    Nexus(
-      baseUrl = parameters.sonatypeHost.get().apiBaseUrl(),
-      username = parameters.repositoryUsername.get(),
-      password = parameters.repositoryPassword.get(),
       userAgentName = BuildConfig.NAME,
       userAgentVersion = BuildConfig.VERSION,
       okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
@@ -127,11 +111,7 @@ internal abstract class SonatypeRepositoryBuildService :
       return
     }
 
-    uploadId = if (parameters.sonatypeHost.get().isCentralPortal) {
-      UUID.randomUUID().toString()
-    } else {
-      nexus.createRepositoryForGroup(parameters.groupId.get())
-    }
+    uploadId = UUID.randomUUID().toString()
 
     endOfBuildActions += EndOfBuildAction.Close(searchForRepositoryIfNoIdPresent = false)
     if (parameters.automaticRelease.get()) {
@@ -151,7 +131,7 @@ internal abstract class SonatypeRepositoryBuildService :
     if (manualStagingRepositoryId != null) {
       publishId = manualStagingRepositoryId
     } else {
-      if (uploadId == null && parameters.sonatypeHost.get().isCentralPortal) {
+      if (uploadId == null) {
         error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
       }
     }
@@ -168,9 +148,7 @@ internal abstract class SonatypeRepositoryBuildService :
     if (manualStagingRepositoryId != null) {
       publishId = manualStagingRepositoryId
     } else {
-      if (parameters.sonatypeHost.get().isCentralPortal) {
-        error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
-      }
+      error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
     }
 
     endOfBuildActions += EndOfBuildAction.Drop(
@@ -180,32 +158,13 @@ internal abstract class SonatypeRepositoryBuildService :
   }
 
   internal fun publishingUrl(): String = if (parameters.versionIsSnapshot.get()) {
-    require(uploadId == null) {
-      "Staging repositories are not supported for SNAPSHOT versions."
-    }
-
-    val host = parameters.sonatypeHost.get()
-    if (host.isCentralPortal) {
-      "${host.rootUrl}/repository/maven-snapshots/"
-    } else {
-      "${host.rootUrl}/content/repositories/snapshots/"
-    }
+    error { "Staging repositories are not supported for SNAPSHOT versions." }
   } else {
-    val stagingRepositoryId = requireNotNull(uploadId) {
-      if (parameters.configurationCacheActive.get()) {
-        "Publishing releases to Maven Central is not supported yet with configuration caching enabled, because of " +
-          "this missing Gradle feature: https://github.com/gradle/gradle/issues/22779"
-      } else {
-        "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
-      }
+    val id = requireNotNull(uploadId) {
+      "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
     }
 
-    val host = parameters.sonatypeHost.get()
-    if (host.isCentralPortal) {
-      "file://${parameters.rootBuildDirectory.get()}/publish/staging/$stagingRepositoryId"
-    } else {
-      "${host.rootUrl}/service/local/staging/deployByRepositoryId/$stagingRepositoryId/"
-    }
+    "file://${parameters.rootBuildDirectory.get()}/publish/staging/$id"
   }
 
   override fun onFinish(event: FinishEvent) {
@@ -232,14 +191,6 @@ internal abstract class SonatypeRepositoryBuildService :
   }
 
   private fun runEndOfBuildActions(actions: List<EndOfBuildAction>) {
-    if (parameters.sonatypeHost.get().isCentralPortal) {
-      runCentralPortalEndOfBuildActions(actions)
-    } else {
-      runNexusEndOfBuildActions(actions)
-    }
-  }
-
-  private fun runCentralPortalEndOfBuildActions(actions: List<EndOfBuildAction>) {
     val uploadId = uploadId
 
     val closeActions = actions.filterIsInstance<EndOfBuildAction.Close>()
@@ -300,38 +251,10 @@ internal abstract class SonatypeRepositoryBuildService :
     }
   }
 
-  private fun runNexusEndOfBuildActions(actions: List<EndOfBuildAction>) {
-    var stagingRepositoryId = uploadId ?: publishId
-
-    val closeActions = actions.filterIsInstance<EndOfBuildAction.Close>()
-    if (closeActions.isNotEmpty()) {
-      if (stagingRepositoryId != null) {
-        nexus.closeStagingRepository(stagingRepositoryId)
-      } else if (closeActions.all { it.searchForRepositoryIfNoIdPresent }) {
-        stagingRepositoryId = nexus.closeCurrentStagingRepository()
-      }
-
-      if (stagingRepositoryId != null && actions.contains(EndOfBuildAction.ReleaseAfterClose)) {
-        nexus.releaseStagingRepository(stagingRepositoryId)
-      }
-    }
-
-    // there might be 2 drop actions but one of the runs on success, the other on failure
-    val dropAction = actions.filterIsInstance<EndOfBuildAction.Drop>().singleOrNull()
-    if (dropAction != null) {
-      if (stagingRepositoryId != null) {
-        nexus.dropStagingRepository(stagingRepositoryId)
-      } else if (dropAction.searchForRepositoryIfNoIdPresent) {
-        nexus.dropCurrentStagingRepository()
-      }
-    }
-  }
-
   companion object {
     private const val NAME = "sonatype-repository-build-service"
 
     fun Project.registerSonatypeRepositoryBuildService(
-      sonatypeHost: Provider<SonatypeHost>,
       groupId: Provider<String>,
       versionIsSnapshot: Provider<Boolean>,
       repositoryUsername: Provider<String>,
@@ -339,7 +262,6 @@ internal abstract class SonatypeRepositoryBuildService :
       automaticRelease: Boolean,
       rootBuildDirectory: Provider<Directory>,
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
-      isConfigurationCacheActive: Provider<Boolean>,
     ): Provider<SonatypeRepositoryBuildService> {
       val okhttpTimeout = project.providers
         .gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
@@ -351,7 +273,6 @@ internal abstract class SonatypeRepositoryBuildService :
         .orElse(60 * 15)
       val service = gradle.sharedServices.registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {
         it.maxParallelUsages.set(1)
-        it.parameters.sonatypeHost.set(sonatypeHost)
         it.parameters.groupId.set(groupId)
         it.parameters.versionIsSnapshot.set(versionIsSnapshot)
         it.parameters.repositoryUsername.set(repositoryUsername)
@@ -360,7 +281,6 @@ internal abstract class SonatypeRepositoryBuildService :
         it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
         it.parameters.closeTimeoutSeconds.set(closeTimeout)
         it.parameters.rootBuildDirectory.set(rootBuildDirectory)
-        it.parameters.configurationCacheActive.set(isConfigurationCacheActive)
       }
       buildEventsListenerRegistry.onTaskCompletion(service)
       return service
