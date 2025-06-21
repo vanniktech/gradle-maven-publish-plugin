@@ -1,9 +1,7 @@
 package com.vanniktech.maven.publish.tasks
 
 import com.vanniktech.maven.publish.JavadocJar as JavadocJarOption
-import com.vanniktech.maven.publish.JavadocJar.Dokka.DokkaTaskName
-import com.vanniktech.maven.publish.JavadocJar.Dokka.ProviderDokkaTaskName
-import com.vanniktech.maven.publish.JavadocJar.Dokka.StringDokkaTaskName
+import com.vanniktech.maven.publish.JavadocJar.Dokka.DokkaTaskWrapper
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -18,7 +16,7 @@ public open class JavadocJar : Jar() {
       is JavadocJarOption.None -> null
       is JavadocJarOption.Empty -> emptyJavadocJar(prefix)
       is JavadocJarOption.Javadoc -> plainJavadocJar(prefix)
-      is JavadocJarOption.Dokka -> dokkaJavadocJar(prefix, javadocJar.taskName)
+      is JavadocJarOption.Dokka -> dokkaJavadocJar(prefix, javadocJar.wrapper)
     }
 
     private fun Project.emptyJavadocJar(prefix: String): TaskProvider<out Jar> = tasks.register(
@@ -36,14 +34,11 @@ public open class JavadocJar : Jar() {
         it.archiveBaseName.set("${project.name}-$prefix-javadoc")
       }
 
-    private fun Project.dokkaJavadocJar(prefix: String, taskName: DokkaTaskName): TaskProvider<out Jar> =
+    private fun Project.dokkaJavadocJar(prefix: String, dokkaTaskWrapper: DokkaTaskWrapper): TaskProvider<out Jar> =
       tasks.register("${prefix}DokkaJavadocJar", JavadocJar::class.java) {
-        val task = when (taskName) {
-          is ProviderDokkaTaskName -> taskName.value.flatMap { name -> tasks.named(name) }
-          is StringDokkaTaskName -> tasks.named(taskName.value)
-        }
-        it.dependsOn(task)
-        it.from(task)
+        val dokkaTask = dokkaTaskWrapper.asProvider(project)
+        it.dependsOn(dokkaTask)
+        it.from(dokkaTask)
         it.archiveBaseName.set("${project.name}-$prefix-javadoc")
       }
   }
