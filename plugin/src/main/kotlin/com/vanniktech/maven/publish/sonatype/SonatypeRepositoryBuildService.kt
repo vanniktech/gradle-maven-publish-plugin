@@ -33,11 +33,9 @@ internal abstract class SonatypeRepositoryBuildService :
   private val logger: Logger = Logging.getLogger(SonatypeRepositoryBuildService::class.java)
 
   internal interface Params : BuildServiceParameters {
-    val groupId: Property<String>
     val versionIsSnapshot: Property<Boolean>
     val repositoryUsername: Property<String>
     val repositoryPassword: Property<String>
-    val automaticRelease: Property<Boolean>
     val okhttpTimeoutSeconds: Property<Long>
     val closeTimeoutSeconds: Property<Long>
     val rootBuildDirectory: DirectoryProperty
@@ -100,9 +98,6 @@ internal abstract class SonatypeRepositoryBuildService :
     uploadId = UUID.randomUUID().toString()
 
     endOfBuildActions += EndOfBuildAction.Upload
-    if (parameters.automaticRelease.get()) {
-      endOfBuildActions += EndOfBuildAction.Publish
-    }
     endOfBuildActions += EndOfBuildAction.Drop(runAfterFailure = true)
   }
 
@@ -216,11 +211,9 @@ internal abstract class SonatypeRepositoryBuildService :
     private const val NAME = "sonatype-repository-build-service"
 
     fun Project.registerSonatypeRepositoryBuildService(
-      groupId: Provider<String>,
       versionIsSnapshot: Provider<Boolean>,
       repositoryUsername: Provider<String>,
       repositoryPassword: Provider<String>,
-      automaticRelease: Boolean,
       rootBuildDirectory: Provider<Directory>,
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
     ): Provider<SonatypeRepositoryBuildService> {
@@ -234,11 +227,9 @@ internal abstract class SonatypeRepositoryBuildService :
         .orElse(60 * 15)
       val service = gradle.sharedServices.registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {
         it.maxParallelUsages.set(1)
-        it.parameters.groupId.set(groupId)
         it.parameters.versionIsSnapshot.set(versionIsSnapshot)
         it.parameters.repositoryUsername.set(repositoryUsername)
         it.parameters.repositoryPassword.set(repositoryPassword)
-        it.parameters.automaticRelease.set(automaticRelease)
         it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
         it.parameters.closeTimeoutSeconds.set(closeTimeout)
         it.parameters.rootBuildDirectory.set(rootBuildDirectory)
