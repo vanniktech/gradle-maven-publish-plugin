@@ -14,7 +14,7 @@ public open class JavadocJar : Jar() {
   }
 
   internal companion object {
-    internal fun Project.javadocJarTask(prefix: String, javadocJar: JavadocJarOption): TaskProvider<*>? {
+    internal fun Project.javadocJarTask(prefix: String, javadocJar: JavadocJarOption): TaskProvider<out Jar>? {
       return when (javadocJar) {
         is JavadocJarOption.None -> null
         is JavadocJarOption.Empty -> emptyJavadocJar(prefix)
@@ -23,14 +23,14 @@ public open class JavadocJar : Jar() {
       }
     }
 
-    private fun Project.emptyJavadocJar(prefix: String): TaskProvider<*> = tasks.register(
+    private fun Project.emptyJavadocJar(prefix: String): TaskProvider<out Jar> = tasks.register(
       "${prefix}EmptyJavadocJar",
       JavadocJar::class.java,
     ) {
       it.archiveBaseName.set("${project.name}-$prefix-javadoc")
     }
 
-    private fun Project.plainJavadocJar(prefix: String): TaskProvider<*> {
+    private fun Project.plainJavadocJar(prefix: String): TaskProvider<out Jar> {
       return tasks.register("${prefix}PlainJavadocJar", JavadocJar::class.java) {
         val task = tasks.named("javadoc")
         it.dependsOn(task)
@@ -39,7 +39,7 @@ public open class JavadocJar : Jar() {
       }
     }
 
-    private fun Project.dokkaJavadocJar(prefix: String, taskName: DokkaTaskName): TaskProvider<*> {
+    private fun Project.dokkaJavadocJar(prefix: String, taskName: DokkaTaskName): TaskProvider<out Jar> {
       return tasks.register("${prefix}DokkaJavadocJar", JavadocJar::class.java) {
         val task = when (taskName) {
           is ProviderDokkaTaskName -> taskName.value.flatMap { name -> tasks.named(name) }

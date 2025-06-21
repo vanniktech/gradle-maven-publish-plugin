@@ -399,6 +399,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         val variant = project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release"
         configure(AndroidSingleVariantLibrary(variant, sourcesJar, javadocJar))
       }
+      project.plugins.hasPlugin("com.android.fused-library") -> {
+        configure(AndroidFusedLibrary())
+      }
       project.plugins.hasPlugin("com.gradle.plugin-publish") ->
         configure(GradlePublishPlugin())
       project.plugins.hasPlugin("java-gradle-plugin") ->
