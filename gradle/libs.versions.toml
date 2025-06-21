@@ -12,6 +12,7 @@ moshi = "1.15.2"
 retrofit = "3.0.0"
 
 truth = "1.4.4"
+junit-platform = "1.13.1"
 
 [libraries]
 okhttp = "com.squareup.okhttp3:okhttp:4.12.0"
@@ -33,7 +34,9 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 
-junit-jupiter = "org.junit.jupiter:junit-jupiter:5.11.4"
+junit-jupiter = "org.junit.jupiter:junit-jupiter:5.13.1"
+junit-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junit-platform" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.18"
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 truth-java8 = { module = "com.google.truth.extensions:truth-java8-extension", version.ref = "truth" }

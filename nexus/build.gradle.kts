@@ -11,6 +11,8 @@ dependencies {
   implementation(libs.retrofit.converter.moshi)
 
   testImplementation(libs.junit.jupiter)
+  testImplementation(libs.junit.engine)
+  testImplementation(libs.junit.launcher)
   testImplementation(libs.truth)
   testImplementation(libs.truth.java8)
 }
