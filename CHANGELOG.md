@@ -2,6 +2,55 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.32.0...HEAD) *(2025-xx-xx)*
 
+> [!CAUTION]
+> Sonatype OSSRH (oss.sonatype.org and s01.oss.sonatype.org) will be shut down on June 30, 2025.
+>
+> Migration steps:
+> 1. Sign in to the [Central Portal](https://central.sonatype.com) with your existing Sonatype account
+> 2. Go to [Namespaces](https://central.sonatype.com/publishing/namespaces) and click "Migrate Namespace"
+>    for the relevant namespace. Confirm the migration and wait for it to complete.
+> 3. Optional: If you want to publish snapshots of your project tap the 3 dots next to your namespace and
+>    select "Enable SNAPSHOTs"
+> 4. Go to [Account](https://central.sonatype.com/account) and select "Generate User Token". Use the shown
+>    "Username" and "Password" as values for `mavenCentralUsername` and `mavenCentralPassword`.
+> 5. Configure this plugin to publish to Central Portal. Either update your `SONATYPE_HOST` property from
+>    `DEFAULT` or `S01` to `CENTRAL_PORTAL` or call `publishToMavenCentral()`/publishToMavenCentral(automaticRelease)
+>    without a `SonatypeHost` parameter.
+
+**BREAKING**
+- `publishToMavenCentral()` and `publishToMavenCentral(automaticRelease)` without `SonatypeHost` will
+  now publish through the Central Portal.
+- Deprecated overloads of `publishToMavenCentral` that take a `SonatypeHost` parameter.
+- Deprecated `SonatypeHost`.
+
+Improvements
+- Added new Gradle properties
+   - `mavenCentralPublishing=true` replaces `SONATYPE_HOST=CENTRAL_PORTAL`
+   - `mavenCentralAutomaticPublishing=true` replaces `SONATYPE_AUTOMATIC_RELEASE=true`
+   - `signAllPublications=true` replaces `RELEASE_SIGNING_ENABLED=true`
+   - Note: The old properties continue to work and there are no plans to remove them
+- The base plugin is now compatible with isolated projects as long as `pomFromGradleProperties()` is
+  not called.
+
+
+Thanks to @Goooler and @solrudev for their contributions to this release.
+
+#### Minimum supported versions
+- JDK 11
+- Gradle 8.5
+- Android Gradle Plugin 8.0.0
+- Kotlin Gradle Plugin 1.9.20
+
+#### Compatibility tested up to
+- JDK 24
+- Gradle 8.14.2
+- Gradle 9.0-rc1
+- Android Gradle Plugin 8.10.0
+- Android Gradle Plugin 8.11.0-rc02
+- Android Gradle Plugin 8.12.0-alpha06
+- Kotlin Gradle Plugin 2.1.21
+- Kotlin Gradle Plugin 2.2.0-RC3
+
 
 ## [0.32.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.32.0) *(2025-05-15)*
 

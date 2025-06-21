@@ -4,6 +4,7 @@ import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import com.vanniktech.maven.publish.workaround.addTestFixturesSourcesJar
 import com.vanniktech.maven.publish.workaround.fixTestFixturesMetadata
+import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
@@ -251,6 +252,42 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
 }
 
 /**
+ * To be used for `com.android.fused-library` projects. Applying this creates a publication for the library with
+ * empty source and javadoc jars.
+ *
+ * Equivalent Gradle set up:
+ * ```
+ * publishing {
+ *   publications {
+ *     register<MavenPublication>("maven") {
+ *       from(components["fusedLibraryComponent"])
+ *     }
+ *   }
+ * }
+ * ```
+ */
+@Incubating
+public class AndroidFusedLibrary : Platform() {
+  override val sourcesJar: Boolean = false
+  override val javadocJar: JavadocJar = JavadocJar.Empty()
+
+  override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("com.android.fused-library")) {
+      "Calling configure(AndroidFusedLibrary(...)) requires the com.android.fused-library plugin to be applied"
+    }
+
+    project.mavenPublications {
+      it.withJavadocJar(javadocJar, project, configureArchives = true)
+      it.withJavaSourcesJar(sourcesJar, project, configureArchives = true)
+    }
+  }
+
+  override fun equals(other: Any?): Boolean = other is AndroidFusedLibrary
+
+  override fun hashCode(): Int = this::class.hashCode()
+}
+
+/**
  * To be used for `org.jetbrains.kotlin.multiplatform` projects. Uses the default publications that gets created by
  * that plugin, including the automatically created `-sources` jars. Depending on the passed parameters for [javadocJar],
  * `-javadoc` will be added to the publications.
@@ -463,21 +500,31 @@ public sealed interface JavadocJar {
 
 private const val PUBLICATION_NAME = "maven"
 
-private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Project) {
+private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Project, configureArchives: Boolean = false) {
   if (enabled) {
     project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
   } else {
     val task = project.tasks.register("emptySourcesJar", Jar::class.java) {
       it.archiveClassifier.set("sources")
+      if (configureArchives) {
+        it.archiveBaseName.set(project.name)
+        it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
+      }
     }
     artifact(task)
   }
 }
 
-private fun MavenPublication.withJavadocJar(javadocJar: JavadocJar, project: Project) {
+private fun MavenPublication.withJavadocJar(javadocJar: JavadocJar, project: Project, configureArchives: Boolean = false) {
   val task = project.javadocJarTask(name, javadocJar)
   if (task != null) {
     artifact(task)
+
+    if (configureArchives) {
+      task.configure {
+        it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
+      }
+    }
   }
 }
 

@@ -103,6 +103,46 @@ the specified variant instead of publishing all of them.
     }
     ```
 
+
+## Android Fused Library
+
+For projects using the `com.android.fused-library` plugin.
+
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+
+    mavenPublishing {
+      configure(new AndroidFusedLibrary())
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    import com.vanniktech.maven.publish.AndroidFusedLibrary
+
+    mavenPublishing {
+      configure(AndroidFusedLibrary())
+    }
+    ```
+
+!!! warning
+
+    Support for Android fused libraries is considered experimental and might break
+    with future Android Gradle plugin updates.
+
+!!! warning
+
+    Signing is currently unsupported for Android fused libraries.
+
+!!! info
+
+    Configuring source and javadoc publishing is currently not possible and the
+    plugin will always publush empty jars for them.
+
+
 ## Java Library
 
 For projects using the `java-library` plugin.
