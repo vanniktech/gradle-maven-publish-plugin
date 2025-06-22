@@ -3,11 +3,11 @@ package com.vanniktech.maven.publish.central
 internal sealed interface EndOfBuildAction {
   val runAfterFailure: Boolean
 
-  object Upload : EndOfBuildAction {
+  data object Upload : EndOfBuildAction {
     override val runAfterFailure: Boolean = false
   }
 
-  object Publish : EndOfBuildAction {
+  data object Publish : EndOfBuildAction {
     override val runAfterFailure: Boolean = false
   }
 

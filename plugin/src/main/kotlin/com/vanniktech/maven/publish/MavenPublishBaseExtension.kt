@@ -76,7 +76,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         repository.setUrl("https://central.sonatype.com/repository/maven-snapshots/")
         repository.credentials(PasswordCredentials::class.java)
       } else {
-        repository.setUrl("file://${localRepository.get()}")
+        repository.url = localRepository.get().asFile.toURI()
       }
     }
 
