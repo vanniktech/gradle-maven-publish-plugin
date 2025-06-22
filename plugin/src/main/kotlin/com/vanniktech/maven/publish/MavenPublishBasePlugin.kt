@@ -9,9 +9,9 @@ public open class MavenPublishBasePlugin : Plugin<Project> {
   override fun apply(project: Project) {
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
 
-    project.extensions.create("mavenPublishing", MavenPublishBaseExtension::class.java, project)
-
     project.checkMinimumVersions()
+
+    project.extensions.create("mavenPublishing", MavenPublishBaseExtension::class.java, project)
   }
 
   private fun Project.checkMinimumVersions() {
