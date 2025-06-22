@@ -101,6 +101,7 @@ public abstract interface class com/vanniktech/maven/publish/JavadocJar {
 public final class com/vanniktech/maven/publish/JavadocJar$Dokka : com/vanniktech/maven/publish/JavadocJar {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Lorg/gradle/api/provider/Provider;)V
+	public fun <init> (Lorg/gradle/api/tasks/TaskProvider;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 }

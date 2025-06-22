@@ -35,6 +35,8 @@ Improvements
   - Note: The old properties continue to work and there are no plans to remove them
 - The base plugin is now compatible with isolated projects as long as `pomFromGradleProperties()` is
   not called.
+- It's possible to pass a `TaskProvider` to `JavadocJar.Dokka`
+- Improved naming of produced `-javadoc` jars (locally, the name of the published artifact is unchanged)
 - Resolve issue that caused `version` to be read too early when publishing to
   Central Portal.
 
