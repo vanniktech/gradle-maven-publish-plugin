@@ -21,7 +21,7 @@ No changes
 - Kotlin Gradle Plugin 2.2.0-RC3
 
 
-## [0.33.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.32.0) *(2025-06-22)*
+## [0.33.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.33.0) *(2025-06-22)*
 
 > [!CAUTION]
 > Sonatype OSSRH (oss.sonatype.org and s01.oss.sonatype.org) will be shut down on June 30, 2025.
