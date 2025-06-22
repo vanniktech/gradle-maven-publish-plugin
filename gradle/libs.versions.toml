@@ -18,7 +18,7 @@ junit-platform = "1.13.1"
 okhttp = "com.squareup.okhttp3:okhttp:4.12.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:2.0.0"
 android-plugin = "com.android.tools.build:gradle:8.10.1"
-maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.32.0"
+maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.33.0-rc1"
 bcv = "org.jetbrains.kotlinx:binary-compatibility-validator:0.17.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
