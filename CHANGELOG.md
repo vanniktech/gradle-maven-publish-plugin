@@ -1,6 +1,27 @@
 # Change Log
 
-## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.32.0...HEAD) *(2025-xx-xx)*
+## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.33.0...HEAD) *(2025-xx-xx)*
+
+No changes
+
+#### Minimum supported versions
+- JDK 11
+- Gradle 8.5
+- Android Gradle Plugin 8.0.0
+- Kotlin Gradle Plugin 1.9.20
+
+#### Compatibility tested up to
+- JDK 24
+- Gradle 8.14.2
+- Gradle 9.0-rc1
+- Android Gradle Plugin 8.10.0
+- Android Gradle Plugin 8.11.0-rc02
+- Android Gradle Plugin 8.12.0-alpha06
+- Kotlin Gradle Plugin 2.1.21
+- Kotlin Gradle Plugin 2.2.0-RC3
+
+
+## [0.33.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.32.0) *(2025-06-22)*
 
 > [!CAUTION]
 > Sonatype OSSRH (oss.sonatype.org and s01.oss.sonatype.org) will be shut down on June 30, 2025.
@@ -41,7 +62,7 @@ Improvements
   Central Portal.
 
 
-Thanks to @Goooler and @solrudev for their contributions to this release.
+Thanks to @Goooler, @solrudev and @sschuberth for their contributions to this release.
 
 #### Minimum supported versions
 - JDK 11
