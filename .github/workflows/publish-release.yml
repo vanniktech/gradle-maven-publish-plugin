@@ -26,7 +26,7 @@ jobs:
       - name: Get release notes
         run: |
           echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
-          echo "$(awk '/^## ${{ github.ref_name }}/{flag=1;next}/^## /{flag=0}flag' CHANGELOG.md)" >> $GITHUB_ENV
+          echo "$(awk '/^## \[${{ github.ref_name }}/{flag=1;next}/^## /{flag=0}flag' CHANGELOG.md)" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
       - name: Set version for tag
