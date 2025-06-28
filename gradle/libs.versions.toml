@@ -12,7 +12,7 @@ moshi = "1.15.2"
 retrofit = "3.0.0"
 
 truth = "1.4.4"
-junit-platform = "1.13.1"
+junit-platform = "1.13.2"
 
 [libraries]
 okhttp = "com.squareup.okhttp3:okhttp:4.12.0"
