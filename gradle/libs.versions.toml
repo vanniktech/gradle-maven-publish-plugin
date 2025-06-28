@@ -34,7 +34,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 
-junit-jupiter = "org.junit.jupiter:junit-jupiter:5.13.2"
+junit-jupiter = "org.junit.jupiter:junit-jupiter:6.0.0-M1"
 junit-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junit-platform" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.18"
