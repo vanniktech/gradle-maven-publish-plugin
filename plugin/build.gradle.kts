@@ -113,6 +113,7 @@ lint {
   baseline = file("lint-baseline.xml")
   ignoreTestSources = true
   warningsAsErrors = true
+  disable += "NewerVersionAvailable"
 }
 
 dependencies {
