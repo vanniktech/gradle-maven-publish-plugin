@@ -1,9 +1,9 @@
 package com.vanniktech.maven.publish.tasks
 
 import com.vanniktech.maven.publish.JavadocJar as JavadocJarOption
-import com.vanniktech.maven.publish.JavadocJar.Dokka.DokkaTaskName
-import com.vanniktech.maven.publish.JavadocJar.Dokka.ProviderDokkaTaskName
-import com.vanniktech.maven.publish.JavadocJar.Dokka.StringDokkaTaskName
+import com.vanniktech.maven.publish.JavadocJar.Dokka.DokkaTaskWrapper
+import com.vanniktech.maven.publish.baseExtension
+import java.util.Locale
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -14,37 +14,46 @@ public open class JavadocJar : Jar() {
   }
 
   internal companion object {
-    internal fun Project.javadocJarTask(prefix: String, javadocJar: JavadocJarOption): TaskProvider<out Jar>? = when (javadocJar) {
+    internal fun Project.javadocJarTask(javadocJar: JavadocJarOption, prefix: String?): TaskProvider<out Jar>? = when (javadocJar) {
       is JavadocJarOption.None -> null
       is JavadocJarOption.Empty -> emptyJavadocJar(prefix)
       is JavadocJarOption.Javadoc -> plainJavadocJar(prefix)
-      is JavadocJarOption.Dokka -> dokkaJavadocJar(prefix, javadocJar.taskName)
+      is JavadocJarOption.Dokka -> dokkaJavadocJar(prefix, javadocJar.wrapper)
     }
 
-    private fun Project.emptyJavadocJar(prefix: String): TaskProvider<out Jar> = tasks.register(
-      "${prefix}EmptyJavadocJar",
+    private fun Project.emptyJavadocJar(prefix: String?): TaskProvider<out Jar> = tasks.register(
+      prefixedTaskName("emptyJavadocJar", prefix),
       JavadocJar::class.java,
     ) {
-      it.archiveBaseName.set("${project.name}-$prefix-javadoc")
+      it.updateArchivesBaseNameWithPrefix(project, prefix)
     }
 
-    private fun Project.plainJavadocJar(prefix: String): TaskProvider<out Jar> =
-      tasks.register("${prefix}PlainJavadocJar", JavadocJar::class.java) {
-        val task = tasks.named("javadoc")
-        it.dependsOn(task)
-        it.from(task)
-        it.archiveBaseName.set("${project.name}-$prefix-javadoc")
+    private fun Project.plainJavadocJar(prefix: String?): TaskProvider<out Jar> =
+      tasks.register(prefixedTaskName("plainJavadocJar", prefix), JavadocJar::class.java) {
+        val javadocTask = tasks.named("javadoc")
+        it.dependsOn(javadocTask)
+        it.from(javadocTask)
+        it.updateArchivesBaseNameWithPrefix(project, prefix)
       }
 
-    private fun Project.dokkaJavadocJar(prefix: String, taskName: DokkaTaskName): TaskProvider<out Jar> =
-      tasks.register("${prefix}DokkaJavadocJar", JavadocJar::class.java) {
-        val task = when (taskName) {
-          is ProviderDokkaTaskName -> taskName.value.flatMap { name -> tasks.named(name) }
-          is StringDokkaTaskName -> tasks.named(taskName.value)
-        }
-        it.dependsOn(task)
-        it.from(task)
-        it.archiveBaseName.set("${project.name}-$prefix-javadoc")
+    private fun Project.dokkaJavadocJar(prefix: String?, dokkaTaskWrapper: DokkaTaskWrapper): TaskProvider<out Jar> =
+      tasks.register(prefixedTaskName("dokkaJavadocJar", prefix), JavadocJar::class.java) {
+        val dokkaTask = dokkaTaskWrapper.asProvider(project)
+        it.dependsOn(dokkaTask)
+        it.from(dokkaTask)
+        it.updateArchivesBaseNameWithPrefix(project, prefix)
       }
+
+    private fun prefixedTaskName(name: String, prefix: String?): String = if (prefix != null) {
+      "${prefix}${name.replaceFirstChar { it.titlecase(Locale.US) }}"
+    } else {
+      name
+    }
+
+    private fun Jar.updateArchivesBaseNameWithPrefix(project: Project, prefix: String?) {
+      if (prefix != null) {
+        archiveBaseName.set(project.baseExtension.artifactId.map { "$it-$prefix" })
+      }
+    }
   }
 }

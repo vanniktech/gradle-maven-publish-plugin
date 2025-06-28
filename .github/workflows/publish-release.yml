@@ -23,12 +23,6 @@ jobs:
           distribution: zulu
           java-version: 11
 
-      - name: Get release notes
-        run: |
-          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
-          echo "$(awk '/^## ${{ github.ref_name }}/{flag=1;next}/^## /{flag=0}flag' CHANGELOG.md)" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
       - name: Set version for tag
         run: |
           echo "ORG_GRADLE_PROJECT_VERSION_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
@@ -43,8 +37,13 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_PRIVATE_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
 
+      - name: Extract release notes
+        uses: ffurrer2/extract-release-notes@v2
+        with:
+          changelog_file: CHANGELOG.md
+          release_notes_file: RELEASE_NOTES.md
+
       - name: Create Release
-        run: gh release create "${{ github.ref_name }}" --notes "${{ env.RELEASE_NOTES }}"
+        run: gh release create "${{ github.ref_name }}" --notes-file RELEASE_NOTES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ env.RELEASE_NOTES != '' }}

@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -59,7 +60,7 @@ public data class JavaLibrary @JvmOverloads constructor(
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar(javadocJar, project)
+      it.withJavadocJar(javadocJar, project, multipleTasks = false)
     }
 
     setupTestFixtures(project, sourcesJar)
@@ -90,7 +91,7 @@ public data class GradlePlugin @JvmOverloads constructor(
 
     project.mavenPublicationsWithoutPluginMarker {
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar(javadocJar, project)
+      it.withJavadocJar(javadocJar, project, multipleTasks = false)
     }
   }
 }
@@ -277,7 +278,7 @@ public class AndroidFusedLibrary : Platform() {
     }
 
     project.mavenPublications {
-      it.withJavadocJar(javadocJar, project, configureArchives = true)
+      it.withJavadocJar(javadocJar, project, multipleTasks = false, configureArchives = true)
       it.withJavaSourcesJar(sourcesJar, project, configureArchives = true)
     }
   }
@@ -317,7 +318,7 @@ public data class KotlinMultiplatform internal constructor(
     }
 
     project.mavenPublications {
-      it.withJavadocJar(javadocJar, project)
+      it.withJavadocJar(javadocJar, project, multipleTasks = true)
     }
 
     project.extensions.configure(KotlinMultiplatformExtension::class.java) {
@@ -366,7 +367,7 @@ public data class KotlinJvm @JvmOverloads constructor(
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
       it.withJavaSourcesJar(sourcesJar, project)
-      it.withJavadocJar(javadocJar, project)
+      it.withJavadocJar(javadocJar, project, multipleTasks = false)
     }
 
     setupTestFixtures(project, sourcesJar)
@@ -477,24 +478,37 @@ public sealed interface JavadocJar {
    * for that purpose.
    */
   public class Dokka private constructor(
-    internal val taskName: DokkaTaskName,
+    internal val wrapper: DokkaTaskWrapper,
   ) : JavadocJar {
-    internal sealed interface DokkaTaskName
+    internal sealed interface DokkaTaskWrapper {
+      fun asProvider(project: Project): Provider<*>
+    }
 
-    internal data class StringDokkaTaskName(
+    internal data class StringDokkaTaskWrapper(
       val value: String,
-    ) : DokkaTaskName
+    ) : DokkaTaskWrapper {
+      override fun asProvider(project: Project): Provider<*> = project.tasks.named(value)
+    }
 
-    internal data class ProviderDokkaTaskName(
+    internal data class StringProviderDokkaTaskWrapper(
       val value: Provider<String>,
-    ) : DokkaTaskName
+    ) : DokkaTaskWrapper {
+      override fun asProvider(project: Project): Provider<*> = value.flatMap { name -> project.tasks.named(name) }
+    }
 
-    public constructor(taskName: String) : this(StringDokkaTaskName(taskName))
-    public constructor(taskName: Provider<String>) : this(ProviderDokkaTaskName(taskName))
+    internal data class DirectDokkaTaskWrapper(
+      val value: TaskProvider<*>,
+    ) : DokkaTaskWrapper {
+      override fun asProvider(project: Project): Provider<*> = value
+    }
 
-    override fun equals(other: Any?): Boolean = other is Dokka && taskName == other.taskName
+    public constructor(taskName: String) : this(StringDokkaTaskWrapper(taskName))
+    public constructor(taskName: Provider<String>) : this(StringProviderDokkaTaskWrapper(taskName))
+    public constructor(task: TaskProvider<*>) : this(DirectDokkaTaskWrapper(task))
 
-    override fun hashCode(): Int = taskName.hashCode()
+    override fun equals(other: Any?): Boolean = other is Dokka && wrapper == other.wrapper
+
+    override fun hashCode(): Int = wrapper.hashCode()
   }
 }
 
@@ -515,8 +529,13 @@ private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Proje
   }
 }
 
-private fun MavenPublication.withJavadocJar(javadocJar: JavadocJar, project: Project, configureArchives: Boolean = false) {
-  val task = project.javadocJarTask(name, javadocJar)
+private fun MavenPublication.withJavadocJar(
+  javadocJar: JavadocJar,
+  project: Project,
+  multipleTasks: Boolean,
+  configureArchives: Boolean = false,
+) {
+  val task = project.javadocJarTask(javadocJar, prefix = name.takeIf { multipleTasks })
   if (task != null) {
     artifact(task)
 
