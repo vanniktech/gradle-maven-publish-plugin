@@ -173,12 +173,7 @@ public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public final fun pom (Lorg/gradle/api/Action;)V
 	public final fun pomFromGradleProperties ()V
 	public final fun publishToMavenCentral ()V
-	public final fun publishToMavenCentral (Lcom/vanniktech/maven/publish/SonatypeHost;)V
-	public final fun publishToMavenCentral (Lcom/vanniktech/maven/publish/SonatypeHost;Z)V
-	public final synthetic fun publishToMavenCentral (Ljava/lang/String;)V
-	public final synthetic fun publishToMavenCentral (Ljava/lang/String;Z)V
 	public final fun publishToMavenCentral (Z)V
-	public static synthetic fun publishToMavenCentral$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Ljava/lang/String;ZILjava/lang/Object;)V
 	public static synthetic fun publishToMavenCentral$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;ZILjava/lang/Object;)V
 	public final fun signAllPublications ()V
 }
@@ -198,24 +193,6 @@ public class com/vanniktech/maven/publish/MavenPublishPlugin : org/gradle/api/Pl
 public abstract class com/vanniktech/maven/publish/Platform {
 	public abstract fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
 	public abstract fun getSourcesJar ()Z
-}
-
-public final class com/vanniktech/maven/publish/SonatypeHost : java/io/Serializable {
-	public static final field CENTRAL_PORTAL Lcom/vanniktech/maven/publish/SonatypeHost;
-	public static final field Companion Lcom/vanniktech/maven/publish/SonatypeHost$Companion;
-	public static final field DEFAULT Lcom/vanniktech/maven/publish/SonatypeHost;
-	public static final field S01 Lcom/vanniktech/maven/publish/SonatypeHost;
-	public fun <init> (Ljava/lang/String;)V
-	public final fun copy (Ljava/lang/String;Z)Lcom/vanniktech/maven/publish/SonatypeHost;
-	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/SonatypeHost;Ljava/lang/String;ZILjava/lang/Object;)Lcom/vanniktech/maven/publish/SonatypeHost;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-	public static final fun valueOf (Ljava/lang/String;)Lcom/vanniktech/maven/publish/SonatypeHost;
-}
-
-public final class com/vanniktech/maven/publish/SonatypeHost$Companion {
-	public final fun valueOf (Ljava/lang/String;)Lcom/vanniktech/maven/publish/SonatypeHost;
 }
 
 public final class com/vanniktech/maven/publish/VersionCatalog : com/vanniktech/maven/publish/Platform {
