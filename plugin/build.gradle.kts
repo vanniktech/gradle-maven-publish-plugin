@@ -117,8 +117,6 @@ lint {
 }
 
 dependencies {
-  api(gradleApi())
-
   compileOnly(libs.dokka)
   compileOnly(libs.kotlin.plugin)
   compileOnly(libs.android.plugin)
@@ -126,7 +124,6 @@ dependencies {
   implementation(projects.centralPortal)
   implementation(projects.nexus)
 
-  testImplementation(gradleTestKit())
   testImplementation(libs.junit.jupiter)
   testImplementation(libs.junit.engine)
   testImplementation(libs.junit.launcher)
