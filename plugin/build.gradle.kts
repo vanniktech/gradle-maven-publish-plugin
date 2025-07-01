@@ -122,7 +122,6 @@ dependencies {
   compileOnly(libs.android.plugin)
 
   implementation(projects.centralPortal)
-  implementation(projects.nexus)
 
   testImplementation(libs.junit.jupiter)
   testImplementation(libs.junit.engine)
@@ -146,7 +145,6 @@ tasks.whenTaskAdded {
 val integrationTest by tasks.registering(Test::class) {
   dependsOn(
     tasks.publishToMavenLocal,
-    project(projects.nexus.path).tasks.publishToMavenLocal,
     project(projects.centralPortal.path).tasks.publishToMavenLocal,
   )
   mustRunAfter(tasks.test)

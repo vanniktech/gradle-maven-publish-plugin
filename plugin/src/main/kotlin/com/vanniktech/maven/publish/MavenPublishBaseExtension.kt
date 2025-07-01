@@ -10,8 +10,6 @@ import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
-import org.gradle.api.artifacts.repositories.MavenArtifactRepository
-import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
@@ -30,10 +28,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
   private val buildEventsListenerRegistry: BuildEventsListenerRegistry,
 ) {
-  @get:Inject
-  internal abstract val buildFeatures: BuildFeatures
-
-  private val sonatypeHost: Property<SonatypeHost> = project.objects.property(SonatypeHost::class.java)
+  private val mavenCentral: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
   internal val groupId: Property<String> = project.objects
     .property(String::class.java)
@@ -67,75 +62,12 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    */
   @JvmOverloads
   public fun publishToMavenCentral(automaticRelease: Boolean = false) {
-    @Suppress("DEPRECATION")
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL, automaticRelease)
-  }
-
-  /**
-   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
-   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
-   * `publish` task. As part of running publish the plugin will automatically create a staging repository on Sonatype
-   * to which all artifacts will be published. At the end of the build this staging repository will be automatically
-   * closed. When the [automaticRelease] parameter is `true` the staging repository will also be released
-   * automatically afterwards.
-   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
-   * repository instead.
-   *
-   * This expects you provide your Sonatype username and password through Gradle properties called
-   * `mavenCentralUsername` and `mavenCentralPassword`.
-   *
-   * The `closeAndReleaseRepository` task is automatically configured for Sonatype OSSRH using the same credentials.
-   *
-   * @param host the instance of Sonatype OSSRH to use
-   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
-   */
-  @Deprecated(
-    message = "OSSRH will be shut down after June 30, 2025. Migrate to Central Portal instead. " +
-      "See more info at https://central.sonatype.org/news/20250326_ossrh_sunset . After migrating " +
-      "your account remove the SonatypeHost parameter and update your user token to one created in " +
-      "the Central Portal.\n" +
-      "If you are already calling this method with CENTRAL_PORTAL, you can simply remove the parameter.",
-    replaceWith = ReplaceWith("publishToMavenCentral()"),
-  )
-  public fun publishToMavenCentral(host: SonatypeHost) {
-    @Suppress("DEPRECATION")
-    publishToMavenCentral(host, automaticRelease = false)
-  }
-
-  /**
-   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
-   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
-   * `publish` task. As part of running publish the plugin will automatically create a staging repository on Sonatype
-   * to which all artifacts will be published. At the end of the build this staging repository will be automatically
-   * closed. When the [automaticRelease] parameter is `true` the staging repository will also be released
-   * automatically afterwards.
-   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
-   * repository instead.
-   *
-   * This expects you provide your Sonatype username and password through Gradle properties called
-   * `mavenCentralUsername` and `mavenCentralPassword`.
-   *
-   * The `closeAndReleaseRepository` task is automatically configured for Sonatype OSSRH using the same credentials.
-   *
-   * @param host the instance of Sonatype OSSRH to use
-   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
-   */
-  @Deprecated(
-    message = "OSSRH will be shut down after June 30, 2025. Migrate to Central Portal instead. " +
-      "See more info at https://central.sonatype.org/news/20250326_ossrh_sunset . After migrating " +
-      "your account remove the SonatypeHost parameter and update your user token to one created in " +
-      "the Central Portal.\n" +
-      "If you are already calling this method with CENTRAL_PORTAL, you can simply remove the parameter.",
-    replaceWith = ReplaceWith("publishToMavenCentral()"),
-  )
-  public fun publishToMavenCentral(host: SonatypeHost, automaticRelease: Boolean) {
-    sonatypeHost.set(host)
-    sonatypeHost.finalizeValue()
+    mavenCentral.set(true)
+    mavenCentral.finalizeValue()
 
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
 
     val buildService = project.registerSonatypeRepositoryBuildService(
-      sonatypeHost = sonatypeHost,
       groupId = groupId,
       versionIsSnapshot = versionIsSnapshot,
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
@@ -143,19 +75,18 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       automaticRelease = automaticRelease,
       rootBuildDirectory = project.rootProjectBuildDir(),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
-      isConfigurationCacheActive = buildFeatures.configurationCache.active,
     )
 
-    project.gradlePublishing.repositories.maven { repo ->
+    val repository = project.gradlePublishing.repositories.maven { repo ->
       repo.name = "mavenCentral"
-      repo.setUrl(buildService.map { it.publishingUrl() })
     }
 
-    project.afterEvaluate { project ->
-      project.gradlePublishing.repositories.withType(MavenArtifactRepository::class.java).configureEach { repo ->
-        if (repo.name == "mavenCentral" && (!sonatypeHost.get().isCentralPortal || versionIsSnapshot.get())) {
-          repo.credentials(PasswordCredentials::class.java)
-        }
+    project.afterEvaluate {
+      if (versionIsSnapshot.get()) {
+        repository.setUrl("https://central.sonatype.com/repository/maven-snapshots/")
+        repository.credentials(PasswordCredentials::class.java)
+      } else {
+        repository.setUrl(buildService.map { it.publishingUrl() })
       }
     }
 
@@ -181,12 +112,6 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       it.dependsOn(project.tasks.named("publishAllPublicationsToMavenCentralRepository"))
       it.dependsOn(releaseRepository)
     }
-  }
-
-  @JvmOverloads
-  @JvmSynthetic
-  public fun publishToMavenCentral(host: String, automaticRelease: Boolean = false) {
-    publishToMavenCentral(SonatypeHost.valueOf(host), automaticRelease)
   }
 
   /**
