@@ -1,6 +1,7 @@
 package com.vanniktech.maven.publish.sonatype
 
 import com.vanniktech.maven.publish.BuildConfig
+import com.vanniktech.maven.publish.central.EndOfBuildAction
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
 import java.io.File
 import java.io.FileOutputStream
@@ -38,25 +39,6 @@ internal abstract class SonatypeRepositoryBuildService :
     val okhttpTimeoutSeconds: Property<Long>
     val closeTimeoutSeconds: Property<Long>
     val rootBuildDirectory: DirectoryProperty
-  }
-
-  private sealed interface EndOfBuildAction {
-    val runAfterFailure: Boolean
-
-    data class Close(
-      val searchForRepositoryIfNoIdPresent: Boolean,
-    ) : EndOfBuildAction {
-      override val runAfterFailure: Boolean = false
-    }
-
-    object ReleaseAfterClose : EndOfBuildAction {
-      override val runAfterFailure: Boolean = false
-    }
-
-    data class Drop(
-      override val runAfterFailure: Boolean,
-      val searchForRepositoryIfNoIdPresent: Boolean,
-    ) : EndOfBuildAction
   }
 
   private val centralPortal by lazy {
