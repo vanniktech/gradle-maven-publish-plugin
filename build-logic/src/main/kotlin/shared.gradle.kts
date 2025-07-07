@@ -1,6 +1,7 @@
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val libs = the<LibrariesForLibs>()
@@ -9,7 +10,6 @@ plugins {
   id("java-library")
   id("org.jetbrains.kotlin.jvm")
   id("com.vanniktech.maven.publish")
-  id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 repositories {
@@ -24,6 +24,10 @@ java {
 
 kotlin {
   explicitApi()
+  @OptIn(ExperimentalAbiValidation::class)
+  abiValidation {
+    enabled = true
+  }
 }
 
 tasks.withType(KotlinCompile::class.java) {
@@ -31,6 +35,13 @@ tasks.withType(KotlinCompile::class.java) {
     jvmTarget.set(JvmTarget.JVM_11)
     languageVersion.set(KotlinVersion.KOTLIN_1_8)
   }
+}
+
+tasks.check {
+  dependsOn(
+    // TODO: https://youtrack.jetbrains.com/issue/KT-78525
+    tasks.checkLegacyAbi,
+  )
 }
 
 configurations.all {
