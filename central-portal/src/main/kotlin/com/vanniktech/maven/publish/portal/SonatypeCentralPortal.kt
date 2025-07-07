@@ -60,12 +60,12 @@ public class SonatypeCentralPortal(
     }
   }
 
-  public fun upload(name: String?, publishingType: String?, file: File): String {
+  public fun upload(name: String, publishingType: String, file: File): String {
     val uploadFile = file.asRequestBody("application/octet-stream".toMediaType())
     val multipart = MultipartBody.Part.createFormData("bundle", file.name, uploadFile)
     val uploadResponse = service.uploadBundle(name, publishingType, multipart).execute()
     if (uploadResponse.isSuccessful) {
-      return uploadResponse.body()!!
+      return requireNotNull(uploadResponse.body())
     } else {
       throw IOException("Upload failed: ${uploadResponse.errorBody()?.string()}")
     }
