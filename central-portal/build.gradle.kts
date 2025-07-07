@@ -3,8 +3,6 @@ plugins {
 }
 
 dependencies {
-  ksp(libs.moshi.codegen)
-
   implementation(libs.okhttp)
   implementation(libs.moshi)
   implementation(libs.retrofit)
