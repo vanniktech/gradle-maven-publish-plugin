@@ -8,7 +8,6 @@ val libs = the<LibrariesForLibs>()
 plugins {
   id("java-library")
   id("org.jetbrains.kotlin.jvm")
-  id("com.google.devtools.ksp")
   id("com.vanniktech.maven.publish")
   id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
