@@ -48,8 +48,8 @@ internal interface SonatypeCentralPortalService {
   @Multipart
   @POST("publisher/upload")
   fun uploadBundle(
-    @Query("name") name: String?,
-    @Query("publishingType") publishingType: String?,
+    @Query("name") name: String,
+    @Query("publishingType") publishingType: String,
     @Part input: MultipartBody.Part,
   ): Call<String>
 
