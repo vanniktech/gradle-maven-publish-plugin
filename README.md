@@ -14,6 +14,32 @@ For modifying what is getting published see [configuring what to publish](https:
 There is also a [base plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/base/) that doesn't apply any
 default configuration and allows the most customization.
 
+<details>
+<summary>Snapshots of the development version are available in Central Portal Snapshots.
+</summary>
+<p>
+
+```kotlin
+// Update this in your `settings.gradle.kts` file.
+pluginManagement {
+  repositories {
+    mavenCentral()
+    google()
+    // Add the snapshot repository.
+    maven("https://central.sonatype.com/repository/maven-snapshots/")
+  }
+}
+
+// Update this in your `build.gradle.kts` file.
+plugins {
+  // You can get the latest snapshot version from `VERSION_NAME` declared in https://github.com/vanniktech/gradle-maven-publish-plugin/blob/main/gradle.properties
+  id("com.vanniktech.maven.publish.base") version "<latest-snapshot-version>"
+}
+```
+
+</p>
+</details>
+
 # Supported plugins
 
 The output of the following Gradle plugins is supported to be published with this plugin:
