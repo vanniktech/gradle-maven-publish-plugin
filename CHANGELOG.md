@@ -2,7 +2,7 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.33.0...HEAD) *(2025-xx-xx)*
 
-No changes
+- Update the Central Portal Publisher APIs to the latest.
 
 #### Minimum supported versions
 - JDK 11

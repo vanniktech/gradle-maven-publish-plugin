@@ -13,18 +13,18 @@ import retrofit2.http.Query
  * Sonatype Central Portal Publishing based on https://central.sonatype.org/publish/publish-portal-api/
  */
 internal interface SonatypeCentralPortalService {
-  @DELETE("publisher/deployment/{deploymentId}")
+  @DELETE("api/v1/publisher/deployment/{deploymentId}")
   fun deleteDeployment(
     @Path("deploymentId") deploymentId: String,
   ): Call<Unit>
 
-  @POST("publisher/deployment/{deploymentId}")
+  @POST("api/v1/publisher/deployment/{deploymentId}")
   fun publishDeployment(
     @Path("deploymentId") deploymentId: String,
   ): Call<Unit>
 
   @Multipart
-  @POST("publisher/upload")
+  @POST("api/v1/publisher/upload")
   fun uploadBundle(
     @Query("name") name: String,
     @Query("publishingType") publishingType: String,
