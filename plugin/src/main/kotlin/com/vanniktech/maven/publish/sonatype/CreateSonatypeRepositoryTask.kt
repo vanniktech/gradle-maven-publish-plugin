@@ -23,8 +23,8 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
   abstract val buildService: Property<SonatypeRepositoryBuildService>
 
   @TaskAction
-  fun createStagingRepository() {
-    buildService.get().createStagingRepository(projectGroup.get(), artifactId.get(), version.get())
+  fun registerProject() {
+    buildService.get().registerProject(projectGroup.get(), artifactId.get(), version.get())
   }
 
   companion object {
