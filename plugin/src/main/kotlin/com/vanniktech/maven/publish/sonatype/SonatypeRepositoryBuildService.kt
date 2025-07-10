@@ -146,7 +146,11 @@ internal abstract class SonatypeRepositoryBuildService :
       "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
     }
 
-    val rootBuildDirectory = parameters.rootBuildDirectory.get().toString().replace('\\', '/')
+    val rootBuildDirectory = parameters
+      .rootBuildDirectory
+      .get()
+      .toString()
+      .replace('\\', '/')
     "file:///$rootBuildDirectory/publish/staging/$id"
   }
 
