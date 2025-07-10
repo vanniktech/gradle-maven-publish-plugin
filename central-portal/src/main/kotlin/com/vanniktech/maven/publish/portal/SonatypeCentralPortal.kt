@@ -8,8 +8,6 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 public class SonatypeCentralPortal(
   private val baseUrl: String,
@@ -29,8 +27,6 @@ public class SonatypeCentralPortal(
       .build()
     val retrofit = Retrofit
       .Builder()
-      .addConverterFactory(ScalarsConverterFactory.create())
-      .addConverterFactory(MoshiConverterFactory.create())
       .client(okHttpClient)
       .baseUrl(baseUrl)
       .build()

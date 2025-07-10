@@ -13,7 +13,7 @@ truth = "1.4.4"
 junit-platform = "1.13.3"
 
 [libraries]
-okhttp = "com.squareup.okhttp3:okhttp:5.0.0"
+okhttp = "com.squareup.okhttp3:okhttp:5.1.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:2.0.0"
 android-plugin = "com.android.tools.build:gradle:8.11.0"
 maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.33.0"
@@ -23,11 +23,7 @@ kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", versi
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
-moshi = "com.squareup.moshi:moshi:1.15.2"
-
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofit-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
-retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 
 junit-jupiter = "org.junit.jupiter:junit-jupiter:5.13.3"
 junit-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junit-platform" }
