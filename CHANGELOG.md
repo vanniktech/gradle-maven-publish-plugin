@@ -2,7 +2,7 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.33.0...HEAD) *(2025-xx-xx)*
 
-No changes
+- Fixed Gradle's deprecation warning caused by invalid URI.
 
 #### Minimum supported versions
 - JDK 11
