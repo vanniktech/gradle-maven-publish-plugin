@@ -98,8 +98,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       }
     }
 
-    val releaseRepository = project.tasks.registerReleaseRepository(buildService, createRepository)
-    project.tasks.registerDropRepository(buildService, createRepository)
+    val releaseRepository = project.tasks.registerReleaseRepository(buildService)
+    project.tasks.registerDropRepository(buildService)
 
     project.tasks.register("publishToMavenCentral") {
       it.description = "Publishes to a staging repository on Sonatype OSS"
