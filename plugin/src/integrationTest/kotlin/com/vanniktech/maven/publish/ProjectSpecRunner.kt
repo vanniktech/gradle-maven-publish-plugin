@@ -21,7 +21,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
   fixtures.resolve("test-secring.gpg").copyTo(project.resolve("test-secring.gpg"))
 
   val task = ":module:publishAllPublicationsToTestFolderRepository"
-  val arguments = mutableListOf(task, "--stacktrace")
+  val arguments = mutableListOf(task, "--warning-mode=fail", "--stacktrace")
   if (supportsConfigCaching()) {
     arguments.add("--configuration-cache")
   }
