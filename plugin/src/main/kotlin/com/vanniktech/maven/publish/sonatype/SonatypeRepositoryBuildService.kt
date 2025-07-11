@@ -8,6 +8,7 @@ import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.net.URI
 import java.util.Base64
 import java.util.UUID
 import java.util.zip.ZipEntry
@@ -143,19 +144,19 @@ internal abstract class SonatypeRepositoryBuildService :
     )
   }
 
-  internal fun publishingUrl(): String = if (parameters.versionIsSnapshot.get()) {
+  internal fun publishingUrl(): URI = if (parameters.versionIsSnapshot.get()) {
     error { "Staging repositories are not supported for SNAPSHOT versions." }
   } else {
     val id = requireNotNull(uploadId) {
       "The staging repository was not created yet. Please open a bug with a build scan or build logs and stacktrace"
     }
 
-    val rootBuildDirectory = parameters
+    parameters
       .rootBuildDirectory
       .get()
-      .toString()
-      .replace('\\', '/')
-    "file:///$rootBuildDirectory/publish/staging/$id"
+      .asFile
+      .resolve("publish/staging/$id")
+      .toURI()
   }
 
   override fun onFinish(event: FinishEvent) {
@@ -205,7 +206,7 @@ internal abstract class SonatypeRepositoryBuildService :
           "USER_MANAGED"
         }
 
-        val directory = File(publishingUrl().substringAfter("://"))
+        val directory = File(publishingUrl())
         val zipFile = File("${directory.absolutePath}.zip")
         val out = ZipOutputStream(FileOutputStream(zipFile))
         directory.walkTopDown().forEach {
