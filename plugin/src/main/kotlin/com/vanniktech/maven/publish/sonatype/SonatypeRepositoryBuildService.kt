@@ -5,8 +5,9 @@ import com.vanniktech.maven.publish.central.EndOfBuildAction
 import com.vanniktech.maven.publish.central.MavenCentralCoordinates
 import com.vanniktech.maven.publish.central.MavenCentralProject
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
+import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.AUTOMATIC
+import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.USER_MANAGED
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Base64
 import java.util.UUID
@@ -152,7 +153,7 @@ internal abstract class SonatypeRepositoryBuildService :
     if (buildIsSuccess) {
       runEndOfBuildActions(endOfBuildActions.filter { !it.runAfterFailure })
     } else {
-      // surround with try catch since failing again on clean up actions causes confusion
+      // surround with try catch since failing again on cleanup actions causes confusion
       try {
         runEndOfBuildActions(endOfBuildActions.filter { it.runAfterFailure })
       } catch (e: IOException) {
@@ -182,27 +183,23 @@ internal abstract class SonatypeRepositoryBuildService :
       }
 
       val publishingType = if (actions.contains(EndOfBuildAction.Publish)) {
-        "AUTOMATIC"
+        AUTOMATIC
       } else {
-        "USER_MANAGED"
+        USER_MANAGED
       }
 
       val directory = File(publishingUrl().substringAfter("://"))
       val zipFile = File("${directory.absolutePath}.zip")
-      val out = ZipOutputStream(FileOutputStream(zipFile))
-      directory.walkTopDown().forEach {
-        if (it.isDirectory) {
-          return@forEach
+      val out = ZipOutputStream(zipFile.outputStream())
+      directory
+        .walkTopDown()
+        .filter { it.isFile && !it.name.contains("maven-metadata") }
+        .forEach {
+          val entry = ZipEntry(it.toRelativeString(directory))
+          out.putNextEntry(entry)
+          out.write(it.readBytes())
+          out.closeEntry()
         }
-        if (it.name.contains("maven-metadata")) {
-          return@forEach
-        }
-
-        val entry = ZipEntry(it.toRelativeString(directory))
-        out.putNextEntry(entry)
-        out.write(it.readBytes())
-        out.closeEntry()
-      }
       out.close()
 
       publishId = centralPortal.upload(deploymentName, publishingType, zipFile)

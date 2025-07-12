@@ -27,7 +27,7 @@ internal interface SonatypeCentralPortalService {
   @POST("api/v1/publisher/upload")
   fun uploadBundle(
     @Query("name") name: String,
-    @Query("publishingType") publishingType: String,
+    @Query("publishingType") publishingType: SonatypeCentralPortal.PublishingType,
     @Part input: MultipartBody.Part,
   ): Call<String>
 }
