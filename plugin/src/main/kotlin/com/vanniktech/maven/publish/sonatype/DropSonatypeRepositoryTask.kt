@@ -22,8 +22,7 @@ internal abstract class DropSonatypeRepositoryTask : DefaultTask() {
 
   @TaskAction
   fun closeAndReleaseRepository() {
-    val service = this.buildService.get()
-    service.shouldDropRepository(manualStagingRepositoryId)
+    buildService.get().shouldDropRepository(manualStagingRepositoryId)
   }
 
   companion object {
@@ -31,13 +30,11 @@ internal abstract class DropSonatypeRepositoryTask : DefaultTask() {
 
     fun TaskContainer.registerDropRepository(
       buildService: Provider<SonatypeRepositoryBuildService>,
-      createRepository: TaskProvider<CreateSonatypeRepositoryTask>,
     ): TaskProvider<DropSonatypeRepositoryTask> = register(NAME, DropSonatypeRepositoryTask::class.java) {
       it.description = "Drops a staging repository on Sonatype OSS"
       it.group = "release"
       it.buildService.set(buildService)
       it.usesService(buildService)
-      it.mustRunAfter(createRepository)
     }
   }
 }

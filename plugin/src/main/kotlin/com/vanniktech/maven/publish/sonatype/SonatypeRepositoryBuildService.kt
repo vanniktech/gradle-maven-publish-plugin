@@ -5,8 +5,9 @@ import com.vanniktech.maven.publish.central.EndOfBuildAction
 import com.vanniktech.maven.publish.central.MavenCentralCoordinates
 import com.vanniktech.maven.publish.central.MavenCentralProject
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
+import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.AUTOMATIC
+import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.USER_MANAGED
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URI
 import java.util.Base64
@@ -100,31 +101,18 @@ internal abstract class SonatypeRepositoryBuildService :
 
     uploadId = UUID.randomUUID().toString()
 
-    endOfBuildActions += EndOfBuildAction.Close(searchForRepositoryIfNoIdPresent = false)
+    endOfBuildActions += EndOfBuildAction.Upload
     if (parameters.automaticRelease.get()) {
-      endOfBuildActions += EndOfBuildAction.ReleaseAfterClose
+      endOfBuildActions += EndOfBuildAction.Publish
     }
-    endOfBuildActions += EndOfBuildAction.Drop(
-      runAfterFailure = true,
-      searchForRepositoryIfNoIdPresent = false,
-    )
+    endOfBuildActions += EndOfBuildAction.Drop(runAfterFailure = true)
   }
 
   /**
-   * Is only be allowed to be called from task actions. Tasks calling this must run after tasks
-   * that call [registerProject].
+   * Is only be allowed to be called from task actions.
    */
-  fun shouldCloseAndReleaseRepository(manualStagingRepositoryId: String?) {
-    if (manualStagingRepositoryId != null) {
-      publishId = manualStagingRepositoryId
-    } else {
-      if (uploadId == null) {
-        error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
-      }
-    }
-
-    endOfBuildActions += EndOfBuildAction.Close(searchForRepositoryIfNoIdPresent = true)
-    endOfBuildActions += EndOfBuildAction.ReleaseAfterClose
+  fun enableAutomaticPublishing() {
+    endOfBuildActions += EndOfBuildAction.Publish
   }
 
   /**
@@ -138,10 +126,7 @@ internal abstract class SonatypeRepositoryBuildService :
       error("A deployment id needs to be provided with `--repository` when publishing through Central Portal")
     }
 
-    endOfBuildActions += EndOfBuildAction.Drop(
-      runAfterFailure = false,
-      searchForRepositoryIfNoIdPresent = true,
-    )
+    endOfBuildActions += EndOfBuildAction.Drop(runAfterFailure = false)
   }
 
   internal fun publishingUrl(): URI = if (parameters.versionIsSnapshot.get()) {
@@ -169,7 +154,7 @@ internal abstract class SonatypeRepositoryBuildService :
     if (buildIsSuccess) {
       runEndOfBuildActions(endOfBuildActions.filter { !it.runAfterFailure })
     } else {
-      // surround with try catch since failing again on clean up actions causes confusion
+      // surround with try catch since failing again on cleanup actions causes confusion
       try {
         runEndOfBuildActions(endOfBuildActions.filter { it.runAfterFailure })
       } catch (e: IOException) {
@@ -185,54 +170,40 @@ internal abstract class SonatypeRepositoryBuildService :
   private fun runEndOfBuildActions(actions: List<EndOfBuildAction>) {
     val uploadId = uploadId
 
-    val closeActions = actions.filterIsInstance<EndOfBuildAction.Close>()
-    if (closeActions.isNotEmpty()) {
-      if (uploadId != null) {
-        val coordinates = projectsToPublish.map { it.coordinates }.toSet()
-        val deploymentName = if (coordinates.size == 1) {
-          val coordinate = coordinates.single()
-          "${coordinate.group}-${coordinate.artifactId}-${coordinate.version}"
-        } else if (coordinates.distinctBy { it.group + it.version }.size == 1) {
-          val coordinate = coordinates.first()
-          "${coordinate.group}-${coordinate.version}"
-        } else {
-          val coordinate = coordinates.first()
-          "${coordinate.group}-$uploadId"
-        }
+    if (actions.contains(EndOfBuildAction.Upload)) {
+      val coordinates = projectsToPublish.map { it.coordinates }.toSet()
+      val deploymentName = if (coordinates.size == 1) {
+        val coordinate = coordinates.single()
+        "${coordinate.group}-${coordinate.artifactId}-${coordinate.version}"
+      } else if (coordinates.distinctBy { it.group + it.version }.size == 1) {
+        val coordinate = coordinates.first()
+        "${coordinate.group}-${coordinate.version}"
+      } else {
+        val coordinate = coordinates.first()
+        "${coordinate.group}-$uploadId"
+      }
 
-        val publishingType = if (actions.contains(EndOfBuildAction.ReleaseAfterClose)) {
-          "AUTOMATIC"
-        } else {
-          "USER_MANAGED"
-        }
+      val publishingType = if (actions.contains(EndOfBuildAction.Publish)) {
+        AUTOMATIC
+      } else {
+        USER_MANAGED
+      }
 
-        val directory = File(publishingUrl())
-        val zipFile = File("${directory.absolutePath}.zip")
-        val out = ZipOutputStream(FileOutputStream(zipFile))
-        directory.walkTopDown().forEach {
-          if (it.isDirectory) {
-            return@forEach
-          }
-          if (it.name.contains("maven-metadata")) {
-            return@forEach
-          }
-
+      val directory = File(publishingUrl())
+      val zipFile = File("${directory.absolutePath}.zip")
+      val out = ZipOutputStream(zipFile.outputStream())
+      directory
+        .walkTopDown()
+        .filter { it.isFile && !it.name.contains("maven-metadata") }
+        .forEach {
           val entry = ZipEntry(it.toRelativeString(directory))
           out.putNextEntry(entry)
           out.write(it.readBytes())
           out.closeEntry()
         }
-        out.close()
+      out.close()
 
-        publishId = centralPortal.upload(deploymentName, publishingType, zipFile)
-      } else {
-        val publishId = publishId
-        if (publishId != null) {
-          centralPortal.publishDeployment(publishId)
-        } else if (closeActions.all { it.searchForRepositoryIfNoIdPresent }) {
-          error("A deployment id needs to be provided when publishing through Central Portal")
-        }
-      }
+      publishId = centralPortal.upload(deploymentName, publishingType, zipFile)
     }
 
     val dropAction = actions.filterIsInstance<EndOfBuildAction.Drop>().singleOrNull()
@@ -240,8 +211,6 @@ internal abstract class SonatypeRepositoryBuildService :
       val publishId = publishId
       if (publishId != null) {
         centralPortal.deleteDeployment(publishId)
-      } else if (dropAction.searchForRepositoryIfNoIdPresent) {
-        error("A deployment id needs to be provided when publishing through Central Portal")
       }
     }
   }
