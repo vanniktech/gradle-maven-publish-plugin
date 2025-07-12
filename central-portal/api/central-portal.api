@@ -2,6 +2,13 @@ public final class com/vanniktech/maven/publish/portal/SonatypeCentralPortal {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJ)V
 	public final fun deleteDeployment (Ljava/lang/String;)V
 	public final fun publishDeployment (Ljava/lang/String;)V
-	public final fun upload (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Ljava/lang/String;
+	public final fun upload (Ljava/lang/String;Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;Ljava/io/File;)Ljava/lang/String;
+}
+
+public final class com/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType : java/lang/Enum {
+	public static final field AUTOMATIC Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;
+	public static final field USER_MANAGED Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;
+	public static fun valueOf (Ljava/lang/String;)Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;
+	public static fun values ()[Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;
 }
 
