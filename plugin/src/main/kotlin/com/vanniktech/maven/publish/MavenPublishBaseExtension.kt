@@ -68,11 +68,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
 
     val buildService = project.registerSonatypeRepositoryBuildService(
-      groupId = groupId,
       versionIsSnapshot = versionIsSnapshot,
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
-      automaticRelease = automaticRelease,
       rootBuildDirectory = project.rootProjectBuildDir(),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
     )
@@ -91,14 +89,17 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
 
     val createRepository = project.tasks.registerCreateRepository(buildService, groupId, artifactId, version)
+    val releaseRepository = project.tasks.registerReleaseRepository(buildService)
 
     project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
       if (publishTask.name.endsWith("ToMavenCentralRepository")) {
         publishTask.dependsOn(createRepository)
+        if (automaticRelease) {
+          publishTask.dependsOn(releaseRepository)
+        }
       }
     }
 
-    val releaseRepository = project.tasks.registerReleaseRepository(buildService)
     project.tasks.registerDropRepository(buildService)
 
     project.tasks.register("publishToMavenCentral") {
