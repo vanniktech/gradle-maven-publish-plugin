@@ -35,8 +35,7 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
   fun registerProject() {
     val localRepository = localRepository.asFile.get()
 
-    // delete local repository from previous publishing attempts to ensure only current files
-    // are published
+    // delete local repository from previous publishing attempts to ensure only current files are published.
     if (localRepository.exists()) {
       localRepository.deleteRecursively()
     }
