@@ -8,6 +8,7 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
 public class SonatypeCentralPortal(
   private val baseUrl: String,
@@ -29,6 +30,7 @@ public class SonatypeCentralPortal(
       .Builder()
       .client(okHttpClient)
       .baseUrl(baseUrl)
+      .addConverterFactory(ScalarsConverterFactory.create())
       .build()
 
     retrofit.create(SonatypeCentralPortalService::class.java)
