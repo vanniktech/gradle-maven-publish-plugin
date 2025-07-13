@@ -9,6 +9,7 @@
 - Update the Central Portal Publisher APIs to the latest.
 - Fixed Gradle's deprecation warning caused by invalid URI.
 - Fixed check for the minimum supported Gradle version running too late in some cases.
+- Mark publishing tasks as `@CacheableTask`.
 
 #### Minimum supported versions
 - JDK 11
