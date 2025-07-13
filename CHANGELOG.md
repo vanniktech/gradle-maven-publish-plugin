@@ -2,6 +2,7 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.33.0...HEAD) *(2025-xx-xx)*
 
+- Added configuration cache support for publishing.
 - Removed support for publishing through Sonatype OSSRH.
     - `SonatypeHost` has been removed from the DSL.
     - `SONATYPE_HOST` only supports `CENTRAL_PORTAL` now (it's recommended to use `mavenCentralPublishing=true` instead).
