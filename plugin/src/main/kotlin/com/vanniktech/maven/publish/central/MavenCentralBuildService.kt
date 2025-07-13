@@ -131,6 +131,7 @@ internal abstract class MavenCentralBuildService :
         .file("publish/$deploymentName-${System.currentTimeMillis()}.zip")
         .get()
         .asFile
+      check(zipFile.createNewFile()) { "$zipFile already exists" }
       val out = ZipOutputStream(zipFile.outputStream())
       projectsToPublish.forEach { project ->
         project.localRepository
