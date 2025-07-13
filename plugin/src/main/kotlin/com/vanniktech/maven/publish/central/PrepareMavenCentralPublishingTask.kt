@@ -24,8 +24,7 @@ internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
   @get:Input
   abstract val version: Property<String>
 
-  @get:InputDirectory
-  @get:PathSensitive(PathSensitivity.RELATIVE)
+  @get:Internal
   abstract val localRepository: DirectoryProperty
 
   @get:Internal
