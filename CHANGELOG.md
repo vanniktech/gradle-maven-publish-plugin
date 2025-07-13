@@ -1,14 +1,37 @@
 # Change Log
 
-## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.33.0...HEAD) *(2025-xx-xx)*
+## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.34.0...HEAD) *(2025-xx-xx)*
+
+#### Minimum supported versions
+- JDK 11
+- Gradle 8.5
+- Android Gradle Plugin 8.0.0
+- Kotlin Gradle Plugin 1.9.20
+
+#### Compatibility tested up to
+- JDK 24
+- Gradle 8.14.3
+- Gradle 9.0.0-rc2
+- Android Gradle Plugin 8.11.1
+- Android Gradle Plugin 8.12.0-alpha08
+- Kotlin Gradle Plugin 2.2.0
+- Kotlin Gradle Plugin 2.2.20-Beta1
+
+
+## [0.34.0.](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.34.0) *(2025-07-13)*
 
 - Added configuration cache support for publishing.
-- Removed support for publishing through Sonatype OSSRH.
+- Removed support for publishing through Sonatype OSSRH since it has been shut down. See the
+  [0.33.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.33.0) release notes for upgrade
+  instructions if you haven't upgraded yet.
     - `SonatypeHost` has been removed from the DSL.
     - `SONATYPE_HOST` only supports `CENTRAL_PORTAL` now (it's recommended to use `mavenCentralPublishing=true` instead).
 - Update the Central Portal Publisher APIs to the latest.
+- It's now possible to mix SNAPSHOT versions and release versions when running `publish` tasks.
 - Fixed Gradle's deprecation warning caused by invalid URI.
 - Fixed check for the minimum supported Gradle version running too late in some cases.
+
+Thanks to @Goooler and @solrudev for their contributions to this release.
 
 #### Minimum supported versions
 - JDK 11
