@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.sonatype
+package com.vanniktech.maven.publish.central
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
@@ -14,7 +14,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 
-internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
+internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
   @get:Internal
   abstract val projectGroup: Property<String>
 
@@ -29,7 +29,7 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
   abstract val localRepository: DirectoryProperty
 
   @get:Internal
-  abstract val buildService: Property<SonatypeRepositoryBuildService>
+  abstract val buildService: Property<MavenCentralBuildService>
 
   @TaskAction
   fun registerProject() {
@@ -44,17 +44,16 @@ internal abstract class CreateSonatypeRepositoryTask : DefaultTask() {
   }
 
   companion object {
-    private const val NAME = "createStagingRepository"
+    private const val NAME = "prepareMavenCentralPublishing"
 
-    fun TaskContainer.registerCreateRepository(
-      buildService: Provider<SonatypeRepositoryBuildService>,
+    fun TaskContainer.registerPrepareMavenCentralPublishingTask(
+      buildService: Provider<MavenCentralBuildService>,
       group: Provider<String>,
       artifactId: Provider<String>,
       version: Provider<String>,
       localRepository: Provider<Directory>,
-    ): TaskProvider<CreateSonatypeRepositoryTask> = register(NAME, CreateSonatypeRepositoryTask::class.java) {
-      it.description = "Create a staging repository on Sonatype OSS"
-      it.group = "release"
+    ): TaskProvider<PrepareMavenCentralPublishingTask> = register(NAME, PrepareMavenCentralPublishingTask::class.java) {
+      it.description = "Prepare for publishing to Maven Central"
       it.projectGroup.set(group)
       it.artifactId.set(artifactId)
       it.version.set(version)

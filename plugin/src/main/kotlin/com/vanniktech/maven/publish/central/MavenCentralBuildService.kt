@@ -1,9 +1,6 @@
-package com.vanniktech.maven.publish.sonatype
+package com.vanniktech.maven.publish.central
 
 import com.vanniktech.maven.publish.BuildConfig
-import com.vanniktech.maven.publish.central.EndOfBuildAction
-import com.vanniktech.maven.publish.central.MavenCentralCoordinates
-import com.vanniktech.maven.publish.central.MavenCentralProject
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.AUTOMATIC
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.USER_MANAGED
@@ -24,8 +21,8 @@ import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 
-internal abstract class SonatypeRepositoryBuildService :
-  BuildService<SonatypeRepositoryBuildService.Params>,
+internal abstract class MavenCentralBuildService :
+  BuildService<MavenCentralBuildService.Params>,
   AutoCloseable,
   OperationCompletionListener {
   internal interface Params : BuildServiceParameters {
@@ -171,14 +168,14 @@ internal abstract class SonatypeRepositoryBuildService :
   }
 
   companion object {
-    private const val NAME = "sonatype-repository-build-service"
+    private const val NAME = "maven-central-build-service"
 
-    fun Project.registerSonatypeRepositoryBuildService(
+    fun Project.registerMavenCentralBuildService(
       repositoryUsername: Provider<String>,
       repositoryPassword: Provider<String>,
       rootBuildDirectory: Provider<Directory>,
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
-    ): Provider<SonatypeRepositoryBuildService> {
+    ): Provider<MavenCentralBuildService> {
       val okhttpTimeout = project.providers
         .gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
         .map { it.toLong() }
@@ -187,7 +184,7 @@ internal abstract class SonatypeRepositoryBuildService :
         .gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
         .map { it.toLong() }
         .orElse(60 * 15)
-      val service = gradle.sharedServices.registerIfAbsent(NAME, SonatypeRepositoryBuildService::class.java) {
+      val service = gradle.sharedServices.registerIfAbsent(NAME, MavenCentralBuildService::class.java) {
         it.maxParallelUsages.set(1)
         it.parameters.repositoryUsername.set(repositoryUsername)
         it.parameters.repositoryPassword.set(repositoryPassword)
