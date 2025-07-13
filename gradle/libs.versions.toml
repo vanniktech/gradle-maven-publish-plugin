@@ -13,7 +13,7 @@ junit-platform = "1.13.3"
 okhttp = "com.squareup.okhttp3:okhttp:5.1.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:2.0.0"
 android-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
-maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.34.0-rc1"
+maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.33.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
