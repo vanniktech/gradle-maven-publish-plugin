@@ -128,7 +128,6 @@ dependencies {
   testImplementation(libs.junit.launcher)
   testImplementation(libs.testParameterInjector)
   testImplementation(libs.truth)
-  testImplementation(libs.truth.java8)
   testImplementation(libs.truth.testKit)
   testImplementation(libs.maven.model)
 

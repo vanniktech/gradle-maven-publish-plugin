@@ -3,19 +3,16 @@ gradle = "8.14.3"
 
 kotlin = "2.2.0"
 
-android-gradle = "8.9.2"
+android-gradle = "8.11.1"
 
 gradle-plugin-publish = "1.3.1"
 
-retrofit = "3.0.0"
-
-truth = "1.4.4"
 junit-platform = "1.13.3"
 
 [libraries]
 okhttp = "com.squareup.okhttp3:okhttp:5.1.0"
 dokka = "org.jetbrains.dokka:dokka-gradle-plugin:2.0.0"
-android-plugin = "com.android.tools.build:gradle:8.11.1"
+android-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
 maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.33.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
@@ -23,14 +20,13 @@ kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", versi
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit = "com.squareup.retrofit2:retrofit:3.0.0"
 
 junit-jupiter = "org.junit.jupiter:junit-jupiter:5.13.3"
 junit-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junit-platform" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.18"
-truth = { module = "com.google.truth:truth", version.ref = "truth" }
-truth-java8 = { module = "com.google.truth.extensions:truth-java8-extension", version.ref = "truth" }
+truth = "com.google.truth:truth:1.4.4"
 truth-testKit = "com.autonomousapps:testkit-truth:1.1"
 maven-model = "org.apache.maven:maven-model:3.9.10"
 
