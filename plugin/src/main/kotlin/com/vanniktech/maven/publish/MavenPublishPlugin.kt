@@ -34,7 +34,6 @@ public open class MavenPublishPlugin : Plugin<Project> {
     }
   }
 
-  @Suppress("DEPRECATION")
   private fun Project.sonatypeHost(): Boolean {
     val central = providers.gradleProperty("mavenCentralPublishing").orNull
     if (central != null) {
