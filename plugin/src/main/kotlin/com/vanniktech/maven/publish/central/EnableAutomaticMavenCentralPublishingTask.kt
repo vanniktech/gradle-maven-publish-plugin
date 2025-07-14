@@ -7,7 +7,9 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.UntrackedTask
 
+@UntrackedTask(because = "Not worth tracking")
 internal abstract class EnableAutomaticMavenCentralPublishingTask : DefaultTask() {
   @get:Internal
   abstract val buildService: Property<MavenCentralBuildService>

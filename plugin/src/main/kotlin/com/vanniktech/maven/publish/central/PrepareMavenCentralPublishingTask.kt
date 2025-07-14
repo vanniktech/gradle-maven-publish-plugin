@@ -10,7 +10,9 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.UntrackedTask
 
+@UntrackedTask(because = "Not worth tracking")
 internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
   @get:Internal
   abstract val projectGroup: Property<String>

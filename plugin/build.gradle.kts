@@ -134,6 +134,11 @@ dependencies {
   lintChecks(libs.androidx.gradlePluginLints)
 }
 
+tasks.validatePlugins {
+  // TODO: https://github.com/gradle/gradle/issues/22600
+  enableStricterValidation = true
+}
+
 tasks.whenTaskAdded {
   if (name.contains("lint") && this::class.java.name.contains("com.android.build")) {
     // TODO: lints can be run on Java 17 or above, remove this once we bump the min Java version to 17.

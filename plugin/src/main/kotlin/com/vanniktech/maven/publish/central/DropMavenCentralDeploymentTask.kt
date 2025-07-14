@@ -8,8 +8,10 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.UntrackedTask
 import org.gradle.api.tasks.options.Option
 
+@UntrackedTask(because = "Not worth tracking")
 internal abstract class DropMavenCentralDeploymentTask : DefaultTask() {
   @get:Internal
   abstract val buildService: Property<MavenCentralBuildService>
