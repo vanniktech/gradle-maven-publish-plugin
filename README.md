@@ -18,15 +18,15 @@ default configuration and allows the most customization.
 
 The output of the following Gradle plugins is supported to be published with this plugin:
 
-- `com.android.library`
 - `com.android.fused-library`
+- `com.android.library`
+- `com.gradle.plugin-publish`
+- `java`
+- `java-gradle-plugin`
+- `java-library`
+- `java-platform`
 - `org.jetbrains.kotlin.jvm`
 - `org.jetbrains.kotlin.multiplatform`
-- `java`
-- `java-library`
-- `java-gradle-plugin`
-- `com.gradle.plugin-publish`
-- `java-platform`
 - `version-catalog`
 
 # Advantages over `maven-publish`
