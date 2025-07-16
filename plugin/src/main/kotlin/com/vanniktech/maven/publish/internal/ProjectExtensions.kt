@@ -87,21 +87,18 @@ internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, 
  * Use isolated project compatible methods of accessing the root project
  * if they are available.
  *
- * Can be removed when Gradle 8.13 is the minimum supported version.
+ * TODO: remove this when Gradle 8.8/8.13 is the minimum supported version.
  */
-internal fun Project.rootProjectBuildDir(): Provider<Directory> {
-  // TODO: remove this when Gradle 8.8/8.13 is the minimum supported version.
-  return when {
-    GradleVersion.current() >= SETTINGS_DIRECTORY_GRADLE_VERSION -> project.provider {
-      layout.settingsDirectory.dir("build")
-    }
-    GradleVersion.current() >= ISOLATED_PROJECT_VIEW_GRADLE_VERSION -> project.provider {
-      isolated.rootProject.projectDirectory.dir("build")
-    }
-    else -> {
-      @Suppress("GradleProjectIsolation")
-      rootProject.layout.buildDirectory
-    }
+internal fun Project.rootProjectBuildDir(): Provider<Directory> = when {
+  GradleVersion.current() >= SETTINGS_DIRECTORY_GRADLE_VERSION -> project.provider {
+    layout.settingsDirectory.dir("build")
+  }
+  GradleVersion.current() >= ISOLATED_PROJECT_VIEW_GRADLE_VERSION -> project.provider {
+    isolated.rootProject.projectDirectory.dir("build")
+  }
+  else -> {
+    @Suppress("GradleProjectIsolation")
+    rootProject.layout.buildDirectory
   }
 }
 
