@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.workaround
+package com.vanniktech.maven.publish.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory

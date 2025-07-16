@@ -2,7 +2,7 @@ package com.vanniktech.maven.publish.tasks
 
 import com.vanniktech.maven.publish.JavadocJar as JavadocJarOption
 import com.vanniktech.maven.publish.JavadocJar.Dokka.DokkaTaskWrapper
-import com.vanniktech.maven.publish.baseExtension
+import com.vanniktech.maven.publish.internal.baseExtension
 import java.util.Locale
 import org.gradle.api.Project
 import org.gradle.api.tasks.CacheableTask

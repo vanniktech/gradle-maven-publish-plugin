@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.central
+package com.vanniktech.maven.publish.internal.central
 
 import com.vanniktech.maven.publish.BuildConfig
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal

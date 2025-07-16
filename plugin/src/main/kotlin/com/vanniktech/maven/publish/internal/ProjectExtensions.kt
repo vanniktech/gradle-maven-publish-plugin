@@ -1,9 +1,10 @@
 @file:Suppress("UnstableApiUsage")
 
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.internal
 
 import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project

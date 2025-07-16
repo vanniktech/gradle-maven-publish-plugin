@@ -1,8 +1,7 @@
 @file:Suppress("InternalGradleApiUsage")
 
-package com.vanniktech.maven.publish.workaround
+package com.vanniktech.maven.publish.internal
 
-import com.vanniktech.maven.publish.baseExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.DocsType
