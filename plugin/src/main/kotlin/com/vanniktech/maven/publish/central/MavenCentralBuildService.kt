@@ -36,7 +36,7 @@ internal abstract class MavenCentralBuildService :
   private val centralPortal by lazy {
     SonatypeCentralPortal(
       baseUrl = "https://central.sonatype.com",
-      usertoken = Base64
+      userToken = Base64
         .getEncoder()
         .encode(
           "${parameters.repositoryUsername.get()}:${parameters.repositoryPassword.get()}".toByteArray(),
