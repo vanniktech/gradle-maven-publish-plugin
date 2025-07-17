@@ -2,6 +2,8 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.34.0...HEAD) *(2025-xx-xx)*
 
+- Remove unused `SONATYPE_CLOSE_TIMEOUT_SECONDS`.
+
 #### Minimum supported versions
 - JDK 11
 - Gradle 8.5

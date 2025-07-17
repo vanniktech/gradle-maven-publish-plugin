@@ -16,7 +16,6 @@ public class SonatypeCentralPortal(
   userAgentName: String,
   userAgentVersion: String,
   okhttpTimeoutSeconds: Long,
-  private val closeTimeoutSeconds: Long,
 ) {
   private val service by lazy {
     val okHttpClient = OkHttpClient
