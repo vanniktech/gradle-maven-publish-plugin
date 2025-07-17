@@ -2,7 +2,7 @@ package com.vanniktech.maven.publish.portal
 
 import java.io.File
 import java.io.IOException
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -15,15 +15,15 @@ public class SonatypeCentralPortal(
   private val usertoken: String,
   userAgentName: String,
   userAgentVersion: String,
-  okhttpTimeoutSeconds: Long,
+  okhttpTimeout: Duration,
 ) {
   private val service by lazy {
     val okHttpClient = OkHttpClient
       .Builder()
       .addInterceptor(SonatypeCentralPortalOkHttpInterceptor(usertoken, userAgentName, userAgentVersion))
-      .connectTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
-      .readTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
-      .writeTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
+      .connectTimeout(okhttpTimeout)
+      .readTimeout(okhttpTimeout)
+      .writeTimeout(okhttpTimeout)
       .build()
     val retrofit = Retrofit
       .Builder()

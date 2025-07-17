@@ -9,6 +9,7 @@ import java.io.IOException
 import java.util.Base64
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.time.Duration.Companion.seconds
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -42,7 +43,7 @@ internal abstract class MavenCentralBuildService :
         ).toString(Charsets.UTF_8),
       userAgentName = BuildConfig.NAME,
       userAgentVersion = BuildConfig.VERSION,
-      okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
+      okhttpTimeout = parameters.okhttpTimeoutSeconds.get().seconds,
     )
   }
 
