@@ -29,7 +29,6 @@ internal abstract class MavenCentralBuildService :
     val repositoryUsername: Property<String>
     val repositoryPassword: Property<String>
     val okhttpTimeoutSeconds: Property<Long>
-    val closeTimeoutSeconds: Property<Long>
     val rootBuildDirectory: DirectoryProperty
   }
 
@@ -44,7 +43,6 @@ internal abstract class MavenCentralBuildService :
       userAgentName = BuildConfig.NAME,
       userAgentVersion = BuildConfig.VERSION,
       okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
-      closeTimeoutSeconds = parameters.closeTimeoutSeconds.get(),
     )
   }
 
@@ -172,16 +170,11 @@ internal abstract class MavenCentralBuildService :
         .gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
         .map { it.toLong() }
         .orElse(60)
-      val closeTimeout = project.providers
-        .gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
-        .map { it.toLong() }
-        .orElse(60 * 15)
       val service = gradle.sharedServices.registerIfAbsent(NAME, MavenCentralBuildService::class.java) {
         it.maxParallelUsages.set(1)
         it.parameters.repositoryUsername.set(repositoryUsername)
         it.parameters.repositoryPassword.set(repositoryPassword)
         it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
-        it.parameters.closeTimeoutSeconds.set(closeTimeout)
         it.parameters.rootBuildDirectory.set(rootBuildDirectory)
       }
       buildEventsListenerRegistry.onTaskCompletion(service)
