@@ -12,7 +12,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 public class SonatypeCentralPortal(
   private val baseUrl: String,
-  private val usertoken: String,
+  private val userToken: String,
   userAgentName: String,
   userAgentVersion: String,
   okhttpTimeout: Duration,
@@ -20,7 +20,7 @@ public class SonatypeCentralPortal(
   private val service by lazy {
     val okHttpClient = OkHttpClient
       .Builder()
-      .addInterceptor(SonatypeCentralPortalOkHttpInterceptor(usertoken, userAgentName, userAgentVersion))
+      .addInterceptor(SonatypeCentralPortalOkHttpInterceptor(userToken, userAgentName, userAgentVersion))
       .connectTimeout(okhttpTimeout)
       .readTimeout(okhttpTimeout)
       .writeTimeout(okhttpTimeout)
