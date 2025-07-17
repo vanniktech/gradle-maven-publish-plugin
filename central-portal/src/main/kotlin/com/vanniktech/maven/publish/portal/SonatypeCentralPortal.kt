@@ -62,7 +62,7 @@ public class SonatypeCentralPortal(
     val multipart = MultipartBody.Part.createFormData("bundle", file.name, uploadFile)
     val uploadResponse = service.uploadBundle(name, publishingType, multipart).execute()
     if (uploadResponse.isSuccessful) {
-      return requireNotNull(uploadResponse.body())
+      return requireNotNull(uploadResponse.body()) { "Upload response body should never be null" }
     } else {
       throw IOException("Upload failed: ${uploadResponse.errorBody()?.string()}")
     }
