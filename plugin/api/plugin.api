@@ -178,13 +178,13 @@ public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public final fun signAllPublications ()V
 }
 
-public class com/vanniktech/maven/publish/MavenPublishBasePlugin : org/gradle/api/Plugin {
+public abstract class com/vanniktech/maven/publish/MavenPublishBasePlugin : org/gradle/api/Plugin {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
-public class com/vanniktech/maven/publish/MavenPublishPlugin : org/gradle/api/Plugin {
+public abstract class com/vanniktech/maven/publish/MavenPublishPlugin : org/gradle/api/Plugin {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
@@ -203,7 +203,7 @@ public final class com/vanniktech/maven/publish/VersionCatalog : com/vanniktech/
 	public fun hashCode ()I
 }
 
-public class com/vanniktech/maven/publish/tasks/JavadocJar : org/gradle/jvm/tasks/Jar {
+public abstract class com/vanniktech/maven/publish/tasks/JavadocJar : org/gradle/jvm/tasks/Jar {
 	public fun <init> ()V
 }
 
