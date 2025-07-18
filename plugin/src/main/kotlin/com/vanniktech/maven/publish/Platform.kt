@@ -1,9 +1,12 @@
 package com.vanniktech.maven.publish
 
 import com.android.build.api.dsl.LibraryExtension
+import com.vanniktech.maven.publish.internal.addTestFixturesSourcesJar
+import com.vanniktech.maven.publish.internal.fixTestFixturesMetadata
+import com.vanniktech.maven.publish.internal.gradlePublishing
+import com.vanniktech.maven.publish.internal.mavenPublications
+import com.vanniktech.maven.publish.internal.mavenPublicationsWithoutPluginMarker
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
-import com.vanniktech.maven.publish.workaround.addTestFixturesSourcesJar
-import com.vanniktech.maven.publish.workaround.fixTestFixturesMetadata
 import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension

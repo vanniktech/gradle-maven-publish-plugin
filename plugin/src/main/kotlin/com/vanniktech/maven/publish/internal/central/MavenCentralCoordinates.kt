@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.central
+package com.vanniktech.maven.publish.internal.central
 
 internal data class MavenCentralCoordinates(
   val group: String,

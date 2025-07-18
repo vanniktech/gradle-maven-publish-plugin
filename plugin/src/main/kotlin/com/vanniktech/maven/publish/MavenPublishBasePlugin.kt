@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.internal.isAtLeastKotlinVersion
+import com.vanniktech.maven.publish.internal.isAtLeastUsingAndroidGradleVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin

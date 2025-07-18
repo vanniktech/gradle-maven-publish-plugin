@@ -1,11 +1,17 @@
 package com.vanniktech.maven.publish
 
-import com.vanniktech.maven.publish.central.DropMavenCentralDeploymentTask.Companion.registerDropMavenCentralDeploymentTask
-import com.vanniktech.maven.publish.central.EnableAutomaticMavenCentralPublishingTask.Companion.registerEnableAutomaticMavenCentralPublishingTask
-import com.vanniktech.maven.publish.central.MavenCentralBuildService.Companion.registerMavenCentralBuildService
-import com.vanniktech.maven.publish.central.PrepareMavenCentralPublishingTask.Companion.registerPrepareMavenCentralPublishingTask
+import com.vanniktech.maven.publish.internal.central.DropMavenCentralDeploymentTask.Companion.registerDropMavenCentralDeploymentTask
+import com.vanniktech.maven.publish.internal.central.EnableAutomaticMavenCentralPublishingTask.Companion.registerEnableAutomaticMavenCentralPublishingTask
+import com.vanniktech.maven.publish.internal.central.MavenCentralBuildService.Companion.registerMavenCentralBuildService
+import com.vanniktech.maven.publish.internal.central.PrepareMavenCentralPublishingTask.Companion.registerPrepareMavenCentralPublishingTask
+import com.vanniktech.maven.publish.internal.findOptionalProperty
+import com.vanniktech.maven.publish.internal.gradlePublishing
+import com.vanniktech.maven.publish.internal.gradleSigning
+import com.vanniktech.maven.publish.internal.javaVersion
+import com.vanniktech.maven.publish.internal.mavenPublications
+import com.vanniktech.maven.publish.internal.mavenPublicationsWithoutPluginMarker
+import com.vanniktech.maven.publish.internal.rootProjectBuildDir
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
-import com.vanniktech.maven.publish.workaround.rootProjectBuildDir
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
