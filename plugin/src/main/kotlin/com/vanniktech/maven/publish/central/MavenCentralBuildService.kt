@@ -165,7 +165,7 @@ internal abstract class MavenCentralBuildService :
     fun Project.registerMavenCentralBuildService(
       repositoryUsername: Provider<String>,
       repositoryPassword: Provider<String>,
-      rootBuildDirectory: Provider<Directory>,
+      rootBuildDirectory: Directory,
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
     ): Provider<MavenCentralBuildService> {
       val okhttpTimeout = project.providers
