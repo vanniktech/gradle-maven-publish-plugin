@@ -5,7 +5,6 @@ import com.vanniktech.maven.publish.central.EnableAutomaticMavenCentralPublishin
 import com.vanniktech.maven.publish.central.MavenCentralBuildService.Companion.registerMavenCentralBuildService
 import com.vanniktech.maven.publish.central.PrepareMavenCentralPublishingTask.Companion.registerPrepareMavenCentralPublishingTask
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
-import com.vanniktech.maven.publish.workaround.rootProjectBuildDir
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -21,7 +20,6 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
-import org.gradle.util.GradleVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 
 public abstract class MavenPublishBaseExtension @Inject constructor(
@@ -84,7 +82,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     val buildService = project.registerMavenCentralBuildService(
       repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
       repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
-      rootBuildDirectory = project.rootProjectBuildDir(),
+      rootBuildDirectory = @Suppress("UnstableApiUsage") project.layout.settingsDirectory.dir("build"),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
     )
 
@@ -244,13 +242,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    */
   public fun pom(configure: Action<in MavenPom>) {
     project.mavenPublications { publication ->
-      if (GradleVersion.current() >= GradleVersion.version("8.8-rc-1")) {
-        publication.pom(configure)
-      } else {
-        project.afterEvaluate {
-          publication.pom(configure)
-        }
-      }
+      publication.pom(configure)
     }
   }
 

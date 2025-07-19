@@ -33,38 +33,15 @@ internal fun addTestFixturesSourcesJar(project: Project) {
     ProjectDerivedCapability::class.java.getConstructor(Project::class.java, String::class.java)
   }.newInstance(projectInternal, "testFixtures")
 
-  val sourceElements = if (GradleVersion.current() >= GradleVersion.version("8.6-rc-1")) {
-    JvmPluginsHelper.createDocumentationVariantWithArtifact(
-      testFixturesSourceSet.sourcesElementsConfigurationName,
-      testFixtureSourceSetName,
-      DocsType.SOURCES,
-      setOf(projectDerivedCapability),
-      testFixturesSourceSet.sourcesJarTaskName,
-      testFixturesSourceSet.allSource,
-      projectInternal,
-    )
-  } else {
-    JvmPluginsHelper::class.java
-      .getMethod(
-        "createDocumentationVariantWithArtifact",
-        String::class.java,
-        String::class.java,
-        String::class.java,
-        List::class.java,
-        String::class.java,
-        Object::class.java,
-        ProjectInternal::class.java,
-      ).invoke(
-        null,
-        testFixturesSourceSet.sourcesElementsConfigurationName,
-        testFixtureSourceSetName,
-        DocsType.SOURCES,
-        listOf(projectDerivedCapability),
-        testFixturesSourceSet.sourcesJarTaskName,
-        testFixturesSourceSet.allSource,
-        projectInternal,
-      ) as Configuration
-  }
+  val sourceElements = JvmPluginsHelper.createDocumentationVariantWithArtifact(
+    testFixturesSourceSet.sourcesElementsConfigurationName,
+    testFixtureSourceSetName,
+    DocsType.SOURCES,
+    setOf(projectDerivedCapability),
+    testFixturesSourceSet.sourcesJarTaskName,
+    testFixturesSourceSet.allSource,
+    projectInternal,
+  )
 
   val component = JavaPluginHelper.getJavaComponent(project) as DefaultJvmSoftwareComponent
   component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))
