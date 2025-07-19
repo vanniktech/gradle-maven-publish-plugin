@@ -309,7 +309,13 @@ public data class KotlinMultiplatform internal constructor(
   @JvmOverloads public constructor(
     javadocJar: JavadocJar = JavadocJar.Empty(),
     sourcesJar: Boolean = true,
-    androidVariantsToPublish: List<String> = emptyList(),
+  ) : this(javadocJar, sourcesJar, emptyList(), forceAndroidVariantsIfNotEmpty = false)
+
+  // TODO: deprecate when AGP 8.12 is stable
+  public constructor(
+    javadocJar: JavadocJar = JavadocJar.Empty(),
+    sourcesJar: Boolean = true,
+    androidVariantsToPublish: List<String>,
   ) : this(javadocJar, sourcesJar, androidVariantsToPublish, forceAndroidVariantsIfNotEmpty = true)
 
   override fun configure(project: Project) {

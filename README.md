@@ -19,6 +19,7 @@ default configuration and allows the most customization.
 The output of the following Gradle plugins is supported to be published with this plugin:
 
 - `com.android.fused-library`
+- `com.android.kotlin.multiplatform.library`
 - `com.android.library`
 - `com.gradle.plugin-publish`
 - `java`
