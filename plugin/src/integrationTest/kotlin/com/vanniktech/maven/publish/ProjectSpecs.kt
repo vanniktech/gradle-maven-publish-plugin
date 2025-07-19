@@ -13,6 +13,7 @@ val kotlinJvmPlugin = PluginSpec("org.jetbrains.kotlin.jvm")
 val kotlinMultiplatformPlugin = PluginSpec("org.jetbrains.kotlin.multiplatform")
 val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
+val androidMultiplatformLibraryPlugin = PluginSpec("com.android.kotlin.multiplatform.library")
 val androidFusedLibraryPlugin = PluginSpec("com.android.fused-library")
 val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 val dokkaPlugin = PluginSpec("org.jetbrains.dokka", "1.8.10")
@@ -135,7 +136,7 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("commonMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
     SourceFile("jvmMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
-    SourceFile("linuxMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
+    SourceFile("linuxX64Main", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
     SourceFile("nodeJsMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
   ),
   basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty()))",
@@ -146,7 +147,7 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
         js("nodeJs", "IR") {
             nodejs()
         }
-        linuxX64("linux")
+        linuxX64()
 
         sourceSets {
             commonMain {
@@ -161,7 +162,7 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
                 dependencies {
                 }
             }
-            linuxMain {
+            linuxX64Main {
                 dependencies {
                 }
             }
@@ -221,6 +222,27 @@ fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(
         }
       }
       """.trimIndent(),
+  )
+}
+
+fun kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
+  val baseProject = kotlinMultiplatformProjectSpec(kotlinVersion)
+  return baseProject.copy(
+    plugins = baseProject.plugins + listOf(androidMultiplatformLibraryPlugin.copy(version = agpVersion.value)),
+    sourceFiles = baseProject.sourceFiles + listOf(
+      SourceFile("androidMain", "kotlin", "com/vanniktech/maven/publish/test/AndroidTestClass.kt"),
+      SourceFile("androidMain", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
+    ),
+    buildFileExtra =
+      """
+      kotlin {
+          androidLibrary {
+              compileSdk = 36
+              namespace = "com.example.namespace"
+          }
+      }
+
+      """.trimIndent() + baseProject.buildFileExtra,
   )
 }
 
