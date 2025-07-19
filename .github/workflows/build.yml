@@ -2,8 +2,6 @@ name: Build
 
 on:
   push:
-    branches:
-      - main
   pull_request:
 
 concurrency:
@@ -39,5 +37,29 @@ jobs:
         run: ./kotlinw ktlint.main.kts --fail-on-changes
         if: ${{ matrix.java_version != '11' }}
 
+      - name: Show disk usage
+        run: df -h
+        if: always()
+
+      - name: Top-level directories
+        run: du -h -d2 /home/runner | sort -hr | head -n 20
+        if: always()
+
+      - name: Detailed file sizes
+        run: find /home -type f -exec du -h {} + 2>/dev/null | sort -hr | head -n 1000
+        if: always()
+
       - name: Build with Gradle
         run: ./gradlew build --stacktrace -DtestConfigMethod=${{ matrix.test_config_method }}
+
+      - name: Show disk usage
+        run: df -h
+        if: always()
+
+      - name: Top-level directories
+        run: du -h -d2 /home/runner | sort -hr | head -n 20
+        if: always()
+
+      - name: Detailed file sizes
+        run: find /home -type f -exec du -h {} + 2>/dev/null | sort -hr | head -n 1000
+        if: always()
