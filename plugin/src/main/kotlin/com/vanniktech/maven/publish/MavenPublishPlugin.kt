@@ -3,7 +3,7 @@ package com.vanniktech.maven.publish
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-public open class MavenPublishPlugin : Plugin<Project> {
+public abstract class MavenPublishPlugin : Plugin<Project> {
   override fun apply(project: Project) {
     project.plugins.apply(MavenPublishBasePlugin::class.java)
     val baseExtension = project.baseExtension
