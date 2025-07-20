@@ -10,7 +10,6 @@ import com.vanniktech.maven.publish.internal.gradleSigning
 import com.vanniktech.maven.publish.internal.javaVersion
 import com.vanniktech.maven.publish.internal.mavenPublications
 import com.vanniktech.maven.publish.internal.mavenPublicationsWithoutPluginMarker
-import com.vanniktech.maven.publish.internal.rootProjectBuildDir
 import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
 import javax.inject.Inject
 import org.gradle.api.Action
