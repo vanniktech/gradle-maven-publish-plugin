@@ -2,7 +2,7 @@ package com.vanniktech.maven.publish.portal
 
 import java.io.File
 import java.io.IOException
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -12,19 +12,18 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 public class SonatypeCentralPortal(
   private val baseUrl: String,
-  private val usertoken: String,
+  private val userToken: String,
   userAgentName: String,
   userAgentVersion: String,
-  okhttpTimeoutSeconds: Long,
-  private val closeTimeoutSeconds: Long,
+  okhttpTimeout: Duration,
 ) {
   private val service by lazy {
     val okHttpClient = OkHttpClient
       .Builder()
-      .addInterceptor(SonatypeCentralPortalOkHttpInterceptor(usertoken, userAgentName, userAgentVersion))
-      .connectTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
-      .readTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
-      .writeTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
+      .addInterceptor(SonatypeCentralPortalOkHttpInterceptor(userToken, userAgentName, userAgentVersion))
+      .connectTimeout(okhttpTimeout)
+      .readTimeout(okhttpTimeout)
+      .writeTimeout(okhttpTimeout)
       .build()
     val retrofit = Retrofit
       .Builder()
@@ -63,7 +62,7 @@ public class SonatypeCentralPortal(
     val multipart = MultipartBody.Part.createFormData("bundle", file.name, uploadFile)
     val uploadResponse = service.uploadBundle(name, publishingType, multipart).execute()
     if (uploadResponse.isSuccessful) {
-      return requireNotNull(uploadResponse.body())
+      return requireNotNull(uploadResponse.body()) { "Upload response body should never be null" }
     } else {
       throw IOException("Upload failed: ${uploadResponse.errorBody()?.string()}")
     }

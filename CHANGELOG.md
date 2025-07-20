@@ -4,7 +4,7 @@
 
 - Add support for publishing Kotlin Multiplatform libraries that use `com.android.kotlin.multiplatform.library`.
 - Raise minimum Gradle version to 8.13
-
+- Remove unused `SONATYPE_CLOSE_TIMEOUT_SECONDS`.
 
 #### Minimum supported versions
 - JDK 11
