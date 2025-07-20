@@ -32,6 +32,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     .withProjectDir(project.toFile())
     .withDebug(true)
     .withArguments(arguments)
+    .withTestKitDir(temp.resolve("test-kit-dir").toFile())
     .build()
 
   return ProjectResult(

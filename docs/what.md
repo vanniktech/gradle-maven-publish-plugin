@@ -7,6 +7,7 @@ It is possible to configure publishing for the following Gradle plugins:
 - [`com.android.fused-library`](#android-fused-library)
 - [`org.jetbrains.kotlin.jvm`](#kotlin-jvm-library)
 - [`org.jetbrains.kotlin.multiplatform`](#kotlin-multiplatform-library)
+    - automatically includes `com.android.kotlin.multiplatform.library`
 - [`java`](#java-library)
 - [`java-library`](#java-library)
 - [`java-gradle-plugin`](#gradle-plugin)
@@ -267,6 +268,11 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
       ))
     }
     ```
+
+!!! info
+
+    The `com.android.kotlin.multiplatform.library` plugin does not need any special configuration. When using it
+    leave out the third parameter (`androidVariantsToPublish`) of `KotlinMultiplatform`.
 
 ## Gradle Plugin
 

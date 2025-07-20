@@ -7,7 +7,7 @@ import org.gradle.api.Project
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
 import org.gradle.util.GradleVersion
 
-public open class MavenPublishBasePlugin : Plugin<Project> {
+public abstract class MavenPublishBasePlugin : Plugin<Project> {
   override fun apply(project: Project) {
     project.plugins.apply(GradleMavenPublishPlugin::class.java)
 
@@ -43,7 +43,7 @@ public open class MavenPublishBasePlugin : Plugin<Project> {
   }
 
   private companion object {
-    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("8.5")
+    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("8.13")
     val KOTLIN_PLUGIN_IDS = listOf(
       "org.jetbrains.kotlin.jvm",
       "org.jetbrains.kotlin.multiplatform",

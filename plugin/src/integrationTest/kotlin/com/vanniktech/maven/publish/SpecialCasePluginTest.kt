@@ -45,7 +45,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
     assertThat(jvmResult).javadocJar().exists()
 
-    val linuxResult = result.withArtifactIdSuffix("linux")
+    val linuxResult = result.withArtifactIdSuffix("linuxx64")
     assertThat(linuxResult).outcome().succeeded()
     assertThat(linuxResult).artifact("klib").exists()
     assertThat(linuxResult).pom().exists()
@@ -55,7 +55,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).sourcesJar().exists()
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxMain")
+    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
     assertThat(linuxResult).javadocJar().exists()
 
     val nodejsResult = result.withArtifactIdSuffix("nodejs")
@@ -105,7 +105,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
     assertThat(jvmResult).javadocJar().exists()
 
-    val linuxResult = result.withArtifactIdSuffix("linux")
+    val linuxResult = result.withArtifactIdSuffix("linuxx64")
     assertThat(linuxResult).outcome().succeeded()
     assertThat(linuxResult).artifact("klib").exists()
     assertThat(linuxResult).pom().exists()
@@ -115,7 +115,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).sourcesJar().exists()
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxMain")
+    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
     assertThat(linuxResult).javadocJar().exists()
 
     val nodejsResult = result.withArtifactIdSuffix("nodejs")
