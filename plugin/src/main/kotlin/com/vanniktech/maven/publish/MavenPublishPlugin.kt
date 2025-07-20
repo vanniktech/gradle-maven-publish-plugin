@@ -1,5 +1,7 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.internal.androidComponents
+import com.vanniktech.maven.publish.internal.baseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

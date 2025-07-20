@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.central
+package com.vanniktech.maven.publish.internal.central
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property

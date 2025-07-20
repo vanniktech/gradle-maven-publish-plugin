@@ -1,9 +1,10 @@
 @file:Suppress("UnstableApiUsage")
 
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.internal
 
 import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
@@ -50,7 +51,7 @@ internal fun Project.javaVersion(): JavaVersion {
       val version = toolchain.languageVersion.get().asInt()
       return JavaVersion.toVersion(version)
     }
-  } catch (t: Throwable) {
+  } catch (_: Throwable) {
     // ignore failures and fallback to java version in which Gradle is running
   }
   return JavaVersion.current()
@@ -74,7 +75,7 @@ internal fun Project.isAtLeastKotlinVersion(id: String, major: Int, minor: Int, 
 
 internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, patch: Int): Boolean = try {
   androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch)
-} catch (e: NoClassDefFoundError) {
+} catch (_: NoClassDefFoundError) {
   // was added in 7.0
   false
 }
