@@ -372,12 +372,16 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
 
     when {
       project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> {
-        val variant = project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release"
+        val variants = if (project.plugins.hasPlugin("com.android.kotlin.multiplatform.library")) {
+          emptyList()
+        } else {
+          listOf(project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release")
+        }
         configure(
           KotlinMultiplatform(
             javadocJar = defaultJavaDocOption(javadocJar, plainJavadocSupported = false),
             sourcesJar = sourcesJar,
-            androidVariantsToPublish = listOf(variant),
+            androidVariantsToPublish = variants,
             forceAndroidVariantsIfNotEmpty = false,
           ),
         )

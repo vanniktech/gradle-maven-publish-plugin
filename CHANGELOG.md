@@ -2,7 +2,9 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.34.0...HEAD) *(2025-xx-xx)*
 
+- Add support for publishing Kotlin Multiplatform libraries that use `com.android.kotlin.multiplatform.library`.
 - Raise minimum Gradle version to 8.13
+
 
 #### Minimum supported versions
 - JDK 11
