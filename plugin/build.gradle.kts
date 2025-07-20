@@ -185,6 +185,16 @@ val integrationTest by tasks.registering(Test::class) {
   )
 }
 
+// This block must be placed after integrationTest registering.
+kotlin.target.compilations {
+  val main by getting
+  // Make integrationTest can access the internal APIs of main.
+  named(integrationTest.name) {
+    // TODO: https://youtrack.jetbrains.com/issue/KTIJ-7662
+    associateWith(main)
+  }
+}
+
 val quickIntegrationTest by tasks.registering {
   description = "Runs the integration tests quickly."
   group = "verification"

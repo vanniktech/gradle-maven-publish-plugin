@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import com.google.common.truth.TruthJUnit.assume
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig as Versions
+import com.vanniktech.maven.publish.MavenPublishBasePlugin.Companion.MIN_GRADLE_VERSION
 import org.gradle.api.JavaVersion
 
 data class TestOptions(
@@ -67,7 +68,7 @@ enum class GradleVersion(
 ) {
   // minimum supported
   GRADLE_MIN(
-    value = "8.13",
+    value = MIN_GRADLE_VERSION.version,
     firstUnsupportedJdkVersion = JavaVersion.VERSION_24,
   ),
 
