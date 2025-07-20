@@ -51,15 +51,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    if (gradleVersion < GradleVersion.GRADLE_8_12) {
-      assertThat(result).pom().matchesExpectedPom(
-        kotlinStdlibJdk(kotlinVersion),
-        // TODO: Gradle currently adds a self dependency when test fixtures are published https://github.com/gradle/gradle/issues/14936
-        PomDependency("com.example", "test-artifact", "1.0.0", "compile", true),
-      )
-    } else {
-      assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
-    }
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()

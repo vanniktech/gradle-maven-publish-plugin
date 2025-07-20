@@ -3,24 +3,26 @@
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.34.0...HEAD) *(2025-xx-xx)*
 
 - Add support for publishing Kotlin Multiplatform libraries that use `com.android.kotlin.multiplatform.library`.
+- Raise minimum Gradle version to 8.13
+
 
 #### Minimum supported versions
 - JDK 11
-- Gradle 8.5
+- Gradle 8.13
 - Android Gradle Plugin 8.0.0
 - Kotlin Gradle Plugin 1.9.20
 
 #### Compatibility tested up to
 - JDK 24
 - Gradle 8.14.3
-- Gradle 9.0.0-rc2
+- Gradle 9.0.0-rc3
 - Android Gradle Plugin 8.11.1
-- Android Gradle Plugin 8.12.0-alpha08
+- Android Gradle Plugin 8.12.0-rc01
 - Kotlin Gradle Plugin 2.2.0
 - Kotlin Gradle Plugin 2.2.20-Beta1
 
 
-## [0.34.0.](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.34.0) *(2025-07-13)*
+## [0.34.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.34.0) *(2025-07-13)*
 
 - Added configuration cache support for publishing.
 - Removed support for publishing through Sonatype OSSRH since it has been shut down. See the
