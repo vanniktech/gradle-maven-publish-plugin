@@ -39,7 +39,16 @@ public abstract class MavenPublishPlugin : Plugin<Project> {
     if (central != null) {
       return central.toBoolean()
     }
-    return providers.gradleProperty("SONATYPE_HOST").orNull == "CENTRAL_PORTAL"
+    return when (providers.gradleProperty("SONATYPE_HOST").orNull) {
+      null -> false
+      "CENTRAL_PORTAL" -> true
+      else -> error(
+        """
+        OSSRH was shut down on June 30, 2025. Migrate to CENTRAL_PORTAL instead.
+        See more info at https://central.sonatype.org/news/20250326_ossrh_sunset.
+        """.trimIndent(),
+      )
+    }
   }
 
   private fun Project.automaticRelease(): Boolean {
