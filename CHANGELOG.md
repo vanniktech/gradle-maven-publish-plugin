@@ -4,6 +4,7 @@
 
 - Add support for publishing Kotlin Multiplatform libraries that use `com.android.kotlin.multiplatform.library`.
 - Raise minimum Gradle version to 8.13
+- Do not unconditionally disable DocLint
 
 
 #### Minimum supported versions

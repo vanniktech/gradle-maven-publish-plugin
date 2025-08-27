@@ -434,9 +434,6 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         if (javaVersion.isJava9Compatible) {
           options.addBooleanOption("html5", true)
         }
-        if (javaVersion.isJava8Compatible) {
-          options.addStringOption("Xdoclint:none", "-quiet")
-        }
       }
       return JavadocJar.Javadoc()
     } else {
