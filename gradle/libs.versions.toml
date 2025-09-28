@@ -3,7 +3,7 @@ jdkRelease = "11"
 
 gradle = "8.14.3"
 
-kotlin = "2.2.0"
+kotlin = "2.2.20"
 
 android-gradle = "8.13.0"
 
