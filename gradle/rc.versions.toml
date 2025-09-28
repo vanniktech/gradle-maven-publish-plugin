@@ -5,7 +5,7 @@ kotlin = "2.2.20"
 
 android-gradle = "8.13.0"
 
-gradle-plugin-publish = "1.3.1"
+gradle-plugin-publish = "2.0.0"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
