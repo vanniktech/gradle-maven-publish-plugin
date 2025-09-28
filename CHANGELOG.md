@@ -5,7 +5,7 @@
 - Add support for publishing Kotlin Multiplatform libraries that use `com.android.kotlin.multiplatform.library`.
 - Raise minimum Gradle version to 8.13
 - Do not unconditionally disable DocLint
-
+- Fail publishing if `SONATYPE_HOST` is not set to `CENTRAL_PORTAL`.
 
 #### Minimum supported versions
 - JDK 11
@@ -31,8 +31,8 @@
   instructions if you haven't upgraded yet.
     - `SonatypeHost` has been removed from the DSL.
     - `SONATYPE_HOST` only supports `CENTRAL_PORTAL` now. It's recommended to use the following properties instead:
-      - `mavenCentralPublishing=true` replaces `SONATYPE_HOST=CENTRAL_PORTAL`.
-      - `mavenCentralAutomaticPublishing=true` replaces `SONATYPE_AUTOMATIC_RELEASE=true`.
+        - `mavenCentralPublishing=true` replaces `SONATYPE_HOST=CENTRAL_PORTAL`.
+        - `mavenCentralAutomaticPublishing=true` replaces `SONATYPE_AUTOMATIC_RELEASE=true`.
 - Update the Central Portal Publisher APIs to the latest.
 - It's now possible to mix SNAPSHOT versions and release versions when running `publish` tasks.
 - Fixed Gradle's deprecation warning caused by invalid URI.
