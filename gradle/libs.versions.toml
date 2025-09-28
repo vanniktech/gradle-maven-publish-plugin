@@ -27,7 +27,7 @@ junit-jupiter = "org.junit.jupiter:junit-jupiter:5.13.4"
 junit-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junit-platform" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.18"
-truth = "com.google.truth:truth:1.4.4"
+truth = "com.google.truth:truth:1.4.5"
 truth-testKit = "com.autonomousapps:testkit-truth:1.1"
 maven-model = "org.apache.maven:maven-model:3.9.11"
 
