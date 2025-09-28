@@ -12,6 +12,10 @@ plugins {
   id("com.vanniktech.maven.publish")
 }
 
+dependencies {
+  compileOnly(libs.kotlin.stdlib)
+}
+
 kotlin {
   explicitApi()
   @OptIn(ExperimentalAbiValidation::class)
@@ -39,13 +43,4 @@ tasks.check {
     // TODO: https://youtrack.jetbrains.com/issue/KT-78525
     tasks.checkLegacyAbi,
   )
-}
-
-configurations.all {
-  // Pin the kotlin version
-  resolutionStrategy {
-    force(libs.kotlin.stdlib)
-    force(libs.kotlin.stdlib.jdk8)
-    force(libs.kotlin.reflect)
-  }
 }

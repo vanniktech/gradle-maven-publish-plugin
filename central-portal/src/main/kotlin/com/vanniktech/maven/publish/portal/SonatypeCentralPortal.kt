@@ -3,10 +3,10 @@ package com.vanniktech.maven.publish.portal
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
-import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
@@ -59,7 +59,7 @@ public class SonatypeCentralPortal(
   }
 
   public fun upload(name: String, publishingType: PublishingType, file: File): String {
-    val uploadFile = file.asRequestBody("application/octet-stream".toMediaType())
+    val uploadFile = RequestBody.create(MediaType.parse("application/octet-stream"), file)
     val multipart = MultipartBody.Part.createFormData("bundle", file.name, uploadFile)
     val uploadResponse = service.uploadBundle(name, publishingType, multipart).execute()
     if (uploadResponse.isSuccessful) {
