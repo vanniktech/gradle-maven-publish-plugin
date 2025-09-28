@@ -17,11 +17,6 @@ repositories {
   google()
 }
 
-java {
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
-}
-
 kotlin {
   explicitApi()
   @OptIn(ExperimentalAbiValidation::class)
@@ -30,10 +25,17 @@ kotlin {
   }
 }
 
+tasks.withType<JavaCompile>().configureEach {
+  options.release = libs.versions.jdkRelease
+    .get()
+    .toInt()
+}
+
 tasks.withType(KotlinCompile::class.java) {
   compilerOptions {
-    jvmTarget.set(JvmTarget.JVM_11)
+    jvmTarget.set(JvmTarget.fromTarget(libs.versions.jdkRelease.get()))
     languageVersion.set(KotlinVersion.KOTLIN_1_8)
+    freeCompilerArgs.add("-Xjdk-release=${libs.versions.jdkRelease.get()}")
   }
 }
 
