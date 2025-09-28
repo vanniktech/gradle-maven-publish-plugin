@@ -374,9 +374,8 @@ class KotlinPluginTest : BasePluginTest() {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
     kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    // requires AGP 8.11 and Kotlin 2.2 (maybe 2.1)
-    assume().that(agpVersion).isAtLeast(AgpVersion.AGP_STABLE)
-    assume().that(kotlinVersion).isAtLeast(KotlinVersion.KOTLIN_STABLE)
+    assume().that(agpVersion).isAtLeast(AgpVersion.AGP_8_11)
+    assume().that(kotlinVersion).isAtLeast(KotlinVersion.KOTLIN_2_2_0)
 
     val project = kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)

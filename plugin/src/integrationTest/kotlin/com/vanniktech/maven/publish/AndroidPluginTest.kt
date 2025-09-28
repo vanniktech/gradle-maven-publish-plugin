@@ -11,7 +11,7 @@ class AndroidPluginTest : BasePluginTest() {
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-    assume().that(agpVersion).isAtLeast(AgpVersion.AGP_ALPHA)
+    assume().that(agpVersion).isAtLeast(AgpVersion.AGP_8_12)
 
     val project = androidFusedLibraryProjectSpec(agpVersion)
     // TODO: signing plugin currently unsupported
