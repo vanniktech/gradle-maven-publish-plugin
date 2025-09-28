@@ -35,4 +35,4 @@ androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0-alpha05"
 
 [plugins]
 buildconfig = "com.github.gmazzo.buildconfig:5.6.7"
-android-lint = "com.android.lint:8.11.1"
+android-lint = "com.android.lint:8.13.0"
