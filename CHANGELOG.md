@@ -4,8 +4,8 @@
 
 - Add support for publishing Kotlin Multiplatform libraries that use `com.android.kotlin.multiplatform.library`.
 - Raise minimum Gradle version to 8.13
+- Do not unconditionally disable DocLint
 - Fail publishing if `SONATYPE_HOST` is not set to `CENTRAL_PORTAL`.
-
 
 #### Minimum supported versions
 - JDK 11
