@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        java_version: [11, 17, 24]
+        java_version: [11, 17, 25]
         test_config_method: ["DSL", "PROPERTIES", "BASE"]
 
     steps:

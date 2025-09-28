@@ -104,9 +104,8 @@ Thanks to @Goooler, @solrudev and @sschuberth for their contributions to this re
 - Kotlin Gradle Plugin 1.9.20
 
 #### Compatibility tested up to
-- JDK 24
-- Gradle 8.14.2
-- Gradle 9.0-rc1
+- JDK 25
+- Gradle 9.1.0
 - Android Gradle Plugin 8.10.0
 - Android Gradle Plugin 8.11.0-rc02
 - Android Gradle Plugin 8.12.0-alpha06
