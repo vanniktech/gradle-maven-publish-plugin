@@ -14,13 +14,12 @@
 - Kotlin Gradle Plugin 1.9.20
 
 #### Compatibility tested up to
-- JDK 24
+- JDK 25
 - Gradle 8.14.3
-- Gradle 9.0.0-rc3
+- Gradle 9.1.0
 - Android Gradle Plugin 8.11.1
 - Android Gradle Plugin 8.12.0-rc01
-- Kotlin Gradle Plugin 2.2.0
-- Kotlin Gradle Plugin 2.2.20-Beta1
+- Kotlin Gradle Plugin 2.2.20
 
 
 ## [0.34.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.34.0) *(2025-07-13)*
@@ -104,8 +103,9 @@ Thanks to @Goooler, @solrudev and @sschuberth for their contributions to this re
 - Kotlin Gradle Plugin 1.9.20
 
 #### Compatibility tested up to
-- JDK 25
-- Gradle 9.1.0
+- JDK 24
+- Gradle 8.14.2
+- Gradle 9.0-rc1
 - Android Gradle Plugin 8.10.0
 - Android Gradle Plugin 8.11.0-rc02
 - Android Gradle Plugin 8.12.0-alpha06

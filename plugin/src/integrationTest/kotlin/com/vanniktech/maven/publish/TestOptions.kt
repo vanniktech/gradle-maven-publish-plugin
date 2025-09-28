@@ -51,10 +51,10 @@ enum class KotlinVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
   // minimum supported
-  KOTLIN_MIN("1.9.24", firstUnsupportedGradleVersion = GradleVersion.GRADLE_RC),
+  KOTLIN_MIN("1.9.24", firstUnsupportedGradleVersion = GradleVersion.GRADLE_STABLE),
 
   // latest versions of each type
-  KOTLIN_STABLE(Versions.KOTLIN_STABLE, firstUnsupportedGradleVersion = GradleVersion.GRADLE_RC),
+  KOTLIN_STABLE(Versions.KOTLIN_STABLE),
   KOTLIN_RC(Versions.KOTLIN_RC),
   KOTLIN_BETA(Versions.KOTLIN_BETA),
   KOTLIN_ALPHA(Versions.KOTLIN_ALPHA),
