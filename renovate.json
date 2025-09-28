@@ -2,6 +2,7 @@
   "extends": [
     "config:base"
   ],
+  "rebaseWhen": "conflicted",
   "ignoreUnstable": false,
   "packageRules": [
     {
