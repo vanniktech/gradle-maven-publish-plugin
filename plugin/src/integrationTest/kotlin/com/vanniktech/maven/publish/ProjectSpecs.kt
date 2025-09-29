@@ -306,9 +306,7 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   artifactId = "test-artifact",
   version = "1.0.0",
   properties = defaultProperties,
-  sourceFiles = listOf(
-    SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
-  ),
+  sourceFiles = emptyList(),
   basePluginConfig = "configure(new AndroidFusedLibrary())",
   buildFileExtra =
     """
