@@ -208,7 +208,7 @@ public abstract class com/vanniktech/maven/publish/tasks/JavadocJar : org/gradle
 	public fun <init> ()V
 }
 
-public final class com/vanniktech/maven/publish/tasks/WorkaroundSignatureType : org/gradle/plugins/signing/type/AbstractSignatureType {
+public final class com/vanniktech/maven/publish/workaround/DirectorySignatureType : org/gradle/plugins/signing/type/AbstractSignatureType {
 	public fun <init> (Lorg/gradle/plugins/signing/type/SignatureType;Lorg/gradle/api/provider/Provider;)V
 	public fun fileFor (Ljava/io/File;)Ljava/io/File;
 	public final fun getActual ()Lorg/gradle/plugins/signing/type/SignatureType;
