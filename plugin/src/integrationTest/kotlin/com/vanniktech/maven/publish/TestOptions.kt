@@ -33,14 +33,20 @@ enum class AgpVersion(
   AGP_MIN(
     value = "8.0.0",
     minGradleVersion = GradleVersion.GRADLE_8_1,
-    firstUnsupportedGradleVersion = GradleVersion.GRADLE_RC,
+    firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_0,
   ),
 
   // latest versions of each type
-  AGP_STABLE(Versions.ANDROID_GRADLE_STABLE, minGradleVersion = GradleVersion.GRADLE_STABLE),
-  AGP_RC(Versions.ANDROID_GRADLE_RC, minGradleVersion = GradleVersion.GRADLE_STABLE),
-  AGP_BETA(Versions.ANDROID_GRADLE_BETA, minGradleVersion = GradleVersion.GRADLE_STABLE),
-  AGP_ALPHA(Versions.ANDROID_GRADLE_ALPHA, minGradleVersion = GradleVersion.GRADLE_STABLE),
+  AGP_STABLE(Versions.ANDROID_GRADLE_STABLE, minGradleVersion = GradleVersion.GRADLE_8_13),
+  AGP_RC(Versions.ANDROID_GRADLE_RC, minGradleVersion = GradleVersion.GRADLE_8_13),
+  AGP_BETA(Versions.ANDROID_GRADLE_BETA, minGradleVersion = GradleVersion.GRADLE_8_13),
+  AGP_ALPHA(Versions.ANDROID_GRADLE_ALPHA, minGradleVersion = GradleVersion.GRADLE_8_13),
+  ;
+
+  companion object {
+    val AGP_8_11 = AGP_STABLE
+    val AGP_8_12 = AGP_STABLE
+  }
 }
 
 enum class KotlinVersion(
@@ -51,13 +57,18 @@ enum class KotlinVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
   // minimum supported
-  KOTLIN_MIN("1.9.24", firstUnsupportedGradleVersion = GradleVersion.GRADLE_RC),
+  KOTLIN_MIN("1.9.24", firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_0),
 
   // latest versions of each type
-  KOTLIN_STABLE(Versions.KOTLIN_STABLE, firstUnsupportedGradleVersion = GradleVersion.GRADLE_RC),
+  KOTLIN_STABLE(Versions.KOTLIN_STABLE),
   KOTLIN_RC(Versions.KOTLIN_RC),
   KOTLIN_BETA(Versions.KOTLIN_BETA),
   KOTLIN_ALPHA(Versions.KOTLIN_ALPHA),
+  ;
+
+  companion object {
+    val KOTLIN_2_2_0 = KOTLIN_STABLE
+  }
 }
 
 enum class GradleVersion(
@@ -72,7 +83,7 @@ enum class GradleVersion(
   ),
 
   // latest versions of each type
-  GRADLE_STABLE(Versions.GRADLE_STABLE),
+  GRADLE_STABLE(Versions.GRADLE_STABLE, minJdkVersion = JavaVersion.VERSION_17),
   GRADLE_RC(Versions.GRADLE_RC, minJdkVersion = JavaVersion.VERSION_17),
   GRADLE_BETA(Versions.GRADLE_BETA, minJdkVersion = JavaVersion.VERSION_17),
   GRADLE_ALPHA(Versions.GRADLE_ALPHA, minJdkVersion = JavaVersion.VERSION_17),
@@ -81,7 +92,8 @@ enum class GradleVersion(
   companion object {
     // aliases for the skipped version to be able to reference the correct one in AgpVersion or conditions
     val GRADLE_8_1 = GRADLE_MIN
-    val GRADLE_8_12 = GRADLE_STABLE
+    val GRADLE_8_13 = GRADLE_STABLE
+    val GRADLE_9_0 = GRADLE_STABLE
   }
 }
 

@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.tasks
+package com.vanniktech.maven.publish.workaround
 
 import java.io.File
 import java.io.InputStream
@@ -11,7 +11,15 @@ import org.gradle.plugins.signing.signatory.Signatory
 import org.gradle.plugins.signing.type.AbstractSignatureType
 import org.gradle.plugins.signing.type.SignatureType
 
-public class WorkaroundSignatureType(
+/**
+ * Creates signature files in a separate given directory to avoid
+ * Gradle complaining about task depedencies missing when running
+ * KMP tests and signing in the same build.
+ *
+ * https://youtrack.jetbrains.com/issue/KT-61313/
+ * https://github.com/gradle/gradle/issues/26132
+ */
+public class DirectorySignatureType(
   @Nested
   public val actual: SignatureType,
   @Internal
