@@ -574,6 +574,7 @@ private class MissingVariantException(
   name: String,
 ) : RuntimeException(
     "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
-      " Try setting the 'androidVariantToPublish' property in the mavenPublish" +
-      " extension object to something that matches the variant that ought to be published.",
+      " By default the publish plugin will publish the variant called \"release\". To modify this behavior" +
+      " either call configure(AndroidSingleVariantLibrary(\"variant-to-publish\")) or " +
+      " configure(AndroidMultiVariantLibrary()) to publish all flavors.",
   )

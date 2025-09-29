@@ -6,6 +6,7 @@
 - Raise minimum Gradle version to 8.13
 - Do not unconditionally disable DocLint
 - Fail publishing if `SONATYPE_HOST` is not set to `CENTRAL_PORTAL`.
+- Fix misleading error message when Android library variant is not found.
 - Downgrade transitive OkHttp version.
 
 #### Minimum supported versions
