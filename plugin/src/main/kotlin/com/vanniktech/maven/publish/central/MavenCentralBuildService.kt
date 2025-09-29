@@ -1,9 +1,8 @@
 package com.vanniktech.maven.publish.central
 
 import com.vanniktech.maven.publish.BuildConfig
-import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
-import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.AUTOMATIC
-import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.USER_MANAGED
+import com.vanniktech.maven.publish.central.SonatypeCentralPortal.PublishingType.AUTOMATIC
+import com.vanniktech.maven.publish.central.SonatypeCentralPortal.PublishingType.USER_MANAGED
 import java.io.File
 import java.io.IOException
 import java.util.Base64

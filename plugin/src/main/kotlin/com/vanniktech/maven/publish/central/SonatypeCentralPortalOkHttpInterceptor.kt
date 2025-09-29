@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.portal
+package com.vanniktech.maven.publish.central
 
 import okhttp3.Interceptor
 import okhttp3.Response

@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.portal
+package com.vanniktech.maven.publish.central
 
 import okhttp3.MultipartBody
 import retrofit2.Call

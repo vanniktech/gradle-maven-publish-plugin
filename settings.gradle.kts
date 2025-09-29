@@ -58,5 +58,4 @@ enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":plugin")
-include(":central-portal")
 includeBuild("build-logic")

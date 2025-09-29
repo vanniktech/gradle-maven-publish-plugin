@@ -8,6 +8,9 @@
 - Fail publishing if `SONATYPE_HOST` is not set to `CENTRAL_PORTAL`.
 - Downgrade transitive OkHttp version.
 
+**BREAKING**
+- Eliminate `com.vanniktech:central-portal` Maven artifacts.
+
 #### Minimum supported versions
 - JDK 11
 - Gradle 8.13

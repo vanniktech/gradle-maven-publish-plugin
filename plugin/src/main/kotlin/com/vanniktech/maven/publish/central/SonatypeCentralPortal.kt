@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish.portal
+package com.vanniktech.maven.publish.central
 
 import java.io.File
 import java.io.IOException
@@ -10,7 +10,7 @@ import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
-public class SonatypeCentralPortal(
+internal class SonatypeCentralPortal(
   private val baseUrl: String,
   private val usertoken: String,
   userAgentName: String,
