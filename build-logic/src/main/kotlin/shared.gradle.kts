@@ -12,11 +12,6 @@ plugins {
   id("com.vanniktech.maven.publish")
 }
 
-repositories {
-  mavenCentral()
-  google()
-}
-
 kotlin {
   explicitApi()
   @OptIn(ExperimentalAbiValidation::class)

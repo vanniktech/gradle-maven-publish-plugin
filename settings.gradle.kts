@@ -3,7 +3,13 @@ rootProject.name = "gradle-maven-publish-plugin"
 pluginManagement {
   repositories {
     mavenCentral()
-    google()
+    google {
+      mavenContent {
+        includeGroupAndSubgroups("androidx")
+        includeGroupAndSubgroups("com.android")
+        includeGroupAndSubgroups("com.google")
+      }
+    }
     gradlePluginPortal()
   }
 }
@@ -23,6 +29,18 @@ develocity {
 }
 
 dependencyResolutionManagement {
+  repositories {
+    mavenCentral()
+    google {
+      mavenContent {
+        includeGroupAndSubgroups("androidx")
+        includeGroupAndSubgroups("com.android")
+        includeGroupAndSubgroups("com.google")
+      }
+    }
+    gradlePluginPortal()
+  }
+
   versionCatalogs {
     create("alpha") {
       from(files("gradle/alpha.versions.toml"))

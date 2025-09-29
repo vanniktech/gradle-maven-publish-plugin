@@ -166,7 +166,13 @@ private fun writeSettingFile(path: Path) {
         repositories {
             mavenLocal()
             mavenCentral()
-            google()
+            google {
+                mavenContent {
+                    includeGroupAndSubgroups("androidx")
+                    includeGroupAndSubgroups("com.android")
+                    includeGroupAndSubgroups("com.google")
+                }
+            }
             gradlePluginPortal()
         }
     }
@@ -174,7 +180,13 @@ private fun writeSettingFile(path: Path) {
     dependencyResolutionManagement {
         repositories {
             mavenCentral()
-            google()
+            google {
+                mavenContent {
+                    includeGroupAndSubgroups("androidx")
+                    includeGroupAndSubgroups("com.android")
+                    includeGroupAndSubgroups("com.google")
+                }
+            }
         }
     }
 
