@@ -4,7 +4,7 @@ import com.vanniktech.maven.publish.central.DropMavenCentralDeploymentTask.Compa
 import com.vanniktech.maven.publish.central.EnableAutomaticMavenCentralPublishingTask.Companion.registerEnableAutomaticMavenCentralPublishingTask
 import com.vanniktech.maven.publish.central.MavenCentralBuildService.Companion.registerMavenCentralBuildService
 import com.vanniktech.maven.publish.central.PrepareMavenCentralPublishingTask.Companion.registerPrepareMavenCentralPublishingTask
-import com.vanniktech.maven.publish.tasks.WorkaroundSignatureType
+import com.vanniktech.maven.publish.workaround.DirectorySignatureType
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -162,7 +162,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     // TODO: https://youtrack.jetbrains.com/issue/KT-61313/ https://github.com/gradle/gradle/issues/26132
     project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
       project.tasks.withType(Sign::class.java).configureEach {
-        it.signatureType = WorkaroundSignatureType(
+        it.signatureType = DirectorySignatureType(
           it.signatureType ?: ArmoredSignatureType(),
           project.layout.buildDirectory.dir("signatures/${it.name}"),
         )
