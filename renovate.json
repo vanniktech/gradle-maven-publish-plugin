@@ -10,6 +10,13 @@
       "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-beta|-Beta|-BETA|-rc|-RC|-milestone|-m|-SNAPSHOT)/"
     },
     {
+      "groupName": "Retrofit",
+      "enabled": false,
+      "matchPackageNames": [
+        "/com.squareup.retrofit2:*/"
+      ]
+    },
+    {
       "matchFileNames": ["**/alpha.versions.toml"],
       "allowedVersions": "!/(-SNAPSHOT)/"
     },

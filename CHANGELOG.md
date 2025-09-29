@@ -6,6 +6,7 @@
 - Raise minimum Gradle version to 8.13
 - Do not unconditionally disable DocLint
 - Fail publishing if `SONATYPE_HOST` is not set to `CENTRAL_PORTAL`.
+- Downgrade transitive OkHttp version.
 
 #### Minimum supported versions
 - JDK 11
