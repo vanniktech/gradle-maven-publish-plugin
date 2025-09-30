@@ -1,5 +1,5 @@
 public final class com/vanniktech/maven/publish/portal/SonatypeCentralPortal {
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;J)V
 	public final fun deleteDeployment (Ljava/lang/String;)V
 	public final fun publishDeployment (Ljava/lang/String;)V
 	public final fun upload (Ljava/lang/String;Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;Ljava/io/File;)Ljava/lang/String;
