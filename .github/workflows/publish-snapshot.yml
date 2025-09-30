@@ -29,10 +29,6 @@ jobs:
           distribution: zulu
           java-version: 11
 
-      - name: Set version
-        run: |
-          echo "ORG_GRADLE_PROJECT_VERSION_NAME=$(git describe --tags --abbrev=0 | awk -F. '/[0-9]+\./{$NF++;print}' OFS=.)-SNAPSHOT" >> $GITHUB_ENV
-
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Publish
