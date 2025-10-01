@@ -161,6 +161,13 @@ val integrationTest by tasks.registering(Test::class) {
   testClassesDirs = integrationTestSourceSet.output.classesDirs
   classpath = integrationTestSourceSet.runtimeClasspath
 
+  val testJavaVersion = System.getProperty("testJavaVersion")
+  if (testJavaVersion != null) {
+    javaLauncher = javaToolchains.launcherFor {
+      languageVersion = JavaLanguageVersion.of(testJavaVersion.toInt())
+    }
+  }
+
   useJUnitPlatform()
   testLogging.showStandardStreams = true
   maxHeapSize = "2g"
