@@ -39,7 +39,7 @@ jobs:
       - name: Accept Android SDK license
         run: echo -e "24333f8a63b6825ea9c5514f83c2829b004d1fee\n" > "$ANDROID_HOME/licenses/android-sdk-license"
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
 
       - name: Run ktlint
         run: ./kotlinw ktlint.main.kts --fail-on-changes
