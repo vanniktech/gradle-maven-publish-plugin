@@ -10,6 +10,9 @@
 - Fix misleading error message when Android library variant is not found.
 - Downgrade transitive OkHttp version.
 
+**BREAKING**
+- Remove unused `SONATYPE_CLOSE_TIMEOUT_SECONDS`.
+
 #### Minimum supported versions
 - JDK 11
 - Gradle 8.13
