@@ -203,6 +203,11 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
         }
       }
       """.trimIndent(),
+    // TODO remove when removing support for AGP 8.x
+    propertiesExtra =
+      """
+      android.newDsl=false
+      """.trimIndent(),
   )
 }
 
@@ -281,8 +286,13 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
 
 fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
   val plainAndroidProject = androidLibraryProjectSpec(agpVersion)
+  val plugins = if (agpVersion < AgpVersion.AGP_9_0) {
+    plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value)
+  } else {
+    plainAndroidProject.plugins
+  }
   return plainAndroidProject.copy(
-    plugins = plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value),
+    plugins = plugins,
     sourceFiles = plainAndroidProject.sourceFiles + listOf(
       SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
     ),
@@ -314,6 +324,11 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
         namespace = "com.test.library"
         minSdk = 29
     }
+    """.trimIndent(),
+  // TODO remove when stable
+  propertiesExtra =
+    """
+    android.experimental.fusedLibrarySupport=true
     """.trimIndent(),
 )
 

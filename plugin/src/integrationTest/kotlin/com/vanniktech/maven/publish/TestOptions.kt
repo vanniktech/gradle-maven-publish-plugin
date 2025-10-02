@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import com.google.common.truth.TruthJUnit.assume
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig as Versions
+import com.vanniktech.maven.publish.IntegrationTestBuildConfig.ANDROID_GRADLE_ALPHA
 import org.gradle.api.JavaVersion
 
 data class TestOptions(
@@ -46,6 +47,7 @@ enum class AgpVersion(
   companion object {
     val AGP_8_11 = AGP_STABLE
     val AGP_8_12 = AGP_STABLE
+    val AGP_9_0 = AGP_ALPHA
   }
 }
 
