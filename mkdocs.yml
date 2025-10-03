@@ -3,6 +3,7 @@ site_url: https://vanniktech.github.io/gradle-maven-publish-plugin/
 repo_name: gradle-maven-publish-plugin
 repo_url: https://github.com/vanniktech/gradle-maven-publish-plugin
 site_author: Niklas Baudy
+edit_uri: edit/main/docs
 
 copyright: 'Copyright (C) 2018 Vanniktech - Niklas Baudy'
 
@@ -17,6 +18,7 @@ theme:
     - navigation.tabs
     - content.tabs.link
     - toc.integrate
+    - content.action.edit
 
 nav:
   - 'index.md'
