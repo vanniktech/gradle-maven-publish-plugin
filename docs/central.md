@@ -220,7 +220,7 @@ home `gradle.properties` file or to use environment variables (when publishing f
     ```
 
 Note that the username/password here is *not* the same one you use to login; Sonatype publishing
-requires a username/password that was generated via user tokens. The user token needs to be obtained on [Sonatype OSS](https://central.sonatype.org/publish/generate-token/) or the [Central Portal](https://central.sonatype.org/publish/generate-portal-token/) depending on where you publish.
+requires a username/password that was generated via user tokens. The user token needs to be obtained on the [Central Portal](https://central.sonatype.org/publish/generate-portal-token/).
 
 ### In memory GPG key
 
