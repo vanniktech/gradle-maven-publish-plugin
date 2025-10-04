@@ -35,46 +35,19 @@ internal fun addTestFixturesSourcesJar(project: Project) {
   }.newInstance(projectInternal, "testFixtures")
 
   // use reflection because return type changed in Gradle 9.2.0-milestone-1
-  val sourceElements = JvmPluginsHelper::class.java
-    .getMethod(
-      "createDocumentationVariantWithArtifact",
-      String::class.java,
-      String::class.java,
-      String::class.java,
-      Set::class.java,
-      String::class.java,
-      Object::class.java,
-      ProjectInternal::class.java,
-    ).invoke(
-      null,
-      testFixturesSourceSet.sourcesElementsConfigurationName,
-      testFixtureSourceSetName,
-      DocsType.SOURCES,
-      setOf(projectDerivedCapability),
-      testFixturesSourceSet.sourcesJarTaskName,
-      testFixturesSourceSet.allSource,
-      projectInternal,
-    )
+  val sourceElements = JvmPluginsHelper.createDocumentationVariantWithArtifact(
+    testFixturesSourceSet.sourcesElementsConfigurationName,
+    testFixtureSourceSetName,
+    DocsType.SOURCES,
+    setOf(projectDerivedCapability),
+    testFixturesSourceSet.sourcesJarTaskName,
+    testFixturesSourceSet.allSource,
+    projectInternal,
+  )
 
   // the following is not using private APIs just needs to adapt to the API change in the method above
   val component = project.components.findByName("java") as AdhocComponentWithVariants
-  if (GradleVersion.current() >= GradleVersion.version("9.2.0-milestone-1")) {
-    AdhocComponentWithVariants::class.java.getMethod(
-      "addVariantsFromConfiguration",
-      Provider::class.java,
-      Action::class.java,
-    )
-  } else {
-    AdhocComponentWithVariants::class.java.getMethod(
-      "addVariantsFromConfiguration",
-      Configuration::class.java,
-      Action::class.java,
-    )
-  }.invoke(
-    component,
-    sourceElements,
-    JavaConfigurationVariantMapping("compile", true),
-  )
+  component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))
 }
 
 /**
