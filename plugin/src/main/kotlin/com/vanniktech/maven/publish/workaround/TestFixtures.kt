@@ -3,16 +3,13 @@
 package com.vanniktech.maven.publish.workaround
 
 import com.vanniktech.maven.publish.baseExtension
-import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.DocsType
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
 import org.gradle.api.plugins.internal.JvmPluginsHelper
-import org.gradle.api.provider.Provider
 import org.gradle.internal.component.external.model.ProjectDerivedCapability
 import org.gradle.util.GradleVersion
 
