@@ -174,7 +174,7 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
 fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
   val baseProject = kotlinMultiplatformProjectSpec(kotlinVersion)
   return baseProject.copy(
-    plugins = listOf(androidLibraryPlugin.copy(version = agpVersion.value)) + baseProject.plugins,
+    plugins = baseProject.plugins + listOf(androidLibraryPlugin.copy(version = agpVersion.value)),
     sourceFiles = baseProject.sourceFiles + listOf(
       SourceFile("androidMain", "kotlin", "com/vanniktech/maven/publish/test/AndroidTestClass.kt"),
       SourceFile("androidDebug", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
@@ -203,9 +203,11 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
         }
       }
       """.trimIndent(),
-    // TODO remove when removing support for AGP 8.x
+    // TODO remove when removing support for AGP 8.x, spec should be merged
+    //  with kotlinMultiplatformWithModernAndroidLibraryProjectSpec
     propertiesExtra =
       """
+      android.builtInKotlin=false
       android.newDsl=false
       """.trimIndent(),
   )
@@ -267,7 +269,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     """
     android {
         namespace "com.test.library"
-        compileSdkVersion 29
+        compileSdkVersion 30
 
         // resolves config cache issue, can be removed when AGP 8 becomes the minimum supported version
         buildFeatures {
