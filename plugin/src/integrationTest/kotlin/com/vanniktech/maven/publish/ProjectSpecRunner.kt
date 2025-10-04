@@ -204,10 +204,8 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
       appendLine("kotlin.compiler.execution.strategy=in-process")
       appendLine("kotlin.jvm.target.validation.mode=ignore")
       appendLine("kotlin.mpp.androidSourceSetLayoutVersion1.nowarn=true")
-      appendLine("org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled")
-      appendLine("org.jetbrains.dokka.experimental.gradle.pluginMode.noWarn=true")
-      appendLine("android.experimental.fusedLibrarySupport=true")
       appendLine()
+      appendLine(propertiesExtra)
 
       if (options.config == TestOptions.Config.PROPERTIES) {
         if (group != null) {

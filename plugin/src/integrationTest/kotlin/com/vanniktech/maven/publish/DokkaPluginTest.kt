@@ -38,6 +38,11 @@ class DokkaPluginTest : BasePluginTest() {
         "JavadocJar.Empty()",
         "JavadocJar.Dokka(\"dokkaGeneratePublicationHtml\")",
       ),
+      propertiesExtra =
+        """
+        org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled
+        org.jetbrains.dokka.experimental.gradle.pluginMode.noWarn=true
+        """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -62,6 +67,11 @@ class DokkaPluginTest : BasePluginTest() {
         "JavadocJar.Empty()",
         "JavadocJar.Dokka(\"dokkaGeneratePublicationJavadoc\")",
       ),
+      propertiesExtra =
+        """
+        org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled
+        org.jetbrains.dokka.experimental.gradle.pluginMode.noWarn=true
+        """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 

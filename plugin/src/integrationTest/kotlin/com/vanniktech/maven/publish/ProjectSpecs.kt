@@ -174,7 +174,7 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
 fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
   val baseProject = kotlinMultiplatformProjectSpec(kotlinVersion)
   return baseProject.copy(
-    plugins = listOf(androidLibraryPlugin.copy(version = agpVersion.value)) + baseProject.plugins,
+    plugins = baseProject.plugins + listOf(androidLibraryPlugin.copy(version = agpVersion.value)),
     sourceFiles = baseProject.sourceFiles + listOf(
       SourceFile("androidMain", "kotlin", "com/vanniktech/maven/publish/test/AndroidTestClass.kt"),
       SourceFile("androidDebug", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
@@ -202,6 +202,13 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
             languageVersion.set(JavaLanguageVersion.of("8"))
         }
       }
+      """.trimIndent(),
+    // TODO remove when removing support for AGP 8.x, spec should be merged
+    //  with kotlinMultiplatformWithModernAndroidLibraryProjectSpec
+    propertiesExtra =
+      """
+      android.builtInKotlin=false
+      android.newDsl=false
       """.trimIndent(),
   )
 }
@@ -262,7 +269,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     """
     android {
         namespace "com.test.library"
-        compileSdkVersion 29
+        compileSdkVersion 30
 
         // resolves config cache issue, can be removed when AGP 8 becomes the minimum supported version
         buildFeatures {
@@ -281,8 +288,13 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
 
 fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
   val plainAndroidProject = androidLibraryProjectSpec(agpVersion)
+  val plugins = if (agpVersion < AgpVersion.AGP_9_0) {
+    plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value)
+  } else {
+    plainAndroidProject.plugins
+  }
   return plainAndroidProject.copy(
-    plugins = plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value),
+    plugins = plugins,
     sourceFiles = plainAndroidProject.sourceFiles + listOf(
       SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
     ),
@@ -314,6 +326,11 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
         namespace = "com.test.library"
         minSdk = 29
     }
+    """.trimIndent(),
+  // TODO remove when stable
+  propertiesExtra =
+    """
+    android.experimental.fusedLibrarySupport=true
     """.trimIndent(),
 )
 

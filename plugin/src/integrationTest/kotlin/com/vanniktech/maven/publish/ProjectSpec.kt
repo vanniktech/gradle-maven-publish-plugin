@@ -13,6 +13,7 @@ data class ProjectSpec(
   val basePluginConfig: String,
   val defaultProjectName: String = "default-root-project-name",
   val buildFileExtra: String = "",
+  val propertiesExtra: String = "",
 )
 
 data class PluginSpec(
