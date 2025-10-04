@@ -20,9 +20,8 @@
 - JDK 24
 - Gradle 8.14.3
 - Gradle 9.1.0
-- Gradle 9.2.0-milestone-2
-- Android Gradle Plugin 8.11.1
-- Android Gradle Plugin 8.12.0-rc01
+- Android Gradle Plugin 8.13.0
+- Android Gradle Plugin 9.0.0-alpha08
 - Kotlin Gradle Plugin 2.2.20
 
 
