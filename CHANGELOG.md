@@ -21,7 +21,7 @@
 - Gradle 8.14.3
 - Gradle 9.1.0
 - Android Gradle Plugin 8.13.0
-- Android Gradle Plugin 9.0.0-alpha08
+- Android Gradle Plugin 9.0.0-alpha09
 - Kotlin Gradle Plugin 2.2.20
 
 
