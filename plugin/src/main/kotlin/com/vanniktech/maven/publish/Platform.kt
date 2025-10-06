@@ -1,6 +1,8 @@
 package com.vanniktech.maven.publish
 
+import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.extension.impl.CurrentAndroidGradlePluginVersion.CURRENT_AGP_VERSION
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import com.vanniktech.maven.publish.workaround.addTestFixturesSourcesJar
 import com.vanniktech.maven.publish.workaround.fixTestFixturesMetadata
@@ -279,7 +281,9 @@ public class AndroidFusedLibrary : Platform() {
 
     project.mavenPublications {
       it.withJavadocJar(javadocJar, project, multipleTasks = false, configureArchives = true)
-      it.withJavaSourcesJar(sourcesJar, project, configureArchives = true)
+      if (CURRENT_AGP_VERSION < AndroidPluginVersion(9, 0, 0).alpha(9)) {
+        it.withJavaSourcesJar(sourcesJar, project, configureArchives = true)
+      }
     }
   }
 
