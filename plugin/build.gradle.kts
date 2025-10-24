@@ -141,13 +141,6 @@ tasks.validatePlugins {
   enableStricterValidation = true
 }
 
-tasks.whenTaskAdded {
-  if (name.contains("lint") && this::class.java.name.contains("com.android.build")) {
-    // TODO: lints can be run on Java 17 or above, remove this once we bump the min Java version to 17.
-    enabled = JavaVersion.current() >= JavaVersion.VERSION_17
-  }
-}
-
 val integrationTest by tasks.registering(Test::class) {
   dependsOn(
     tasks.publishToMavenLocal,
@@ -160,13 +153,6 @@ val integrationTest by tasks.registering(Test::class) {
 
   testClassesDirs = integrationTestSourceSet.output.classesDirs
   classpath = integrationTestSourceSet.runtimeClasspath
-
-  val testJavaVersion = System.getProperty("testJavaVersion")
-  if (testJavaVersion != null) {
-    javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(testJavaVersion.toInt())
-    }
-  }
 
   useJUnitPlatform()
   testLogging.showStandardStreams = true

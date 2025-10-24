@@ -9,9 +9,10 @@
 - Fail publishing if `SONATYPE_HOST` is not set to `CENTRAL_PORTAL`.
 - Fix misleading error message when Android library variant is not found.
 - Downgrade transitive OkHttp version.
+- Bump min Java requirement to 17.
 
 #### Minimum supported versions
-- JDK 11
+- JDK 17
 - Gradle 8.13
 - Android Gradle Plugin 8.0.0
 - Kotlin Gradle Plugin 1.9.20
