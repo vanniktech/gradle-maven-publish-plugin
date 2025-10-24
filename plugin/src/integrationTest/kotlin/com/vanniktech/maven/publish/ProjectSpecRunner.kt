@@ -86,7 +86,7 @@ private fun ProjectSpec.pluginsBlock(options: TestOptions) = buildString {
     }
   }
 
-  val pluginVersion = System.getProperty("com.vanniktech.publish.version")
+  val pluginVersion = IntegrationTestBuildConfig.VERSION_NAME
   when (options.config) {
     TestOptions.Config.BASE -> appendLine(" id \"com.vanniktech.maven.publish.base\" version \"${pluginVersion}\"")
     TestOptions.Config.DSL,
