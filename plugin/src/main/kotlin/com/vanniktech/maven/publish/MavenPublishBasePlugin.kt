@@ -3,7 +3,6 @@ package com.vanniktech.maven.publish
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
-import org.gradle.util.GradleVersion
 
 public abstract class MavenPublishBasePlugin : Plugin<Project> {
   override fun apply(project: Project) {
@@ -15,9 +14,6 @@ public abstract class MavenPublishBasePlugin : Plugin<Project> {
   }
 
   private fun Project.checkMinimumVersions() {
-    if (GradleVersion.current() < MIN_GRADLE_VERSION) {
-      error("You need Gradle version $MIN_GRADLE_VERSION or higher, was ${GradleVersion.current()}")
-    }
     plugins.withId("com.android.library") {
       if (!isAtLeastUsingAndroidGradleVersion(8, 0, 0)) {
         error("You need AGP version 8.0.0 or newer")
@@ -41,7 +37,6 @@ public abstract class MavenPublishBasePlugin : Plugin<Project> {
   }
 
   private companion object {
-    val MIN_GRADLE_VERSION: GradleVersion = GradleVersion.version("8.13")
     val KOTLIN_PLUGIN_IDS = listOf(
       "org.jetbrains.kotlin.jvm",
       "org.jetbrains.kotlin.multiplatform",
