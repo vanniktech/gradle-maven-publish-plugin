@@ -1,5 +1,5 @@
 [versions]
-jdkRelease = "11"
+jdkRelease = "17"
 minGradle = "8.13"
 
 gradle = "9.2.0"
