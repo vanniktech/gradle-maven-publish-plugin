@@ -29,6 +29,10 @@
       "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-beta|-Beta|-BETA|-milestone|-m|-SNAPSHOT)/"
     }
   ],
+  ignorePresets: [
+    // Ensure we get the latest version and are not pinned to old versions.
+    'workarounds:javaLTSVersions',
+  ],
   "customManagers": [
     {
       "customType": "regex",
@@ -36,6 +40,20 @@
       "matchStrings": ["(^|\n)(?<depName>gradle) *= *\"(?<currentValue>.*)\""],
       "depNameTemplate": "gradle",
       "datasourceTemplate": "gradle-version"
-    }
+    },
+    // Update .java-version file with the latest JDK version.
+    {
+      customType: 'regex',
+      fileMatch: [
+        '\\.java-version$',
+      ],
+      matchStrings: [
+        '(?<currentValue>.*)\\n',
+      ],
+      datasourceTemplate: 'java-version',
+      depNameTemplate: 'java',
+      // Only write the major version.
+      extractVersionTemplate: '^(?<version>\\d+)',
+    },
   ]
 }
