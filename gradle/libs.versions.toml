@@ -36,5 +36,5 @@ maven-model = "org.apache.maven:maven-model:3.9.11"
 androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0-alpha05"
 
 [plugins]
-buildconfig = "com.github.gmazzo.buildconfig:5.6.8"
+buildconfig = "com.github.gmazzo.buildconfig:5.7.1"
 android-lint = "com.android.lint:8.13.0"
