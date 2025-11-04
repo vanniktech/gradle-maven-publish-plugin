@@ -12,6 +12,7 @@ import java.util.zip.ZipOutputStream
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -30,8 +31,11 @@ internal abstract class MavenCentralBuildService :
     val repositoryPassword: Property<String>
     val okhttpTimeoutSeconds: Property<Long>
     val closeTimeoutSeconds: Property<Long>
+    val pollIntervalSeconds: Property<Long>
     val rootBuildDirectory: DirectoryProperty
   }
+
+  private val logger = Logging.getLogger(MavenCentralBuildService::class.java)
 
   private val centralPortal by lazy {
     SonatypeCentralPortal(
@@ -45,6 +49,8 @@ internal abstract class MavenCentralBuildService :
       userAgentVersion = BuildConfig.VERSION,
       okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
       closeTimeoutSeconds = parameters.closeTimeoutSeconds.get(),
+      pollIntervalMs = parameters.pollIntervalSeconds.get() * 1000L,
+      logger = logger,
     )
   }
 
@@ -75,8 +81,11 @@ internal abstract class MavenCentralBuildService :
   /**
    * Is only allowed to be called from task actions.
    */
-  fun enableAutomaticPublishing() {
+  fun enableAutomaticPublishing(validateDeployment: Boolean) {
     endOfBuildActions += EndOfBuildAction.Publish
+    if (validateDeployment) {
+      endOfBuildActions += EndOfBuildAction.Validate
+    }
   }
 
   /**
@@ -147,7 +156,14 @@ internal abstract class MavenCentralBuildService :
       }
       out.close()
 
-      deploymentId = centralPortal.upload(deploymentName, publishingType, zipFile)
+      val deploymentId = centralPortal.upload(deploymentName, publishingType, zipFile)
+      this.deploymentId = deploymentId
+
+      if (actions.contains(EndOfBuildAction.Validate)) {
+        centralPortal.validateDeployment(deploymentId)
+      } else {
+        logger.lifecycle("Skipping deployment validation!")
+      }
     }
 
     val dropAction = actions.filterIsInstance<EndOfBuildAction.Drop>().singleOrNull()
@@ -176,12 +192,17 @@ internal abstract class MavenCentralBuildService :
         .gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
         .map { it.toLong() }
         .orElse(60 * 15)
+      val pollIntervalSeconds = project.providers
+        .gradleProperty("SONATYPE_POLL_INTERVAL_SECONDS")
+        .map { it.toLong() }
+        .orElse(5L)
       val service = gradle.sharedServices.registerIfAbsent(NAME, MavenCentralBuildService::class.java) {
         it.maxParallelUsages.set(1)
         it.parameters.repositoryUsername.set(repositoryUsername)
         it.parameters.repositoryPassword.set(repositoryPassword)
         it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
         it.parameters.closeTimeoutSeconds.set(closeTimeout)
+        it.parameters.pollIntervalSeconds.set(pollIntervalSeconds)
         it.parameters.rootBuildDirectory.set(rootBuildDirectory)
       }
       buildEventsListenerRegistry.onTaskCompletion(service)

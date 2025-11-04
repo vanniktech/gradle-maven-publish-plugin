@@ -9,6 +9,7 @@
 - Fail publishing if `SONATYPE_HOST` is not set to `CENTRAL_PORTAL`.
 - Fix misleading error message when Android library variant is not found.
 - Downgrade transitive OkHttp version.
+- Add support for validating deployments to Central Portal
 
 #### Minimum supported versions
 - JDK 11

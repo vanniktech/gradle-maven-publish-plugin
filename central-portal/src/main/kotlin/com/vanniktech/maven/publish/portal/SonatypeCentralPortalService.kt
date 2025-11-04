@@ -30,4 +30,9 @@ internal interface SonatypeCentralPortalService {
     @Query("publishingType") publishingType: SonatypeCentralPortal.PublishingType,
     @Part input: MultipartBody.Part,
   ): Call<String>
+
+  @POST("api/v1/publisher/status")
+  fun checkDeploymentStatus(
+    @Query("id") deploymentId: String,
+  ): Call<DeploymentStatusResponse>
 }
