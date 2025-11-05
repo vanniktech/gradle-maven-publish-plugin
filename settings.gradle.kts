@@ -1,6 +1,7 @@
 rootProject.name = "gradle-maven-publish-plugin"
 
 pluginManagement {
+  includeBuild("build-logic")
   repositories {
     mavenCentral()
     google {
@@ -60,4 +61,3 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":plugin")
 include(":central-portal")
-includeBuild("build-logic")

@@ -9,7 +9,10 @@ public abstract class MavenPublishPlugin : Plugin<Project> {
     val baseExtension = project.baseExtension
 
     if (project.sonatypeHost()) {
-      baseExtension.publishToMavenCentral(project.automaticRelease())
+      baseExtension.publishToMavenCentral(
+        project.automaticRelease(),
+        project.validateDeployment(),
+      )
     }
 
     if (project.signAllPublications()) {
@@ -57,6 +60,14 @@ public abstract class MavenPublishPlugin : Plugin<Project> {
       return automatic.toBoolean()
     }
     return providers.gradleProperty("SONATYPE_AUTOMATIC_RELEASE").orNull.toBoolean()
+  }
+
+  private fun Project.validateDeployment(): Boolean {
+    val automatic = providers.gradleProperty("mavenCentralDeploymentValidation").getOrElse("true")
+    if (automatic != null) {
+      return automatic.toBoolean()
+    }
+    return providers.gradleProperty("SONATYPE_DEPLOYMENT_VALIDATION").getOrElse("true").toBoolean()
   }
 
   private fun Project.signAllPublications(): Boolean {

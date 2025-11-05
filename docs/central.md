@@ -354,3 +354,50 @@ For automatic publishing use one of the following options
     ```sh
     ./gradlew publishToMavenCentral
     ```
+
+### Deployment validation
+
+When automatic releases are enabled, the plugin automatically monitors the deployment status until it reaches
+a terminal state (`PUBLISHED` or `FAILED`).
+
+The validation process:
+
+- Polls the deployment status every 5 seconds (configurable via `SONATYPE_POLL_INTERVAL_SECONDS` property)
+- Only stops when reaching a terminal state (`PUBLISHED` or `FAILED`)
+- Times out after 15 minutes by default (configurable via `SONATYPE_CLOSE_TIMEOUT_SECONDS` property)
+- Fails the build if the deployment enters the `FAILED` state, displaying validation errors
+
+#### Disabling automatic validation
+
+Deployment validation for automatic releases is enabled by default. If you prefer to check validation status
+manually, you can disable automatic validation:
+
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      publishToMavenCentral(true, false) // automaticRelease = true, validateDeployment = false
+
+      // rest of publishing config
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    mavenPublishing {
+      publishToMavenCentral(automaticRelease = true, validateDeployment = false)
+
+      // rest of publishing config
+    }
+    ```
+
+=== "gradle.properties"
+
+    ```properties
+    mavenCentralDeploymentValidation=false
+    ```
+
+When validation is disabled, the build will complete immediately after uploading the artifacts,
+and you can check the deployment status manually on
+the [Central Portal website](https://central.sonatype.com/publishing/deployments).
