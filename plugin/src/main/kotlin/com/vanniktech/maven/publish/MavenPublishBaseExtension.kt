@@ -254,13 +254,13 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   /**
    * Configures the POM through Gradle properties.
    */
+  @Incubating
   // TODO: we can't call 'providers.gradleProperty' instead due to
   //  https://github.com/gradle/gradle/issues/23572
   //  https://github.com/gradle/gradle/issues/29600
   @Suppress(
     "GradleProjectIsolation",
   )
-  @Incubating
   public fun pomFromGradleProperties() {
     fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
 
