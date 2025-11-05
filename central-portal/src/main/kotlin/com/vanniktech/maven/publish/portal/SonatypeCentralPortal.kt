@@ -84,7 +84,7 @@ public class SonatypeCentralPortal(
   }
 
   /**
-   * Validates the deployment by polling its status until it reaches PUBLISHED or FAILED.
+   * Validates the deployment by polling its status until it reaches `PUBLISHED` or `FAILED`.
    *
    * @param deploymentId The ID of the deployment to validate
    * @param logger An SLF4J logger instance for logging deployment status updates
