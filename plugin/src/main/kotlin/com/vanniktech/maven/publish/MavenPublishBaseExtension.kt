@@ -254,8 +254,16 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   /**
    * Configures the POM through Gradle properties.
    */
+  // TODO: we can't call 'providers.gradleProperty' instead due to
+  //  https://github.com/gradle/gradle/issues/23572
+  //  https://github.com/gradle/gradle/issues/29600
+  @Suppress(
+    "GradleProjectIsolation",
+  )
   @Incubating
   public fun pomFromGradleProperties() {
+    fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
+
     pomFromProperties.set(true)
     pomFromProperties.finalizeValue()
 
@@ -380,7 +388,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         val variants = if (project.plugins.hasPlugin("com.android.kotlin.multiplatform.library")) {
           emptyList()
         } else {
-          listOf(project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release")
+          listOf(project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release")
         }
         configure(
           KotlinMultiplatform(
@@ -392,7 +400,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         )
       }
       project.plugins.hasPlugin("com.android.library") -> {
-        val variant = project.findOptionalProperty("ANDROID_VARIANT_TO_PUBLISH") ?: "release"
+        val variant = project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
         configure(AndroidSingleVariantLibrary(variant, sourcesJar, javadocJar))
       }
       project.plugins.hasPlugin("com.android.fused-library") -> {
