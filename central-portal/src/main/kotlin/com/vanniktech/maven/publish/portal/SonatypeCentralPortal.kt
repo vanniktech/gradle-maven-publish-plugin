@@ -28,7 +28,8 @@ public class SonatypeCentralPortal(
   private val logger: Logger,
 ) {
   private val service by lazy {
-    val moshi = Moshi.Builder()
+    val moshi = Moshi
+      .Builder()
       .add(KotlinJsonAdapterFactory())
       .build()
 
@@ -91,9 +92,7 @@ public class SonatypeCentralPortal(
    * @throws IOException if the deployment fails validation or an API error occurs
    */
   @OptIn(ExperimentalTime::class)
-  public fun validateDeployment(
-    deploymentId: String,
-  ) {
+  public fun validateDeployment(deploymentId: String) {
     val startMark = TimeSource.Monotonic.markNow()
     val timeout = closeTimeoutSeconds.seconds
     var lastState: DeploymentState? = null
@@ -133,7 +132,7 @@ public class SonatypeCentralPortal(
             val errorMessages =
               status.errors?.entries?.joinToString("\n") { (publication, errors) ->
                 buildString {
-                  appendLine("Publication ${publication}:")
+                  appendLine("Publication $publication:")
                   errors.forEach { error ->
                     appendLine("* $error")
                   }
