@@ -11,6 +11,10 @@ internal sealed interface EndOfBuildAction {
     override val runAfterFailure: Boolean = false
   }
 
+  object Validate : EndOfBuildAction {
+    override val runAfterFailure: Boolean = false
+  }
+
   data class Drop(
     override val runAfterFailure: Boolean,
   ) : EndOfBuildAction

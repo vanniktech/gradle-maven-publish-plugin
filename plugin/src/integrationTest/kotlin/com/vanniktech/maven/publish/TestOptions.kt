@@ -79,7 +79,7 @@ enum class GradleVersion(
 ) {
   // minimum supported
   GRADLE_MIN(
-    value = "8.13",
+    value = Versions.GRADLE_MIN,
     firstUnsupportedJdkVersion = JavaVersion.VERSION_24,
   ),
 
