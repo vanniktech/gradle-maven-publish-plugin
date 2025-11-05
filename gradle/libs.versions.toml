@@ -2,7 +2,7 @@
 jdkRelease = "11"
 minGradle = "8.13"
 
-gradle = "9.1.0"
+gradle = "9.2.0"
 
 kotlin = "2.2.20"
 
