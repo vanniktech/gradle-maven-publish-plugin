@@ -14,9 +14,12 @@ internal abstract class EnableAutomaticMavenCentralPublishingTask : DefaultTask(
   @get:Internal
   abstract val buildService: Property<MavenCentralBuildService>
 
+  @get:Internal
+  abstract val validateDeployment: Property<Boolean>
+
   @TaskAction
   fun enableAutomaticPublishing() {
-    buildService.get().enableAutomaticPublishing()
+    buildService.get().enableAutomaticPublishing(validateDeployment.get())
   }
 
   companion object {
@@ -24,9 +27,11 @@ internal abstract class EnableAutomaticMavenCentralPublishingTask : DefaultTask(
 
     fun TaskContainer.registerEnableAutomaticMavenCentralPublishingTask(
       buildService: Provider<MavenCentralBuildService>,
+      validateDeployment: Boolean,
     ): TaskProvider<EnableAutomaticMavenCentralPublishingTask> = register(NAME, EnableAutomaticMavenCentralPublishingTask::class.java) {
       it.description = "Enables automatic publishing for Maven Central"
       it.buildService.set(buildService)
+      it.validateDeployment.set(validateDeployment)
       it.usesService(buildService)
     }
   }

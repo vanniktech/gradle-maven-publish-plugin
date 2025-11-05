@@ -56,10 +56,15 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * `mavenCentralUsername` and `mavenCentralPassword`. See [here](https://central.sonatype.org/publish/generate-portal-token/)
    * for how to obtain a user token.
    *
+   * When [validateDeployment] is `true` (the default), the plugin will monitor the deployment status after upload
+   * and wait until it reaches a terminal state (`PUBLISHED` or `FAILED`). Deployment validation only happens
+   * when [automaticRelease] is `true`.
+   *
    * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
+   * @param validateDeployment whether to wait for the deployment to be validated and published at the end of the build
    */
   @JvmOverloads
-  public fun publishToMavenCentral(automaticRelease: Boolean = false) {
+  public fun publishToMavenCentral(automaticRelease: Boolean = false, validateDeployment: Boolean = true) {
     mavenCentral.set(true)
     mavenCentral.finalizeValue()
 
@@ -87,7 +92,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     )
 
     val prepareTask = project.tasks.registerPrepareMavenCentralPublishingTask(buildService, groupId, artifactId, version, localRepository)
-    val enableAutomaticTask = project.tasks.registerEnableAutomaticMavenCentralPublishingTask(buildService)
+    val enableAutomaticTask = project.tasks.registerEnableAutomaticMavenCentralPublishingTask(buildService, validateDeployment)
 
     project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
       if (publishTask.name.endsWith("ToMavenCentralRepository")) {

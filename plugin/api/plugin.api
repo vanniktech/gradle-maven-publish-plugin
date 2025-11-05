@@ -175,7 +175,8 @@ public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public final fun pomFromGradleProperties ()V
 	public final fun publishToMavenCentral ()V
 	public final fun publishToMavenCentral (Z)V
-	public static synthetic fun publishToMavenCentral$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;ZILjava/lang/Object;)V
+	public final fun publishToMavenCentral (ZZ)V
+	public static synthetic fun publishToMavenCentral$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;ZZILjava/lang/Object;)V
 	public final fun signAllPublications ()V
 }
 
