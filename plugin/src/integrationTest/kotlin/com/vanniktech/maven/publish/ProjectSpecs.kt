@@ -324,7 +324,9 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     """
     androidFusedLibrary {
         namespace = "com.test.library"
-        minSdk = 29
+        minSdk {
+             version = release(34)
+        }
     }
     """.trimIndent(),
   // TODO remove when stable
