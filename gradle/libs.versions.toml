@@ -20,7 +20,7 @@ okhttp = "4.12.0"
 slf4j = "1.7.36"
 
 [libraries]
-dokka = "org.jetbrains.dokka:dokka-gradle-plugin:2.0.0"
+dokka = "org.jetbrains.dokka:dokka-gradle-plugin:2.1.0"
 android-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
 maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.34.0"
 
