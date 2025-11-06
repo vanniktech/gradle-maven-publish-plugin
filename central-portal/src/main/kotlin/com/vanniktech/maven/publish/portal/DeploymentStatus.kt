@@ -1,12 +1,9 @@
 package com.vanniktech.maven.publish.portal
 
-import com.squareup.moshi.JsonClass
-
 /**
  * Response from the Central Portal API status endpoint.
  * See https://central.sonatype.org/publish/publish-portal-api/#verify-status-of-the-deployment
  */
-@JsonClass(generateAdapter = true)
 internal data class DeploymentStatusResponse(
   val deploymentId: String,
   val deploymentName: String,
