@@ -10,11 +10,12 @@
       "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-beta|-Beta|-BETA|-rc|-RC|-milestone|-m|-SNAPSHOT)/"
     },
     {
-      "groupName": "Retrofit",
+      // See https://github.com/vanniktech/gradle-maven-publish-plugin/issues/1131.
+      "groupName": "Retrofit and OkHttp",
       "enabled": false,
       "matchPackageNames": [
-        "/com.squareup.retrofit2:*/"
-        "/com.squareup.okhttp3:*/"
+        "/com.squareup.retrofit2:*/",
+        "/com.squareup.okhttp3:*/",
       ]
     },
     {
