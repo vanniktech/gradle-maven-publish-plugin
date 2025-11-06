@@ -44,79 +44,37 @@ configurations.named(API_ELEMENTS_CONFIGURATION_NAME) {
 
 buildConfig {
   packageName("com.vanniktech.maven.publish")
-  buildConfigField("String", "NAME", "\"com.vanniktech.maven.publish\"")
-  buildConfigField("String", "VERSION", "\"${project.findProperty("VERSION_NAME") ?: "dev"}\"")
+  generateAtSync = true
 
-  sourceSets.getByName(integrationTestSourceSet.name) {
-    buildConfigField(
-      "GRADLE_ALPHA",
-      alpha.versions.gradle
-        .asProvider()
-        .get(),
-    )
-    buildConfigField(
-      "GRADLE_BETA",
-      beta.versions.gradle
-        .asProvider()
-        .get(),
-    )
-    buildConfigField(
-      "GRADLE_RC",
-      rc.versions.gradle
-        .asProvider()
-        .get(),
-    )
-    buildConfigField(
-      "GRADLE_STABLE",
-      libs.versions.gradle
-        .asProvider()
-        .get(),
-    )
+  sourceSets.named("main") {
+    buildConfigField("PLUGIN_NAME", "com.vanniktech.maven.publish")
+    buildConfigField("VERSION_NAME", providers.gradleProperty("VERSION_NAME"))
+  }
+
+  sourceSets.named(integrationTestSourceSet.name) {
+    // We must provide the plugin version here instead of using `withPluginClasspath` for GradleRunner. As there are
+    // various AGP / KGP and other plugins tested in the matrix, `withPluginClasspath` will mess the whole classpath.
+    buildConfigField("VERSION_NAME", providers.gradleProperty("VERSION_NAME"))
+    buildConfigField("TEST_CONFIG_METHOD", providers.gradleProperty("testConfigMethod").orElse(""))
+    buildConfigField("Boolean", "QUICK_TEST", providers.gradleProperty("quickTest").orElse("false"))
+
     buildConfigField("GRADLE_MIN", libs.versions.minGradle)
-    buildConfigField(
-      "ANDROID_GRADLE_ALPHA",
-      alpha.versions.android.gradle
-        .get(),
-    )
-    buildConfigField(
-      "ANDROID_GRADLE_BETA",
-      beta.versions.android.gradle
-        .get(),
-    )
-    buildConfigField(
-      "ANDROID_GRADLE_RC",
-      rc.versions.android.gradle
-        .get(),
-    )
-    buildConfigField(
-      "ANDROID_GRADLE_STABLE",
-      libs.versions.android.gradle
-        .get(),
-    )
-    buildConfigField("KOTLIN_ALPHA", alpha.versions.kotlin.get())
-    buildConfigField("KOTLIN_BETA", beta.versions.kotlin.get())
-    buildConfigField("KOTLIN_RC", rc.versions.kotlin.get())
-    buildConfigField("KOTLIN_STABLE", libs.versions.kotlin.get())
-    buildConfigField(
-      "GRADLE_PUBLISH_ALPHA",
-      alpha.versions.gradle.plugin.publish
-        .get(),
-    )
-    buildConfigField(
-      "GRADLE_PUBLISH_BETA",
-      beta.versions.gradle.plugin.publish
-        .get(),
-    )
-    buildConfigField(
-      "GRADLE_PUBLISH_RC",
-      rc.versions.gradle.plugin.publish
-        .get(),
-    )
-    buildConfigField(
-      "GRADLE_PUBLISH_STABLE",
-      libs.versions.gradle.plugin.publish
-        .get(),
-    )
+    buildConfigField("GRADLE_ALPHA", alpha.versions.gradle.asProvider())
+    buildConfigField("GRADLE_BETA", beta.versions.gradle.asProvider())
+    buildConfigField("GRADLE_RC", rc.versions.gradle.asProvider())
+    buildConfigField("GRADLE_STABLE", libs.versions.gradle.asProvider())
+    buildConfigField("ANDROID_GRADLE_ALPHA", alpha.versions.android.gradle)
+    buildConfigField("ANDROID_GRADLE_BETA", beta.versions.android.gradle)
+    buildConfigField("ANDROID_GRADLE_RC", rc.versions.android.gradle)
+    buildConfigField("ANDROID_GRADLE_STABLE", libs.versions.android.gradle)
+    buildConfigField("KOTLIN_ALPHA", alpha.versions.kotlin)
+    buildConfigField("KOTLIN_BETA", beta.versions.kotlin)
+    buildConfigField("KOTLIN_RC", rc.versions.kotlin)
+    buildConfigField("KOTLIN_STABLE", libs.versions.kotlin)
+    buildConfigField("GRADLE_PUBLISH_ALPHA", alpha.versions.gradle.plugin.publish)
+    buildConfigField("GRADLE_PUBLISH_BETA", beta.versions.gradle.plugin.publish)
+    buildConfigField("GRADLE_PUBLISH_RC", rc.versions.gradle.plugin.publish)
+    buildConfigField("GRADLE_PUBLISH_STABLE", libs.versions.gradle.plugin.publish)
   }
 }
 
@@ -192,25 +150,11 @@ val integrationTest by tasks.registering(Test::class) {
     "java.base/java.util=ALL-UNNAMED",
   )
 
-  // We must provide the plugin version here instead of using `withPluginClasspath` for GradleRunner. As there are
-  // various AGP / KGP and other plugins tested in the matrix, `withPluginClasspath` will mess the whole classpath.
-  systemProperty("com.vanniktech.publish.version", project.property("VERSION_NAME").toString())
-  systemProperty("testConfigMethod", System.getProperty("testConfigMethod"))
-  systemProperty("quickTest", System.getProperty("quickTest"))
-
   beforeTest(
     closureOf<TestDescriptor> {
       logger.lifecycle("Running test: ${this.className} ${this.displayName}")
     },
   )
-}
-
-val quickIntegrationTest by tasks.registering {
-  description = "Runs the integration tests quickly."
-  group = "verification"
-
-  dependsOn(integrationTest)
-  System.setProperty("quickTest", "true")
 }
 
 tasks.check {
