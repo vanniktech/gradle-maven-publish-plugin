@@ -2,7 +2,6 @@ package com.vanniktech.maven.publish
 
 import com.google.common.truth.TruthJUnit.assume
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig as Versions
-import com.vanniktech.maven.publish.IntegrationTestBuildConfig.ANDROID_GRADLE_ALPHA
 import org.gradle.api.JavaVersion
 
 data class TestOptions(
@@ -32,7 +31,7 @@ enum class AgpVersion(
 ) {
   // minimum supported
   AGP_MIN(
-    value = "8.0.0",
+    value = "8.2.2",
     minGradleVersion = GradleVersion.GRADLE_8_1,
     firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_0,
   ),

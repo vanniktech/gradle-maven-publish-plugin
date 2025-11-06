@@ -45,8 +45,8 @@ internal abstract class MavenCentralBuildService :
         .encode(
           "${parameters.repositoryUsername.get()}:${parameters.repositoryPassword.get()}".toByteArray(),
         ).toString(Charsets.UTF_8),
-      userAgentName = BuildConfig.NAME,
-      userAgentVersion = BuildConfig.VERSION,
+      userAgentName = BuildConfig.PLUGIN_NAME,
+      userAgentVersion = BuildConfig.VERSION_NAME,
       okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
       closeTimeoutSeconds = parameters.closeTimeoutSeconds.get(),
       pollIntervalMs = parameters.pollIntervalSeconds.get() * 1000L,
