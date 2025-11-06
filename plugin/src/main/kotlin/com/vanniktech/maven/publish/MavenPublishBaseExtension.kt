@@ -9,6 +9,7 @@ import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
+import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
@@ -25,6 +26,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 public abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
   private val buildEventsListenerRegistry: BuildEventsListenerRegistry,
+  private val buildFeatures: BuildFeatures,
 ) {
   private val mavenCentral: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
@@ -255,51 +257,43 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * Configures the POM through Gradle properties.
    */
   @Incubating
-  // TODO: we can't call 'providers.gradleProperty' instead due to
-  //  https://github.com/gradle/gradle/issues/23572
-  //  https://github.com/gradle/gradle/issues/29600
-  @Suppress(
-    "GradleProjectIsolation",
-  )
   public fun pomFromGradleProperties() {
-    fun Project.findOptionalProperty(propertyName: String) = findProperty(propertyName)?.toString()
-
     pomFromProperties.set(true)
     pomFromProperties.finalizeValue()
 
-    val groupId = project.findOptionalProperty("GROUP")
+    val groupId = findOptionalProperty("GROUP")
     if (groupId != null) {
       groupId(groupId)
     }
-    val artifactId = project.findOptionalProperty("POM_ARTIFACT_ID")
+    val artifactId = findOptionalProperty("POM_ARTIFACT_ID")
     if (artifactId != null) {
       artifactId(artifactId)
     }
-    val version = project.findOptionalProperty("VERSION_NAME")
+    val version = findOptionalProperty("VERSION_NAME")
     if (version != null) {
       version(version)
     }
 
     pom { pom ->
-      val name = project.findOptionalProperty("POM_NAME")
+      val name = findOptionalProperty("POM_NAME")
       if (name != null) {
         pom.name.set(name)
       }
-      val description = project.findOptionalProperty("POM_DESCRIPTION")
+      val description = findOptionalProperty("POM_DESCRIPTION")
       if (description != null) {
         pom.description.set(description)
       }
-      val url = project.findOptionalProperty("POM_URL")
+      val url = findOptionalProperty("POM_URL")
       if (url != null) {
         pom.url.set(url)
       }
-      val inceptionYear = project.findOptionalProperty("POM_INCEPTION_YEAR")
+      val inceptionYear = findOptionalProperty("POM_INCEPTION_YEAR")
       if (inceptionYear != null) {
         pom.inceptionYear.set(inceptionYear)
       }
 
-      val issueManagementSystem = project.findOptionalProperty("POM_ISSUE_SYSTEM")
-      val issueManagementUrl = project.findOptionalProperty("POM_ISSUE_URL")
+      val issueManagementSystem = findOptionalProperty("POM_ISSUE_SYSTEM")
+      val issueManagementUrl = findOptionalProperty("POM_ISSUE_URL")
       if (issueManagementSystem != null || issueManagementUrl != null) {
         pom.issueManagement {
           it.system.set(issueManagementSystem)
@@ -307,9 +301,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
       }
 
-      val scmUrl = project.findOptionalProperty("POM_SCM_URL")
-      val scmConnection = project.findOptionalProperty("POM_SCM_CONNECTION")
-      val scmDeveloperConnection = project.findOptionalProperty("POM_SCM_DEV_CONNECTION")
+      val scmUrl = findOptionalProperty("POM_SCM_URL")
+      val scmConnection = findOptionalProperty("POM_SCM_CONNECTION")
+      val scmDeveloperConnection = findOptionalProperty("POM_SCM_DEV_CONNECTION")
       if (scmUrl != null || scmConnection != null || scmDeveloperConnection != null) {
         pom.scm {
           it.url.set(scmUrl)
@@ -318,9 +312,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
       }
 
-      val licenceName = project.findOptionalProperty("POM_LICENCE_NAME")
-      val licenceUrl = project.findOptionalProperty("POM_LICENCE_URL")
-      val licenceDistribution = project.findOptionalProperty("POM_LICENCE_DIST")
+      val licenceName = findOptionalProperty("POM_LICENCE_NAME")
+      val licenceUrl = findOptionalProperty("POM_LICENCE_URL")
+      val licenceDistribution = findOptionalProperty("POM_LICENCE_DIST")
       if (licenceName != null || licenceUrl != null || licenceDistribution != null) {
         pom.licenses { licences ->
           licences.license {
@@ -331,9 +325,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
       }
 
-      val licenseName = project.findOptionalProperty("POM_LICENSE_NAME")
-      val licenseUrl = project.findOptionalProperty("POM_LICENSE_URL")
-      val licenseDistribution = project.findOptionalProperty("POM_LICENSE_DIST")
+      val licenseName = findOptionalProperty("POM_LICENSE_NAME")
+      val licenseUrl = findOptionalProperty("POM_LICENSE_URL")
+      val licenseDistribution = findOptionalProperty("POM_LICENSE_DIST")
       if (licenseName != null || licenseUrl != null || licenseDistribution != null) {
         pom.licenses { licenses ->
           licenses.license {
@@ -344,10 +338,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
       }
 
-      val developerId = project.findOptionalProperty("POM_DEVELOPER_ID")
-      val developerName = project.findOptionalProperty("POM_DEVELOPER_NAME")
-      val developerUrl = project.findOptionalProperty("POM_DEVELOPER_URL")
-      val developerEmail = project.findOptionalProperty("POM_DEVELOPER_EMAIL")
+      val developerId = findOptionalProperty("POM_DEVELOPER_ID")
+      val developerName = findOptionalProperty("POM_DEVELOPER_NAME")
+      val developerUrl = findOptionalProperty("POM_DEVELOPER_URL")
+      val developerEmail = findOptionalProperty("POM_DEVELOPER_EMAIL")
       if (developerId != null || developerName != null || developerUrl != null) {
         pom.developers { developers ->
           developers.developer {
@@ -452,5 +446,20 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     } else {
       JavadocJar.Empty()
     }
+  }
+
+  private fun findOptionalProperty(propertyName: String): String? = if (buildFeatures.isolatedProjects.active.get()) {
+    // There is currently no way to search hierarchically for a project property in an isolated
+    // projects safe way:
+    // https://github.com/gradle/gradle/issues/29600#issuecomment-2306054264
+    // Projects applying this plugin must either use the DSL to specify values for the POM
+    // properties, or use the values provided by the root gradle properties.
+    project.providers.gradleProperty(propertyName).orNull
+  } else {
+    // TODO: we can't call 'providers.gradleProperty' instead due to
+    //  https://github.com/gradle/gradle/issues/23572
+    //  https://github.com/gradle/gradle/issues/29600
+    @Suppress("GradleProjectIsolation")
+    project.findProperty(propertyName)?.toString()
   }
 }

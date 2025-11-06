@@ -10,6 +10,7 @@
 - Fix misleading error message when Android library variant is not found.
 - Downgrade transitive OkHttp version.
 - Add support for validating deployments to Central Portal
+- Don't check project heirarchy for POM properties when Isolated proejcts is enabled.
 
 #### Minimum supported versions
 - JDK 11

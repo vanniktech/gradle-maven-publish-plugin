@@ -163,7 +163,7 @@ public final class com/vanniktech/maven/publish/KotlinMultiplatform : com/vannik
 }
 
 public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
-	public fun <init> (Lorg/gradle/api/Project;Lorg/gradle/build/event/BuildEventsListenerRegistry;)V
+	public fun <init> (Lorg/gradle/api/Project;Lorg/gradle/build/event/BuildEventsListenerRegistry;Lorg/gradle/api/configuration/BuildFeatures;)V
 	public final fun configure (Lcom/vanniktech/maven/publish/Platform;)V
 	public final fun configureBasedOnAppliedPlugins ()V
 	public final fun configureBasedOnAppliedPlugins (Z)V
