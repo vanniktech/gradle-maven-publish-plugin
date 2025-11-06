@@ -130,7 +130,7 @@ val integrationTest by tasks.registering(Test::class) {
   testClassesDirs = integrationTestSourceSet.output.classesDirs
   classpath = integrationTestSourceSet.runtimeClasspath
 
-  val testJavaVersion = System.getProperty("testJavaVersion")
+  val testJavaVersion = providers.gradleProperty("testJavaVersion").orNull
   if (testJavaVersion != null) {
     javaLauncher = javaToolchains.launcherFor {
       languageVersion = JavaLanguageVersion.of(testJavaVersion.toInt())
