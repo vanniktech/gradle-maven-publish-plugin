@@ -13,8 +13,8 @@
       "groupName": "Retrofit",
       "enabled": false,
       "matchPackageNames": [
-        "/com.squareup.retrofit2:*/"
-        "/com.squareup.okhttp3:*/"
+        "/com.squareup.retrofit2:*/",
+        "/com.squareup.okhttp3:*/",
       ]
     },
     {
