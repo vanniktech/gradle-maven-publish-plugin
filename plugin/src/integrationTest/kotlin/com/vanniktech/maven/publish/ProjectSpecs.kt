@@ -320,8 +320,8 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   properties = defaultProperties,
   sourceFiles = emptyList(),
   basePluginConfig = "configure(new AndroidFusedLibrary())",
+  // TODO remove old min sdk syntax when min AGP version is 9
   buildFileExtra =
-    // TODO remove old min sdk syntax when min AGP version is 9
     """
     androidFusedLibrary {
         namespace = "com.test.library"
