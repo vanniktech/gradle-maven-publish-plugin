@@ -46,7 +46,7 @@ jobs:
         if: ${{ matrix.java_version != '11' }}
 
       - name: Build with Gradle
-        run: ./gradlew build --stacktrace -DtestJavaVersion=${{ matrix.java_version }} -DtestConfigMethod=${{ matrix.test_config_method }}
+        run: ./gradlew build --stacktrace -PtestJavaVersion=${{ matrix.java_version }} -PtestConfigMethod=${{ matrix.test_config_method }}
 
   # Status check that is required in branch protection rules.
   build-status:
