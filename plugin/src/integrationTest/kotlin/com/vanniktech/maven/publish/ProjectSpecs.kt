@@ -188,11 +188,6 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
       android {
         compileSdk = 34
         namespace = "com.test.library"
-
-        // resolves config cache issue, can be removed when AGP 8 becomes the minimum supported version
-        buildFeatures {
-            shaders = false
-        }
       }
 
       kotlin {
