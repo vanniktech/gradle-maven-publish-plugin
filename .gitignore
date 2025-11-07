@@ -16,5 +16,9 @@ local.properties
 
 *.DS_Store
 
+### MkDocs ###
+docs/api
+site
+
 # file is copied automatically based on the readme
 docs/index.md
