@@ -198,9 +198,7 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
       kotlin {
         androidTarget {}
 
-        jvmToolchain {
-            languageVersion.set(JavaLanguageVersion.of("8"))
-        }
+        jvmToolchain(11)
       }
       """.trimIndent(),
     // TODO remove when removing support for AGP 8.x, spec should be merged
@@ -302,9 +300,7 @@ fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: Kotli
       """
 
       kotlin {
-          jvmToolchain {
-              languageVersion.set(JavaLanguageVersion.of("8"))
-          }
+        jvmToolchain(11)
       }
       """.trimIndent(),
   )
