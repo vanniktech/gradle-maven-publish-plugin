@@ -26,6 +26,7 @@ nav:
   - 'other.md'
   - 'base.md'
   - 'changelog.md'
+  - 'API': api/index.html
 
 markdown_extensions:
   - smarty

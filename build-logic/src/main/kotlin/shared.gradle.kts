@@ -7,8 +7,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val libs = the<LibrariesForLibs>()
 
 plugins {
-  id("java-library")
   id("org.jetbrains.kotlin.jvm")
+  id("org.jetbrains.dokka")
   id("com.vanniktech.maven.publish")
 }
 
