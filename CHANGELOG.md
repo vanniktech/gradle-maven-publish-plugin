@@ -3,13 +3,13 @@
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.34.0...HEAD) *(2025-xx-xx)*
 
 - Add support for publishing Kotlin Multiplatform libraries that use `com.android.kotlin.multiplatform.library`.
+- Add support for validating deployments to Central Portal
 - Raise minimum Gradle version to 8.13
 - Raise minimum Android Gradle Plugin version to 8.2.2
 - Do not unconditionally disable DocLint
 - Fail publishing if `SONATYPE_HOST` is not set to `CENTRAL_PORTAL`.
 - Fix misleading error message when Android library variant is not found.
 - Downgrade transitive OkHttp version.
-- Add support for validating deployments to Central Portal
 - Don't check project heirarchy for POM properties when Isolated proejcts is enabled.
 
 #### Minimum supported versions
@@ -23,7 +23,7 @@
 - Gradle 9.2.0
 - Gradle 9.3.0-milestone-1
 - Android Gradle Plugin 8.13.0
-- Android Gradle Plugin 9.0.0-alpha09
+- Android Gradle Plugin 9.0.0-alpha14
 - Kotlin Gradle Plugin 2.2.21
 - Kotlin Gradle Plugin 2.3.0-Beta2
 
