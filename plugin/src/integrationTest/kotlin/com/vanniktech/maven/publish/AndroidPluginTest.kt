@@ -55,7 +55,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     if (agpVersion >= AgpVersion.AGP_9_0) {
-      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk("2.2.10").copy(scope = "runtime"))
+      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk("2.2.10"))
     } else {
       assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk(kotlinVersion))
     }
@@ -83,7 +83,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     if (agpVersion >= AgpVersion.AGP_9_0) {
-      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk("2.2.10").copy(scope = "runtime"))
+      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk("2.2.10"))
     } else {
       assertThat(result).pom().matchesExpectedPom("aar")
     }
@@ -113,7 +113,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     if (agpVersion >= AgpVersion.AGP_9_0) {
-      assertThat(result).pom().matchesExpectedPom("pom", kotlinStdlibJdk("2.2.10").copy(scope = "runtime"))
+      assertThat(result).pom().matchesExpectedPom("pom", kotlinStdlibJdk("2.2.10"))
     } else {
       assertThat(result).pom().matchesExpectedPom("pom")
     }
