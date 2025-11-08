@@ -20,7 +20,7 @@ jobs:
         test_java_version:
           - 11 # Minimum supported version.
           - 17 # Supported by all tests.
-          - 25 # Latest supported version.
+          - latest # Latest supported version, the value syncs with the .java-version file.
         test_config_method: ["DSL", "PROPERTIES", "BASE"]
 
     steps:
@@ -31,7 +31,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: zulu
-          java-version: 25
+          java-version-file: .github/workflows/.java-version
 
       - name: Accept Android SDK license
         run: echo -e "24333f8a63b6825ea9c5514f83c2829b004d1fee\n" > "$ANDROID_HOME/licenses/android-sdk-license"
