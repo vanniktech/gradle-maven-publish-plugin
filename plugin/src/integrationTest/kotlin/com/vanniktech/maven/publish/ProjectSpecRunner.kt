@@ -37,8 +37,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
       if (!QUICK_TEST) {
         withTestKitDir(temp.resolve("test-kit-dir").toFile())
       }
-    }
-    .build()
+    }.build()
 
   return ProjectResult(
     result = result,
