@@ -4,6 +4,8 @@ import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
+import org.junit.jupiter.api.condition.DisabledOnJre
+import org.junit.jupiter.api.condition.JRE
 
 class AndroidPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
@@ -96,6 +98,10 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).javadocJar().isSigned()
   }
 
+  @DisabledOnJre(
+    value = [JRE.JAVA_25],
+    disabledReason = "Dokka 1.x does not support Java 25+.",
+  )
   @TestParameterInjectorTest
   fun androidMultiVariantLibraryProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,

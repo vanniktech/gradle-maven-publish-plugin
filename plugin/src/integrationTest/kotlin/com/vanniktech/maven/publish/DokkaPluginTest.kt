@@ -3,10 +3,16 @@ package com.vanniktech.maven.publish
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.TestOptions.Signing.NO_SIGNING
+import org.junit.jupiter.api.condition.DisabledOnJre
+import org.junit.jupiter.api.condition.JRE
 
 class DokkaPluginTest : BasePluginTest() {
   override val testOptions get() = TestOptions(config, NO_SIGNING, gradleVersion)
 
+  @DisabledOnJre(
+    value = [JRE.JAVA_25],
+    disabledReason = "Dokka 1.x does not support Java 25+.",
+  )
   @TestParameterInjectorTest
   fun dokka() {
     val kotlinVersion = KotlinVersion.values().last()
@@ -38,11 +44,6 @@ class DokkaPluginTest : BasePluginTest() {
         "JavadocJar.Empty()",
         "JavadocJar.Dokka(\"dokkaGeneratePublicationHtml\")",
       ),
-      propertiesExtra =
-        """
-        org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled
-        org.jetbrains.dokka.experimental.gradle.pluginMode.noWarn=true
-        """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
@@ -67,11 +68,6 @@ class DokkaPluginTest : BasePluginTest() {
         "JavadocJar.Empty()",
         "JavadocJar.Dokka(\"dokkaGeneratePublicationJavadoc\")",
       ),
-      propertiesExtra =
-        """
-        org.jetbrains.dokka.experimental.gradle.pluginMode=V2Enabled
-        org.jetbrains.dokka.experimental.gradle.pluginMode.noWarn=true
-        """.trimIndent(),
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 

@@ -12,29 +12,26 @@ concurrency:
 
 jobs:
   build:
-    name: JDK ${{ matrix.java_version }}, Config ${{ matrix.test_config_method }}
+    name: JDK ${{ matrix.test_java_version }}, Config ${{ matrix.test_config_method }}
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        java_version: [11, 17, 24]
+        test_java_version:
+          - 11 # Minimum supported version.
+          - 17 # Supported by all tests.
+          - 25 # Latest supported version.
         test_config_method: ["DSL", "PROPERTIES", "BASE"]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Install JDK ${{ matrix.java_version }}
+      - name: Install JDK
         uses: actions/setup-java@v5
         with:
           distribution: zulu
-          java-version: ${{ matrix.java_version }}
-
-      - name: Install JDK 24
-        uses: actions/setup-java@v5
-        with:
-          distribution: zulu
-          java-version: 24
+          java-version: 25
 
       - name: Accept Android SDK license
         run: echo -e "24333f8a63b6825ea9c5514f83c2829b004d1fee\n" > "$ANDROID_HOME/licenses/android-sdk-license"
@@ -43,10 +40,9 @@ jobs:
 
       - name: Run ktlint
         run: ./kotlinw ktlint.main.kts --fail-on-changes
-        if: ${{ matrix.java_version != '11' }}
 
       - name: Build with Gradle
-        run: ./gradlew build --stacktrace -PtestJavaVersion=${{ matrix.java_version }} -PtestConfigMethod=${{ matrix.test_config_method }}
+        run: ./gradlew build --stacktrace -PtestJavaVersion=${{ matrix.test_java_version }} -PtestConfigMethod=${{ matrix.test_config_method }}
 
   # Status check that is required in branch protection rules.
   build-status:

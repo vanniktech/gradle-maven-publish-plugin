@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.IntegrationTestBuildConfig.DOKKA_STABLE
 import java.nio.file.Paths
 import kotlin.io.path.absolute
 
@@ -17,8 +18,8 @@ val androidMultiplatformLibraryPlugin = PluginSpec("com.android.kotlin.multiplat
 val androidFusedLibraryPlugin = PluginSpec("com.android.fused-library")
 val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 val dokkaPlugin = PluginSpec("org.jetbrains.dokka", "1.8.10")
-val dokka2Plugin = PluginSpec("org.jetbrains.dokka", "2.0.0-Beta")
-val dokka2JavadocPlugin = PluginSpec("org.jetbrains.dokka-javadoc", "2.0.0-Beta")
+val dokka2Plugin = PluginSpec("org.jetbrains.dokka", DOKKA_STABLE)
+val dokka2JavadocPlugin = PluginSpec("org.jetbrains.dokka-javadoc", DOKKA_STABLE)
 
 val fixtures = Paths.get("src/integrationTest/fixtures2").absolute()
 
