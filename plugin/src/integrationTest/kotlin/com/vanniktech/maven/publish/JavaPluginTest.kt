@@ -177,9 +177,7 @@ class JavaPluginTest : BasePluginTest() {
       buildFileExtra =
         """
         java {
-            toolchain {
-                languageVersion = JavaLanguageVersion.of(11)
-            }
+          toolchain.languageVersion = JavaLanguageVersion.of(11)
         }
         """.trimIndent(),
     )
