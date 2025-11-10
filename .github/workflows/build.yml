@@ -19,6 +19,7 @@ jobs:
       matrix:
         test_java_version:
           - 11 # Minimum supported version.
+          - 17 # Supported by all tests.
           - 25 # Latest supported version.
         test_config_method: ["DSL", "PROPERTIES", "BASE"]
 
