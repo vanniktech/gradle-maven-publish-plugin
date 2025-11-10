@@ -63,7 +63,7 @@ public abstract class MavenPublishPlugin : Plugin<Project> {
   }
 
   private fun Project.validateDeployment(): Boolean {
-    val automatic = providers.gradleProperty("mavenCentralDeploymentValidation").getOrElse("true")
+    val automatic = providers.gradleProperty("mavenCentralDeploymentValidation").orNull
     if (automatic != null) {
       return automatic.toBoolean()
     }

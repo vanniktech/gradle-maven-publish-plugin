@@ -315,7 +315,7 @@ public data class KotlinMultiplatform internal constructor(
     sourcesJar: Boolean = true,
   ) : this(javadocJar, sourcesJar, emptyList(), forceAndroidVariantsIfNotEmpty = false)
 
-  // TODO: deprecate when AGP 8.12 is stable
+  @Deprecated("Choosing which Android variants to publish is deprecated.")
   public constructor(
     javadocJar: JavadocJar = JavadocJar.Empty(),
     sourcesJar: Boolean = true,
