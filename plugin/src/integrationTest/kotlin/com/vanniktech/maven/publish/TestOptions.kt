@@ -31,7 +31,7 @@ enum class AgpVersion(
 ) {
   // minimum supported
   AGP_MIN(
-    value = "8.2.2",
+    value = Versions.ANDROID_GRADLE_MIN,
     minGradleVersion = GradleVersion.GRADLE_8_1,
     firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_0,
   ),

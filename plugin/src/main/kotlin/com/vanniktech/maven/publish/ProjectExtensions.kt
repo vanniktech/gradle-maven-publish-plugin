@@ -67,9 +67,10 @@ internal fun Project.isAtLeastKotlinVersion(id: String, major: Int, minor: Int, 
     )
 }
 
-internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, patch: Int): Boolean = try {
+internal fun Project.isAtLeastAgp(version: String): Boolean = try {
+  val (major, minor, patch) = version.split(".").map { it.toInt() }
   androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch)
-} catch (e: NoClassDefFoundError) {
+} catch (_: NoClassDefFoundError) {
   // was added in 7.0
   false
 }

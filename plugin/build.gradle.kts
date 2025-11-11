@@ -54,6 +54,7 @@ buildConfig {
 
   sourceSets.configureEach {
     buildConfigField("VERSION_NAME", providers.gradleProperty("VERSION_NAME"))
+    buildConfigField("ANDROID_GRADLE_MIN", libs.versions.minAgp)
   }
 
   sourceSets.named("main") {
