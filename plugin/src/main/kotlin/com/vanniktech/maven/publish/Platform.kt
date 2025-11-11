@@ -316,6 +316,13 @@ public data class KotlinMultiplatform internal constructor(
     sourcesJar: Boolean = true,
   ) : this(javadocJar, sourcesJar, emptyList(), forceAndroidVariantsIfNotEmpty = false)
 
+  @Deprecated("Choosing which Android variants to publish is deprecated.")
+  public constructor(
+    javadocJar: JavadocJar = JavadocJar.Empty(),
+    sourcesJar: Boolean = true,
+    androidVariantsToPublish: List<String>,
+  ) : this(javadocJar, sourcesJar, androidVariantsToPublish, forceAndroidVariantsIfNotEmpty = true)
+
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
       "Calling configure(KotlinMultiplatform(...)) requires the org.jetbrains.kotlin.multiplatform plugin to be applied"
