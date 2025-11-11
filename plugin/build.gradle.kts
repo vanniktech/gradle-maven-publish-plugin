@@ -166,6 +166,11 @@ val integrationTest by tasks.registering(Test::class) {
   )
 }
 
+tasks.test {
+  // The generated build config fails the test task.
+  failOnNoDiscoveredTests = false
+}
+
 tasks.check {
   dependsOn(integrationTest)
 }
