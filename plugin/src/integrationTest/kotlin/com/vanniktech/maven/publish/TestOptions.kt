@@ -31,7 +31,7 @@ enum class AgpVersion(
 ) {
   // minimum supported
   AGP_MIN(
-    value = "8.2.2",
+    value = Versions.ANDROID_GRADLE_MIN,
     minGradleVersion = GradleVersion.GRADLE_8_1,
     firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_0,
   ),
@@ -58,7 +58,7 @@ enum class KotlinVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) {
   // minimum supported
-  KOTLIN_MIN("1.9.24", firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_0),
+  KOTLIN_MIN(Versions.KOTLIN_MIN, firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_0),
 
   // latest versions of each type
   KOTLIN_STABLE(Versions.KOTLIN_STABLE),

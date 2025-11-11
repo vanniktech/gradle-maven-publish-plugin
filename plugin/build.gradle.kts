@@ -52,15 +52,17 @@ buildConfig {
   packageName("com.vanniktech.maven.publish")
   generateAtSync = true
 
+  sourceSets.configureEach {
+    buildConfigField("VERSION_NAME", providers.gradleProperty("VERSION_NAME"))
+    buildConfigField("ANDROID_GRADLE_MIN", libs.versions.minAgp)
+    buildConfigField("KOTLIN_MIN", libs.versions.minKgp)
+  }
+
   sourceSets.named("main") {
     buildConfigField("PLUGIN_NAME", "com.vanniktech.maven.publish")
-    buildConfigField("VERSION_NAME", providers.gradleProperty("VERSION_NAME"))
   }
 
   sourceSets.named(integrationTestSourceSet.name) {
-    // We must provide the plugin version here instead of using `withPluginClasspath` for GradleRunner. As there are
-    // various AGP / KGP and other plugins tested in the matrix, `withPluginClasspath` will mess the whole classpath.
-    buildConfigField("VERSION_NAME", providers.gradleProperty("VERSION_NAME"))
     buildConfigField("TEST_CONFIG_METHOD", providers.gradleProperty("testConfigMethod").orElse(""))
     buildConfigField("Boolean", "QUICK_TEST", providers.gradleProperty("quickTest").orElse("false"))
 
@@ -155,6 +157,11 @@ val integrationTest by tasks.registering(Test::class) {
       logger.lifecycle("Running test: ${this.className} ${this.displayName}")
     },
   )
+}
+
+tasks.test {
+  // The generated build config fails the test task.
+  failOnNoDiscoveredTests = false
 }
 
 tasks.check {

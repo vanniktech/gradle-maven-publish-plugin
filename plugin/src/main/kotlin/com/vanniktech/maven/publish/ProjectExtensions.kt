@@ -51,25 +51,21 @@ internal fun Project.javaVersion(): JavaVersion {
   return JavaVersion.current()
 }
 
-internal fun Project.isAtLeastKotlinVersion(id: String, major: Int, minor: Int, patch: Int): Boolean {
-  val plugin = project.plugins.getPlugin(id) as KotlinBasePlugin
-  val elements = plugin.pluginVersion.takeWhile { it != '-' }.split(".")
-  val kgpMajor = elements[0].toInt()
-  val kgpMinor = elements[1].toInt()
-  val kgpPatch = elements[2].toInt()
-  return kgpMajor > major ||
-    (
-      kgpMajor == major &&
-        (
-          kgpMinor > minor ||
-            (kgpMinor == minor && kgpPatch >= patch)
-        )
-    )
+internal fun Project.isAtLeastKgp(id: String, version: String): Boolean {
+  val (major, minor, patch) = version.normalizeVersion()
+  val (actualMajor, actualMinor, actualPatch) = (plugins.getPlugin(id) as KotlinBasePlugin).pluginVersion.normalizeVersion()
+  return KotlinVersion(actualMajor, actualMinor, actualPatch) >= KotlinVersion(major, minor, patch)
 }
 
-internal fun Project.isAtLeastUsingAndroidGradleVersion(major: Int, minor: Int, patch: Int): Boolean = try {
+internal fun Project.isAtLeastAgp(version: String): Boolean = try {
+  val (major, minor, patch) = version.normalizeVersion()
   androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch)
-} catch (e: NoClassDefFoundError) {
+} catch (_: NoClassDefFoundError) {
   // was added in 7.0
   false
+}
+
+private fun String.normalizeVersion(): Triple<Int, Int, Int> {
+  val (major, minor, patch) = takeWhile { it != '-' }.split(".").map { it.toInt() }
+  return Triple(major, minor, patch)
 }
