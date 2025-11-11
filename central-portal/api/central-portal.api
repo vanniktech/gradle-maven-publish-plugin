@@ -9,6 +9,7 @@ public final class com/vanniktech/maven/publish/portal/SonatypeCentralPortal {
 public final class com/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType : java/lang/Enum {
 	public static final field AUTOMATIC Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;
 	public static final field USER_MANAGED Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;
 	public static fun values ()[Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;
 }

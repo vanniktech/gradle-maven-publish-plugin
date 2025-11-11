@@ -145,14 +145,10 @@ public final class com/vanniktech/maven/publish/KotlinMultiplatform : com/vannik
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;)V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Z)V
 	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;)V
-	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lcom/vanniktech/maven/publish/JavadocJar;
 	public final fun component2 ()Z
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Z
-	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;Z)Lcom/vanniktech/maven/publish/KotlinMultiplatform;
-	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/KotlinMultiplatform;Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;ZILjava/lang/Object;)Lcom/vanniktech/maven/publish/KotlinMultiplatform;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAndroidVariantsToPublish ()Ljava/util/List;
 	public final fun getForceAndroidVariantsIfNotEmpty ()Z
