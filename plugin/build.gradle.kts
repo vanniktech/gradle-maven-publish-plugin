@@ -52,15 +52,15 @@ buildConfig {
   packageName("com.vanniktech.maven.publish")
   generateAtSync = true
 
-  sourceSets.named("main") {
-    buildConfigField("PLUGIN_NAME", "com.vanniktech.maven.publish")
+  sourceSets.configureEach {
     buildConfigField("VERSION_NAME", providers.gradleProperty("VERSION_NAME"))
   }
 
+  sourceSets.named("main") {
+    buildConfigField("PLUGIN_NAME", "com.vanniktech.maven.publish")
+  }
+
   sourceSets.named(integrationTestSourceSet.name) {
-    // We must provide the plugin version here instead of using `withPluginClasspath` for GradleRunner. As there are
-    // various AGP / KGP and other plugins tested in the matrix, `withPluginClasspath` will mess the whole classpath.
-    buildConfigField("VERSION_NAME", providers.gradleProperty("VERSION_NAME"))
     buildConfigField("TEST_CONFIG_METHOD", providers.gradleProperty("testConfigMethod").orElse(""))
     buildConfigField("Boolean", "QUICK_TEST", providers.gradleProperty("quickTest").orElse("false"))
 
