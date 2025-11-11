@@ -3,10 +3,11 @@
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.34.0...HEAD) *(2025-xx-xx)*
 
 - Bump min Java requirement to 17.
+- Bump min Gradle requirement to 9.0.0.
 
 #### Minimum supported versions
 - JDK 17
-- Gradle 8.13
+- Gradle 9.0.0
 - Android Gradle Plugin 8.2.2
 - Kotlin Gradle Plugin 1.9.20
 

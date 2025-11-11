@@ -52,7 +52,7 @@ enum class AgpVersion(
 
 enum class KotlinVersion(
   val value: String,
-  val minJdkVersion: JavaVersion = JavaVersion.VERSION_11,
+  val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
   val minGradleVersion: GradleVersion = GradleVersion.GRADLE_MIN,
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
@@ -74,20 +74,20 @@ enum class KotlinVersion(
 
 enum class GradleVersion(
   val value: String,
-  val minJdkVersion: JavaVersion = JavaVersion.VERSION_1_8,
+  val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
   val firstUnsupportedJdkVersion: JavaVersion? = null,
 ) {
   // minimum supported
   GRADLE_MIN(
     value = Versions.GRADLE_MIN,
-    firstUnsupportedJdkVersion = JavaVersion.VERSION_24,
+    firstUnsupportedJdkVersion = JavaVersion.VERSION_25,
   ),
 
   // latest versions of each type
-  GRADLE_STABLE(Versions.GRADLE_STABLE, minJdkVersion = JavaVersion.VERSION_17),
-  GRADLE_RC(Versions.GRADLE_RC, minJdkVersion = JavaVersion.VERSION_17),
-  GRADLE_BETA(Versions.GRADLE_BETA, minJdkVersion = JavaVersion.VERSION_17),
-  GRADLE_ALPHA(Versions.GRADLE_ALPHA, minJdkVersion = JavaVersion.VERSION_17),
+  GRADLE_STABLE(Versions.GRADLE_STABLE),
+  GRADLE_RC(Versions.GRADLE_RC),
+  GRADLE_BETA(Versions.GRADLE_BETA),
+  GRADLE_ALPHA(Versions.GRADLE_ALPHA),
   ;
 
   companion object {

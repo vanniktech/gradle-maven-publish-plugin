@@ -11,7 +11,6 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
 import org.gradle.api.plugins.internal.JvmPluginsHelper
 import org.gradle.internal.component.external.model.ProjectDerivedCapability
-import org.gradle.util.GradleVersion
 
 /**
  * Gradle currently doesn't publish a sources jar for test fixtures and the APIs to add
@@ -25,11 +24,9 @@ internal fun addTestFixturesSourcesJar(project: Project) {
   val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
   val projectInternal = project as ProjectInternal
 
-  val projectDerivedCapability = if (GradleVersion.current() >= GradleVersion.version("9.0-milestone-6")) {
-    ProjectDerivedCapability::class.java.getConstructor(ProjectInternal::class.java, String::class.java)
-  } else {
-    ProjectDerivedCapability::class.java.getConstructor(Project::class.java, String::class.java)
-  }.newInstance(projectInternal, "testFixtures")
+  val projectDerivedCapability = ProjectDerivedCapability::class.java
+    .getConstructor(ProjectInternal::class.java, String::class.java)
+    .newInstance(projectInternal, "testFixtures")
 
   // use reflection because return type changed in Gradle 9.2.0-milestone-1
   val sourceElements = JvmPluginsHelper.createDocumentationVariantWithArtifact(
