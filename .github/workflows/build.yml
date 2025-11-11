@@ -18,8 +18,7 @@ jobs:
     strategy:
       matrix:
         test_java_version:
-          - 11 # Minimum supported version.
-          - 17 # Supported by all tests.
+          - 17 # Minimum supported version.
           - latest # Latest supported version, the value syncs with the .java-version file.
         test_config_method: ["DSL", "PROPERTIES", "BASE"]
 
