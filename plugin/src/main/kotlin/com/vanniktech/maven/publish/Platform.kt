@@ -304,6 +304,7 @@ public class AndroidFusedLibrary : Platform() {
  *
  * This does not include javadoc jars because there are no APIs for that available.
  */
+@ConsistentCopyVisibility
 public data class KotlinMultiplatform internal constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean,
@@ -314,13 +315,6 @@ public data class KotlinMultiplatform internal constructor(
     javadocJar: JavadocJar = JavadocJar.Empty(),
     sourcesJar: Boolean = true,
   ) : this(javadocJar, sourcesJar, emptyList(), forceAndroidVariantsIfNotEmpty = false)
-
-  @Deprecated("Choosing which Android variants to publish is deprecated.")
-  public constructor(
-    javadocJar: JavadocJar = JavadocJar.Empty(),
-    sourcesJar: Boolean = true,
-    androidVariantsToPublish: List<String>,
-  ) : this(javadocJar, sourcesJar, androidVariantsToPublish, forceAndroidVariantsIfNotEmpty = true)
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {

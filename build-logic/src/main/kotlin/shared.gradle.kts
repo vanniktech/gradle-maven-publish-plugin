@@ -32,8 +32,9 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.withType(KotlinCompile::class.java) {
   compilerOptions {
+    // https://docs.gradle.org/current/userguide/compatibility.html#kotlin
+    languageVersion.set(KotlinVersion.KOTLIN_2_2)
     jvmTarget.set(JvmTarget.fromTarget(libs.versions.jdkRelease.get()))
-    languageVersion.set(KotlinVersion.KOTLIN_1_8)
     freeCompilerArgs.add("-Xjdk-release=${libs.versions.jdkRelease.get()}")
   }
 }
