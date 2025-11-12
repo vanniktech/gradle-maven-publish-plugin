@@ -12,6 +12,7 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 internal inline val Project.baseExtension: MavenPublishBaseExtension
   get() = extensions.getByType(MavenPublishBaseExtension::class.java)
@@ -52,9 +53,8 @@ internal fun Project.javaVersion(): JavaVersion {
 }
 
 internal fun Project.isAtLeastKgp(id: String, version: String): Boolean {
-  val (major, minor, patch) = version.normalizeVersion()
-  val (actualMajor, actualMinor, actualPatch) = (plugins.getPlugin(id) as KotlinBasePlugin).pluginVersion.normalizeVersion()
-  return KotlinVersion(actualMajor, actualMinor, actualPatch) >= KotlinVersion(major, minor, patch)
+  val actual = (plugins.getPlugin(id) as KotlinBasePlugin).pluginVersion
+  return KotlinToolingVersion(actual) >= KotlinToolingVersion(version)
 }
 
 internal fun Project.isAtLeastAgp(version: String): Boolean = try {
