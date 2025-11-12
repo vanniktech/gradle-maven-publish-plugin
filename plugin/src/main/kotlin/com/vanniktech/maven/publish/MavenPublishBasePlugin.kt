@@ -17,8 +17,15 @@ public abstract class MavenPublishBasePlugin : Plugin<Project> {
 
   private fun Project.checkMinimumVersions() {
     plugins.withId("com.android.library") {
-      if (!isAtLeastAgp(ANDROID_GRADLE_MIN)) {
-        error("You need AGP version $ANDROID_GRADLE_MIN or newer")
+      val requireNewerAgp = { error("You need AGP version $ANDROID_GRADLE_MIN or newer") }
+      try {
+        if (!isAtLeastAgp(ANDROID_GRADLE_MIN)) {
+          requireNewerAgp()
+        }
+      } catch (_: NoClassDefFoundError) {
+        requireNewerAgp()
+      } catch (_: NoSuchMethodError) {
+        requireNewerAgp()
       }
     }
     KOTLIN_PLUGIN_IDS.forEach { pluginId ->
