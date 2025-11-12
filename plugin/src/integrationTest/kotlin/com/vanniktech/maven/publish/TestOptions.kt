@@ -40,7 +40,7 @@ enum class AgpVersion(
   ;
 
   companion object {
-    val AGP_9_0 = AGP_ALPHA
+    val AGP_9_0_0 = AGP_ALPHA
   }
 }
 
@@ -59,6 +59,11 @@ enum class KotlinVersion(
   KOTLIN_RC(Versions.KOTLIN_RC),
   KOTLIN_BETA(Versions.KOTLIN_BETA),
   KOTLIN_ALPHA(Versions.KOTLIN_ALPHA),
+  ;
+
+  companion object {
+    val KOTLIN_2_2_10 = KOTLIN_STABLE
+  }
 }
 
 enum class GradleVersion(
