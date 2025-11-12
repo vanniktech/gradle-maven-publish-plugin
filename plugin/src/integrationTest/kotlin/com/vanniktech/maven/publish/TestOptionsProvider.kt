@@ -8,7 +8,7 @@ internal class TestOptionsConfigProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> = when {
     QUICK_TEST -> listOf(TestOptions.Config.BASE)
     TEST_CONFIG_METHOD.isNotBlank() -> listOf(TestOptions.Config.valueOf(TEST_CONFIG_METHOD))
-    else -> TestOptions.Config.entries.toList()
+    else -> TestOptions.Config.entries
   }
 }
 
