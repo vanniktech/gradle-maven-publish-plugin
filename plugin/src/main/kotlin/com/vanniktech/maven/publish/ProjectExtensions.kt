@@ -57,15 +57,8 @@ internal fun Project.isAtLeastKgp(id: String, version: String): Boolean {
   return KotlinToolingVersion(actual) >= KotlinToolingVersion(version)
 }
 
-internal fun Project.isAtLeastAgp(version: String): Boolean = try {
-  val (major, minor, patch) = version.normalizeVersion()
-  androidComponents.pluginVersion >= AndroidPluginVersion(major, minor, patch)
-} catch (_: NoClassDefFoundError) {
-  // was added in 7.0
-  false
-}
-
-private fun String.normalizeVersion(): Triple<Int, Int, Int> {
-  val (major, minor, patch) = takeWhile { it != '-' }.split(".").map { it.toInt() }
-  return Triple(major, minor, patch)
+internal fun isAtLeastAgp(version: String): Boolean {
+  // Drop everything after '-' to ignore rc/beta/alpha suffixes. If you want to compare those, use the rc/beta/alpha functions in AndroidPluginVersion.
+  val (major, minor, patch) = version.takeWhile { it != '-' }.split(".").map { it.toInt() }
+  return AndroidPluginVersion.getCurrent() >= AndroidPluginVersion(major, minor, patch)
 }
