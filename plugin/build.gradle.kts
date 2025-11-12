@@ -99,7 +99,7 @@ lint {
 dependencies {
   compileOnly(libs.dokka)
   compileOnly(libs.kotlin.plugin)
-  compileOnly(libs.android.plugin)
+  compileOnly(libs.android.pluginApi)
 
   implementation(projects.centralPortal)
 
