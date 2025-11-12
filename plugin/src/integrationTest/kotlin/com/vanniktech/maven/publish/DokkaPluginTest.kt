@@ -19,27 +19,6 @@ class DokkaPluginTest : BasePluginTest() {
     val original = kotlinJvmProjectSpec(kotlinVersion)
     val project = original.copy(
       plugins = original.plugins + dokkaPlugin,
-      basePluginConfig = original.basePluginConfig.replace("JavadocJar.Empty()", "JavadocJar.Dokka(\"dokkaHtml\")"),
-    )
-    val result = project.run(fixtures, testProjectDir, testOptions)
-
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
-    assertThat(result).module().exists()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().containsFiles(ignoreAdditionalFiles = true, "index.html")
-  }
-
-  @TestParameterInjectorTest
-  fun dokka2() {
-    val kotlinVersion = KotlinVersion.entries.last()
-    val original = kotlinJvmProjectSpec(kotlinVersion)
-    val project = original.copy(
-      plugins = original.plugins + dokka2Plugin,
       basePluginConfig = original.basePluginConfig.replace(
         "JavadocJar.Empty()",
         "JavadocJar.Dokka(\"dokkaGeneratePublicationHtml\")",
@@ -59,11 +38,11 @@ class DokkaPluginTest : BasePluginTest() {
   }
 
   @TestParameterInjectorTest
-  fun dokka2Javadoc() {
+  fun dokkaJavadoc() {
     val kotlinVersion = KotlinVersion.entries.last()
     val original = kotlinJvmProjectSpec(kotlinVersion)
     val project = original.copy(
-      plugins = original.plugins + dokka2JavadocPlugin,
+      plugins = original.plugins + dokkaJavadocPlugin,
       basePluginConfig = original.basePluginConfig.replace(
         "JavadocJar.Empty()",
         "JavadocJar.Dokka(\"dokkaGeneratePublicationJavadoc\")",

@@ -23,12 +23,7 @@ internal fun addTestFixturesSourcesJar(project: Project) {
   val extension = project.extensions.getByType(JavaPluginExtension::class.java)
   val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
   val projectInternal = project as ProjectInternal
-
-  val projectDerivedCapability = ProjectDerivedCapability::class.java
-    .getConstructor(ProjectInternal::class.java, String::class.java)
-    .newInstance(projectInternal, "testFixtures")
-
-  // use reflection because return type changed in Gradle 9.2.0-milestone-1
+  val projectDerivedCapability = ProjectDerivedCapability(projectInternal, "testFixtures")
   val sourceElements = JvmPluginsHelper.createDocumentationVariantWithArtifact(
     testFixturesSourceSet.sourcesElementsConfigurationName,
     testFixtureSourceSetName,
@@ -38,8 +33,6 @@ internal fun addTestFixturesSourcesJar(project: Project) {
     testFixturesSourceSet.allSource,
     projectInternal,
   )
-
-  // the following is not using private APIs just needs to adapt to the API change in the method above
   val component = project.components.findByName("java") as AdhocComponentWithVariants
   component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))
 }

@@ -2,14 +2,15 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.34.0...HEAD) *(2025-xx-xx)*
 
-- Bump min Java requirement to 17.
-- Bump min Gradle requirement to 9.0.0.
+- Updated minimum supported JDK, Gradle, Android Gradle Plugin and Kotlin versions.
+- Removed support for Dokka v1, it's now required to use Dokka in v2 mode.
+- Removed deprecated option of selecting which Android variant to publish for KMP libraries.
 
 #### Minimum supported versions
 - JDK 17
 - Gradle 9.0.0
-- Android Gradle Plugin 8.2.2
-- Kotlin Gradle Plugin 1.9.20
+- Android Gradle Plugin 8.13.0
+- Kotlin Gradle Plugin 2.2.0
 
 #### Compatibility tested up to
 - JDK 25

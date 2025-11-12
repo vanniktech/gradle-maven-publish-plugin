@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish
 
-import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
@@ -373,9 +372,6 @@ class KotlinPluginTest : BasePluginTest() {
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
     kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-
-    assume().that(agpVersion).isAtLeast(AgpVersion.AGP_8_11)
-    assume().that(kotlinVersion).isAtLeast(KotlinVersion.KOTLIN_2_2_0)
 
     val project = kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
