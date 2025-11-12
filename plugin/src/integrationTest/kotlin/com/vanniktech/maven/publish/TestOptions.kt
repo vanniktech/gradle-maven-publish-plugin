@@ -36,7 +36,7 @@ enum class AgpVersion(
   AGP_STABLE(Versions.ANDROID_GRADLE_STABLE),
   AGP_RC(Versions.ANDROID_GRADLE_RC),
   AGP_BETA(Versions.ANDROID_GRADLE_BETA),
-  AGP_ALPHA(Versions.ANDROID_GRADLE_ALPHA),
+  AGP_ALPHA(Versions.ANDROID_GRADLE_ALPHA, minGradleVersion = GradleVersion.GRADLE_9_1_0),
   ;
 
   companion object {
@@ -77,6 +77,11 @@ enum class GradleVersion(
   GRADLE_RC(Versions.GRADLE_RC),
   GRADLE_BETA(Versions.GRADLE_BETA),
   GRADLE_ALPHA(Versions.GRADLE_ALPHA),
+  ;
+
+  companion object {
+    val GRADLE_9_1_0 = GRADLE_STABLE
+  }
 }
 
 enum class GradlePluginPublish(

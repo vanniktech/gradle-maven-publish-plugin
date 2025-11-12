@@ -153,13 +153,19 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
+    val kotlinDependencyVersion = if (agpVersion >= AgpVersion.AGP_9_0) {
+      "2.2.10"
+    } else {
+      kotlinVersion.value
+    }
+
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     assertThat(result).pom().matchesExpectedPom(
-      kotlinStdlibCommon(kotlinVersion).copy(scope = "runtime"),
+      kotlinStdlibCommon(kotlinDependencyVersion).copy(scope = "runtime"),
     )
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
@@ -176,8 +182,8 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().isSigned()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(jvmResult).module().exists()
     assertThat(jvmResult).module().isSigned()
@@ -195,7 +201,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(linuxResult).pom().isSigned()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).module().isSigned()
@@ -211,7 +217,9 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(nodejsResult).artifact("klib").isSigned()
     assertThat(nodejsResult).pom().exists()
     assertThat(nodejsResult).pom().isSigned()
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion), kotlinDomApi(kotlinVersion))
+    assertThat(
+      nodejsResult,
+    ).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinDependencyVersion), kotlinDomApi(kotlinDependencyVersion))
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).module().isSigned()
     assertThat(nodejsResult).sourcesJar().exists()
@@ -228,8 +236,8 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(androidReleaseResult).pom().isSigned()
     assertThat(androidReleaseResult).pom().matchesExpectedPom(
       "aar",
-      kotlinStdlibJdk(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(androidReleaseResult).module().exists()
     assertThat(androidReleaseResult).module().isSigned()
@@ -259,14 +267,18 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
+    val kotlinDependencyVersion = if (agpVersion >= AgpVersion.AGP_9_0) {
+      "2.2.10"
+    } else {
+      kotlinVersion.value
+    }
+
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(
-      kotlinStdlibCommon(kotlinVersion).copy(scope = "runtime"),
-    )
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibCommon(kotlinDependencyVersion).copy(scope = "runtime"))
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
@@ -282,8 +294,8 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().isSigned()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(jvmResult).module().exists()
     assertThat(jvmResult).module().isSigned()
@@ -301,7 +313,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(linuxResult).pom().isSigned()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).module().isSigned()
@@ -317,7 +329,9 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(nodejsResult).artifact("klib").isSigned()
     assertThat(nodejsResult).pom().exists()
     assertThat(nodejsResult).pom().isSigned()
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion), kotlinDomApi(kotlinVersion))
+    assertThat(
+      nodejsResult,
+    ).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinDependencyVersion), kotlinDomApi(kotlinDependencyVersion))
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).module().isSigned()
     assertThat(nodejsResult).sourcesJar().exists()
@@ -334,8 +348,8 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(androidReleaseResult).pom().isSigned()
     assertThat(androidReleaseResult).pom().matchesExpectedPom(
       "aar",
-      kotlinStdlibJdk(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(androidReleaseResult).module().exists()
     assertThat(androidReleaseResult).module().isSigned()
@@ -353,8 +367,8 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(androidDebugResult).pom().isSigned()
     assertThat(androidDebugResult).pom().matchesExpectedPom(
       "aar",
-      kotlinStdlibJdk(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(androidDebugResult).module().exists()
     assertThat(androidDebugResult).module().isSigned()
@@ -376,13 +390,19 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
+    val kotlinDependencyVersion = if (agpVersion >= AgpVersion.AGP_9_0) {
+      "2.2.10"
+    } else {
+      kotlinVersion.value
+    }
+
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     assertThat(result).pom().matchesExpectedPom(
-      kotlinStdlibCommon(kotlinVersion).copy(scope = "runtime"),
+      kotlinStdlibCommon(kotlinDependencyVersion).copy(scope = "runtime"),
     )
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
@@ -399,8 +419,8 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().isSigned()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(jvmResult).module().exists()
     assertThat(jvmResult).module().isSigned()
@@ -418,7 +438,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(linuxResult).pom().isSigned()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).module().isSigned()
@@ -434,7 +454,9 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(nodejsResult).artifact("klib").isSigned()
     assertThat(nodejsResult).pom().exists()
     assertThat(nodejsResult).pom().isSigned()
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion), kotlinDomApi(kotlinVersion))
+    assertThat(
+      nodejsResult,
+    ).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinDependencyVersion), kotlinDomApi(kotlinDependencyVersion))
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).module().isSigned()
     assertThat(nodejsResult).sourcesJar().exists()
@@ -451,8 +473,8 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(androidReleaseResult).pom().isSigned()
     assertThat(androidReleaseResult).pom().matchesExpectedPom(
       "aar",
-      kotlinStdlibJdk(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(androidReleaseResult).module().exists()
     assertThat(androidReleaseResult).module().isSigned()
