@@ -17,15 +17,18 @@ public abstract class MavenPublishBasePlugin : Plugin<Project> {
 
   private fun Project.checkMinimumVersions() {
     plugins.withId("com.android.library") {
-      val requireNewerAgp = { error("You need AGP version $ANDROID_GRADLE_MIN or newer") }
       try {
         if (!isAtLeastAgp(ANDROID_GRADLE_MIN)) {
-          requireNewerAgp()
+          error("You need AGP version $ANDROID_GRADLE_MIN or newer")
         }
-      } catch (_: NoClassDefFoundError) {
-        requireNewerAgp()
-      } catch (_: NoSuchMethodError) {
-        requireNewerAgp()
+      } catch (t: Throwable) {
+        throw IllegalStateException(
+          "Make sure the AGP version $ANDROID_GRADLE_MIN or newer is applied." +
+            "Otherwise, detected Android Library plugin but was not able to access AGP classes. Please make sure " +
+            "that the Android plugin and the publish plugin are applied to the same project. In many cases this means " +
+            "you need to add both the root project with `apply false`.",
+          t,
+        )
       }
     }
     KOTLIN_PLUGIN_IDS.forEach { pluginId ->
@@ -34,11 +37,13 @@ public abstract class MavenPublishBasePlugin : Plugin<Project> {
           if (!isAtLeastKgp(pluginId, KOTLIN_MIN)) {
             error("You need Kotlin version $KOTLIN_MIN or newer")
           }
-        } catch (_: NoClassDefFoundError) {
-          error(
-            "Detected Kotlin plugin $pluginId but was not able to access Kotlin plugin classes. Please make sure " +
+        } catch (t: Throwable) {
+          throw IllegalStateException(
+            "Make sure the Kotlin version $KOTLIN_MIN or newer is applied." +
+              "Otherwise, detected Kotlin plugin $pluginId but was not able to access Kotlin plugin classes. Please make sure " +
               "that the Kotlin plugin and the publish plugin are applied to the same project. In many cases this means " +
               "you need to add both the root project with `apply false`.",
+            t,
           )
         }
       }
