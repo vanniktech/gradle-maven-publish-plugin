@@ -157,6 +157,15 @@ val integrationTest by tasks.registering(Test::class) {
       logger.lifecycle("Running test: ${this.className} ${this.displayName}")
     },
   )
+
+  develocity {
+    testRetry {
+      if (providers.environmentVariable("CI").isPresent) {
+        maxRetries = 2
+        maxFailures = 10
+      }
+    }
+  }
 }
 
 tasks.test {
