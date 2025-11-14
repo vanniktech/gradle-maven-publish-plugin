@@ -17,9 +17,8 @@ val androidLibraryPlugin = PluginSpec("com.android.library")
 val androidMultiplatformLibraryPlugin = PluginSpec("com.android.kotlin.multiplatform.library")
 val androidFusedLibraryPlugin = PluginSpec("com.android.fused-library")
 val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
-val dokkaPlugin = PluginSpec("org.jetbrains.dokka", "1.8.10")
-val dokka2Plugin = PluginSpec("org.jetbrains.dokka", DOKKA_STABLE)
-val dokka2JavadocPlugin = PluginSpec("org.jetbrains.dokka-javadoc", DOKKA_STABLE)
+val dokkaPlugin = PluginSpec("org.jetbrains.dokka", DOKKA_STABLE)
+val dokkaJavadocPlugin = PluginSpec("org.jetbrains.dokka-javadoc", DOKKA_STABLE)
 
 val fixtures = Paths.get("src/integrationTest/fixtures2").absolute()
 
@@ -172,6 +171,7 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
     """.trimIndent(),
 )
 
+// TODO remove when min AGP version is AGP 9
 fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
   val baseProject = kotlinMultiplatformProjectSpec(kotlinVersion)
   return baseProject.copy(
@@ -197,8 +197,6 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
         jvmToolchain(11)
       }
       """.trimIndent(),
-    // TODO remove when removing support for AGP 8.x, spec should be merged
-    //  with kotlinMultiplatformWithModernAndroidLibraryProjectSpec
     propertiesExtra =
       """
       android.builtInKotlin=false
@@ -277,7 +275,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
 
 fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
   val plainAndroidProject = androidLibraryProjectSpec(agpVersion)
-  val plugins = if (agpVersion < AgpVersion.AGP_9_0) {
+  val plugins = if (agpVersion < AgpVersion.AGP_9_0_0) {
     plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value)
   } else {
     plainAndroidProject.plugins
@@ -312,7 +310,7 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     """
     androidFusedLibrary {
         namespace = "com.test.library"
-        ${if (version < AgpVersion.AGP_9_0) "minSdk = 29" else "minSdk { version = release(34) }" }
+        ${if (version < AgpVersion.AGP_9_0_0) "minSdk = 29" else "minSdk { version = release(34) }" }
     }
     """.trimIndent(),
   // TODO remove when stable

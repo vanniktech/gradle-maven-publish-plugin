@@ -15,15 +15,21 @@ data class PomDependency(
   val optional: Boolean? = null,
 )
 
-fun kotlinStdlibCommon(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", version.value, "compile")
+fun kotlinStdlibCommon(version: KotlinVersion) = kotlinStdlibCommon(version.value)
+
+fun kotlinStdlibCommon(version: String) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", version, "compile")
 
 fun kotlinStdlibJdk(version: KotlinVersion) = kotlinStdlibJdk(version.value)
 
 fun kotlinStdlibJdk(version: String) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", version, "compile")
 
-fun kotlinStdlibJs(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", version.value, "compile")
+fun kotlinStdlibJs(version: KotlinVersion) = kotlinStdlibJs(version.value)
 
-fun kotlinDomApi(version: KotlinVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-dom-api-compat", version.value, "compile")
+fun kotlinStdlibJs(version: String) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", version, "compile")
+
+fun kotlinDomApi(version: KotlinVersion) = kotlinDomApi(version.value)
+
+fun kotlinDomApi(version: String) = PomDependency("org.jetbrains.kotlin", "kotlin-dom-api-compat", version, "compile")
 
 fun createPom(
   groupId: String,

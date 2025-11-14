@@ -22,10 +22,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
   fixtures.resolve("test-secring.gpg").copyTo(project.resolve("test-secring.gpg"))
 
   val task = ":module:publishAllPublicationsToTestFolderRepository"
-  val arguments = mutableListOf(task, "--stacktrace")
-  if (supportsConfigCaching()) {
-    arguments.add("--configuration-cache")
-  }
+  val arguments = mutableListOf(task, "--stacktrace", "--configuration-cache")
 
   val result = GradleRunner
     .create()
@@ -46,12 +43,6 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     project = module,
     repo = repo,
   )
-}
-
-private fun ProjectSpec.supportsConfigCaching(): Boolean {
-  // TODO can always return true when dropping support for dokka in v1 mode
-  //  to simplify the test set up this assumes that version 2.x always runs in v2 mode
-  return plugins.none { it.id == dokkaPlugin.id && it.version!!.startsWith("1.") }
 }
 
 private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOptions) {

@@ -21,7 +21,6 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
-import org.jetbrains.dokka.gradle.DokkaTask
 
 public abstract class MavenPublishBaseExtension @Inject constructor(
   private val project: Project,
@@ -428,11 +427,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       if (project.extensions.findByName("dokka") != null) {
         JavadocJar.Dokka("dokkaGeneratePublicationHtml")
       } else {
-        val dokkaTask = project.provider {
-          val tasks = project.tasks.withType(DokkaTask::class.java)
-          tasks.singleOrNull()?.name ?: "dokkaHtml"
-        }
-        JavadocJar.Dokka(dokkaTask)
+        error("Dokka in v2 mode is required when using Dokka")
       }
     } else if (plainJavadocSupported) {
       project.tasks.withType(Javadoc::class.java).configureEach {

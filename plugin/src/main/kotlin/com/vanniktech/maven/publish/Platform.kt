@@ -303,6 +303,7 @@ public class AndroidFusedLibrary : Platform() {
  *
  * This does not include javadoc jars because there are no APIs for that available.
  */
+@ConsistentCopyVisibility
 public data class KotlinMultiplatform internal constructor(
   override val javadocJar: JavadocJar,
   override val sourcesJar: Boolean,
