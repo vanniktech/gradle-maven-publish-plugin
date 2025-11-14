@@ -153,7 +153,7 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
-    val kotlinDependencyVersion = if (agpVersion >= AgpVersion.AGP_9_0_0 && kotlinVersion < KotlinVersion.KOTLIN_2_2_10) {
+    val kotlinDependencyVersion = if (agpVersion >= AgpVersion.AGP_9_0_0 && kotlinVersion < KotlinVersion.KOTLIN_2_2_21) {
       "2.2.10"
     } else {
       kotlinVersion.value
@@ -267,7 +267,7 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
-    val kotlinDependencyVersion = if (agpVersion >= AgpVersion.AGP_9_0_0 && kotlinVersion < KotlinVersion.KOTLIN_2_2_10) {
+    val kotlinDependencyVersion = if (agpVersion >= AgpVersion.AGP_9_0_0 && kotlinVersion < KotlinVersion.KOTLIN_2_2_21) {
       "2.2.10"
     } else {
       kotlinVersion.value
@@ -390,7 +390,7 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
-    val kotlinDependencyVersion = if (agpVersion >= AgpVersion.AGP_9_0_0 && kotlinVersion < KotlinVersion.KOTLIN_2_2_10) {
+    val kotlinDependencyVersion = if (agpVersion >= AgpVersion.AGP_9_0_0 && kotlinVersion < KotlinVersion.KOTLIN_2_2_21) {
       "2.2.10"
     } else {
       kotlinVersion.value

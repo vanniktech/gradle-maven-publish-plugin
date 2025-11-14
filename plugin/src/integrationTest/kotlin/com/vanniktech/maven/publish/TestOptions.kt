@@ -62,7 +62,7 @@ enum class KotlinVersion(
   ;
 
   companion object {
-    val KOTLIN_2_2_10 = KOTLIN_STABLE
+    val KOTLIN_2_2_21 = KOTLIN_STABLE
   }
 }
 
