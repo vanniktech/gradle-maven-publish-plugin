@@ -44,6 +44,6 @@ internal class GradlePluginPublishVersionProvider : TestParameterValuesProvider(
     if (QUICK_TEST) {
       return listOf(GradlePluginPublish.entries.last())
     }
-    return GradlePluginPublish.entries.distinctBy { it.version }
+    return GradlePluginPublish.entries.distinctBy { it.value }
   }
 }

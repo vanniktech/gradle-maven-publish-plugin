@@ -95,7 +95,7 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
 fun javaGradlePluginWithGradlePluginPublish(gradlePluginPublish: GradlePluginPublish): ProjectSpec {
   val base = javaGradlePluginProjectSpec()
   return base.copy(
-    plugins = base.plugins + gradlePluginPublishPlugin.copy(version = gradlePluginPublish.version),
+    plugins = base.plugins + gradlePluginPublishPlugin.copy(version = gradlePluginPublish.value),
     basePluginConfig = "configure(new GradlePublishPlugin())",
   )
 }

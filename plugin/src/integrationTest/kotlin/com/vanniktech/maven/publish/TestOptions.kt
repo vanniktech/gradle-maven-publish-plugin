@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import com.google.common.truth.TruthJUnit.assume
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig as Versions
+import net.swiftzer.semver.SemVer
 import org.gradle.api.JavaVersion
 
 data class TestOptions(
@@ -22,13 +23,20 @@ data class TestOptions(
   }
 }
 
+private sealed interface ComparableVersion : Comparable<ComparableVersion> {
+  val value: String
+  val semVer: SemVer get() = SemVer.parse(value)
+
+  override fun compareTo(other: ComparableVersion): Int = semVer.compareTo(other.semVer)
+}
+
 enum class AgpVersion(
-  val value: String,
+  override val value: String,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
   val minGradleVersion: GradleVersion = GradleVersion.GRADLE_MIN,
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
-) {
+) : ComparableVersion {
   // minimum supported
   AGP_MIN(Versions.ANDROID_GRADLE_MIN),
 
@@ -45,12 +53,12 @@ enum class AgpVersion(
 }
 
 enum class KotlinVersion(
-  val value: String,
+  override val value: String,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
   val minGradleVersion: GradleVersion = GradleVersion.GRADLE_MIN,
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
-) {
+) : ComparableVersion {
   // minimum supported
   KOTLIN_MIN(Versions.KOTLIN_MIN),
 
@@ -67,10 +75,10 @@ enum class KotlinVersion(
 }
 
 enum class GradleVersion(
-  val value: String,
+  override val value: String,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
   val firstUnsupportedJdkVersion: JavaVersion? = null,
-) {
+) : ComparableVersion {
   // minimum supported
   GRADLE_MIN(
     value = Versions.GRADLE_MIN,
@@ -85,8 +93,8 @@ enum class GradleVersion(
 }
 
 enum class GradlePluginPublish(
-  val version: String,
-) {
+  override val value: String,
+) : ComparableVersion {
   // minimum supported
   GRADLE_PLUGIN_PUBLISH_MIN("1.0.0"),
 
