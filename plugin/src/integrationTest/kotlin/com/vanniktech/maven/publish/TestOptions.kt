@@ -47,7 +47,7 @@ enum class AgpVersion(
   AGP_ALPHA(Versions.ANDROID_GRADLE_ALPHA, minGradleVersion = GradleVersion.GRADLE_STABLE),
   ;
 
-  fun isAtLeast900(): Boolean = semVer > SemVer.parse("9.0.0-beta01")
+  val isAtLeast900: Boolean = semVer > SemVer.parse("9.0.0-beta01")
 }
 
 enum class KotlinVersion(
@@ -67,7 +67,7 @@ enum class KotlinVersion(
   KOTLIN_ALPHA(Versions.KOTLIN_ALPHA),
   ;
 
-  fun isBelow2210(): Boolean = semVer < SemVer.parse("2.2.10")
+  val isBelow2210: Boolean = semVer < SemVer.parse("2.2.10")
 }
 
 enum class GradleVersion(
