@@ -1,8 +1,8 @@
 [versions]
 jdkRelease = "17"
-minGradle = "8.13"
-minAgp = "8.2.2"
-minKgp = "1.9.20"
+minGradle = "9.0.0"
+minAgp = "8.13.0"
+minKgp = "2.2.0"
 
 gradle = "9.2.0"
 
@@ -25,7 +25,7 @@ slf4j = "1.7.36"
 
 [libraries]
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
-android-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle" }
+android-pluginApi = { module = "com.android.tools.build:gradle-api", version.ref = "android-gradle" }
 maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.35.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
@@ -53,4 +53,4 @@ androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0-alpha05"
 
 [plugins]
 buildconfig = "com.github.gmazzo.buildconfig:5.7.1"
-android-lint = "com.android.lint:8.13.1"
+android-lint = { id = "com.android.lint", version.ref = "android-gradle" }
