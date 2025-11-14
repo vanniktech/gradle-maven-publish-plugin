@@ -275,10 +275,10 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
 
 fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
   val plainAndroidProject = androidLibraryProjectSpec(agpVersion)
-  val plugins = if (agpVersion < AgpVersion.AGP_9_0_0) {
-    plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value)
-  } else {
+  val plugins = if (agpVersion.isAtLeast900()) {
     plainAndroidProject.plugins
+  } else {
+    plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value)
   }
   return plainAndroidProject.copy(
     plugins = plugins,
@@ -310,7 +310,7 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     """
     androidFusedLibrary {
         namespace = "com.test.library"
-        ${if (version < AgpVersion.AGP_9_0_0) "minSdk = 29" else "minSdk { version = release(34) }" }
+        ${if (version.isAtLeast900()) "minSdk { version = release(34) }" else "minSdk = 29" }
     }
     """.trimIndent(),
   // TODO remove when stable
