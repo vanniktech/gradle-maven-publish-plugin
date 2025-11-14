@@ -2,6 +2,8 @@ package com.vanniktech.maven.publish
 
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
+import com.vanniktech.maven.publish.AgpVersion.Companion.AGP_9_0_0
+import com.vanniktech.maven.publish.KotlinVersion.Companion.KOTLIN_2_2_10
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 
 class KotlinPluginTest : BasePluginTest() {
@@ -153,7 +155,7 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
-    val kotlinDependencyVersion = if (agpVersion.isAtLeast900 && kotlinVersion.isBelow2210) {
+    val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kotlinVersion < KOTLIN_2_2_10) {
       "2.2.10"
     } else {
       kotlinVersion.value
@@ -267,7 +269,7 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
-    val kotlinDependencyVersion = if (agpVersion.isAtLeast900 && kotlinVersion.isBelow2210) {
+    val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kotlinVersion < KOTLIN_2_2_10) {
       "2.2.10"
     } else {
       kotlinVersion.value
@@ -390,7 +392,7 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
-    val kotlinDependencyVersion = if (agpVersion.isAtLeast900 && kotlinVersion.isBelow2210) {
+    val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kotlinVersion < KOTLIN_2_2_10) {
       "2.2.10"
     } else {
       kotlinVersion.value

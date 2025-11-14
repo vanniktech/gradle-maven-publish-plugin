@@ -3,6 +3,7 @@ package com.vanniktech.maven.publish
 import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
+import com.vanniktech.maven.publish.AgpVersion.Companion.AGP_9_0_0
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 import org.junit.jupiter.api.condition.DisabledOnJre
 import org.junit.jupiter.api.condition.JRE
@@ -55,7 +56,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).artifact("aar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    if (agpVersion.isAtLeast900) {
+    if (agpVersion >= AGP_9_0_0) {
       assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk("2.2.10"))
     } else {
       assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk(kotlinVersion))
@@ -83,7 +84,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).artifact("aar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    if (agpVersion.isAtLeast900) {
+    if (agpVersion >= AGP_9_0_0) {
       assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk("2.2.10"))
     } else {
       assertThat(result).pom().matchesExpectedPom("aar")
@@ -117,7 +118,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).outcome().succeeded()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    if (agpVersion.isAtLeast900) {
+    if (agpVersion >= AGP_9_0_0) {
       assertThat(result).pom().matchesExpectedPom("pom", kotlinStdlibJdk("2.2.10"))
     } else {
       assertThat(result).pom().matchesExpectedPom("pom")

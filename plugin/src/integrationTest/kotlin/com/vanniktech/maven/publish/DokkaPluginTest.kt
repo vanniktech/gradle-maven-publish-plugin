@@ -15,7 +15,7 @@ class DokkaPluginTest : BasePluginTest() {
   )
   @TestParameterInjectorTest
   fun dokka() {
-    val kotlinVersion = KotlinVersion.entries.last()
+    val kotlinVersion = KotlinVersion.VERSIONS.last()
     val original = kotlinJvmProjectSpec(kotlinVersion)
     val project = original.copy(
       plugins = original.plugins + dokkaPlugin,
@@ -39,7 +39,7 @@ class DokkaPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun dokkaJavadoc() {
-    val kotlinVersion = KotlinVersion.entries.last()
+    val kotlinVersion = KotlinVersion.VERSIONS.last()
     val original = kotlinJvmProjectSpec(kotlinVersion)
     val project = original.copy(
       plugins = original.plugins + dokkaJavadocPlugin,
