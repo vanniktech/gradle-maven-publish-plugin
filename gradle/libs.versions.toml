@@ -48,6 +48,7 @@ testParameterInjector = "com.google.testparameterinjector:test-parameter-injecto
 truth = "com.google.truth:truth:1.4.5"
 truth-testKit = "com.autonomousapps:testkit-truth:1.1"
 maven-model = "org.apache.maven:maven-model:3.9.11"
+semver = "net.swiftzer.semver:semver:2.1.0"
 
 androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0-alpha05"
 
