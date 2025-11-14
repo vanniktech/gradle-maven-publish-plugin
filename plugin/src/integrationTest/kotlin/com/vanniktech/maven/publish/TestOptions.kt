@@ -67,9 +67,7 @@ enum class KotlinVersion(
   KOTLIN_ALPHA(Versions.KOTLIN_ALPHA),
   ;
 
-  companion object {
-    val KOTLIN_2_2_21 = KOTLIN_STABLE
-  }
+  fun isBelow2210(): Boolean = semVer < SemVer.parse("2.2.10")
 }
 
 enum class GradleVersion(
