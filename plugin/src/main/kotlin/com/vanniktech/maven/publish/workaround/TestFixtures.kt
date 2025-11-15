@@ -10,7 +10,13 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.internal.JavaConfigurationVariantMapping
 import org.gradle.api.plugins.internal.JvmPluginsHelper
+import org.gradle.api.provider.Provider
 import org.gradle.internal.component.external.model.ProjectDerivedCapability
+
+@Suppress("GradleProjectIsolation") // TODO: https://github.com/gradle/gradle/issues/23572
+internal fun Project.gradlePropertyCompat(propertyName: String): Provider<String> = providers
+  .gradleProperty(propertyName)
+  .orElse(provider { findProperty(propertyName)?.toString() })
 
 /**
  * Gradle currently doesn't publish a sources jar for test fixtures and the APIs to add

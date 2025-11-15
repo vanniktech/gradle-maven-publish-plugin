@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.workaround.gradlePropertyCompat
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -38,11 +39,10 @@ public abstract class MavenPublishPlugin : Plugin<Project> {
   }
 
   private fun Project.sonatypeHost(): Boolean {
-    val central = providers.gradleProperty("mavenCentralPublishing").orNull
-    if (central != null) {
+    gradlePropertyCompat("mavenCentralPublishing").orNull?.let { central ->
       return central.toBoolean()
     }
-    return when (providers.gradleProperty("SONATYPE_HOST").orNull) {
+    return when (gradlePropertyCompat("SONATYPE_HOST").orNull) {
       null -> false
       "CENTRAL_PORTAL" -> true
       else -> error(
@@ -55,26 +55,23 @@ public abstract class MavenPublishPlugin : Plugin<Project> {
   }
 
   private fun Project.automaticRelease(): Boolean {
-    val automatic = providers.gradleProperty("mavenCentralAutomaticPublishing").orNull
-    if (automatic != null) {
+    gradlePropertyCompat("mavenCentralAutomaticPublishing").orNull?.let { automatic ->
       return automatic.toBoolean()
     }
-    return providers.gradleProperty("SONATYPE_AUTOMATIC_RELEASE").orNull.toBoolean()
+    return gradlePropertyCompat("SONATYPE_AUTOMATIC_RELEASE").orNull.toBoolean()
   }
 
   private fun Project.validateDeployment(): Boolean {
-    val automatic = providers.gradleProperty("mavenCentralDeploymentValidation").orNull
-    if (automatic != null) {
+    gradlePropertyCompat("mavenCentralDeploymentValidation").orNull.let { automatic ->
       return automatic.toBoolean()
     }
-    return providers.gradleProperty("SONATYPE_DEPLOYMENT_VALIDATION").getOrElse("true").toBoolean()
+    return gradlePropertyCompat("SONATYPE_DEPLOYMENT_VALIDATION").getOrElse("true").toBoolean()
   }
 
   private fun Project.signAllPublications(): Boolean {
-    val sign = providers.gradleProperty("signAllPublications").orNull
-    if (sign != null) {
+    gradlePropertyCompat("signAllPublications").orNull?.let { sign ->
       return sign.toBoolean()
     }
-    return providers.gradleProperty("RELEASE_SIGNING_ENABLED").orNull.toBoolean()
+    return gradlePropertyCompat("RELEASE_SIGNING_ENABLED").orNull.toBoolean()
   }
 }

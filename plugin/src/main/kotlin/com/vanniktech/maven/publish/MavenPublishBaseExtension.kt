@@ -5,6 +5,7 @@ import com.vanniktech.maven.publish.central.EnableAutomaticMavenCentralPublishin
 import com.vanniktech.maven.publish.central.MavenCentralBuildService.Companion.registerMavenCentralBuildService
 import com.vanniktech.maven.publish.central.PrepareMavenCentralPublishingTask.Companion.registerPrepareMavenCentralPublishingTask
 import com.vanniktech.maven.publish.workaround.DirectorySignatureType
+import com.vanniktech.maven.publish.workaround.gradlePropertyCompat
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.Incubating
@@ -86,8 +87,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
 
     val buildService = project.registerMavenCentralBuildService(
-      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
-      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
+      repositoryUsername = project.gradlePropertyCompat("mavenCentralUsername"),
+      repositoryPassword = project.gradlePropertyCompat("mavenCentralPassword"),
       rootBuildDirectory = @Suppress("UnstableApiUsage") project.layout.settingsDirectory.dir("build"),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
     )
@@ -154,10 +155,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     project.gradleSigning.setRequired(version.map { !it.endsWith("-SNAPSHOT") })
 
     // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
-    val inMemoryKey = project.providers.gradleProperty("signingInMemoryKey")
+    val inMemoryKey = project.gradlePropertyCompat("signingInMemoryKey")
     if (inMemoryKey.isPresent) {
-      val inMemoryKeyId = project.providers.gradleProperty("signingInMemoryKeyId")
-      val inMemoryKeyPassword = project.providers.gradleProperty("signingInMemoryKeyPassword").orElse("")
+      val inMemoryKeyId = project.gradlePropertyCompat("signingInMemoryKeyId")
+      val inMemoryKeyPassword = project.gradlePropertyCompat("signingInMemoryKeyPassword").orElse("")
       project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId.orNull, inMemoryKey.get(), inMemoryKeyPassword.get())
     }
 
@@ -260,39 +261,31 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     pomFromProperties.set(true)
     pomFromProperties.finalizeValue()
 
-    val groupId = findOptionalProperty("GROUP")
-    if (groupId != null) {
+    project.gradlePropertyCompat("GROUP").orNull?.let { groupId ->
       groupId(groupId)
     }
-    val artifactId = findOptionalProperty("POM_ARTIFACT_ID")
-    if (artifactId != null) {
+    project.gradlePropertyCompat("POM_ARTIFACT_ID").orNull?.let { artifactId ->
       artifactId(artifactId)
     }
-    val version = findOptionalProperty("VERSION_NAME")
-    if (version != null) {
+    project.gradlePropertyCompat("VERSION_NAME").orNull?.let { version ->
       version(version)
     }
-
     pom { pom ->
-      val name = findOptionalProperty("POM_NAME")
-      if (name != null) {
+      project.gradlePropertyCompat("POM_NAME").orNull?.let { name ->
         pom.name.set(name)
       }
-      val description = findOptionalProperty("POM_DESCRIPTION")
-      if (description != null) {
+      project.gradlePropertyCompat("POM_DESCRIPTION").orNull?.let { description ->
         pom.description.set(description)
       }
-      val url = findOptionalProperty("POM_URL")
-      if (url != null) {
+      project.gradlePropertyCompat("POM_URL").orNull?.let { url ->
         pom.url.set(url)
       }
-      val inceptionYear = findOptionalProperty("POM_INCEPTION_YEAR")
-      if (inceptionYear != null) {
+      project.gradlePropertyCompat("POM_INCEPTION_YEAR").orNull?.let { inceptionYear ->
         pom.inceptionYear.set(inceptionYear)
       }
 
-      val issueManagementSystem = findOptionalProperty("POM_ISSUE_SYSTEM")
-      val issueManagementUrl = findOptionalProperty("POM_ISSUE_URL")
+      val issueManagementSystem = project.gradlePropertyCompat("POM_ISSUE_SYSTEM").orNull
+      val issueManagementUrl = project.gradlePropertyCompat("POM_ISSUE_URL").orNull
       if (issueManagementSystem != null || issueManagementUrl != null) {
         pom.issueManagement {
           it.system.set(issueManagementSystem)
@@ -300,9 +293,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
       }
 
-      val scmUrl = findOptionalProperty("POM_SCM_URL")
-      val scmConnection = findOptionalProperty("POM_SCM_CONNECTION")
-      val scmDeveloperConnection = findOptionalProperty("POM_SCM_DEV_CONNECTION")
+      val scmUrl = project.gradlePropertyCompat("POM_SCM_URL").orNull
+      val scmConnection = project.gradlePropertyCompat("POM_SCM_CONNECTION").orNull
+      val scmDeveloperConnection = project.gradlePropertyCompat("POM_SCM_DEV_CONNECTION").orNull
       if (scmUrl != null || scmConnection != null || scmDeveloperConnection != null) {
         pom.scm {
           it.url.set(scmUrl)
@@ -311,9 +304,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
       }
 
-      val licenceName = findOptionalProperty("POM_LICENCE_NAME")
-      val licenceUrl = findOptionalProperty("POM_LICENCE_URL")
-      val licenceDistribution = findOptionalProperty("POM_LICENCE_DIST")
+      val licenceName = project.gradlePropertyCompat("POM_LICENCE_NAME").orNull
+      val licenceUrl = project.gradlePropertyCompat("POM_LICENCE_URL").orNull
+      val licenceDistribution = project.gradlePropertyCompat("POM_LICENCE_DIST").orNull
       if (licenceName != null || licenceUrl != null || licenceDistribution != null) {
         pom.licenses { licences ->
           licences.license {
@@ -324,9 +317,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
       }
 
-      val licenseName = findOptionalProperty("POM_LICENSE_NAME")
-      val licenseUrl = findOptionalProperty("POM_LICENSE_URL")
-      val licenseDistribution = findOptionalProperty("POM_LICENSE_DIST")
+      val licenseName = project.gradlePropertyCompat("POM_LICENSE_NAME").orNull
+      val licenseUrl = project.gradlePropertyCompat("POM_LICENSE_URL").orNull
+      val licenseDistribution = project.gradlePropertyCompat("POM_LICENSE_DIST").orNull
       if (licenseName != null || licenseUrl != null || licenseDistribution != null) {
         pom.licenses { licenses ->
           licenses.license {
@@ -337,10 +330,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
       }
 
-      val developerId = findOptionalProperty("POM_DEVELOPER_ID")
-      val developerName = findOptionalProperty("POM_DEVELOPER_NAME")
-      val developerUrl = findOptionalProperty("POM_DEVELOPER_URL")
-      val developerEmail = findOptionalProperty("POM_DEVELOPER_EMAIL")
+      val developerId = project.gradlePropertyCompat("POM_DEVELOPER_ID").orNull
+      val developerName = project.gradlePropertyCompat("POM_DEVELOPER_NAME").orNull
+      val developerUrl = project.gradlePropertyCompat("POM_DEVELOPER_URL").orNull
+      val developerEmail = project.gradlePropertyCompat("POM_DEVELOPER_EMAIL").orNull
       if (developerId != null || developerName != null || developerUrl != null) {
         pom.developers { developers ->
           developers.developer {
@@ -381,7 +374,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         val variants = if (project.plugins.hasPlugin("com.android.kotlin.multiplatform.library")) {
           emptyList()
         } else {
-          listOf(project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release")
+          listOf(project.gradlePropertyCompat("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release")
         }
         configure(
           KotlinMultiplatform(
@@ -393,7 +386,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         )
       }
       project.plugins.hasPlugin("com.android.library") -> {
-        val variant = project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
+        val variant = project.gradlePropertyCompat("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
         configure(AndroidSingleVariantLibrary(variant, sourcesJar, javadocJar))
       }
       project.plugins.hasPlugin("com.android.fused-library") -> {
@@ -441,20 +434,5 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     } else {
       JavadocJar.Empty()
     }
-  }
-
-  private fun findOptionalProperty(propertyName: String): String? = if (buildFeatures.isolatedProjects.active.get()) {
-    // There is currently no way to search hierarchically for a project property in an isolated
-    // projects safe way:
-    // https://github.com/gradle/gradle/issues/29600#issuecomment-2306054264
-    // Projects applying this plugin must either use the DSL to specify values for the POM
-    // properties, or use the values provided by the root gradle properties.
-    project.providers.gradleProperty(propertyName).orNull
-  } else {
-    // TODO: we can't call 'providers.gradleProperty' instead due to
-    //  https://github.com/gradle/gradle/issues/23572
-    //  https://github.com/gradle/gradle/issues/29600
-    @Suppress("GradleProjectIsolation")
-    project.findProperty(propertyName)?.toString()
   }
 }

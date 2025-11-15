@@ -4,6 +4,7 @@ import com.vanniktech.maven.publish.BuildConfig
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.AUTOMATIC
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.USER_MANAGED
+import com.vanniktech.maven.publish.workaround.gradlePropertyCompat
 import java.io.File
 import java.io.IOException
 import java.util.Base64
@@ -184,16 +185,16 @@ internal abstract class MavenCentralBuildService :
       rootBuildDirectory: Directory,
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
     ): Provider<MavenCentralBuildService> {
-      val okhttpTimeout = project.providers
-        .gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
+      val okhttpTimeout = project
+        .gradlePropertyCompat("SONATYPE_CONNECT_TIMEOUT_SECONDS")
         .map { it.toLong() }
         .orElse(60)
-      val closeTimeout = project.providers
-        .gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
+      val closeTimeout = project
+        .gradlePropertyCompat("SONATYPE_CLOSE_TIMEOUT_SECONDS")
         .map { it.toLong() }
         .orElse(60 * 15)
-      val pollIntervalSeconds = project.providers
-        .gradleProperty("SONATYPE_POLL_INTERVAL_SECONDS")
+      val pollIntervalSeconds = project
+        .gradlePropertyCompat("SONATYPE_POLL_INTERVAL_SECONDS")
         .map { it.toLong() }
         .orElse(5L)
       val service = gradle.sharedServices.registerIfAbsent(NAME, MavenCentralBuildService::class.java) {
