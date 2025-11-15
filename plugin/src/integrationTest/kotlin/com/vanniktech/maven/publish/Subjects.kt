@@ -84,7 +84,7 @@ class ProjectResultSubject private constructor(
   }
 }
 
-open class ArtifactSubject internal constructor(
+open class ArtifactSubject(
   failureMetadata: FailureMetadata,
   private val artifact: Path,
   private val result: ProjectResult,
