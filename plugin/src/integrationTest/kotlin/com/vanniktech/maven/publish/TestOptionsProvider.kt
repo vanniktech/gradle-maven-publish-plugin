@@ -5,7 +5,7 @@ import com.vanniktech.maven.publish.IntegrationTestBuildConfig.QUICK_TEST
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.TEST_CONFIG_METHOD
 
 class TestOptionsConfigProvider : TestParameterValuesProvider() {
-  override fun provideValues(context: Context?): List<*> = when {
+  override fun provideValues(context: Context?): List<TestOptions.Config> = when {
     QUICK_TEST -> listOf(TestOptions.Config.BASE)
     TEST_CONFIG_METHOD.isNotBlank() -> listOf(TestOptions.Config.valueOf(TEST_CONFIG_METHOD))
     else -> TestOptions.Config.entries
@@ -13,7 +13,7 @@ class TestOptionsConfigProvider : TestParameterValuesProvider() {
 }
 
 class GradleVersionProvider : TestParameterValuesProvider() {
-  override fun provideValues(context: Context?): List<*> {
+  override fun provideValues(context: Context?): List<GradleVersion> {
     if (QUICK_TEST) {
       return listOf(GradleVersion.VERSIONS.max())
     }
@@ -22,7 +22,7 @@ class GradleVersionProvider : TestParameterValuesProvider() {
 }
 
 class AgpVersionProvider : TestParameterValuesProvider() {
-  override fun provideValues(context: Context?): List<*> {
+  override fun provideValues(context: Context?): List<AgpVersion> {
     if (QUICK_TEST) {
       return listOf(AgpVersion.VERSIONS.max())
     }
@@ -31,7 +31,7 @@ class AgpVersionProvider : TestParameterValuesProvider() {
 }
 
 class KotlinVersionProvider : TestParameterValuesProvider() {
-  override fun provideValues(context: Context?): List<*> {
+  override fun provideValues(context: Context?): List<KgpVersion> {
     if (QUICK_TEST) {
       return listOf(KgpVersion.VERSIONS.max())
     }
@@ -40,7 +40,7 @@ class KotlinVersionProvider : TestParameterValuesProvider() {
 }
 
 class GradlePluginPublishVersionProvider : TestParameterValuesProvider() {
-  override fun provideValues(context: Context?): List<*> {
+  override fun provideValues(context: Context?): List<PluginPublishVersion> {
     if (QUICK_TEST) {
       return listOf(PluginPublishVersion.VERSIONS.max())
     }
