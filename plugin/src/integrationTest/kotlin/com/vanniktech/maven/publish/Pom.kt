@@ -17,8 +17,6 @@ data class PomDependency(
 
 fun kotlinStdlibCommon(version: KgpVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", version.value, "compile")
 
-fun kotlinStdlibJdk(version: KgpVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", version.value, "compile")
-
 fun kotlinStdlibJs(version: KgpVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", version.value, "compile")
 
 fun kotlinDomApi(version: KgpVersion) = PomDependency("org.jetbrains.kotlin", "kotlin-dom-api-compat", version.value, "compile")

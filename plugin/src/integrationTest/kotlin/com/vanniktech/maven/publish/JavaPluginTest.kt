@@ -151,7 +151,7 @@ class JavaPluginTest : BasePluginTest() {
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kgpVersion))
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibCommon(kgpVersion))
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()

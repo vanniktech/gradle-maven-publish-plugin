@@ -21,7 +21,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kgpVersion))
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibCommon(kgpVersion))
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
@@ -52,7 +52,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kgpVersion))
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibCommon(kgpVersion))
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
@@ -99,7 +99,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().isSigned()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kgpVersion),
+      kotlinStdlibCommon(kgpVersion),
       kotlinStdlibCommon(kgpVersion),
     )
     assertThat(jvmResult).module().exists()
@@ -184,7 +184,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().isSigned()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
       kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(jvmResult).module().exists()
@@ -238,7 +238,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(androidReleaseResult).pom().isSigned()
     assertThat(androidReleaseResult).pom().matchesExpectedPom(
       "aar",
-      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
       kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(androidReleaseResult).module().exists()
@@ -296,7 +296,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().isSigned()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
       kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(jvmResult).module().exists()
@@ -350,7 +350,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(androidReleaseResult).pom().isSigned()
     assertThat(androidReleaseResult).pom().matchesExpectedPom(
       "aar",
-      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
       kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(androidReleaseResult).module().exists()
@@ -369,7 +369,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(androidDebugResult).pom().isSigned()
     assertThat(androidDebugResult).pom().matchesExpectedPom(
       "aar",
-      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
       kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(androidDebugResult).module().exists()
@@ -421,7 +421,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().isSigned()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
       kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(jvmResult).module().exists()
@@ -475,7 +475,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(androidReleaseResult).pom().isSigned()
     assertThat(androidReleaseResult).pom().matchesExpectedPom(
       "aar",
-      kotlinStdlibJdk(kotlinDependencyVersion),
+      kotlinStdlibCommon(kotlinDependencyVersion),
       kotlinStdlibCommon(kotlinDependencyVersion),
     )
     assertThat(androidReleaseResult).module().exists()

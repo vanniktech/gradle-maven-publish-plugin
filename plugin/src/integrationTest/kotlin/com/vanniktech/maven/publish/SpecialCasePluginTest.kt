@@ -37,7 +37,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(jvmResult).artifact("jar").exists()
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kgpVersion),
+      kotlinStdlibCommon(kgpVersion),
       kotlinStdlibCommon(kgpVersion),
     )
     assertThat(jvmResult).module().exists()
@@ -97,7 +97,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(jvmResult).artifact("jar").exists()
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kgpVersion),
+      kotlinStdlibCommon(kgpVersion),
       kotlinStdlibCommon(kgpVersion),
     )
     assertThat(jvmResult).module().exists()
