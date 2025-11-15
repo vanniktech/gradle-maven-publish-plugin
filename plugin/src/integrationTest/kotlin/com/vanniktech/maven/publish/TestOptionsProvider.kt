@@ -39,7 +39,7 @@ class KgpVersionProvider : TestParameterValuesProvider() {
   }
 }
 
-class GradlePluginPublishVersionProvider : TestParameterValuesProvider() {
+class PluginPublishVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<PluginPublishVersion> {
     if (QUICK_TEST) {
       return listOf(PluginPublishVersion.VERSIONS.max())
