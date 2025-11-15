@@ -46,7 +46,7 @@ class AgpVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("AGP") {
   companion object {
-    val VERSIONS = listOf(
+    val VERSIONS = setOf(
       // minimum supported
       AgpVersion(Versions.ANDROID_GRADLE_MIN),
       // latest versions of each type
@@ -69,7 +69,7 @@ class KotlinVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("Kotlin") {
   companion object {
-    val VERSIONS = listOf(
+    val VERSIONS = setOf(
       // minimum supported
       KotlinVersion(Versions.KOTLIN_MIN),
       // latest versions of each type
@@ -90,7 +90,7 @@ class GradleVersion(
   val firstUnsupportedJdkVersion: JavaVersion? = null,
 ) : ComparableVersion("Gradle") {
   companion object {
-    val VERSIONS = listOf(
+    val VERSIONS = setOf(
       // minimum supported
       GradleVersion(
         value = Versions.GRADLE_MIN,
@@ -112,7 +112,7 @@ class GradlePluginPublish(
   override val value: String,
 ) : ComparableVersion("Gradle Publish") {
   companion object {
-    val VERSIONS = listOf(
+    val VERSIONS = setOf(
       // minimum supported
       GradlePluginPublish("1.0.0"),
       // latest versions of each type

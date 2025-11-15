@@ -17,7 +17,7 @@ internal class GradleVersionProvider : TestParameterValuesProvider() {
     if (QUICK_TEST) {
       return listOf(GradleVersion.VERSIONS.max())
     }
-    return GradleVersion.VERSIONS.distinct()
+    return GradleVersion.VERSIONS.toList()
   }
 }
 
@@ -26,7 +26,7 @@ internal class AgpVersionProvider : TestParameterValuesProvider() {
     if (QUICK_TEST) {
       return listOf(AgpVersion.VERSIONS.max())
     }
-    return AgpVersion.VERSIONS.distinct()
+    return AgpVersion.VERSIONS.toList()
   }
 }
 
@@ -35,7 +35,7 @@ internal class KotlinVersionProvider : TestParameterValuesProvider() {
     if (QUICK_TEST) {
       return listOf(KotlinVersion.VERSIONS.max())
     }
-    return KotlinVersion.VERSIONS.distinct()
+    return KotlinVersion.VERSIONS.toList()
   }
 }
 
@@ -44,6 +44,6 @@ internal class GradlePluginPublishVersionProvider : TestParameterValuesProvider(
     if (QUICK_TEST) {
       return listOf(GradlePluginPublish.VERSIONS.max())
     }
-    return GradlePluginPublish.VERSIONS.distinct()
+    return GradlePluginPublish.VERSIONS.toList()
   }
 }
