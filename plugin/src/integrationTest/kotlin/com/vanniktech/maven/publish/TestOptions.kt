@@ -68,7 +68,7 @@ class KgpVersion(
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("KGP") {
-  companion object Companion {
+  companion object {
     val VERSIONS = setOf(
       // minimum supported
       KgpVersion(Versions.KOTLIN_MIN),
@@ -111,7 +111,7 @@ class GradleVersion(
 class PluginPublishVersion(
   override val value: String,
 ) : ComparableVersion("PluginPublish") {
-  companion object Companion {
+  companion object {
     val VERSIONS = setOf(
       // minimum supported
       PluginPublishVersion("1.0.0"),
