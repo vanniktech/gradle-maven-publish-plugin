@@ -61,26 +61,26 @@ class AgpVersion(
   }
 }
 
-class KotlinVersion(
+class KgpVersion(
   override val value: String,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
   val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.min(),
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("KGP") {
-  companion object {
+  companion object Companion {
     val VERSIONS = setOf(
       // minimum supported
-      KotlinVersion(Versions.KOTLIN_MIN),
+      KgpVersion(Versions.KOTLIN_MIN),
       // latest versions of each type
-      KotlinVersion(Versions.KOTLIN_STABLE),
-      KotlinVersion(Versions.KOTLIN_RC),
-      KotlinVersion(Versions.KOTLIN_BETA),
-      KotlinVersion(Versions.KOTLIN_ALPHA),
+      KgpVersion(Versions.KOTLIN_STABLE),
+      KgpVersion(Versions.KOTLIN_RC),
+      KgpVersion(Versions.KOTLIN_BETA),
+      KgpVersion(Versions.KOTLIN_ALPHA),
     )
 
     // versions used for checks instead of test matrix
-    val KOTLIN_2_2_10 = KotlinVersion("2.2.10")
+    val KOTLIN_2_2_10 = KgpVersion("2.2.10")
   }
 }
 
@@ -131,7 +131,7 @@ fun GradleVersion.assumeSupportedJdkVersion() {
   }
 }
 
-fun KotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
+fun KgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
   assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
   assume().that(gradleVersion).isAtLeast(minGradleVersion)
   if (firstUnsupportedJdkVersion != null) {

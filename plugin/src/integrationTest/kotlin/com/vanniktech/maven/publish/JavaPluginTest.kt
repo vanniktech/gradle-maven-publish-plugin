@@ -139,11 +139,11 @@ class JavaPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun javaGradlePluginKotlinProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = javaGradlePluginKotlinProjectSpec(kotlinVersion)
+    val project = javaGradlePluginKotlinProjectSpec(kgpVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     assertThat(result).outcome().succeeded()
@@ -151,7 +151,7 @@ class JavaPluginTest : BasePluginTest() {
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kgpVersion))
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()

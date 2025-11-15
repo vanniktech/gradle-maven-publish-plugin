@@ -15,8 +15,8 @@ class DokkaPluginTest : BasePluginTest() {
   )
   @TestParameterInjectorTest
   fun dokka() {
-    val kotlinVersion = KotlinVersion.VERSIONS.last()
-    val original = kotlinJvmProjectSpec(kotlinVersion)
+    val kgpVersion = KgpVersion.VERSIONS.last()
+    val original = kotlinJvmProjectSpec(kgpVersion)
     val project = original.copy(
       plugins = original.plugins + dokkaPlugin,
       basePluginConfig = original.basePluginConfig.replace(
@@ -29,7 +29,7 @@ class DokkaPluginTest : BasePluginTest() {
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kgpVersion))
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsAllSourceFiles()
@@ -39,8 +39,8 @@ class DokkaPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun dokkaJavadoc() {
-    val kotlinVersion = KotlinVersion.VERSIONS.last()
-    val original = kotlinJvmProjectSpec(kotlinVersion)
+    val kgpVersion = KgpVersion.VERSIONS.last()
+    val original = kotlinJvmProjectSpec(kgpVersion)
     val project = original.copy(
       plugins = original.plugins + dokkaJavadocPlugin,
       basePluginConfig = original.basePluginConfig.replace(
@@ -53,7 +53,7 @@ class DokkaPluginTest : BasePluginTest() {
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kgpVersion))
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsAllSourceFiles()

@@ -3,17 +3,17 @@ package com.vanniktech.maven.publish
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.AgpVersion.Companion.AGP_9_0_0
-import com.vanniktech.maven.publish.KotlinVersion.Companion.KOTLIN_2_2_10
+import com.vanniktech.maven.publish.KgpVersion.Companion.KOTLIN_2_2_10
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 
 class KotlinPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun kotlinJvmProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = kotlinJvmProjectSpec(kotlinVersion)
+    val project = kotlinJvmProjectSpec(kgpVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     assertThat(result).outcome().succeeded()
@@ -21,7 +21,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kgpVersion))
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
@@ -33,11 +33,11 @@ class KotlinPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun kotlinJvmWithTestFixturesProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val default = kotlinJvmProjectSpec(kotlinVersion)
+    val default = kotlinJvmProjectSpec(kgpVersion)
     val project = default.copy(
       plugins = default.plugins + javaTestFixturesPlugin,
       sourceFiles = default.sourceFiles + listOf(
@@ -52,7 +52,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kgpVersion))
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
@@ -69,11 +69,11 @@ class KotlinPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun kotlinMultiplatformProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = kotlinMultiplatformProjectSpec(kotlinVersion)
+    val project = kotlinMultiplatformProjectSpec(kgpVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     assertThat(result).outcome().succeeded()
@@ -82,7 +82,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     assertThat(result).pom().matchesExpectedPom(
-      kotlinStdlibCommon(kotlinVersion).copy(scope = "runtime"),
+      kotlinStdlibCommon(kgpVersion).copy(scope = "runtime"),
     )
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
@@ -99,8 +99,8 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(jvmResult).pom().exists()
     assertThat(jvmResult).pom().isSigned()
     assertThat(jvmResult).pom().matchesExpectedPom(
-      kotlinStdlibJdk(kotlinVersion),
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibJdk(kgpVersion),
+      kotlinStdlibCommon(kgpVersion),
     )
     assertThat(jvmResult).module().exists()
     assertThat(jvmResult).module().isSigned()
@@ -118,7 +118,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(linuxResult).pom().isSigned()
     assertThat(linuxResult).pom().matchesExpectedPom(
       "klib",
-      kotlinStdlibCommon(kotlinVersion),
+      kotlinStdlibCommon(kgpVersion),
     )
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).module().isSigned()
@@ -134,7 +134,7 @@ class KotlinPluginTest : BasePluginTest() {
     assertThat(nodejsResult).artifact("klib").isSigned()
     assertThat(nodejsResult).pom().exists()
     assertThat(nodejsResult).pom().isSigned()
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinStdlibJs(kotlinVersion), kotlinDomApi(kotlinVersion))
+    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinStdlibJs(kgpVersion), kotlinDomApi(kgpVersion))
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).module().isSigned()
     assertThat(nodejsResult).sourcesJar().exists()
@@ -147,18 +147,18 @@ class KotlinPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun kotlinMultiplatformWithAndroidLibraryProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
+    val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kgpVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
-    val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kotlinVersion < KOTLIN_2_2_10) {
+    val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kgpVersion < KOTLIN_2_2_10) {
       "2.2.10"
     } else {
-      kotlinVersion.value
+      kgpVersion.value
     }
 
     assertThat(result).outcome().succeeded()
@@ -261,18 +261,18 @@ class KotlinPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(agpVersion, kotlinVersion)
+    val project = kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(agpVersion, kgpVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
-    val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kotlinVersion < KOTLIN_2_2_10) {
+    val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kgpVersion < KOTLIN_2_2_10) {
       "2.2.10"
     } else {
-      kotlinVersion.value
+      kgpVersion.value
     }
 
     assertThat(result).outcome().succeeded()
@@ -384,18 +384,18 @@ class KotlinPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun kotlinMultiplatformWithModernAndroidLibraryProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
+    val project = kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion, kgpVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
-    val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kotlinVersion < KOTLIN_2_2_10) {
+    val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kgpVersion < KOTLIN_2_2_10) {
       "2.2.10"
     } else {
-      kotlinVersion.value
+      kgpVersion.value
     }
 
     assertThat(result).outcome().succeeded()

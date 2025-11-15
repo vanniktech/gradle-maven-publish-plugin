@@ -43,12 +43,12 @@ class AndroidPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun androidLibraryKotlinProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = androidLibraryKotlinProjectSpec(agpVersion, kotlinVersion)
+    val project = androidLibraryKotlinProjectSpec(agpVersion, kgpVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     assertThat(result).outcome().succeeded()
@@ -59,7 +59,7 @@ class AndroidPluginTest : BasePluginTest() {
     if (agpVersion >= AGP_9_0_0) {
       assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk("2.2.10"))
     } else {
-      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk(kotlinVersion))
+      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk(kgpVersion))
     }
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
