@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.AgpVersion.Companion.AGP_9_0_0
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.DOKKA_STABLE
 import java.nio.file.Paths
 import kotlin.io.path.absolute
@@ -275,7 +276,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
 
 fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
   val plainAndroidProject = androidLibraryProjectSpec(agpVersion)
-  val plugins = if (agpVersion >= AgpVersion.AGP_9_0_0) {
+  val plugins = if (agpVersion >= AGP_9_0_0) {
     plainAndroidProject.plugins
   } else {
     plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value)
@@ -310,7 +311,7 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     """
     androidFusedLibrary {
         namespace = "com.test.library"
-        ${if (version >= AgpVersion.AGP_9_0_0) "minSdk { version = release(34) }" else "minSdk = 29" }
+        ${if (version >= AGP_9_0_0) "minSdk { version = release(34) }" else "minSdk = 29" }
     }
     """.trimIndent(),
   // TODO remove when stable

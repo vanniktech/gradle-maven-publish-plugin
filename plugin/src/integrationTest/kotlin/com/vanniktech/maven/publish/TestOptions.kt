@@ -41,7 +41,7 @@ sealed class ComparableVersion(
 class AgpVersion(
   override val value: String,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
-  val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.first(),
+  val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.min(),
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("AGP") {
@@ -64,7 +64,7 @@ class AgpVersion(
 class KotlinVersion(
   override val value: String,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
-  val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.first(),
+  val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.min(),
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("Kotlin") {
