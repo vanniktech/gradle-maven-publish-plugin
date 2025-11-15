@@ -8,10 +8,10 @@ import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.slf4j.Logger
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory

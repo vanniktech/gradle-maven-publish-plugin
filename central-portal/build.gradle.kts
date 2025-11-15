@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-  implementation(libs.okhttp)
+  implementation(libs.okhttp.client)
   implementation(libs.retrofit)
   implementation(libs.retrofit.converter.scalars)
   implementation(libs.retrofit.converter.moshi)
