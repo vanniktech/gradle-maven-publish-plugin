@@ -156,9 +156,9 @@ class KotlinPluginTest : BasePluginTest() {
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kgpVersion < KOTLIN_2_2_10) {
-      "2.2.10"
+      KOTLIN_2_2_10
     } else {
-      kgpVersion.value
+      kgpVersion
     }
 
     assertThat(result).outcome().succeeded()
@@ -270,9 +270,9 @@ class KotlinPluginTest : BasePluginTest() {
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kgpVersion < KOTLIN_2_2_10) {
-      "2.2.10"
+      KOTLIN_2_2_10
     } else {
-      kgpVersion.value
+      kgpVersion
     }
 
     assertThat(result).outcome().succeeded()
@@ -393,9 +393,9 @@ class KotlinPluginTest : BasePluginTest() {
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kgpVersion < KOTLIN_2_2_10) {
-      "2.2.10"
+      KOTLIN_2_2_10
     } else {
-      kgpVersion.value
+      kgpVersion
     }
 
     assertThat(result).outcome().succeeded()
