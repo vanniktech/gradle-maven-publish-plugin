@@ -15,35 +15,35 @@ internal class TestOptionsConfigProvider : TestParameterValuesProvider() {
 internal class GradleVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (QUICK_TEST) {
-      return listOf(GradleVersion.entries.last())
+      return listOf(GradleVersion.VERSIONS.max())
     }
-    return GradleVersion.entries.distinctBy { it.value }
+    return GradleVersion.VERSIONS.toList()
   }
 }
 
 internal class AgpVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (QUICK_TEST) {
-      return listOf(AgpVersion.entries.last())
+      return listOf(AgpVersion.VERSIONS.max())
     }
-    return AgpVersion.entries.distinctBy { it.value }
+    return AgpVersion.VERSIONS.toList()
   }
 }
 
 internal class KotlinVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (QUICK_TEST) {
-      return listOf(KotlinVersion.entries.last())
+      return listOf(KotlinVersion.VERSIONS.max())
     }
-    return KotlinVersion.entries.distinctBy { it.value }
+    return KotlinVersion.VERSIONS.toList()
   }
 }
 
 internal class GradlePluginPublishVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (QUICK_TEST) {
-      return listOf(GradlePluginPublish.entries.last())
+      return listOf(GradlePluginPublish.VERSIONS.max())
     }
-    return GradlePluginPublish.entries.distinctBy { it.version }
+    return GradlePluginPublish.VERSIONS.toList()
   }
 }

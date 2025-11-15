@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish
 
+import com.vanniktech.maven.publish.AgpVersion.Companion.AGP_9_0_0
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.DOKKA_STABLE
 import java.nio.file.Paths
 import kotlin.io.path.absolute
@@ -95,7 +96,7 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
 fun javaGradlePluginWithGradlePluginPublish(gradlePluginPublish: GradlePluginPublish): ProjectSpec {
   val base = javaGradlePluginProjectSpec()
   return base.copy(
-    plugins = base.plugins + gradlePluginPublishPlugin.copy(version = gradlePluginPublish.version),
+    plugins = base.plugins + gradlePluginPublishPlugin.copy(version = gradlePluginPublish.value),
     basePluginConfig = "configure(new GradlePublishPlugin())",
   )
 }
@@ -275,10 +276,10 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
 
 fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
   val plainAndroidProject = androidLibraryProjectSpec(agpVersion)
-  val plugins = if (agpVersion < AgpVersion.AGP_9_0_0) {
-    plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value)
-  } else {
+  val plugins = if (agpVersion >= AGP_9_0_0) {
     plainAndroidProject.plugins
+  } else {
+    plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value)
   }
   return plainAndroidProject.copy(
     plugins = plugins,
@@ -310,7 +311,7 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     """
     androidFusedLibrary {
         namespace = "com.test.library"
-        ${if (version < AgpVersion.AGP_9_0_0) "minSdk = 29" else "minSdk { version = release(34) }" }
+        ${if (version >= AGP_9_0_0) "minSdk { version = release(34) }" else "minSdk = 29" }
     }
     """.trimIndent(),
   // TODO remove when stable

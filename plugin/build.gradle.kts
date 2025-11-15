@@ -110,6 +110,7 @@ dependencies {
   testImplementation(libs.truth)
   testImplementation(libs.truth.testKit)
   testImplementation(libs.maven.model)
+  testImplementation(libs.semver)
 
   lintChecks(libs.androidx.gradlePluginLints)
 }
