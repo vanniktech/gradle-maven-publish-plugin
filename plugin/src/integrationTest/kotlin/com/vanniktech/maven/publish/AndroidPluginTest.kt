@@ -3,13 +3,13 @@ package com.vanniktech.maven.publish
 import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
-import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.util.AgpVersion
 import com.vanniktech.maven.publish.util.AgpVersion.Companion.AGP_9_0_0
 import com.vanniktech.maven.publish.util.AgpVersionProvider
 import com.vanniktech.maven.publish.util.KgpVersion
 import com.vanniktech.maven.publish.util.KgpVersion.Companion.KOTLIN_2_2_10
 import com.vanniktech.maven.publish.util.KgpVersionProvider
+import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.util.TestOptions
 import com.vanniktech.maven.publish.util.androidFusedLibraryProjectSpec
 import com.vanniktech.maven.publish.util.androidLibraryKotlinProjectSpec

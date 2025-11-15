@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
 import com.autonomousapps.kit.truth.BuildResultSubject.Companion.buildResults
 import com.autonomousapps.kit.truth.BuildTaskSubject
@@ -9,13 +9,9 @@ import com.google.common.truth.FailureMetadata
 import com.google.common.truth.Subject
 import com.google.common.truth.Truth.assertAbout
 import com.google.common.truth.Truth.assertThat
-import com.vanniktech.maven.publish.ArtifactSubject.Companion.artifact
-import com.vanniktech.maven.publish.PomSubject.Companion.pomSubject
-import com.vanniktech.maven.publish.SourcesJarSubject.Companion.sourcesJarSubject
-import com.vanniktech.maven.publish.util.PomDependency
-import com.vanniktech.maven.publish.util.ProjectResult
-import com.vanniktech.maven.publish.util.SourceFile
-import com.vanniktech.maven.publish.util.createPom
+import com.vanniktech.maven.publish.util.ArtifactSubject.Companion.artifact
+import com.vanniktech.maven.publish.util.PomSubject.Companion.pomSubject
+import com.vanniktech.maven.publish.util.SourcesJarSubject.Companion.sourcesJarSubject
 import java.io.StringWriter
 import java.nio.file.Path
 import java.util.zip.ZipEntry
