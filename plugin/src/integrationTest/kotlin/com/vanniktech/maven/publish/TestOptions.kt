@@ -67,7 +67,7 @@ class KotlinVersion(
   val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.min(),
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
-) : ComparableVersion("Kotlin") {
+) : ComparableVersion("KGP") {
   companion object {
     val VERSIONS = setOf(
       // minimum supported
@@ -110,7 +110,7 @@ class GradleVersion(
 
 class GradlePluginPublish(
   override val value: String,
-) : ComparableVersion("Gradle Publish") {
+) : ComparableVersion("PluginPublish") {
   companion object {
     val VERSIONS = setOf(
       // minimum supported
