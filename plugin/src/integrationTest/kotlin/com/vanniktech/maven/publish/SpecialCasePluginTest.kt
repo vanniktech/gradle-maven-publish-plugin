@@ -11,7 +11,7 @@ class SpecialCasePluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
@@ -71,7 +71,7 @@ class SpecialCasePluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId2(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 

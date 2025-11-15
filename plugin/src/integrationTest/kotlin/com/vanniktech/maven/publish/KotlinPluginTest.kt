@@ -9,7 +9,7 @@ import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
 class KotlinPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun kotlinJvmProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
@@ -33,7 +33,7 @@ class KotlinPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun kotlinJvmWithTestFixturesProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
@@ -69,7 +69,7 @@ class KotlinPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun kotlinMultiplatformProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
@@ -147,7 +147,7 @@ class KotlinPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun kotlinMultiplatformWithAndroidLibraryProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
@@ -261,7 +261,7 @@ class KotlinPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
@@ -384,7 +384,7 @@ class KotlinPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun kotlinMultiplatformWithModernAndroidLibraryProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)

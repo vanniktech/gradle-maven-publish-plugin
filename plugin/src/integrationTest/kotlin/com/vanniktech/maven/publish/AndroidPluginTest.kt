@@ -43,7 +43,7 @@ class AndroidPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun androidLibraryKotlinProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)

@@ -139,7 +139,7 @@ class JavaPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun javaGradlePluginKotlinProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
