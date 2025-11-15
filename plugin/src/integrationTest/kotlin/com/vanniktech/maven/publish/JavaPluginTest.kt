@@ -107,9 +107,9 @@ class JavaPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun javaGradlePluginWithPluginPublishProject(
-    @TestParameter(valuesProvider = GradlePluginPublishVersionProvider::class) gradlePluginPublish: GradlePluginPublish,
+    @TestParameter(valuesProvider = GradlePluginPublishVersionProvider::class) pluginPublishVersion: PluginPublishVersion,
   ) {
-    val project = javaGradlePluginWithGradlePluginPublish(gradlePluginPublish)
+    val project = javaGradlePluginWithGradlePluginPublish(pluginPublishVersion)
     val result = project.run(fixtures, testProjectDir, testOptions)
 
     assertThat(result).outcome().succeeded()

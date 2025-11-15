@@ -42,8 +42,8 @@ class KotlinVersionProvider : TestParameterValuesProvider() {
 class GradlePluginPublishVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<*> {
     if (QUICK_TEST) {
-      return listOf(GradlePluginPublish.VERSIONS.max())
+      return listOf(PluginPublishVersion.VERSIONS.max())
     }
-    return GradlePluginPublish.VERSIONS.toList()
+    return PluginPublishVersion.VERSIONS.toList()
   }
 }

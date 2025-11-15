@@ -108,18 +108,18 @@ class GradleVersion(
   }
 }
 
-class GradlePluginPublish(
+class PluginPublishVersion(
   override val value: String,
 ) : ComparableVersion("PluginPublish") {
-  companion object {
+  companion object Companion {
     val VERSIONS = setOf(
       // minimum supported
-      GradlePluginPublish("1.0.0"),
+      PluginPublishVersion("1.0.0"),
       // latest versions of each type
-      GradlePluginPublish(Versions.GRADLE_PUBLISH_STABLE),
-      GradlePluginPublish(Versions.GRADLE_PUBLISH_RC),
-      GradlePluginPublish(Versions.GRADLE_PUBLISH_BETA),
-      GradlePluginPublish(Versions.GRADLE_PUBLISH_ALPHA),
+      PluginPublishVersion(Versions.GRADLE_PUBLISH_STABLE),
+      PluginPublishVersion(Versions.GRADLE_PUBLISH_RC),
+      PluginPublishVersion(Versions.GRADLE_PUBLISH_BETA),
+      PluginPublishVersion(Versions.GRADLE_PUBLISH_ALPHA),
     )
   }
 }
