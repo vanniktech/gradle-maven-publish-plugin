@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
 import java.nio.file.Path
 import org.gradle.testkit.runner.BuildResult

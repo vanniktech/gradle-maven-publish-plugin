@@ -2,7 +2,15 @@ package com.vanniktech.maven.publish
 
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
-import com.vanniktech.maven.publish.TestOptions.Signing.NO_SIGNING
+import com.vanniktech.maven.publish.util.KgpVersion
+import com.vanniktech.maven.publish.util.TestOptions
+import com.vanniktech.maven.publish.util.TestOptions.Signing.NO_SIGNING
+import com.vanniktech.maven.publish.util.dokkaJavadocPlugin
+import com.vanniktech.maven.publish.util.dokkaPlugin
+import com.vanniktech.maven.publish.util.fixtures
+import com.vanniktech.maven.publish.util.kotlinJvmProjectSpec
+import com.vanniktech.maven.publish.util.kotlinStdlibCommon
+import com.vanniktech.maven.publish.util.run
 import org.junit.jupiter.api.condition.DisabledOnJre
 import org.junit.jupiter.api.condition.JRE
 

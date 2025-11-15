@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
 import com.google.common.truth.TruthJUnit.assume
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig as Versions

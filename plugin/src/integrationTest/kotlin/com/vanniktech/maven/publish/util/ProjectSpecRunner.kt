@@ -1,5 +1,6 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
+import com.vanniktech.maven.publish.IntegrationTestBuildConfig
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.QUICK_TEST
 import java.nio.file.Files
 import java.nio.file.Path

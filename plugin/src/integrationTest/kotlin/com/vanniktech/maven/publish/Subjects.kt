@@ -12,6 +12,10 @@ import com.google.common.truth.Truth.assertThat
 import com.vanniktech.maven.publish.ArtifactSubject.Companion.artifact
 import com.vanniktech.maven.publish.PomSubject.Companion.pomSubject
 import com.vanniktech.maven.publish.SourcesJarSubject.Companion.sourcesJarSubject
+import com.vanniktech.maven.publish.util.PomDependency
+import com.vanniktech.maven.publish.util.ProjectResult
+import com.vanniktech.maven.publish.util.SourceFile
+import com.vanniktech.maven.publish.util.createPom
 import java.io.StringWriter
 import java.nio.file.Path
 import java.util.zip.ZipEntry

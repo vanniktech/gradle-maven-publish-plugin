@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterValuesProvider
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.QUICK_TEST

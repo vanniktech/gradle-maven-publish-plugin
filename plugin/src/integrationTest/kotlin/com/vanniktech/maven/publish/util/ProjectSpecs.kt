@@ -1,7 +1,7 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
-import com.vanniktech.maven.publish.AgpVersion.Companion.AGP_9_0_0
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.DOKKA_STABLE
+import com.vanniktech.maven.publish.util.AgpVersion.Companion.AGP_9_0_0
 import java.nio.file.Paths
 import kotlin.io.path.absolute
 
