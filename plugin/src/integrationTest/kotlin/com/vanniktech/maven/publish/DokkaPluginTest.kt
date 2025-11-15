@@ -9,8 +9,8 @@ import com.vanniktech.maven.publish.util.dokkaJavadocPlugin
 import com.vanniktech.maven.publish.util.dokkaPlugin
 import com.vanniktech.maven.publish.util.fixtures
 import com.vanniktech.maven.publish.util.kotlinJvmProjectSpec
-import com.vanniktech.maven.publish.util.kotlinStdlibCommon
 import com.vanniktech.maven.publish.util.run
+import com.vanniktech.maven.publish.util.stdlibCommon
 import org.junit.jupiter.api.condition.DisabledOnJre
 import org.junit.jupiter.api.condition.JRE
 
@@ -37,7 +37,7 @@ class DokkaPluginTest : BasePluginTest() {
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibCommon(kgpVersion))
+    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsAllSourceFiles()
@@ -61,7 +61,7 @@ class DokkaPluginTest : BasePluginTest() {
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibCommon(kgpVersion))
+    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsAllSourceFiles()

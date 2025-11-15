@@ -18,8 +18,8 @@ import com.vanniktech.maven.publish.util.javaLibraryProjectSpec
 import com.vanniktech.maven.publish.util.javaPlatformProjectSpec
 import com.vanniktech.maven.publish.util.javaProjectSpec
 import com.vanniktech.maven.publish.util.javaTestFixturesPlugin
-import com.vanniktech.maven.publish.util.kotlinStdlibCommon
 import com.vanniktech.maven.publish.util.run
+import com.vanniktech.maven.publish.util.stdlibCommon
 import com.vanniktech.maven.publish.util.versionCatalogProjectSpec
 
 class JavaPluginTest : BasePluginTest() {
@@ -169,7 +169,7 @@ class JavaPluginTest : BasePluginTest() {
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibCommon(kgpVersion))
+    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()

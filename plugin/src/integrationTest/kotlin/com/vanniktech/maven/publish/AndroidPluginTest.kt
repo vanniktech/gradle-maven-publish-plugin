@@ -16,8 +16,8 @@ import com.vanniktech.maven.publish.util.androidLibraryKotlinProjectSpec
 import com.vanniktech.maven.publish.util.androidLibraryProjectSpec
 import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
 import com.vanniktech.maven.publish.util.fixtures
-import com.vanniktech.maven.publish.util.kotlinStdlibCommon
 import com.vanniktech.maven.publish.util.run
+import com.vanniktech.maven.publish.util.stdlibCommon
 import org.junit.jupiter.api.condition.DisabledOnJre
 import org.junit.jupiter.api.condition.JRE
 
@@ -70,9 +70,9 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     if (agpVersion >= AGP_9_0_0) {
-      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibCommon(KOTLIN_2_2_10))
+      assertThat(result).pom().matchesExpectedPom("aar", KOTLIN_2_2_10.stdlibCommon())
     } else {
-      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibCommon(kgpVersion))
+      assertThat(result).pom().matchesExpectedPom("aar", kgpVersion.stdlibCommon())
     }
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
@@ -98,7 +98,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     if (agpVersion >= AGP_9_0_0) {
-      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibCommon(KOTLIN_2_2_10))
+      assertThat(result).pom().matchesExpectedPom("aar", KOTLIN_2_2_10.stdlibCommon())
     } else {
       assertThat(result).pom().matchesExpectedPom("aar")
     }
@@ -132,7 +132,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     if (agpVersion >= AGP_9_0_0) {
-      assertThat(result).pom().matchesExpectedPom("pom", kotlinStdlibCommon(KOTLIN_2_2_10))
+      assertThat(result).pom().matchesExpectedPom("pom", KOTLIN_2_2_10.stdlibCommon())
     } else {
       assertThat(result).pom().matchesExpectedPom("pom")
     }
