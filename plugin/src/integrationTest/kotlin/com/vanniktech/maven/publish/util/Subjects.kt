@@ -30,8 +30,9 @@ class ProjectResultSubject private constructor(
   private val result: ProjectResult,
 ) : Subject(failureMetadata, result) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ProjectResultSubject, ProjectResult> =
-      Factory { metadata, actual -> ProjectResultSubject(metadata, actual!!) }
+    private val BUILD_RESULT_SUBJECT_FACTORY = Factory<ProjectResultSubject, ProjectResult> { metadata, actual ->
+      ProjectResultSubject(metadata, requireNotNull(actual))
+    }
 
     fun projectResult() = BUILD_RESULT_SUBJECT_FACTORY
 
@@ -90,8 +91,10 @@ open class ArtifactSubject(
   private val result: ProjectResult,
 ) : Subject(failureMetadata, artifact) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ArtifactSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> ArtifactSubject(metadata, actual!!.first, actual.second) }
+    private val BUILD_RESULT_SUBJECT_FACTORY = Factory<ArtifactSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+      requireNotNull(actual)
+      ArtifactSubject(metadata, actual.first, actual.second)
+    }
 
     fun artifact() = BUILD_RESULT_SUBJECT_FACTORY
   }
@@ -211,8 +214,10 @@ class SourcesJarSubject private constructor(
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY: Factory<SourcesJarSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> SourcesJarSubject(metadata, actual!!.first, actual.second) }
+    private val BUILD_RESULT_SUBJECT_FACTORY = Factory<SourcesJarSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+      requireNotNull(actual)
+      SourcesJarSubject(metadata, actual.first, actual.second)
+    }
 
     fun sourcesJarSubject() = BUILD_RESULT_SUBJECT_FACTORY
   }
@@ -245,8 +250,10 @@ class PomSubject private constructor(
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY: Factory<PomSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> PomSubject(metadata, actual!!.first, actual.second) }
+    private val BUILD_RESULT_SUBJECT_FACTORY = Factory<PomSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+      requireNotNull(actual)
+      PomSubject(metadata, actual.first, actual.second)
+    }
 
     fun pomSubject() = BUILD_RESULT_SUBJECT_FACTORY
   }
