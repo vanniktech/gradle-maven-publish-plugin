@@ -109,7 +109,7 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String = when (op
          ${if (options.config == TestOptions.Config.BASE) basePluginConfig else ""}
          ${if (options.signing != TestOptions.Signing.NO_SIGNING) "signAllPublications()" else ""}
 
-         ${if (group != null && artifactId != null && version != null) "coordinates(\"$group\", \"$artifactId\", \"$version\")" else ""}
+         ${if (group.isNotEmpty() && artifactId.isNotEmpty() && version.isNotEmpty()) "coordinates(\"$group\", \"$artifactId\", \"$version\")" else ""}
 
          pom {
       """,
@@ -201,13 +201,13 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
       appendLine(propertiesExtra)
 
       if (options.config == TestOptions.Config.PROPERTIES) {
-        if (group != null) {
+        if (group.isNotEmpty()) {
           appendLine("GROUP=$group")
         }
-        if (artifactId != null) {
+        if (artifactId.isNotEmpty()) {
           appendLine("POM_ARTIFACT_ID=$artifactId")
         }
-        if (version != null) {
+        if (version.isNotEmpty()) {
           appendLine("VERSION_NAME=$version")
         }
         appendLine()
