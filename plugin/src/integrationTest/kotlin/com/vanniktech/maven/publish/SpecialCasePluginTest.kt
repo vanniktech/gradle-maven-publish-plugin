@@ -48,10 +48,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(jvmResult).outcome().succeeded()
     assertThat(jvmResult).artifact("jar").exists()
     assertThat(jvmResult).pom().exists()
-    assertThat(jvmResult).pom().matchesExpectedPom(
-      kgpVersion.stdlibCommon(),
-      kgpVersion.stdlibCommon(),
-    )
+    assertThat(jvmResult).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
     assertThat(jvmResult).module().exists()
     assertThat(jvmResult).sourcesJar().exists()
     assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
@@ -61,10 +58,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(linuxResult).outcome().succeeded()
     assertThat(linuxResult).artifact("klib").exists()
     assertThat(linuxResult).pom().exists()
-    assertThat(linuxResult).pom().matchesExpectedPom(
-      "klib",
-      kgpVersion.stdlibCommon(),
-    )
+    assertThat(linuxResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibCommon())
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).sourcesJar().exists()
     assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
@@ -108,10 +102,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(jvmResult).outcome().succeeded()
     assertThat(jvmResult).artifact("jar").exists()
     assertThat(jvmResult).pom().exists()
-    assertThat(jvmResult).pom().matchesExpectedPom(
-      kgpVersion.stdlibCommon(),
-      kgpVersion.stdlibCommon(),
-    )
+    assertThat(jvmResult).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
     assertThat(jvmResult).module().exists()
     assertThat(jvmResult).sourcesJar().exists()
     assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
@@ -121,10 +112,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(linuxResult).outcome().succeeded()
     assertThat(linuxResult).artifact("klib").exists()
     assertThat(linuxResult).pom().exists()
-    assertThat(linuxResult).pom().matchesExpectedPom(
-      "klib",
-      kgpVersion.stdlibCommon(),
-    )
+    assertThat(linuxResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibCommon())
     assertThat(linuxResult).module().exists()
     assertThat(linuxResult).sourcesJar().exists()
     assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
