@@ -195,7 +195,6 @@ private fun writeSettingFile(path: Path) {
 private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) {
   path.writeText(
     buildString {
-      appendLine("org.gradle.vfs.watch=false")
       appendLine("kotlin.compiler.execution.strategy=in-process")
       appendLine("kotlin.jvm.target.validation.mode=ignore")
       appendLine("kotlin.mpp.androidSourceSetLayoutVersion1.nowarn=true")
