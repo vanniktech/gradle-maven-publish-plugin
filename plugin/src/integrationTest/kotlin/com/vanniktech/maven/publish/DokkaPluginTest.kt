@@ -11,16 +11,10 @@ import com.vanniktech.maven.publish.util.fixtures
 import com.vanniktech.maven.publish.util.kotlinJvmProjectSpec
 import com.vanniktech.maven.publish.util.run
 import com.vanniktech.maven.publish.util.stdlibCommon
-import org.junit.jupiter.api.condition.DisabledOnJre
-import org.junit.jupiter.api.condition.JRE
 
 class DokkaPluginTest : BasePluginTest() {
   override val testOptions get() = TestOptions(config, NO_SIGNING, gradleVersion)
 
-  @DisabledOnJre(
-    value = [JRE.JAVA_25],
-    disabledReason = "Dokka 1.x does not support Java 25+.",
-  )
   @TestParameterInjectorTest
   fun dokka() {
     val kgpVersion = KgpVersion.VERSIONS.last()

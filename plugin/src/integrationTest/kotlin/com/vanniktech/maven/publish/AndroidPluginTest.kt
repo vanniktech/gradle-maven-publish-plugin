@@ -113,7 +113,7 @@ class AndroidPluginTest : BasePluginTest() {
 
   @DisabledOnJre(
     value = [JRE.JAVA_25],
-    disabledReason = "Dokka 1.x does not support Java 25+.",
+    disabledReason = "Bundled dokka 1.x does not support Java 25+.",
   )
   @TestParameterInjectorTest
   fun androidMultiVariantLibraryProject(
