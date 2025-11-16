@@ -1,6 +1,6 @@
 # Change Log
 
-## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.34.0...HEAD) *(2025-xx-xx)*
+## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.35.0...HEAD) *(2025-xx-xx)*
 
 - Updated minimum supported JDK, Gradle, Android Gradle Plugin and Kotlin versions.
 - Removed support for Dokka v1, it's now required to use Dokka in v2 mode.
