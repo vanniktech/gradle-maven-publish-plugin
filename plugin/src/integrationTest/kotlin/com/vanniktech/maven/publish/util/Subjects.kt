@@ -30,11 +30,11 @@ class ProjectResultSubject private constructor(
   private val result: ProjectResult,
 ) : Subject(failureMetadata, result) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY = Factory<ProjectResultSubject, ProjectResult> { metadata, actual ->
+    private val factory = Factory<ProjectResultSubject, ProjectResult> { metadata, actual ->
       ProjectResultSubject(metadata, requireNotNull(actual))
     }
 
-    fun projectResult() = BUILD_RESULT_SUBJECT_FACTORY
+    fun projectResult() = factory
 
     fun assertThat(actual: ProjectResult): ProjectResultSubject = assertAbout(projectResult()).that(actual)
   }
@@ -91,12 +91,12 @@ open class ArtifactSubject(
   private val result: ProjectResult,
 ) : Subject(failureMetadata, artifact) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY = Factory<ArtifactSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+    private val factory = Factory<ArtifactSubject, Pair<Path, ProjectResult>> { metadata, actual ->
       requireNotNull(actual)
       ArtifactSubject(metadata, actual.first, actual.second)
     }
 
-    fun artifact() = BUILD_RESULT_SUBJECT_FACTORY
+    fun artifact() = factory
   }
 
   fun exists() {
@@ -214,12 +214,12 @@ class SourcesJarSubject private constructor(
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY = Factory<SourcesJarSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+    private val factory = Factory<SourcesJarSubject, Pair<Path, ProjectResult>> { metadata, actual ->
       requireNotNull(actual)
       SourcesJarSubject(metadata, actual.first, actual.second)
     }
 
-    fun sourcesJarSubject() = BUILD_RESULT_SUBJECT_FACTORY
+    fun sourcesJarSubject() = factory
   }
 
   fun containsAllSourceFiles() {
@@ -250,12 +250,12 @@ class PomSubject private constructor(
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY = Factory<PomSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+    private val factory = Factory<PomSubject, Pair<Path, ProjectResult>> { metadata, actual ->
       requireNotNull(actual)
       PomSubject(metadata, actual.first, actual.second)
     }
 
-    fun pomSubject() = BUILD_RESULT_SUBJECT_FACTORY
+    fun pomSubject() = factory
   }
 
   fun matchesExpectedPom(vararg dependencies: PomDependency) {
