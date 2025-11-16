@@ -13,7 +13,17 @@ data class PomDependency(
   val version: String,
   val scope: String?,
   val optional: Boolean? = null,
-)
+) {
+  fun toDependency() = Dependency().also {
+    it.groupId = groupId
+    it.artifactId = artifactId
+    it.version = version
+    it.scope = scope
+    if (optional != null) {
+      it.isOptional = optional
+    }
+  }
+}
 
 fun KgpVersion.stdlibCommon() = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", value, "compile")
 
@@ -65,8 +75,7 @@ fun createMinimalPom(
   packaging: String?,
   dependencies: List<PomDependency>,
   dependencyManagementDependencies: List<PomDependency>,
-): Model {
-  val model = Model()
+): Model = Model().also { model ->
   model.modelVersion = "4.0.0"
   model.modelEncoding = "UTF-8"
   model.groupId = groupId
@@ -76,36 +85,13 @@ fun createMinimalPom(
     model.packaging = packaging
   }
   dependencies.distinct().forEach {
-    model.addDependency(
-      Dependency().apply {
-        this.groupId = it.groupId
-        this.artifactId = it.artifactId
-        this.version = it.version
-        this.scope = it.scope
-        if (it.optional != null) {
-          this.isOptional = it.optional
-        }
-      },
-    )
+    model.addDependency(it.toDependency())
   }
-
   if (dependencyManagementDependencies.isNotEmpty()) {
     model.dependencyManagement = DependencyManagement().apply {
       dependencyManagementDependencies.distinct().forEach {
-        addDependency(
-          Dependency().apply {
-            this.groupId = it.groupId
-            this.artifactId = it.artifactId
-            this.version = it.version
-            this.scope = it.scope
-            if (it.optional != null) {
-              this.isOptional = it.optional
-            }
-          },
-        )
+        addDependency(it.toDependency())
       }
     }
   }
-
-  return model
 }

@@ -2,7 +2,6 @@ package com.vanniktech.maven.publish.util
 
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.QUICK_TEST
-import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.copyTo
@@ -32,6 +31,7 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
     .withDebug(true)
     .withArguments(arguments)
     .apply {
+      @Suppress("KotlinConstantConditions") // Conditioned by build config.
       if (!QUICK_TEST) {
         withTestKitDir(temp.resolve("test-kit-dir").toFile())
       }
@@ -156,33 +156,31 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String = when (op
 }
 
 private fun writeSettingFile(path: Path) {
+  val googleMaven =
+    """
+    google {
+      mavenContent {
+        includeGroupAndSubgroups("androidx")
+        includeGroupAndSubgroups("com.android")
+        includeGroupAndSubgroups("com.google")
+      }
+    }
+    """.trimIndent()
   path.writeText(
     """
     pluginManagement {
         repositories {
             mavenLocal()
+            $googleMaven
             mavenCentral()
-            google {
-                mavenContent {
-                    includeGroupAndSubgroups("androidx")
-                    includeGroupAndSubgroups("com.android")
-                    includeGroupAndSubgroups("com.google")
-                }
-            }
             gradlePluginPortal()
         }
     }
 
     dependencyResolutionManagement {
         repositories {
+            $googleMaven
             mavenCentral()
-            google {
-                mavenContent {
-                    includeGroupAndSubgroups("androidx")
-                    includeGroupAndSubgroups("com.android")
-                    includeGroupAndSubgroups("com.google")
-                }
-            }
         }
     }
 
@@ -223,10 +221,10 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
         when (options.signing) {
           TestOptions.Signing.NO_SIGNING -> {}
           TestOptions.Signing.GPG_KEY -> {
-            appendLine("RELEASE_SIGNING_ENABLED=true")
+            appendLine("signAllPublications=true")
           }
           TestOptions.Signing.IN_MEMORY_KEY -> {
-            appendLine("RELEASE_SIGNING_ENABLED=true")
+            appendLine("signAllPublications=true")
           }
         }
       }
@@ -324,7 +322,7 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
 
 private fun ProjectSpec.writeSourceFiles(fixtures: Path, target: Path) {
   sourceFiles.forEach {
-    Files.createDirectories(it.resolveIn(target).parent)
-    Files.copy(it.resolveIn(fixtures), it.resolveIn(target))
+    it.resolveIn(target).parent.createDirectories()
+    it.resolveIn(fixtures).copyTo(it.resolveIn(target))
   }
 }
