@@ -12,16 +12,14 @@ data class PomDependency(
   val artifactId: String,
   val version: String,
   val scope: String?,
-  val optional: Boolean? = null,
+  val isOptional: Boolean = false,
 ) {
   fun toDependency() = Dependency().also {
     it.groupId = groupId
     it.artifactId = artifactId
     it.version = version
     it.scope = scope
-    if (optional != null) {
-      it.isOptional = optional
-    }
+    it.isOptional = isOptional
   }
 }
 
