@@ -149,9 +149,9 @@ class SpecialCasePluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun groupAndVersionFromProjectProject() {
     val project = javaProjectSpec().copy(
-      group = null,
-      artifactId = null,
-      version = null,
+      group = "",
+      artifactId = "",
+      version = "",
       buildFileExtra =
         """
         group = "com.example.test2"
