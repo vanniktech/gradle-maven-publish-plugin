@@ -76,6 +76,28 @@ class ProjectResultSubject private constructor(
     .about(artifact())
     .that(artifactPath("", "module") to result)
 
+  fun hasSingleArtifactCommon(artifactExtension: String = "jar", signed: Boolean = true) {
+    assertThat(result).outcome().succeeded()
+    assertThat(result).artifact(artifactExtension).exists()
+    assertThat(result).pom().exists()
+    assertThat(result).module().exists()
+    assertThat(result).sourcesJar().exists()
+    assertThat(result).javadocJar().exists()
+    if (signed) {
+      assertThat(result).artifact(artifactExtension).isSigned()
+      assertThat(result).pom().isSigned()
+      assertThat(result).module().isSigned()
+      assertThat(result).sourcesJar().isSigned()
+      assertThat(result).javadocJar().isSigned()
+    } else {
+      assertThat(result).artifact(artifactExtension).isNotSigned()
+      assertThat(result).pom().isNotSigned()
+      assertThat(result).module().isNotSigned()
+      assertThat(result).sourcesJar().isNotSigned()
+      assertThat(result).javadocJar().isNotSigned()
+    }
+  }
+
   private fun artifactPath(suffix: String, extension: String): Path = with(result.projectSpec) {
     return result.repo
       .resolve(group.replace(".", "/"))
