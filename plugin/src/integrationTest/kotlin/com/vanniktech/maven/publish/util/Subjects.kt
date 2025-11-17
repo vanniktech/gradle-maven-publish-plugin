@@ -98,6 +98,40 @@ class ProjectResultSubject private constructor(
     }
   }
 
+  fun hasKotlinArtifactsCommon(kgpVersion: KgpVersion, containsAndroidTarget: Boolean = true, enableSigning: Boolean = true) {
+    assertThat(result).hasSingleArtifactCommon(signed = enableSigning)
+    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon().copy(scope = "runtime"))
+    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
+
+    result.withArtifactIdSuffix("jvm").let { jvmResult ->
+      assertThat(jvmResult).hasSingleArtifactCommon(signed = enableSigning)
+      assertThat(jvmResult).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
+      assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
+    }
+
+    result.withArtifactIdSuffix("linuxx64").let { linuxResult ->
+      assertThat(linuxResult).hasSingleArtifactCommon("klib", signed = enableSigning)
+      assertThat(linuxResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibCommon())
+      assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
+    }
+
+    result.withArtifactIdSuffix("nodejs").let { nodejsResult ->
+      assertThat(nodejsResult).hasSingleArtifactCommon("klib", signed = enableSigning)
+      assertThat(nodejsResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
+      assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
+    }
+
+    if (containsAndroidTarget) {
+      result.withArtifactIdSuffix("android").let { androidReleaseResult ->
+        assertThat(androidReleaseResult).hasSingleArtifactCommon("aar", signed = enableSigning)
+        assertThat(androidReleaseResult).pom().matchesExpectedPom("aar", kgpVersion.stdlibCommon())
+        assertThat(androidReleaseResult)
+          .sourcesJar()
+          .containsSourceSetFiles("commonMain", "androidMain", "androidRelease")
+      }
+    }
+  }
+
   private fun artifactPath(suffix: String, extension: String): Path = with(result.projectSpec) {
     return result.repo
       .resolve(group.replace(".", "/"))

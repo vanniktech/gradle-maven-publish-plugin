@@ -11,7 +11,6 @@ import com.vanniktech.maven.publish.util.KgpVersionProvider
 import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.util.SourceFile
 import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
-import com.vanniktech.maven.publish.util.domApiCompat
 import com.vanniktech.maven.publish.util.javaTestFixturesPlugin
 import com.vanniktech.maven.publish.util.kotlinJvmProjectSpec
 import com.vanniktech.maven.publish.util.kotlinMultiplatformProjectSpec
@@ -19,7 +18,6 @@ import com.vanniktech.maven.publish.util.kotlinMultiplatformWithAndroidLibraryAn
 import com.vanniktech.maven.publish.util.kotlinMultiplatformWithAndroidLibraryProjectSpec
 import com.vanniktech.maven.publish.util.kotlinMultiplatformWithModernAndroidLibraryProjectSpec
 import com.vanniktech.maven.publish.util.stdlibCommon
-import com.vanniktech.maven.publish.util.stdlibJs
 
 class KotlinPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
@@ -71,24 +69,7 @@ class KotlinPluginTest : BasePluginTest() {
     val project = kotlinMultiplatformProjectSpec(kgpVersion)
     val result = project.run()
 
-    assertThat(result).hasSingleArtifactCommon()
-    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon().copy(scope = "runtime"))
-    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-
-    val jvmResult = result.withArtifactIdSuffix("jvm")
-    assertThat(jvmResult).hasSingleArtifactCommon()
-    assertThat(jvmResult).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
-    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
-
-    val linuxResult = result.withArtifactIdSuffix("linuxx64")
-    assertThat(linuxResult).hasSingleArtifactCommon("klib")
-    assertThat(linuxResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibCommon())
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
-
-    val nodejsResult = result.withArtifactIdSuffix("nodejs")
-    assertThat(nodejsResult).hasSingleArtifactCommon("klib")
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
-    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
+    assertThat(result).hasKotlinArtifactsCommon(kgpVersion, containsAndroidTarget = false)
   }
 
   @TestParameterInjectorTest
@@ -108,37 +89,15 @@ class KotlinPluginTest : BasePluginTest() {
       kgpVersion
     }
 
-    assertThat(result).hasSingleArtifactCommon()
-    assertThat(result).pom().matchesExpectedPom(kotlinDependencyVersion.stdlibCommon().copy(scope = "runtime"))
-    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-
-    val jvmResult = result.withArtifactIdSuffix("jvm")
-    assertThat(jvmResult).hasSingleArtifactCommon()
-    assertThat(jvmResult).pom().matchesExpectedPom(kotlinDependencyVersion.stdlibCommon())
-    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
-
-    val linuxResult = result.withArtifactIdSuffix("linuxx64")
-    assertThat(linuxResult).hasSingleArtifactCommon("klib")
-    assertThat(linuxResult).pom().matchesExpectedPom("klib", kotlinDependencyVersion.stdlibCommon())
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
-
-    val nodejsResult = result.withArtifactIdSuffix("nodejs")
-    assertThat(nodejsResult).hasSingleArtifactCommon("klib")
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinDependencyVersion.stdlibJs(), kotlinDependencyVersion.domApiCompat())
-    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
-
-    val androidReleaseResult = result.withArtifactIdSuffix("android")
-    assertThat(androidReleaseResult).hasSingleArtifactCommon("aar")
-    assertThat(androidReleaseResult).pom().matchesExpectedPom("aar", kotlinDependencyVersion.stdlibCommon())
-    assertThat(androidReleaseResult).sourcesJar().containsSourceSetFiles("commonMain", "androidMain", "androidRelease")
-
-    val androidDebugResult = result.withArtifactIdSuffix("android-debug")
-    assertThat(androidDebugResult).outcome().succeeded()
-    assertThat(androidDebugResult).artifact("aar").doesNotExist()
-    assertThat(androidDebugResult).pom().doesNotExist()
-    assertThat(androidDebugResult).module().doesNotExist()
-    assertThat(androidDebugResult).sourcesJar().doesNotExist()
-    assertThat(androidDebugResult).javadocJar().doesNotExist()
+    assertThat(result).hasKotlinArtifactsCommon(kotlinDependencyVersion)
+    result.withArtifactIdSuffix("android-debug").let { androidDebugResult ->
+      assertThat(androidDebugResult).outcome().succeeded()
+      assertThat(androidDebugResult).artifact("aar").doesNotExist()
+      assertThat(androidDebugResult).pom().doesNotExist()
+      assertThat(androidDebugResult).module().doesNotExist()
+      assertThat(androidDebugResult).sourcesJar().doesNotExist()
+      assertThat(androidDebugResult).javadocJar().doesNotExist()
+    }
   }
 
   @TestParameterInjectorTest
@@ -158,34 +117,12 @@ class KotlinPluginTest : BasePluginTest() {
       kgpVersion
     }
 
-    assertThat(result).hasSingleArtifactCommon()
-    assertThat(result).pom().matchesExpectedPom(kotlinDependencyVersion.stdlibCommon().copy(scope = "runtime"))
-    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-
-    val jvmResult = result.withArtifactIdSuffix("jvm")
-    assertThat(jvmResult).hasSingleArtifactCommon()
-    assertThat(jvmResult).pom().matchesExpectedPom(kotlinDependencyVersion.stdlibCommon())
-    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
-
-    val linuxResult = result.withArtifactIdSuffix("linuxx64")
-    assertThat(linuxResult).hasSingleArtifactCommon("klib")
-    assertThat(linuxResult).pom().matchesExpectedPom("klib", kotlinDependencyVersion.stdlibCommon())
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
-
-    val nodejsResult = result.withArtifactIdSuffix("nodejs")
-    assertThat(nodejsResult).hasSingleArtifactCommon("klib")
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinDependencyVersion.stdlibJs(), kotlinDependencyVersion.domApiCompat())
-    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
-
-    val androidReleaseResult = result.withArtifactIdSuffix("android")
-    assertThat(androidReleaseResult).hasSingleArtifactCommon("aar")
-    assertThat(androidReleaseResult).pom().matchesExpectedPom("aar", kotlinDependencyVersion.stdlibCommon())
-    assertThat(androidReleaseResult).sourcesJar().containsSourceSetFiles("commonMain", "androidMain", "androidRelease")
-
-    val androidDebugResult = result.withArtifactIdSuffix("android-debug")
-    assertThat(androidDebugResult).hasSingleArtifactCommon("aar")
-    assertThat(androidDebugResult).pom().matchesExpectedPom("aar", kotlinDependencyVersion.stdlibCommon())
-    assertThat(androidDebugResult).sourcesJar().containsSourceSetFiles("commonMain", "androidMain", "androidDebug")
+    assertThat(result).hasKotlinArtifactsCommon(kotlinDependencyVersion)
+    result.withArtifactIdSuffix("android-debug").let { androidDebugResult ->
+      assertThat(androidDebugResult).hasSingleArtifactCommon("aar")
+      assertThat(androidDebugResult).pom().matchesExpectedPom("aar", kotlinDependencyVersion.stdlibCommon())
+      assertThat(androidDebugResult).sourcesJar().containsSourceSetFiles("commonMain", "androidMain", "androidDebug")
+    }
   }
 
   @TestParameterInjectorTest
@@ -205,28 +142,6 @@ class KotlinPluginTest : BasePluginTest() {
       kgpVersion
     }
 
-    assertThat(result).hasSingleArtifactCommon()
-    assertThat(result).pom().matchesExpectedPom(kotlinDependencyVersion.stdlibCommon().copy(scope = "runtime"))
-    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-
-    val jvmResult = result.withArtifactIdSuffix("jvm")
-    assertThat(jvmResult).hasSingleArtifactCommon()
-    assertThat(jvmResult).pom().matchesExpectedPom(kotlinDependencyVersion.stdlibCommon())
-    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
-
-    val linuxResult = result.withArtifactIdSuffix("linuxx64")
-    assertThat(linuxResult).hasSingleArtifactCommon("klib")
-    assertThat(linuxResult).pom().matchesExpectedPom("klib", kotlinDependencyVersion.stdlibCommon())
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
-
-    val nodejsResult = result.withArtifactIdSuffix("nodejs")
-    assertThat(nodejsResult).hasSingleArtifactCommon("klib")
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kotlinDependencyVersion.stdlibJs(), kotlinDependencyVersion.domApiCompat())
-    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
-
-    val androidReleaseResult = result.withArtifactIdSuffix("android")
-    assertThat(androidReleaseResult).hasSingleArtifactCommon("aar")
-    assertThat(androidReleaseResult).pom().matchesExpectedPom("aar", kotlinDependencyVersion.stdlibCommon())
-    assertThat(androidReleaseResult).sourcesJar().containsSourceSetFiles("commonMain", "androidMain", "androidRelease")
+    assertThat(result).hasKotlinArtifactsCommon(kotlinDependencyVersion)
   }
 }

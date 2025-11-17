@@ -10,11 +10,8 @@ import com.vanniktech.maven.publish.util.TestOptions.Signing.GPG_KEY
 import com.vanniktech.maven.publish.util.TestOptions.Signing.NO_SIGNING
 import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
 import com.vanniktech.maven.publish.util.createMinimalPom
-import com.vanniktech.maven.publish.util.domApiCompat
 import com.vanniktech.maven.publish.util.javaProjectSpec
 import com.vanniktech.maven.publish.util.kotlinMultiplatformProjectSpec
-import com.vanniktech.maven.publish.util.stdlibCommon
-import com.vanniktech.maven.publish.util.stdlibJs
 
 class SpecialCasePluginTest : BasePluginTest() {
   override val testOptions get() = TestOptions(config, NO_SIGNING, gradleVersion)
@@ -31,24 +28,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     )
     val result = project.run()
 
-    assertThat(result).hasSingleArtifactCommon(signed = false)
-    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon().copy(scope = "runtime"))
-    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-
-    val jvmResult = result.withArtifactIdSuffix("jvm")
-    assertThat(jvmResult).hasSingleArtifactCommon(signed = false)
-    assertThat(jvmResult).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
-    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
-
-    val linuxResult = result.withArtifactIdSuffix("linuxx64")
-    assertThat(linuxResult).hasSingleArtifactCommon("klib", signed = false)
-    assertThat(linuxResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibCommon())
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
-
-    val nodejsResult = result.withArtifactIdSuffix("nodejs")
-    assertThat(nodejsResult).hasSingleArtifactCommon("klib", signed = false)
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
-    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
+    assertThat(result).hasKotlinArtifactsCommon(kgpVersion, containsAndroidTarget = false, enableSigning = false)
   }
 
   @TestParameterInjectorTest
@@ -63,24 +43,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     )
     val result = project.run()
 
-    assertThat(result).hasSingleArtifactCommon(signed = false)
-    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon().copy(scope = "runtime"))
-    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-
-    val jvmResult = result.withArtifactIdSuffix("jvm")
-    assertThat(jvmResult).hasSingleArtifactCommon(signed = false)
-    assertThat(jvmResult).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
-    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
-
-    val linuxResult = result.withArtifactIdSuffix("linuxx64")
-    assertThat(linuxResult).hasSingleArtifactCommon("klib", signed = false)
-    assertThat(linuxResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibCommon())
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
-
-    val nodejsResult = result.withArtifactIdSuffix("nodejs")
-    assertThat(nodejsResult).hasSingleArtifactCommon("klib", signed = false)
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
-    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
+    assertThat(result).hasKotlinArtifactsCommon(kgpVersion, containsAndroidTarget = false, enableSigning = false)
   }
 
   @TestParameterInjectorTest
