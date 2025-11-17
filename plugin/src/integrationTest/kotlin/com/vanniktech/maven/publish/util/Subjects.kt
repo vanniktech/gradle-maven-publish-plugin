@@ -37,6 +37,22 @@ class ProjectResultSubject private constructor(
     fun projectResult() = factory
 
     fun assertThat(actual: ProjectResult): ProjectResultSubject = assertAbout(projectResult()).that(actual)
+
+    fun assertSingleArtifactCommon(result: ProjectResult, artifactExtension: String = "jar", enableSigning: Boolean = true) {
+      assertThat(result).outcome().succeeded()
+      assertThat(result).artifact(artifactExtension).exists()
+      assertThat(result).pom().exists()
+      assertThat(result).module().exists()
+      assertThat(result).sourcesJar().exists()
+      assertThat(result).javadocJar().exists()
+      if (enableSigning) {
+        assertThat(result).artifact(artifactExtension).isSigned()
+        assertThat(result).pom().isSigned()
+        assertThat(result).module().isSigned()
+        assertThat(result).sourcesJar().isSigned()
+        assertThat(result).javadocJar().isSigned()
+      }
+    }
   }
 
   fun outcome(): BuildTaskSubject = check("outcome")
