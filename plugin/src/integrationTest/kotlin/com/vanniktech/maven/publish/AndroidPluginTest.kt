@@ -15,8 +15,6 @@ import com.vanniktech.maven.publish.util.androidFusedLibraryProjectSpec
 import com.vanniktech.maven.publish.util.androidLibraryKotlinProjectSpec
 import com.vanniktech.maven.publish.util.androidLibraryProjectSpec
 import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
-import com.vanniktech.maven.publish.util.fixtures
-import com.vanniktech.maven.publish.util.run
 import com.vanniktech.maven.publish.util.stdlibCommon
 import org.junit.jupiter.api.condition.DisabledOnJre
 import org.junit.jupiter.api.condition.JRE
@@ -30,7 +28,7 @@ class AndroidPluginTest : BasePluginTest() {
 
     val project = androidFusedLibraryProjectSpec(agpVersion)
     // TODO: signing plugin currently unsupported
-    val result = project.run(fixtures, testProjectDir, testOptions.copy(signing = TestOptions.Signing.NO_SIGNING))
+    val result = project.run(testOptions.copy(signing = TestOptions.Signing.NO_SIGNING))
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("aar").exists()
@@ -62,7 +60,7 @@ class AndroidPluginTest : BasePluginTest() {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = androidLibraryKotlinProjectSpec(agpVersion, kgpVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("aar").exists()
@@ -90,7 +88,7 @@ class AndroidPluginTest : BasePluginTest() {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = androidLibraryProjectSpec(agpVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("aar").exists()
@@ -126,7 +124,7 @@ class AndroidPluginTest : BasePluginTest() {
     val project = androidLibraryProjectSpec(agpVersion).copy(
       basePluginConfig = "configure(new AndroidMultiVariantLibrary(true, true))",
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).pom().exists()

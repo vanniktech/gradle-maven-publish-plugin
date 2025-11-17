@@ -11,10 +11,8 @@ import com.vanniktech.maven.publish.util.TestOptions.Signing.NO_SIGNING
 import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
 import com.vanniktech.maven.publish.util.createMinimalPom
 import com.vanniktech.maven.publish.util.domApiCompat
-import com.vanniktech.maven.publish.util.fixtures
 import com.vanniktech.maven.publish.util.javaProjectSpec
 import com.vanniktech.maven.publish.util.kotlinMultiplatformProjectSpec
-import com.vanniktech.maven.publish.util.run
 import com.vanniktech.maven.publish.util.stdlibCommon
 import com.vanniktech.maven.publish.util.stdlibJs
 
@@ -31,7 +29,7 @@ class SpecialCasePluginTest : BasePluginTest() {
       defaultProjectName = "foo",
       artifactId = "foo-bar",
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -85,7 +83,7 @@ class SpecialCasePluginTest : BasePluginTest() {
       defaultProjectName = "foo",
       artifactId = "bar-foo",
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -134,7 +132,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     val project = javaProjectSpec().copy(
       properties = emptyMap(),
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -158,7 +156,7 @@ class SpecialCasePluginTest : BasePluginTest() {
         version = "3.2.1"
         """.trimIndent(),
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     val resultSpec = project.copy(
       group = "com.example.test2",
@@ -180,7 +178,7 @@ class SpecialCasePluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun withoutSigning() {
     val project = javaProjectSpec()
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -198,7 +196,7 @@ class SpecialCasePluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun signWithGpgKey() {
     val project = javaProjectSpec()
-    val result = project.run(fixtures, testProjectDir, testOptions.copy(signing = GPG_KEY))
+    val result = project.run(testOptions.copy(signing = GPG_KEY))
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()

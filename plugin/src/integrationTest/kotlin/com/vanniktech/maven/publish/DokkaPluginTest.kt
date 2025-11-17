@@ -7,9 +7,7 @@ import com.vanniktech.maven.publish.util.TestOptions
 import com.vanniktech.maven.publish.util.TestOptions.Signing.NO_SIGNING
 import com.vanniktech.maven.publish.util.dokkaJavadocPlugin
 import com.vanniktech.maven.publish.util.dokkaPlugin
-import com.vanniktech.maven.publish.util.fixtures
 import com.vanniktech.maven.publish.util.kotlinJvmProjectSpec
-import com.vanniktech.maven.publish.util.run
 import com.vanniktech.maven.publish.util.stdlibCommon
 
 class DokkaPluginTest : BasePluginTest() {
@@ -26,7 +24,7 @@ class DokkaPluginTest : BasePluginTest() {
         "JavadocJar.Dokka(\"dokkaGeneratePublicationHtml\")",
       ),
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -50,7 +48,7 @@ class DokkaPluginTest : BasePluginTest() {
         "JavadocJar.Dokka(\"dokkaGeneratePublicationJavadoc\")",
       ),
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()

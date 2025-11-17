@@ -12,14 +12,12 @@ import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertTh
 import com.vanniktech.maven.publish.util.SourceFile
 import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
 import com.vanniktech.maven.publish.util.domApiCompat
-import com.vanniktech.maven.publish.util.fixtures
 import com.vanniktech.maven.publish.util.javaTestFixturesPlugin
 import com.vanniktech.maven.publish.util.kotlinJvmProjectSpec
 import com.vanniktech.maven.publish.util.kotlinMultiplatformProjectSpec
 import com.vanniktech.maven.publish.util.kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec
 import com.vanniktech.maven.publish.util.kotlinMultiplatformWithAndroidLibraryProjectSpec
 import com.vanniktech.maven.publish.util.kotlinMultiplatformWithModernAndroidLibraryProjectSpec
-import com.vanniktech.maven.publish.util.run
 import com.vanniktech.maven.publish.util.stdlibCommon
 import com.vanniktech.maven.publish.util.stdlibJs
 
@@ -31,7 +29,7 @@ class KotlinPluginTest : BasePluginTest() {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinJvmProjectSpec(kgpVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -62,7 +60,7 @@ class KotlinPluginTest : BasePluginTest() {
         SourceFile("testFixtures", "kotlin", "com/vanniktech/maven/publish/test/TestFixtureKotlinClass.kt"),
       ),
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -91,7 +89,7 @@ class KotlinPluginTest : BasePluginTest() {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinMultiplatformProjectSpec(kgpVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -164,7 +162,7 @@ class KotlinPluginTest : BasePluginTest() {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kgpVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kgpVersion < KOTLIN_2_2_10) {
       KOTLIN_2_2_10
@@ -268,7 +266,7 @@ class KotlinPluginTest : BasePluginTest() {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(agpVersion, kgpVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kgpVersion < KOTLIN_2_2_10) {
       KOTLIN_2_2_10
@@ -377,7 +375,7 @@ class KotlinPluginTest : BasePluginTest() {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion, kgpVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     val kotlinDependencyVersion = if (agpVersion >= AGP_9_0_0 && kgpVersion < KOTLIN_2_2_10) {
       KOTLIN_2_2_10

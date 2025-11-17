@@ -2,8 +2,6 @@ package com.vanniktech.maven.publish.util
 
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.DOKKA_STABLE
 import com.vanniktech.maven.publish.util.AgpVersion.Companion.AGP_9_0_0
-import java.nio.file.Paths
-import kotlin.io.path.absolute
 
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
@@ -20,8 +18,6 @@ val androidFusedLibraryPlugin = PluginSpec("com.android.fused-library")
 val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 val dokkaPlugin = PluginSpec("org.jetbrains.dokka", DOKKA_STABLE)
 val dokkaJavadocPlugin = PluginSpec("org.jetbrains.dokka-javadoc", DOKKA_STABLE)
-
-val fixtures = Paths.get("src/integrationTest/fixtures2").absolute()
 
 val defaultProperties = mapOf(
   "POM_NAME" to "Gradle Maven Publish Plugin Test Artifact",
