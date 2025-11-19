@@ -12,14 +12,7 @@ data class PomDependency(
   val artifactId: String,
   val version: String,
   val scope: String?,
-) {
-  fun toDependency() = Dependency().also {
-    it.groupId = groupId
-    it.artifactId = artifactId
-    it.version = version
-    it.scope = scope
-  }
-}
+)
 
 fun KgpVersion.stdlibCommon() = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", value, "compile")
 
@@ -90,4 +83,11 @@ fun createMinimalPom(
       }
     }
   }
+}
+
+private fun PomDependency.toDependency() = Dependency().also {
+  it.groupId = groupId
+  it.artifactId = artifactId
+  it.version = version
+  it.scope = scope
 }

@@ -19,7 +19,7 @@ val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 val dokkaPlugin = PluginSpec("org.jetbrains.dokka", DOKKA_STABLE)
 val dokkaJavadocPlugin = PluginSpec("org.jetbrains.dokka-javadoc", DOKKA_STABLE)
 
-val defaultProperties = mapOf(
+private val defaultProperties = mapOf(
   "POM_NAME" to "Gradle Maven Publish Plugin Test Artifact",
   "POM_DESCRIPTION" to "Testing the Gradle Maven Publish Plugin",
   "POM_INCEPTION_YEAR" to "2018",

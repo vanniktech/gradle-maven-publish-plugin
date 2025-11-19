@@ -28,8 +28,8 @@ class AgpVersionProvider : TestParameterValuesProvider() {
 
 class KgpVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<KgpVersion> = when {
-    QUICK_TEST -> listOf(KgpVersion.VERSIONS.max())
-    else -> KgpVersion.VERSIONS.toList()
+    QUICK_TEST -> listOf(KgpVersion.entries.max())
+    else -> KgpVersion.entries.toList()
   }
 }
 

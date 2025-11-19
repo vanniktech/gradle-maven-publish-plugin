@@ -69,7 +69,7 @@ class KgpVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("KGP") {
   companion object {
-    val VERSIONS = setOf(
+    val entries = setOf(
       // minimum supported
       KgpVersion(Versions.KOTLIN_MIN),
       // latest versions of each type
