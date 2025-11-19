@@ -47,7 +47,7 @@ fun createPom(
   model.inceptionYear = "2018"
   model.addLicense(
     License().apply {
-      name = "The Apache Software License, Version 2.0"
+      name = "Apache-2.0"
       url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
       distribution = "repo"
     },
