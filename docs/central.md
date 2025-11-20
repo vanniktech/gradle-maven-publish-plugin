@@ -52,8 +52,6 @@ This can be done through either the DSL or by setting Gradle properties.
 === "build.gradle"
 
     ```groovy
-    import com.vanniktech.maven.publish.SonatypeHost
-
     mavenPublishing {
       publishToMavenCentral()
 
@@ -64,8 +62,6 @@ This can be done through either the DSL or by setting Gradle properties.
 === "build.gradle.kts"
 
     ```kotlin
-    import com.vanniktech.maven.publish.SonatypeHost
-
     mavenPublishing {
       publishToMavenCentral()
 
