@@ -41,12 +41,12 @@ sealed class ComparableVersion(
 class AgpVersion(
   override val value: String,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
-  val minGradleVersion: GradleVersion = GradleVersion.entries.min(),
+  val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.min(),
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("AGP") {
   companion object {
-    val entries = setOf(
+    val VERSIONS = setOf(
       // minimum supported
       AgpVersion(Versions.ANDROID_GRADLE_MIN),
       // latest versions of each type
@@ -64,12 +64,12 @@ class AgpVersion(
 class KgpVersion(
   override val value: String,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
-  val minGradleVersion: GradleVersion = GradleVersion.entries.min(),
+  val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.min(),
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("KGP") {
   companion object {
-    val entries = setOf(
+    val VERSIONS = setOf(
       // minimum supported
       KgpVersion(Versions.KOTLIN_MIN),
       // latest versions of each type
@@ -90,7 +90,7 @@ class GradleVersion(
   val firstUnsupportedJdkVersion: JavaVersion? = null,
 ) : ComparableVersion("Gradle") {
   companion object {
-    val entries = setOf(
+    val VERSIONS = setOf(
       // minimum supported
       GradleVersion(
         value = Versions.GRADLE_MIN,
@@ -112,7 +112,7 @@ class PluginPublishVersion(
   override val value: String,
 ) : ComparableVersion("PluginPublish") {
   companion object {
-    val entries = setOf(
+    val VERSIONS = setOf(
       // minimum supported
       PluginPublishVersion("1.0.0"),
       // latest versions of each type

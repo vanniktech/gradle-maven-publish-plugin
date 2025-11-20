@@ -14,28 +14,28 @@ class TestOptionsConfigProvider : TestParameterValuesProvider() {
 
 class GradleVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<GradleVersion> = when {
-    QUICK_TEST -> listOf(GradleVersion.entries.max())
-    else -> GradleVersion.entries.toList()
+    QUICK_TEST -> listOf(GradleVersion.VERSIONS.max())
+    else -> GradleVersion.VERSIONS.toList()
   }
 }
 
 class AgpVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<AgpVersion> = when {
-    QUICK_TEST -> listOf(AgpVersion.entries.max())
-    else -> AgpVersion.entries.toList()
+    QUICK_TEST -> listOf(AgpVersion.VERSIONS.max())
+    else -> AgpVersion.VERSIONS.toList()
   }
 }
 
 class KgpVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<KgpVersion> = when {
-    QUICK_TEST -> listOf(KgpVersion.entries.max())
-    else -> KgpVersion.entries.toList()
+    QUICK_TEST -> listOf(KgpVersion.VERSIONS.max())
+    else -> KgpVersion.VERSIONS.toList()
   }
 }
 
 class PluginPublishVersionProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<PluginPublishVersion> = when {
-    QUICK_TEST -> listOf(PluginPublishVersion.entries.max())
-    else -> PluginPublishVersion.entries.toList()
+    QUICK_TEST -> listOf(PluginPublishVersion.VERSIONS.max())
+    else -> PluginPublishVersion.VERSIONS.toList()
   }
 }
