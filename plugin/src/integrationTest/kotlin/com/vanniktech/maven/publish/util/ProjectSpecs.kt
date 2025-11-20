@@ -27,7 +27,7 @@ private val defaultProperties = mapOf(
   "POM_SCM_URL" to "https://github.com/vanniktech/gradle-maven-publish-plugin/",
   "POM_SCM_CONNECTION" to "scm:git:git://github.com/vanniktech/gradle-maven-publish-plugin.git",
   "POM_SCM_DEV_CONNECTION" to "scm:git:ssh://git@github.com/vanniktech/gradle-maven-publish-plugin.git",
-  "POM_LICENCE_NAME" to "Apache-2.0",
+  "POM_LICENCE_NAME" to "The Apache Software License, Version 2.0",
   "POM_LICENCE_URL" to "https://www.apache.org/licenses/LICENSE-2.0.txt",
   "POM_LICENCE_DIST" to "repo",
   "POM_DEVELOPER_ID" to "vanniktech",
