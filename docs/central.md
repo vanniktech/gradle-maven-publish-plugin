@@ -169,7 +169,7 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
     POM_INCEPTION_YEAR=2020
     POM_URL=https://github.com/username/mylibrary/
 
-    POM_LICENSE_NAME=The Apache Software License, Version 2.0
+    POM_LICENSE_NAME=Apache-2.0
     POM_LICENSE_URL=https://www.apache.org/licenses/LICENSE-2.0.txt
     POM_LICENSE_DIST=repo
 
