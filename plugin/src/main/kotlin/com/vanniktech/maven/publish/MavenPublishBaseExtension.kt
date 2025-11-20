@@ -15,9 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
-import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.build.event.BuildEventsListenerRegistry
-import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
@@ -371,6 +369,15 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   @Incubating
   @JvmOverloads
   public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: Boolean = true) {
+    configureBasedOnAppliedPlugins(sourcesJar, defaultJavaDocOption(javadocJar))
+  }
+
+  /**
+   * Calls [configure] with a [Platform] chosen based on other applied Gradle plugins.
+   */
+  @Incubating
+  @JvmOverloads
+  public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: JavadocJar) {
     // has already been called before by the user or from finalizeDsl
     if (platform.isPresent) {
       return
@@ -385,16 +392,15 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
         configure(
           KotlinMultiplatform(
-            javadocJar = defaultJavaDocOption(javadocJar, plainJavadocSupported = false),
+            javadocJar = javadocJar,
             sourcesJar = sourcesJar,
             androidVariantsToPublish = variants,
-            forceAndroidVariantsIfNotEmpty = false,
           ),
         )
       }
       project.plugins.hasPlugin("com.android.library") -> {
         val variant = project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
-        configure(AndroidSingleVariantLibrary(variant, sourcesJar, javadocJar))
+        configure(AndroidSingleVariantLibrary(javadocJar, sourcesJar, variant))
       }
       project.plugins.hasPlugin("com.android.fused-library") -> {
         configure(AndroidFusedLibrary())
@@ -402,13 +408,13 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       project.plugins.hasPlugin("com.gradle.plugin-publish") ->
         configure(GradlePublishPlugin())
       project.plugins.hasPlugin("java-gradle-plugin") ->
-        configure(GradlePlugin(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
+        configure(GradlePlugin(javadocJar, sourcesJar))
       project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
-        configure(KotlinJvm(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
+        configure(KotlinJvm(javadocJar, sourcesJar))
       project.plugins.hasPlugin("java-library") ->
-        configure(JavaLibrary(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
+        configure(JavaLibrary(javadocJar, sourcesJar))
       project.plugins.hasPlugin("java") ->
-        configure(JavaLibrary(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
+        configure(JavaLibrary(javadocJar, sourcesJar))
       project.plugins.hasPlugin("java-platform") ->
         configure(JavaPlatform())
       project.plugins.hasPlugin("version-catalog") ->
@@ -417,7 +423,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
   }
 
-  private fun defaultJavaDocOption(javadocJar: Boolean, plainJavadocSupported: Boolean): JavadocJar {
+  private fun defaultJavaDocOption(javadocJar: Boolean): JavadocJar {
     return if (!javadocJar) {
       JavadocJar.None()
     } else if (project.plugins.hasPlugin("org.jetbrains.dokka-javadoc")) {
@@ -429,15 +435,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       } else {
         error("Dokka in v2 mode is required when using Dokka")
       }
-    } else if (plainJavadocSupported) {
-      project.tasks.withType(Javadoc::class.java).configureEach {
-        val options = it.options as StandardJavadocDocletOptions
-        val javaVersion = project.javaVersion()
-        if (javaVersion.isJava9Compatible) {
-          options.addBooleanOption("html5", true)
-        }
-      }
-      return JavadocJar.Javadoc()
+    } else if (!project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+      JavadocJar.Javadoc()
     } else {
       JavadocJar.Empty()
     }
