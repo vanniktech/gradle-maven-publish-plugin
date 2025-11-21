@@ -7,5 +7,5 @@ actual class ExpectedTestClass {
   /**
    * An actual test funtion that does something.
    */
-  actual fun test() { }
+  actual fun test() {}
 }
