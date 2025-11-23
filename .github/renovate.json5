@@ -9,6 +9,13 @@
       "matchPackagePatterns": [".*"],
       "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-beta|-Beta|-BETA|-rc|-RC|-milestone|-m|-SNAPSHOT)/"
     },
+    // Enable auto-merge for minor/patch updates.
+    {
+      "matchPackagePatterns": [".*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true,
+    },
     {
       // See https://github.com/vanniktech/gradle-maven-publish-plugin/issues/1131.
       "groupName": "Retrofit and OkHttp",
