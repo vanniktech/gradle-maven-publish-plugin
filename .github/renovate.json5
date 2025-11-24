@@ -7,7 +7,7 @@
   "packageRules": [
     {
       "matchPackagePatterns": [".*"],
-      "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-beta|-Beta|-BETA|-rc|-RC|-milestone|-m|-SNAPSHOT)/"
+      "allowedVersions": "/^v?[0-9]+(\\.[0-9]+){0,2}$/"
     },
     // Enable auto-merge for minor/patch updates.
     {
