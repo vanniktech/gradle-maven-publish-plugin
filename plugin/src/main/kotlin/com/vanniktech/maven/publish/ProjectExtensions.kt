@@ -5,9 +5,7 @@ package com.vanniktech.maven.publish
 import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.variant.AndroidComponentsExtension
 import org.gradle.api.Action
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.plugins.signing.SigningExtension
@@ -36,20 +34,6 @@ internal fun Project.mavenPublicationsWithoutPluginMarker(action: Action<MavenPu
       action.execute(it)
     }
   }
-}
-
-internal fun Project.javaVersion(): JavaVersion {
-  try {
-    val extension = extensions.findByType(JavaPluginExtension::class.java)
-    if (extension != null) {
-      val toolchain = extension.toolchain
-      val version = toolchain.languageVersion.get().asInt()
-      return JavaVersion.toVersion(version)
-    }
-  } catch (t: Throwable) {
-    // ignore failures and fallback to java version in which Gradle is running
-  }
-  return JavaVersion.current()
 }
 
 internal fun Project.isAtLeastKgp(id: String, version: String): Boolean {

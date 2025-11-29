@@ -50,7 +50,7 @@ public sealed class Platform {
  ```
  */
 public data class JavaLibrary @JvmOverloads constructor(
-  override val javadocJar: JavadocJar,
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true,
 ) : Platform() {
   override fun configure(project: Project) {
@@ -82,7 +82,7 @@ public data class JavaLibrary @JvmOverloads constructor(
 ```
  */
 public data class GradlePlugin @JvmOverloads constructor(
-  override val javadocJar: JavadocJar,
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true,
 ) : Platform() {
   override fun configure(project: Project) {
@@ -145,11 +145,21 @@ public class GradlePublishPlugin : Platform() {
  *```
  */
 public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
-  val variant: String = "release",
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true,
-  val publishJavadocJar: Boolean = true,
+  val variant: String = "release",
 ) : Platform() {
-  override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
+  @JvmOverloads
+  @Deprecated("Use constructor with JavadocJar instead of Boolean")
+  public constructor(
+    variant: String = "release",
+    sourcesJar: Boolean = true,
+    publishJavadocJar: Boolean,
+  ) : this(
+    javadocJar = if (publishJavadocJar) JavadocJar.Javadoc() else JavadocJar.None(),
+    sourcesJar = sourcesJar,
+    variant = variant,
+  )
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("com.android.library")) {
@@ -162,7 +172,7 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
         if (sourcesJar) {
           withSourcesJar()
         }
-        if (publishJavadocJar) {
+        if (javadocJar is JavadocJar.Javadoc) {
           withJavadocJar()
         }
       }
@@ -172,6 +182,10 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
       val component = project.components.findByName(variant) ?: throw MissingVariantException(variant)
       project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
         it.from(component)
+
+        if (javadocJar !is JavadocJar.Javadoc) {
+          it.withJavadocJar(javadocJar, project, multipleTasks = false)
+        }
       }
     }
   }
@@ -209,12 +223,24 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
  * ```
  */
 public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: Boolean = true,
-  val publishJavadocJar: Boolean = true,
   val includedBuildTypeValues: Set<String> = emptySet(),
   val includedFlavorDimensionsAndValues: Map<String, Set<String>> = emptyMap(),
 ) : Platform() {
-  override val javadocJar: JavadocJar get() = throw UnsupportedOperationException()
+  @JvmOverloads
+  @Deprecated("Use constructor with JavadocJar instead of Boolean")
+  public constructor(
+    sourcesJar: Boolean = true,
+    publishJavadocJar: Boolean,
+    includedBuildTypeValues: Set<String> = emptySet(),
+    includedFlavorDimensionsAndValues: Map<String, Set<String>> = emptyMap(),
+  ) : this(
+    javadocJar = if (publishJavadocJar) JavadocJar.Javadoc() else JavadocJar.None(),
+    sourcesJar = sourcesJar,
+    includedBuildTypeValues = includedBuildTypeValues,
+    includedFlavorDimensionsAndValues = includedFlavorDimensionsAndValues,
+  )
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("com.android.library")) {
@@ -238,7 +264,7 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
         if (sourcesJar) {
           withSourcesJar()
         }
-        if (publishJavadocJar) {
+        if (javadocJar is JavadocJar.Javadoc) {
           withJavadocJar()
         }
       }
@@ -248,6 +274,10 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
       val component = project.components.findByName(PUBLICATION_NAME) ?: throw MissingVariantException(PUBLICATION_NAME)
       project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
         it.from(component)
+
+        if (javadocJar !is JavadocJar.Javadoc) {
+          it.withJavadocJar(javadocJar, project, multipleTasks = false)
+        }
       }
     }
   }
@@ -270,8 +300,8 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
  */
 @Incubating
 public class AndroidFusedLibrary : Platform() {
-  override val sourcesJar: Boolean = false
   override val javadocJar: JavadocJar = JavadocJar.Empty()
+  override val sourcesJar: Boolean = false
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("com.android.fused-library")) {
@@ -303,25 +333,11 @@ public class AndroidFusedLibrary : Platform() {
  *
  * This does not include javadoc jars because there are no APIs for that available.
  */
-@ConsistentCopyVisibility
-public data class KotlinMultiplatform internal constructor(
-  override val javadocJar: JavadocJar,
-  override val sourcesJar: Boolean,
-  val androidVariantsToPublish: List<String>,
-  val forceAndroidVariantsIfNotEmpty: Boolean,
+public data class KotlinMultiplatform @JvmOverloads constructor(
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val sourcesJar: Boolean = true,
+  val androidVariantsToPublish: List<String> = listOf("release"),
 ) : Platform() {
-  @JvmOverloads public constructor(
-    javadocJar: JavadocJar = JavadocJar.Empty(),
-    sourcesJar: Boolean = true,
-  ) : this(javadocJar, sourcesJar, emptyList(), forceAndroidVariantsIfNotEmpty = false)
-
-  @Deprecated("Choosing which Android variants to publish is deprecated.")
-  public constructor(
-    javadocJar: JavadocJar = JavadocJar.Empty(),
-    sourcesJar: Boolean = true,
-    androidVariantsToPublish: List<String>,
-  ) : this(javadocJar, sourcesJar, androidVariantsToPublish, forceAndroidVariantsIfNotEmpty = true)
-
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
       "Calling configure(KotlinMultiplatform(...)) requires the org.jetbrains.kotlin.multiplatform plugin to be applied"
@@ -337,7 +353,7 @@ public data class KotlinMultiplatform internal constructor(
       if (androidVariantsToPublish.isNotEmpty()) {
         it.targets.configureEach { target ->
           if (target is KotlinAndroidTarget) {
-            if (forceAndroidVariantsIfNotEmpty || target.publishLibraryVariants.isNullOrEmpty()) {
+            if (target.publishLibraryVariants.isNullOrEmpty()) {
               target.publishLibraryVariants = androidVariantsToPublish
             }
           }
