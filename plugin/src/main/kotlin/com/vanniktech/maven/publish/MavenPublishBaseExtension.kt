@@ -423,21 +423,18 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
   }
 
-  private fun defaultJavaDocOption(javadocJar: Boolean): JavadocJar = if (!javadocJar) {
-    JavadocJar.None()
-  } else if (project.plugins.hasPlugin("org.jetbrains.dokka-javadoc")) {
-    JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
-  } else if (project.plugins.hasPlugin("org.jetbrains.dokka")) {
-    // only dokka v2 has an extension
-    if (project.extensions.findByName("dokka") != null) {
+  private fun defaultJavaDocOption(javadocJar: Boolean): JavadocJar = when {
+    !javadocJar -> JavadocJar.None()
+    project.plugins.hasPlugin("org.jetbrains.dokka-javadoc") -> JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
+    project.plugins.hasPlugin("org.jetbrains.dokka") -> {
+      // only dokka v2 has an extension
+      check(project.extensions.findByName("dokka") != null) {
+        "Dokka in v2 mode is required when using Dokka"
+      }
       JavadocJar.Dokka("dokkaGeneratePublicationHtml")
-    } else {
-      error("Dokka in v2 mode is required when using Dokka")
     }
-  } else if (!project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-    JavadocJar.Javadoc()
-  } else {
-    JavadocJar.Empty()
+    !project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> JavadocJar.Javadoc()
+    else -> JavadocJar.Empty()
   }
 
   private fun findOptionalProperty(propertyName: String): String? = if (buildFeatures.isolatedProjects.active.get()) {

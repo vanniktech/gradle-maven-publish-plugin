@@ -156,7 +156,7 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
     sourcesJar: Boolean = true,
     publishJavadocJar: Boolean,
   ) : this(
-    javadocJar = if (publishJavadocJar) { JavadocJar.Javadoc() } else { JavadocJar.None() },
+    javadocJar = if (publishJavadocJar) JavadocJar.Javadoc() else JavadocJar.None(),
     sourcesJar = sourcesJar,
     variant = variant,
   )
@@ -236,10 +236,10 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
     includedBuildTypeValues: Set<String> = emptySet(),
     includedFlavorDimensionsAndValues: Map<String, Set<String>> = emptyMap(),
   ) : this(
-    javadocJar = if (publishJavadocJar) { JavadocJar.Javadoc() } else { JavadocJar.None() },
+    javadocJar = if (publishJavadocJar) JavadocJar.Javadoc() else JavadocJar.None(),
     sourcesJar = sourcesJar,
     includedBuildTypeValues = includedBuildTypeValues,
-    includedFlavorDimensionsAndValues = includedFlavorDimensionsAndValues
+    includedFlavorDimensionsAndValues = includedFlavorDimensionsAndValues,
   )
 
   override fun configure(project: Project) {
