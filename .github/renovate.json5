@@ -1,55 +1,68 @@
 {
-  "extends": [
-    "config:base"
+  extends: [
+    'config:recommended',
   ],
-  "rebaseWhen": "conflicted",
-  "ignoreUnstable": false,
-  "packageRules": [
+  rebaseWhen: 'conflicted',
+  ignoreUnstable: false,
+  packageRules: [
     {
-      "matchPackagePatterns": [".*"],
-      "allowedVersions": "/^v?[0-9]+(\\.[0-9]+){0,2}$/"
-    },
-    // Enable auto-merge for minor/patch updates.
-    {
-      "matchPackagePatterns": [".*"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true,
+      allowedVersions: '/^v?[0-9]+(\\.[0-9]+){0,2}$/',
+      matchPackageNames: [
+        '/.*/',
+      ],
     },
     {
-      // See https://github.com/vanniktech/gradle-maven-publish-plugin/issues/1131.
-      "groupName": "Retrofit and OkHttp",
-      "enabled": false,
-      "matchPackageNames": [
-        "/com.squareup.retrofit2:*/",
-        "/com.squareup.okhttp3:*/",
-      ]
+      matchUpdateTypes: [
+        'minor',
+        'patch',
+      ],
+      automerge: true,
+      matchPackageNames: [
+        '/.*/',
+      ],
     },
     {
-      "matchFileNames": ["**/alpha.versions.toml"],
-      "allowedVersions": "!/(-SNAPSHOT)/"
+      groupName: 'Retrofit and OkHttp',
+      enabled: false,
+      matchPackageNames: [
+        '/com.squareup.retrofit2:*/',
+        '/com.squareup.okhttp3:*/',
+      ],
     },
     {
-      "matchFileNames": ["**/beta.versions.toml"],
-      "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-milestone|-m|-SNAPSHOT)/"
+      matchFileNames: [
+        '**/alpha.versions.toml',
+      ],
+      allowedVersions: '!/(-SNAPSHOT)/',
     },
     {
-      "matchFileNames": ["**/rc.versions.toml"],
-      "allowedVersions": "!/(-alpha|-Alpha|-ALPHA|-beta|-Beta|-BETA|-milestone|-m|-SNAPSHOT)/"
-    }
+      matchFileNames: [
+        '**/beta.versions.toml',
+      ],
+      allowedVersions: '!/(-alpha|-Alpha|-ALPHA|-milestone|-m|-SNAPSHOT)/',
+    },
+    {
+      matchFileNames: [
+        '**/rc.versions.toml',
+      ],
+      allowedVersions: '!/(-alpha|-Alpha|-ALPHA|-beta|-Beta|-BETA|-milestone|-m|-SNAPSHOT)/',
+    },
   ],
   ignorePresets: [
-    // Ensure we get the latest version and are not pinned to old versions.
     'workarounds:javaLTSVersions',
   ],
-  "customManagers": [
+  customManagers: [
     {
-      "customType": "regex",
-      "fileMatch": ["\\.versions.toml$"],
-      "matchStrings": ["(^|\n)(?<depName>gradle) *= *\"(?<currentValue>.*)\""],
-      "depNameTemplate": "gradle",
-      "datasourceTemplate": "gradle-version"
+      customType: 'regex',
+      managerFilePatterns: [
+        '/\\.versions.toml$/',
+      ],
+      matchStrings: [
+        '(^|\n)(?<depName>gradle) *= *"(?<currentValue>.*)"',
+      ],
+      depNameTemplate: 'gradle',
+      datasourceTemplate: 'gradle-version',
     },
-    // Update .java-version file with the latest JDK version.
     {
       customType: 'regex',
       managerFilePatterns: [
@@ -60,8 +73,7 @@
       ],
       datasourceTemplate: 'java-version',
       depNameTemplate: 'java',
-      // Only write the major version.
       extractVersionTemplate: '^(?<version>\\d+)',
-    }
-  ]
+    },
+  ],
 }
