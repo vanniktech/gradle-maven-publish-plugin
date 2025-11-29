@@ -103,8 +103,9 @@ class SonatypeCentralPortalTest {
         ),
     )
 
-    portal.validateDeployment("test-id-123")
+    portal.validateDeployment("test-id-123", true)
     // No exception thrown means success
+    assertThat(mockWebServer.requestCount).isEqualTo(4)
   }
 
   @Test
@@ -141,8 +142,9 @@ class SonatypeCentralPortalTest {
         ),
     )
 
-    portal.validateDeployment("test-id-123")
+    portal.validateDeployment("test-id-123", true)
     // No exception thrown means success
+    assertThat(mockWebServer.requestCount).isEqualTo(2)
   }
 
   @Test
@@ -179,8 +181,9 @@ class SonatypeCentralPortalTest {
         ),
     )
 
-    portal.validateDeployment("test-id-123")
+    portal.validateDeployment("test-id-123", true)
     // No exception thrown means success
+    assertThat(mockWebServer.requestCount).isEqualTo(2)
   }
 
   @Test
@@ -200,8 +203,115 @@ class SonatypeCentralPortalTest {
         ),
     )
 
-    portal.validateDeployment("test-id-123")
+    portal.validateDeployment("test-id-123", true)
     // No exception thrown means success
+    assertThat(mockWebServer.requestCount).isEqualTo(1)
+  }
+
+  @Test
+  fun `validateDeployment without waiting for publishing succeeds when deployment reaches VALIDATING state`() {
+    // First response: VALIDATING
+    mockWebServer.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          """
+          {
+            "deploymentId": "test-id-123",
+            "deploymentName": "test-deployment",
+            "deploymentState": "VALIDATING",
+            "purls": ["pkg:maven/com.example/test@1.0.0"]
+          }
+          """.trimIndent(),
+        ),
+    )
+    // Second response: VALIDATED
+    mockWebServer.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          """
+          {
+            "deploymentId": "test-id-123",
+            "deploymentName": "test-deployment",
+            "deploymentState": "VALIDATED",
+            "purls": ["pkg:maven/com.example/test@1.0.0"]
+          }
+          """.trimIndent(),
+        ),
+    )
+
+    portal.validateDeployment("test-id-123", false)
+    // No exception thrown means success
+    assertThat(mockWebServer.requestCount).isEqualTo(2)
+  }
+
+  @Test
+  fun `validateDeployment without waiting for publishing succeeds when deployment reaches VALIDATED state`() {
+    // First response: VALIDATED
+    mockWebServer.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          """
+          {
+            "deploymentId": "test-id-123",
+            "deploymentName": "test-deployment",
+            "deploymentState": "VALIDATED",
+            "purls": ["pkg:maven/com.example/test@1.0.0"]
+          }
+          """.trimIndent(),
+        ),
+    )
+
+    portal.validateDeployment("test-id-123", false)
+    // No exception thrown means success
+    assertThat(mockWebServer.requestCount).isEqualTo(1)
+  }
+
+  @Test
+  fun `validateDeployment without waiting for publishing succeeds when deployment reaches PUBLISHING state`() {
+    // First response: PUBLISHING
+    mockWebServer.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          """
+          {
+            "deploymentId": "test-id-123",
+            "deploymentName": "test-deployment",
+            "deploymentState": "PUBLISHING",
+            "purls": ["pkg:maven/com.example/test@1.0.0"]
+          }
+          """.trimIndent(),
+        ),
+    )
+
+    portal.validateDeployment("test-id-123", false)
+    // No exception thrown means success
+    assertThat(mockWebServer.requestCount).isEqualTo(1)
+  }
+
+  @Test
+  fun `validateDeployment without waiting for publishing succeeds when deployment reaches PUBLISHED state`() {
+    mockWebServer.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          """
+          {
+            "deploymentId": "test-id-123",
+            "deploymentName": "test-deployment",
+            "deploymentState": "PUBLISHED",
+            "purls": ["pkg:maven/com.example/test@1.0.0"]
+          }
+          """.trimIndent(),
+        ),
+    )
+
+    portal.validateDeployment("test-id-123", false)
+    // No exception thrown means success
+    assertThat(mockWebServer.requestCount).isEqualTo(1)
   }
 
   @Test
@@ -230,7 +340,7 @@ class SonatypeCentralPortalTest {
     )
 
     val exception = assertThrows<IOException> {
-      portal.validateDeployment("test-id-123")
+      portal.validateDeployment("test-id-123", true)
     }
 
     assertThat(exception.message).contains("Deployment test-id-123 failed validation")
@@ -258,7 +368,7 @@ class SonatypeCentralPortalTest {
     )
 
     val exception = assertThrows<IOException> {
-      portal.validateDeployment("test-id-123")
+      portal.validateDeployment("test-id-123", true)
     }
 
     assertThat(exception.message).contains("Deployment test-id-123 failed validation")
@@ -274,7 +384,7 @@ class SonatypeCentralPortalTest {
     )
 
     val exception = assertThrows<IOException> {
-      portal.validateDeployment("test-id-123")
+      portal.validateDeployment("test-id-123", true)
     }
 
     assertThat(exception.message).contains("Failed to check deployment status")
@@ -314,7 +424,7 @@ class SonatypeCentralPortalTest {
     }
 
     val exception = assertThrows<IOException> {
-      shortTimeoutPortal.validateDeployment("test-id-123")
+      shortTimeoutPortal.validateDeployment("test-id-123", true)
     }
 
     assertThat(exception.message).contains("Deployment validation timed out")
@@ -384,7 +494,7 @@ class SonatypeCentralPortalTest {
         ),
     )
 
-    portal.validateDeployment("test-id-123")
+    portal.validateDeployment("test-id-123", true)
     // Success - method completed without exception
   }
 
@@ -420,7 +530,7 @@ class SonatypeCentralPortalTest {
         ),
     )
 
-    portal.validateDeployment("test-id-123")
+    portal.validateDeployment("test-id-123", true)
 
     val request = mockWebServer.takeRequest()
     assertThat(request.path).isEqualTo("/api/v1/publisher/status?id=test-id-123")

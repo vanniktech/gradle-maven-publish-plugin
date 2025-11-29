@@ -63,10 +63,42 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
    * @param validateDeployment whether to wait for the deployment to be validated and published at the end of the build
    */
+  @Deprecated("Use publishToMavenCentral with DeploymentValidation instead of Boolean")
+  public fun publishToMavenCentral(automaticRelease: Boolean, validateDeployment: Boolean) {
+    publishToMavenCentral(
+      automaticRelease = automaticRelease,
+      validateDeployment = if (validateDeployment) DeploymentValidation.PUBLISH else DeploymentValidation.NONE,
+    )
+  }
+
+  /**
+   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
+   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
+   * `publish` task.
+   *
+   * When the [automaticRelease] parameter is `true` the created deployment will be released automatically to
+   * Maven Central without any additional manual steps needed. When [automaticRelease] is not set or `false`
+   * the deployment has to be manually released through the [Central Portal website](https://central.sonatype.com/publishing/deployments).
+   *
+   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
+   * repository instead.
+   *
+   * This expects you provide the username and password of a user token through Gradle properties called
+   * `mavenCentralUsername` and `mavenCentralPassword`. See [here](https://central.sonatype.org/publish/generate-portal-token/)
+   * for how to obtain a user token.
+   *
+   * When [validateDeployment] is `PUBLISH` (the default), the plugin will monitor the deployment status after upload
+   * and wait until it reaches a terminal state (`PUBLISHED` or `FAILED`). Setting it to `VALIDATE` will wait for the
+   * Central Portal validations to succeed but not until the publishing process finished. Deployment validation only
+   * happens when [automaticRelease] is `true`.
+   *
+   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
+   * @param validateDeployment whether to wait for the deployment to be validated and published at the end of the build
+   */
   @JvmOverloads
   public fun publishToMavenCentral(
     automaticRelease: Boolean = project.automaticRelease(),
-    validateDeployment: Boolean = project.validateDeployment(),
+    validateDeployment: DeploymentValidation = project.validateDeployment(),
   ) {
     mavenCentral.set(true)
     mavenCentral.finalizeValue()
