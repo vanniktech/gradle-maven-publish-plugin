@@ -43,14 +43,14 @@ internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
         .get()
         .parameters.repositoryUsername.isPresent,
     ) {
-      "Did not find mavenCentralUsername which is required for publishing to maven central"
+      "mavenCentralUsername not found, which is required for publishing to Maven Central."
     }
     check(
       buildService
         .get()
         .parameters.repositoryPassword.isPresent,
     ) {
-      "Did not find mavenCentralPassword which is required for publishing to maven central"
+      "mavenCentralPassword not found, which is required for publishing to Maven Central."
     }
 
     buildService.get().registerProject(projectGroup.get(), artifactId.get(), version.get(), localRepository)
