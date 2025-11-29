@@ -6,6 +6,9 @@
 - Removed support for Dokka v1, it's now required to use Dokka in v2 mode.
 - Removed deprecated option of selecting which Android variant to publish for KMP libraries.
 
+**BREAKING**
+- Mark `DirectorySignatureType` internal.
+
 #### Minimum supported versions
 - JDK 17
 - Gradle 9.0.0

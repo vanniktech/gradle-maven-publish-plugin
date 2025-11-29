@@ -19,11 +19,11 @@ import org.gradle.plugins.signing.type.SignatureType
  * https://youtrack.jetbrains.com/issue/KT-61313/
  * https://github.com/gradle/gradle/issues/26132
  */
-public class DirectorySignatureType(
+internal class DirectorySignatureType(
   @Nested
-  public val actual: SignatureType,
+  val actual: SignatureType,
   @Internal
-  public val directory: Provider<Directory>,
+  val directory: Provider<Directory>,
 ) : AbstractSignatureType() {
   override fun fileFor(toSign: File): File {
     val original = super.fileFor(toSign)
