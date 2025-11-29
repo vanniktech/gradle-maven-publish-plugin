@@ -11,6 +11,7 @@ import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.credentials.PasswordCredentials
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
@@ -443,18 +444,11 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
   }
 
-  private fun findOptionalProperty(propertyName: String): String? = if (buildFeatures.isolatedProjects.active.get()) {
-    // There is currently no way to search hierarchically for a project property in an isolated
-    // projects safe way:
-    // https://github.com/gradle/gradle/issues/29600#issuecomment-2306054264
-    // Projects applying this plugin must either use the DSL to specify values for the POM
-    // properties, or use the values provided by the root gradle properties.
-    project.providers.gradleProperty(propertyName).orNull
-  } else {
-    // TODO: we can't call 'providers.gradleProperty' instead due to
-    //  https://github.com/gradle/gradle/issues/23572
-    //  https://github.com/gradle/gradle/issues/29600
-    @Suppress("GradleProjectIsolation")
-    project.findProperty(propertyName)?.toString()
+  // ExtraPropertiesExtension is IP safe and contains properties from both the root `gradle.properties`
+  // and the subproject's `gradle.properties`.
+  // https://github.com/gradle/gradle/issues/29600#issuecomment-3580868326
+  private fun findOptionalProperty(propertyName: String): String? {
+    val extras = checkNotNull(project.extensions.findByType(ExtraPropertiesExtension::class.java))
+    return if (extras.has(propertyName)) extras.get(propertyName)?.toString() else null
   }
 }
