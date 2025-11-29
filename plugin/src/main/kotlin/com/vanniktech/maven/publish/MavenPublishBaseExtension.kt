@@ -63,7 +63,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * @param validateDeployment whether to wait for the deployment to be validated and published at the end of the build
    */
   @JvmOverloads
-  public fun publishToMavenCentral(automaticRelease: Boolean = false, validateDeployment: Boolean = true) {
+  public fun publishToMavenCentral(
+    automaticRelease: Boolean = project.automaticRelease(),
+    validateDeployment: Boolean = project.validateDeployment(),
+  ) {
     mavenCentral.set(true)
     mavenCentral.finalizeValue()
 
