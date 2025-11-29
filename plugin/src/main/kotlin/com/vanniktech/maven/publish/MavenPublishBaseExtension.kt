@@ -367,9 +367,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * Calls [configure] with a [Platform] chosen based on other applied Gradle plugins.
    */
   @Incubating
-  @JvmOverloads
   @Deprecated("Use configureBasedOnAppliedPlugins with JavadocJar instead of Boolean")
-  public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: Boolean) {
+  public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean) {
     configureBasedOnAppliedPlugins(sourcesJar, defaultJavaDocOption(javadocJar))
   }
 
