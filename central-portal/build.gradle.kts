@@ -14,8 +14,8 @@ dependencies {
   testImplementation(libs.junit.jupiter)
   testImplementation(libs.junit.engine)
   testImplementation(libs.junit.launcher)
-  testImplementation(libs.slf4j.api)
   testImplementation(libs.truth)
+  testImplementation(libs.slf4j.api)
   testImplementation(libs.okhttp.mockwebserver)
 
   testRuntimeOnly(libs.slf4j.simple)
