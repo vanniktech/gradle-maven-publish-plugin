@@ -2,6 +2,8 @@ package com.vanniktech.maven.publish
 
 import kotlin.text.toBoolean
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 
 internal fun Project.mavenCentralPublishing(): Boolean {
   val central = providers.gradleProperty("mavenCentralPublishing").orNull
@@ -42,4 +44,16 @@ internal fun Project.signAllPublications(): Boolean {
     return sign.toBoolean()
   }
   return providers.gradleProperty("RELEASE_SIGNING_ENABLED").getOrElse("false").toBoolean()
+}
+
+internal inline fun <reified T : Any> Property<T>.setAny(
+  value: Any,
+  lazyMessage: () -> Any = { "value must be a ${T::class.java} or Provider<T>" },
+) {
+  @Suppress("UNCHECKED_CAST")
+  when (value) {
+    is Provider<*> -> set(value as Provider<T>)
+    is T -> set(value)
+    else -> throw IllegalArgumentException(lazyMessage().toString())
+  }
 }

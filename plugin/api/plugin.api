@@ -177,7 +177,9 @@ public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public final fun configureBasedOnAppliedPlugins (ZZ)V
 	public static synthetic fun configureBasedOnAppliedPlugins$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;ZLcom/vanniktech/maven/publish/JavadocJar;ILjava/lang/Object;)V
 	public final fun coordinates (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun coordinates (Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;)V
 	public static synthetic fun coordinates$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
+	public static synthetic fun coordinates$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;ILjava/lang/Object;)V
 	public final fun pom (Lorg/gradle/api/Action;)V
 	public final fun pomFromGradleProperties ()V
 	public final fun publishToMavenCentral ()V

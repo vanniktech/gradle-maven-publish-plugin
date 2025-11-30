@@ -13,6 +13,7 @@ import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
@@ -189,8 +190,14 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     version?.also { version(it) }
   }
 
-  private fun groupId(groupId: String) {
-    this.groupId.set(groupId)
+  public fun coordinates(groupId: Provider<String>? = null, artifactId: Provider<String>? = null, version: Provider<String>? = null) {
+    groupId?.also { groupId(it) }
+    artifactId?.also { artifactId(it) }
+    version?.also { version(it) }
+  }
+
+  private fun groupId(groupId: Any) {
+    this.groupId.setAny(groupId)
     this.groupId.finalizeValueOnRead()
 
     // skip the plugin marker artifact which has its own group id based on the plugin id
@@ -199,8 +206,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
   }
 
-  private fun artifactId(artifactId: String) {
-    this.artifactId.set(artifactId)
+  private fun artifactId(artifactId: Any) {
+    this.artifactId.setAny(artifactId)
     this.artifactId.finalizeValueOnRead()
 
     // skip the plugin marker artifact which has its own artifact id based on the plugin id
@@ -209,10 +216,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       if (project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
         // needed to avoid the mpp plugin writing over our artifact ids
         project.afterEvaluate { project ->
-          it.artifactId = artifactId.forMultiplatform(it, project)
+          it.artifactId = this.artifactId.get().forMultiplatform(it, project)
         }
       } else {
-        it.artifactId = artifactId
+        it.artifactId = this.artifactId.get()
       }
     }
   }
@@ -233,8 +240,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
   }
 
-  private fun version(version: String) {
-    this.version.set(version)
+  private fun version(version: Any) {
+    this.version.setAny(version)
     this.version.finalizeValueOnRead()
 
     project.mavenPublications {
