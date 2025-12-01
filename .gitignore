@@ -18,7 +18,6 @@ local.properties
 
 ### MkDocs ###
 docs/api
-site
-
-# file is copied automatically based on the readme
+docs/changelog.md
 docs/index.md
+site
