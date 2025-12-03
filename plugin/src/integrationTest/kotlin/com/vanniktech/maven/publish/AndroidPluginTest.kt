@@ -3,8 +3,19 @@ package com.vanniktech.maven.publish
 import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
-import com.vanniktech.maven.publish.AgpVersion.Companion.AGP_9_0_0
-import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
+import com.vanniktech.maven.publish.util.AgpVersion
+import com.vanniktech.maven.publish.util.AgpVersion.Companion.AGP_9_0_0
+import com.vanniktech.maven.publish.util.AgpVersionProvider
+import com.vanniktech.maven.publish.util.KgpVersion
+import com.vanniktech.maven.publish.util.KgpVersion.Companion.KOTLIN_2_2_10
+import com.vanniktech.maven.publish.util.KgpVersionProvider
+import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertThat
+import com.vanniktech.maven.publish.util.TestOptions
+import com.vanniktech.maven.publish.util.androidFusedLibraryProjectSpec
+import com.vanniktech.maven.publish.util.androidLibraryKotlinProjectSpec
+import com.vanniktech.maven.publish.util.androidLibraryProjectSpec
+import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
+import com.vanniktech.maven.publish.util.stdlibCommon
 import org.junit.jupiter.api.condition.DisabledOnJre
 import org.junit.jupiter.api.condition.JRE
 
@@ -17,7 +28,7 @@ class AndroidPluginTest : BasePluginTest() {
 
     val project = androidFusedLibraryProjectSpec(agpVersion)
     // TODO: signing plugin currently unsupported
-    val result = project.run(fixtures, testProjectDir, testOptions.copy(signing = TestOptions.Signing.NO_SIGNING))
+    val result = project.run(testOptions.copy(signing = TestOptions.Signing.NO_SIGNING))
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("aar").exists()
@@ -43,13 +54,13 @@ class AndroidPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun androidLibraryKotlinProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = androidLibraryKotlinProjectSpec(agpVersion, kotlinVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val project = androidLibraryKotlinProjectSpec(agpVersion, kgpVersion)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("aar").exists()
@@ -57,9 +68,9 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     if (agpVersion >= AGP_9_0_0) {
-      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk("2.2.10"))
+      assertThat(result).pom().matchesExpectedPom("aar", KOTLIN_2_2_10.stdlibCommon())
     } else {
-      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk(kotlinVersion))
+      assertThat(result).pom().matchesExpectedPom("aar", kgpVersion.stdlibCommon())
     }
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
@@ -77,7 +88,7 @@ class AndroidPluginTest : BasePluginTest() {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = androidLibraryProjectSpec(agpVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("aar").exists()
@@ -85,7 +96,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     if (agpVersion >= AGP_9_0_0) {
-      assertThat(result).pom().matchesExpectedPom("aar", kotlinStdlibJdk("2.2.10"))
+      assertThat(result).pom().matchesExpectedPom("aar", KOTLIN_2_2_10.stdlibCommon())
     } else {
       assertThat(result).pom().matchesExpectedPom("aar")
     }
@@ -100,7 +111,7 @@ class AndroidPluginTest : BasePluginTest() {
 
   @DisabledOnJre(
     value = [JRE.JAVA_25],
-    disabledReason = "Dokka 1.x does not support Java 25+.",
+    disabledReason = "Bundled dokka 1.x does not support Java 25+.",
   )
   @TestParameterInjectorTest
   fun androidMultiVariantLibraryProject(
@@ -113,13 +124,13 @@ class AndroidPluginTest : BasePluginTest() {
     val project = androidLibraryProjectSpec(agpVersion).copy(
       basePluginConfig = "configure(new AndroidMultiVariantLibrary(true, true))",
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
     if (agpVersion >= AGP_9_0_0) {
-      assertThat(result).pom().matchesExpectedPom("pom", kotlinStdlibJdk("2.2.10"))
+      assertThat(result).pom().matchesExpectedPom("pom", KOTLIN_2_2_10.stdlibCommon())
     } else {
       assertThat(result).pom().matchesExpectedPom("pom")
     }
