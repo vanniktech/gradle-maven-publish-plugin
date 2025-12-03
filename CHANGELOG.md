@@ -5,6 +5,7 @@
 - Updated minimum supported JDK, Gradle, Android Gradle Plugin and Kotlin versions.
 - Removed support for Dokka v1, it's now required to use Dokka in v2 mode.
 - Removed deprecated option of selecting which Android variant to publish for KMP libraries.
+- Support passing lazy properties to `MavenPublishBaseExtension.coordinates(...)`.
 
 **BREAKING**
 - Mark `DirectorySignatureType` internal.
