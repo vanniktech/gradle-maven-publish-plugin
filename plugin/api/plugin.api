@@ -208,15 +208,17 @@ public abstract interface class com/vanniktech/maven/publish/SourcesJar {
 }
 
 public final class com/vanniktech/maven/publish/SourcesJar$None : com/vanniktech/maven/publish/SourcesJar {
-	public fun <init> ()V
+	public static final field INSTANCE Lcom/vanniktech/maven/publish/SourcesJar$None;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/vanniktech/maven/publish/SourcesJar$Regular : com/vanniktech/maven/publish/SourcesJar {
-	public fun <init> ()V
+	public static final field INSTANCE Lcom/vanniktech/maven/publish/SourcesJar$Regular;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/vanniktech/maven/publish/VersionCatalog : com/vanniktech/maven/publish/Platform {
