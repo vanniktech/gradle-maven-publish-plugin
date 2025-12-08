@@ -207,6 +207,13 @@ public abstract class com/vanniktech/maven/publish/Platform {
 public abstract interface class com/vanniktech/maven/publish/SourcesJar {
 }
 
+public final class com/vanniktech/maven/publish/SourcesJar$Empty : com/vanniktech/maven/publish/SourcesJar {
+	public static final field INSTANCE Lcom/vanniktech/maven/publish/SourcesJar$Empty;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/vanniktech/maven/publish/SourcesJar$None : com/vanniktech/maven/publish/SourcesJar {
 	public static final field INSTANCE Lcom/vanniktech/maven/publish/SourcesJar$None;
 	public fun equals (Ljava/lang/Object;)Z

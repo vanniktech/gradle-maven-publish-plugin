@@ -545,6 +545,11 @@ public sealed interface SourcesJar {
   public data object None : SourcesJar
 
   /**
+   * Creates an empty sources jar to satisfy maven central requirements.
+   */
+  public data object Empty : SourcesJar
+
+  /**
    * Creates a regular sources jar using Gradle's default `sourcesJar` task.
    */
   public data object Regular : SourcesJar
@@ -553,17 +558,23 @@ public sealed interface SourcesJar {
 private const val PUBLICATION_NAME = "maven"
 
 private fun MavenPublication.withJavaSourcesJar(sourcesJar: SourcesJar, project: Project, configureArchives: Boolean = false) {
-  if (sourcesJar == SourcesJar.Regular) {
-    project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
-  } else {
-    val task = project.tasks.register("emptySourcesJar", Jar::class.java) {
-      it.archiveClassifier.set("sources")
-      if (configureArchives) {
-        it.archiveBaseName.set(project.name)
-        it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
-      }
+  when (sourcesJar) {
+    SourcesJar.Regular -> {
+      project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
     }
-    artifact(task)
+
+    SourcesJar.Empty -> {
+      val task = project.tasks.register("emptySourcesJar", Jar::class.java) {
+        it.archiveClassifier.set("sources")
+        if (configureArchives) {
+          it.archiveBaseName.set(project.name)
+          it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
+        }
+      }
+      artifact(task)
+    }
+
+    SourcesJar.None -> Unit
   }
 }
 
