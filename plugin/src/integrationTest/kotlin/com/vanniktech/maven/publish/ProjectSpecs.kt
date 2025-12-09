@@ -183,7 +183,7 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
       SourceFile("androidRelease", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
     ),
     // needs to explicitly specify release to match the main plugin default behavior
-    basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty(), SourcesJar.Regular.INSTANCE, [\"release\"]))",
+    basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty(), SourcesJar.Sources.INSTANCE, [\"release\"]))",
     buildFileExtra = baseProject.buildFileExtra +
       """
 
@@ -257,7 +257,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   ),
-  basePluginConfig = "configure(new AndroidSingleVariantLibrary(new JavadocJar.Javadoc(), SourcesJar.Regular.INSTANCE, 'release'))",
+  basePluginConfig = "configure(new AndroidSingleVariantLibrary(new JavadocJar.Javadoc(), SourcesJar.Sources.INSTANCE, 'release'))",
   buildFileExtra =
     """
     android {

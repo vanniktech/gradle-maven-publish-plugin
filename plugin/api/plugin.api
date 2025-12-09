@@ -225,8 +225,8 @@ public final class com/vanniktech/maven/publish/SourcesJar$None : com/vanniktech
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/vanniktech/maven/publish/SourcesJar$Regular : com/vanniktech/maven/publish/SourcesJar {
-	public static final field INSTANCE Lcom/vanniktech/maven/publish/SourcesJar$Regular;
+public final class com/vanniktech/maven/publish/SourcesJar$Sources : com/vanniktech/maven/publish/SourcesJar {
+	public static final field INSTANCE Lcom/vanniktech/maven/publish/SourcesJar$Sources;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

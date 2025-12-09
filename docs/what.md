@@ -32,7 +32,7 @@ For projects using the `com.android.library` plugin. This will publish all varia
         // there are multiple overloads for the constructor
         new AndroidMultiVariantLibrary(
           new JavadocJar.Empty(),
-          SourcesJar.Regular.INSTANCE,
+          SourcesJar.Sources.INSTANCE,
           // which build types to include
           ["beta", "release"] as Set),
           // which flavors to include, the map key is a flavor dimension, the set contains the flavors
@@ -54,7 +54,7 @@ For projects using the `com.android.library` plugin. This will publish all varia
         // there are multiple overloads for the constructor
         AndroidMultiVariantLibrary(
           javadocJar = JavadocJar.Empty(),
-          sourcesJar = SourcesJar.Regular,
+          sourcesJar = SourcesJar.Sources,
           // which build types to include
           includedBuildTypeValues = setOf("beta", "release"),
           // which flavors to include, the map key is a flavor dimension, the set contains the flavors
@@ -81,7 +81,7 @@ the specified variant instead of publishing all of them.
         // there are multiple overloads for the constructor
         new AndroidSingleVariantLibrary(
           new JavadocJar.Empty(),
-          SourcesJar.Regular.INSTANCE,
+          SourcesJar.Sources.INSTANCE,
           // which variant is published
           "release",
         )
@@ -101,7 +101,7 @@ the specified variant instead of publishing all of them.
         // there are multiple overloads for the constructor
         AndroidSingleVariantLibrary(
           javadocJar = JavadocJar.Empty(),
-          sourcesJar = SourcesJar.Regular,
+          sourcesJar = SourcesJar.Sources,
           // which variant is published
           variant = "release",
         )
@@ -164,7 +164,7 @@ For projects using the `java-library` plugin.
       configure(
         new JavaLibrary(
           new JavadocJar.Empty(),
-          SourcesJar.Regular.INSTANCE,
+          SourcesJar.Sources.INSTANCE,
         )
       )
     }
@@ -181,7 +181,7 @@ For projects using the `java-library` plugin.
       configure(
         JavaLibrary(
           javadocJar = JavadocJar.Empty(),
-          sourcesJar = SourcesJar.Regular,
+          sourcesJar = SourcesJar.Sources,
         )
       )
     }
@@ -202,7 +202,7 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
       configure(
         new KotlinJvm(
           new JavadocJar.Empty(),
-          SourcesJar.Regular.INSTANCE,
+          SourcesJar.Sources.INSTANCE,
         )
       )
     }
@@ -219,7 +219,7 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
       configure(
         KotlinJvm(
           javadocJar = JavadocJar.Empty(),
-          sourcesJar = SourcesJar.Regular,
+          sourcesJar = SourcesJar.Sources,
         )
       )
     }
@@ -241,7 +241,7 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
         // there are multiple overloads for the constructor
         new KotlinMultiplatform(
           new JavadocJar.Empty(),
-          SourcesJar.Regular.INSTANCE,
+          SourcesJar.Sources.INSTANCE,
           // which Android library variants to publish if this project has an Android target
           ["release"],
         )
@@ -261,7 +261,7 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
       configure(
         KotlinMultiplatform(
           javadocJar = JavadocJar.Empty(),
-          sourcesJar = SourcesJar.Regular,
+          sourcesJar = SourcesJar.Sources,
           // which Android library variants to publish if this project has an Android target
           androidVariantsToPublish = listOf("release"),
         )
@@ -290,7 +290,7 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
       configure(
         new GradlePlugin(
           new JavadocJar.Empty(),
-          SourcesJar.Regular.INSTANCE,
+          SourcesJar.Sources.INSTANCE,
         )
       )
     }
@@ -307,7 +307,7 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
       configure(
         GradlePlugin(
           javadocJar = JavadocJar.Empty(),
-          sourcesJar = SourcesJar.Regular,
+          sourcesJar = SourcesJar.Sources,
         )
       )
     }
