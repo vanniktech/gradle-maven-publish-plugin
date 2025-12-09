@@ -50,7 +50,7 @@ public sealed class Platform {
  ```
  */
 public data class JavaLibrary @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val javadocJar: JavadocJar = JavadocJar.Javadoc(),
   override val sourcesJar: Boolean = true,
 ) : Platform() {
   override fun configure(project: Project) {
@@ -82,7 +82,7 @@ public data class JavaLibrary @JvmOverloads constructor(
 ```
  */
 public data class GradlePlugin @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val javadocJar: JavadocJar = JavadocJar.Javadoc(),
   override val sourcesJar: Boolean = true,
 ) : Platform() {
   override fun configure(project: Project) {
@@ -145,7 +145,7 @@ public class GradlePublishPlugin : Platform() {
  *```
  */
 public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val javadocJar: JavadocJar = JavadocJar.Javadoc(),
   override val sourcesJar: Boolean = true,
   val variant: String = "release",
 ) : Platform() {
@@ -223,7 +223,7 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
  * ```
  */
 public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val javadocJar: JavadocJar = JavadocJar.Javadoc(),
   override val sourcesJar: Boolean = true,
   val includedBuildTypeValues: Set<String> = emptySet(),
   val includedFlavorDimensionsAndValues: Map<String, Set<String>> = emptyMap(),
