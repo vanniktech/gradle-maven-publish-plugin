@@ -334,7 +334,7 @@ public class AndroidFusedLibrary : Platform() {
  * This does not include javadoc jars because there are no APIs for that available.
  */
 public data class KotlinMultiplatform @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val javadocJar: JavadocJar = JavadocJar.Javadoc(),
   override val sourcesJar: Boolean = true,
   val androidVariantsToPublish: List<String> = listOf("release"),
 ) : Platform() {
@@ -380,7 +380,7 @@ public data class KotlinMultiplatform @JvmOverloads constructor(
  * This does not include javadoc jars because there are no APIs for that available.
  */
 public data class KotlinJvm @JvmOverloads constructor(
-  override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val javadocJar: JavadocJar = JavadocJar.Javadoc(),
   override val sourcesJar: Boolean = true,
 ) : Platform() {
   override fun configure(project: Project) {

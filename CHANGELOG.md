@@ -5,6 +5,7 @@
 - Updated minimum supported JDK, Gradle, Android Gradle Plugin and Kotlin versions.
 - Removed support for Dokka v1, it's now required to use Dokka in v2 mode.
 - Removed deprecated option of selecting which Android variant to publish for KMP libraries.
+- Enable Javadoc for `KotlinMultiplatform` and `KotlinJvm` by default.
 
 **BREAKING**
 - Mark `DirectorySignatureType` internal.
