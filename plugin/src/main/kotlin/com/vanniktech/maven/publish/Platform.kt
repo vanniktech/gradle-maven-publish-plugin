@@ -157,7 +157,7 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
     publishJavadocJar: Boolean,
   ) : this(
     javadocJar = if (publishJavadocJar) JavadocJar.Javadoc() else JavadocJar.None(),
-    sourcesJar = if (sourcesJar) SourcesJar.Regular else SourcesJar.None,
+    sourcesJar = if (sourcesJar) SourcesJar.Regular else SourcesJar.Empty,
     variant = variant,
   )
 
@@ -237,7 +237,7 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
     includedFlavorDimensionsAndValues: Map<String, Set<String>> = emptyMap(),
   ) : this(
     javadocJar = if (publishJavadocJar) JavadocJar.Javadoc() else JavadocJar.None(),
-    sourcesJar = if (sourcesJar) SourcesJar.Regular else SourcesJar.None,
+    sourcesJar = if (sourcesJar) SourcesJar.Regular else SourcesJar.Empty,
     includedBuildTypeValues = includedBuildTypeValues,
     includedFlavorDimensionsAndValues = includedFlavorDimensionsAndValues,
   )
@@ -301,7 +301,7 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
 @Incubating
 public class AndroidFusedLibrary : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.Empty()
-  override val sourcesJar: SourcesJar = SourcesJar.None
+  override val sourcesJar: SourcesJar = SourcesJar.Empty
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("com.android.fused-library")) {
@@ -346,7 +346,7 @@ public data class KotlinMultiplatform @JvmOverloads constructor(
     androidVariantsToPublish: List<String>,
   ) : this(
     javadocJar = javadocJar,
-    sourcesJar = if (sourcesJar) SourcesJar.Regular else SourcesJar.None,
+    sourcesJar = if (sourcesJar) SourcesJar.Regular else SourcesJar.Empty,
     androidVariantsToPublish = emptyList(),
   )
 

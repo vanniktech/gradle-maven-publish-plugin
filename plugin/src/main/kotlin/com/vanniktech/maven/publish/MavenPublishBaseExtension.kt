@@ -374,7 +374,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   @Deprecated("Use configureBasedOnAppliedPlugins with JavadocJar instead of Boolean")
   public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean) {
     configureBasedOnAppliedPlugins(
-      sourcesJar = if (sourcesJar) SourcesJar.Regular else SourcesJar.None,
+      sourcesJar = if (sourcesJar) SourcesJar.Regular else SourcesJar.Empty,
       javadocJar = defaultJavaDocOption(javadocJar),
     )
   }
