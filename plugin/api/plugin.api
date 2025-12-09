@@ -155,6 +155,10 @@ public final class com/vanniktech/maven/publish/KotlinMultiplatform : com/vannik
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/List;)V
 	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Ljava/util/List;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;)V
+	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/List;)V
 	public final fun component1 ()Lcom/vanniktech/maven/publish/JavadocJar;
 	public final fun component2 ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public final fun component3 ()Ljava/util/List;

@@ -338,6 +338,18 @@ public data class KotlinMultiplatform @JvmOverloads constructor(
   override val sourcesJar: SourcesJar = SourcesJar.Regular,
   val androidVariantsToPublish: List<String> = listOf("release"),
 ) : Platform() {
+  @Deprecated("Use constructor with SourcesJar instead of Boolean")
+  @JvmOverloads
+  public constructor(
+    javadocJar: JavadocJar = JavadocJar.Empty(),
+    sourcesJar: Boolean = true,
+    androidVariantsToPublish: List<String>,
+  ) : this(
+    javadocJar = javadocJar,
+    sourcesJar = if (sourcesJar) SourcesJar.Regular else SourcesJar.None,
+    androidVariantsToPublish = emptyList(),
+  )
+
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
       "Calling configure(KotlinMultiplatform(...)) requires the org.jetbrains.kotlin.multiplatform plugin to be applied"
