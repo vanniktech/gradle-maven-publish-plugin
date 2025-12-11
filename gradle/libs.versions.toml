@@ -8,7 +8,7 @@ gradle = "9.2.1"
 
 kotlin = "2.2.21"
 
-android-gradle = "8.13.1"
+android-gradle = "8.13.2"
 
 dokka = "2.1.0"
 
