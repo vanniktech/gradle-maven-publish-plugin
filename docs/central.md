@@ -360,19 +360,19 @@ The validation process:
 
 - Polls the deployment status every 5 seconds (configurable via `SONATYPE_POLL_INTERVAL_SECONDS` property)
 - Only stops when reaching a terminal state (`PUBLISHED` or `FAILED`)
-- Times out after 15 minutes by default (configurable via `SONATYPE_CLOSE_TIMEOUT_SECONDS` property)
+- Times out after 60 minutes by default (configurable via `SONATYPE_CLOSE_TIMEOUT_SECONDS` property)
 - Fails the build if the deployment enters the `FAILED` state, displaying validation errors
 
-#### Disabling automatic validation
+#### Changing automatic validation
 
-Deployment validation for automatic releases is enabled by default. If you prefer to check validation status
-manually, you can disable automatic validation:
+Deployment validation for automatic releases is enabled by default and waits for publishing to finish. If you prefer
+to only wait for the validations to succeed, you can change the validation to `VALIDATE`:
 
 === "build.gradle"
 
     ```groovy
     mavenPublishing {
-      publishToMavenCentral(true, false) // automaticRelease = true, validateDeployment = false
+      publishToMavenCentral(true, DeploymentValidation.VALIDATE) // automaticRelease = true, validateDeployment = VALIDATE
 
       // rest of publishing config
     }
@@ -382,7 +382,7 @@ manually, you can disable automatic validation:
 
     ```kotlin
     mavenPublishing {
-      publishToMavenCentral(automaticRelease = true, validateDeployment = false)
+      publishToMavenCentral(automaticRelease = true, validateDeployment = DeploymentValidation.VALIDATE)
 
       // rest of publishing config
     }
@@ -391,7 +391,36 @@ manually, you can disable automatic validation:
 === "gradle.properties"
 
     ```properties
-    mavenCentralDeploymentValidation=false
+    mavenCentralDeploymentValidation=VALIDATE
+    ```
+
+
+If you prefer to check validation status manually, you can disable automatic validation:
+
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      publishToMavenCentral(true, DeploymentValidation.NONE) // automaticRelease = true, validateDeployment = NONE
+
+      // rest of publishing config
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    mavenPublishing {
+      publishToMavenCentral(automaticRelease = true, validateDeployment = DeploymentValidation.NONE)
+
+      // rest of publishing config
+    }
+    ```
+
+=== "gradle.properties"
+
+    ```properties
+    mavenCentralDeploymentValidation=NONE
     ```
 
 When validation is disabled, the build will complete immediately after uploading the artifacts,

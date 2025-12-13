@@ -5,6 +5,12 @@
 - Updated minimum supported JDK, Gradle, Android Gradle Plugin and Kotlin versions.
 - Removed support for Dokka v1, it's now required to use Dokka in v2 mode.
 - Removed deprecated option of selecting which Android variant to publish for KMP libraries.
+- `validateDeployment` now has the `DeploymentValidation` enum as type instead of being a boolean. This
+  allows setting it to `VALIDATE` which only waits for validations instead of the full publishing process.
+- Changed the default `SONATYPE_CLOSE_TIMEOUT_SECONDS` to 60 minutes.
+- When enabling Maven Central publishing through the DSL, the `mavenCentralDeploymentValidation` and
+  `mavenCentralAutomaticPublishing` are used for the default values of the 2 parameters when they are not passed
+  explicitly. This allows to more easily override them in certain environments.
 
 **BREAKING**
 - Mark `DirectorySignatureType` internal.

@@ -92,7 +92,7 @@ public class SonatypeCentralPortal(
    * @throws IOException if the deployment fails validation or an API error occurs
    */
   @OptIn(ExperimentalTime::class)
-  public fun validateDeployment(deploymentId: String) {
+  public fun validateDeployment(deploymentId: String, waitForPublishing: Boolean) {
     val startMark = TimeSource.Monotonic.markNow()
     val timeout = closeTimeoutSeconds.seconds
     var lastState: DeploymentState? = null
@@ -120,9 +120,18 @@ public class SonatypeCentralPortal(
         when (status.deploymentState) {
           DeploymentState.PENDING -> logger.warn("Deployment is pending validation")
           DeploymentState.VALIDATING -> logger.warn("Deployment is being validated")
-          DeploymentState.VALIDATED -> logger.warn("Deployment has been validated successfully")
-          DeploymentState.PUBLISHING -> logger.warn("Deployment is being published to Maven Central")
-
+          DeploymentState.VALIDATED -> {
+            logger.warn("Deployment has been validated successfully")
+            if (!waitForPublishing) {
+              return
+            }
+          }
+          DeploymentState.PUBLISHING -> {
+            logger.warn("Deployment is being published to Maven Central")
+            if (!waitForPublishing) {
+              return
+            }
+          }
           DeploymentState.PUBLISHED -> {
             logger.warn("Deployment has been published to Maven Central")
             return

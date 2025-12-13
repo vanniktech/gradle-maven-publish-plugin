@@ -11,7 +11,9 @@ internal sealed interface EndOfBuildAction {
     override val runAfterFailure: Boolean = false
   }
 
-  data object Validate : EndOfBuildAction {
+  data class Validate(
+    val waitForPublishing: Boolean,
+  ) : EndOfBuildAction {
     override val runAfterFailure: Boolean = false
   }
 
