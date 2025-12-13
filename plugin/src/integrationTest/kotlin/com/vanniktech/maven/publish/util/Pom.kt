@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
 import org.apache.maven.model.Dependency
 import org.apache.maven.model.DependencyManagement
@@ -12,24 +12,13 @@ data class PomDependency(
   val artifactId: String,
   val version: String,
   val scope: String?,
-  val optional: Boolean? = null,
 )
 
-fun kotlinStdlibCommon(version: KotlinVersion) = kotlinStdlibCommon(version.value)
+fun KgpVersion.stdlibCommon() = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", value, "compile")
 
-fun kotlinStdlibCommon(version: String) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", version, "compile")
+fun KgpVersion.stdlibJs() = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", value, "compile")
 
-fun kotlinStdlibJdk(version: KotlinVersion) = kotlinStdlibJdk(version.value)
-
-fun kotlinStdlibJdk(version: String) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", version, "compile")
-
-fun kotlinStdlibJs(version: KotlinVersion) = kotlinStdlibJs(version.value)
-
-fun kotlinStdlibJs(version: String) = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", version, "compile")
-
-fun kotlinDomApi(version: KotlinVersion) = kotlinDomApi(version.value)
-
-fun kotlinDomApi(version: String) = PomDependency("org.jetbrains.kotlin", "kotlin-dom-api-compat", version, "compile")
+fun KgpVersion.domApiCompat() = PomDependency("org.jetbrains.kotlin", "kotlin-dom-api-compat", value, "compile")
 
 fun createPom(
   groupId: String,
@@ -75,8 +64,7 @@ fun createMinimalPom(
   packaging: String?,
   dependencies: List<PomDependency>,
   dependencyManagementDependencies: List<PomDependency>,
-): Model {
-  val model = Model()
+): Model = Model().also { model ->
   model.modelVersion = "4.0.0"
   model.modelEncoding = "UTF-8"
   model.groupId = groupId
@@ -86,36 +74,20 @@ fun createMinimalPom(
     model.packaging = packaging
   }
   dependencies.distinct().forEach {
-    model.addDependency(
-      Dependency().apply {
-        this.groupId = it.groupId
-        this.artifactId = it.artifactId
-        this.version = it.version
-        this.scope = it.scope
-        if (it.optional != null) {
-          this.isOptional = it.optional
-        }
-      },
-    )
+    model.addDependency(it.toDependency())
   }
-
   if (dependencyManagementDependencies.isNotEmpty()) {
     model.dependencyManagement = DependencyManagement().apply {
       dependencyManagementDependencies.distinct().forEach {
-        addDependency(
-          Dependency().apply {
-            this.groupId = it.groupId
-            this.artifactId = it.artifactId
-            this.version = it.version
-            this.scope = it.scope
-            if (it.optional != null) {
-              this.isOptional = it.optional
-            }
-          },
-        )
+        addDependency(it.toDependency())
       }
     }
   }
+}
 
-  return model
+private fun PomDependency.toDependency() = Dependency().also {
+  it.groupId = groupId
+  it.artifactId = artifactId
+  it.version = version
+  it.scope = scope
 }

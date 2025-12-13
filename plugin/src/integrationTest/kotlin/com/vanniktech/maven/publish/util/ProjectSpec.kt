@@ -1,13 +1,13 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
 import java.nio.file.Path
 import org.gradle.testkit.runner.BuildResult
 
 data class ProjectSpec(
   val plugins: List<PluginSpec>,
-  val group: String?,
-  val artifactId: String?,
-  val version: String?,
+  val group: String,
+  val artifactId: String,
+  val version: String,
   val properties: Map<String, String>,
   val sourceFiles: List<SourceFile>,
   val basePluginConfig: String,

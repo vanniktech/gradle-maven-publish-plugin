@@ -1,22 +1,22 @@
 package com.vanniktech.maven.publish
 
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
-import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
-import com.vanniktech.maven.publish.TestOptions.Signing.NO_SIGNING
-import org.junit.jupiter.api.condition.DisabledOnJre
-import org.junit.jupiter.api.condition.JRE
+import com.vanniktech.maven.publish.util.KgpVersion
+import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertThat
+import com.vanniktech.maven.publish.util.TestOptions
+import com.vanniktech.maven.publish.util.TestOptions.Signing.NO_SIGNING
+import com.vanniktech.maven.publish.util.dokkaJavadocPlugin
+import com.vanniktech.maven.publish.util.dokkaPlugin
+import com.vanniktech.maven.publish.util.kotlinJvmProjectSpec
+import com.vanniktech.maven.publish.util.stdlibCommon
 
 class DokkaPluginTest : BasePluginTest() {
   override val testOptions get() = TestOptions(config, NO_SIGNING, gradleVersion)
 
-  @DisabledOnJre(
-    value = [JRE.JAVA_25],
-    disabledReason = "Dokka 1.x does not support Java 25+.",
-  )
   @TestParameterInjectorTest
   fun dokka() {
-    val kotlinVersion = KotlinVersion.VERSIONS.last()
-    val original = kotlinJvmProjectSpec(kotlinVersion)
+    val kgpVersion = KgpVersion.VERSIONS.last()
+    val original = kotlinJvmProjectSpec(kgpVersion)
     val project = original.copy(
       plugins = original.plugins + dokkaPlugin,
       basePluginConfig = original.basePluginConfig.replace(
@@ -24,12 +24,12 @@ class DokkaPluginTest : BasePluginTest() {
         "JavadocJar.Dokka(\"dokkaGeneratePublicationHtml\")",
       ),
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsAllSourceFiles()
@@ -39,8 +39,8 @@ class DokkaPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun dokkaJavadoc() {
-    val kotlinVersion = KotlinVersion.VERSIONS.last()
-    val original = kotlinJvmProjectSpec(kotlinVersion)
+    val kgpVersion = KgpVersion.VERSIONS.last()
+    val original = kotlinJvmProjectSpec(kgpVersion)
     val project = original.copy(
       plugins = original.plugins + dokkaJavadocPlugin,
       basePluginConfig = original.basePluginConfig.replace(
@@ -48,12 +48,12 @@ class DokkaPluginTest : BasePluginTest() {
         "JavadocJar.Dokka(\"dokkaGeneratePublicationJavadoc\")",
       ),
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsAllSourceFiles()
