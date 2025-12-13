@@ -5,6 +5,9 @@
 - Updated minimum supported JDK, Gradle, Android Gradle Plugin and Kotlin versions.
 - Removed support for Dokka v1, it's now required to use Dokka in v2 mode.
 - Removed deprecated option of selecting which Android variant to publish for KMP libraries.
+- Deprecate some `MavenPublishBaseExtension.configureBasedOnAppliedPlugins(...)` overloads.
+- Deprecate constructors of `Platform` subclasses, you can use the new overloads instead.
+- Support configuring `SourcesJar` and `JavadocJar` options as parameters.
 
 **BREAKING**
 - Mark `DirectorySignatureType` internal.

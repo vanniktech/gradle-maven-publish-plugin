@@ -111,7 +111,7 @@ class AndroidPluginTest : BasePluginTest() {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
     val project = androidLibraryProjectSpec(agpVersion).copy(
-      basePluginConfig = "configure(new AndroidMultiVariantLibrary(true, true))",
+      basePluginConfig = "configure(new AndroidMultiVariantLibrary())",
     )
     val result = project.run(fixtures, testProjectDir, testOptions)
 
