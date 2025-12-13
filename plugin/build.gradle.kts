@@ -37,8 +37,9 @@ val integrationTestSourceSet = sourceSets.create("integrationTest") {
   compileClasspath += configurations.testRuntimeClasspath.get()
   runtimeClasspath += output + compileClasspath
 }
-val integrationTestImplementation = configurations["integrationTestImplementation"]
-  .extendsFrom(configurations.testImplementation.get())
+val integrationTestImplementation by configurations.getting {
+  extendsFrom(configurations.testImplementation.get())
+}
 
 configurations.named(API_ELEMENTS_CONFIGURATION_NAME) {
   attributes.attribute(
@@ -106,11 +107,11 @@ dependencies {
   testImplementation(libs.junit.jupiter)
   testImplementation(libs.junit.engine)
   testImplementation(libs.junit.launcher)
-  testImplementation(libs.testParameterInjector)
   testImplementation(libs.truth)
-  testImplementation(libs.truth.testKit)
-  testImplementation(libs.maven.model)
-  testImplementation(libs.semver)
+  integrationTestImplementation(libs.testParameterInjector)
+  integrationTestImplementation(libs.truth.testKit)
+  integrationTestImplementation(libs.maven.model)
+  integrationTestImplementation(libs.semver)
 
   lintChecks(libs.androidx.gradlePluginLints)
 }

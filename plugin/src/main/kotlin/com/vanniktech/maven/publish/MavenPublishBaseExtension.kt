@@ -11,13 +11,12 @@ import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.credentials.PasswordCredentials
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
-import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.build.event.BuildEventsListenerRegistry
-import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
@@ -65,7 +64,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * @param validateDeployment whether to wait for the deployment to be validated and published at the end of the build
    */
   @JvmOverloads
-  public fun publishToMavenCentral(automaticRelease: Boolean = false, validateDeployment: Boolean = true) {
+  public fun publishToMavenCentral(
+    automaticRelease: Boolean = project.automaticRelease(),
+    validateDeployment: Boolean = project.validateDeployment(),
+  ) {
     mavenCentral.set(true)
     mavenCentral.finalizeValue()
 
@@ -369,8 +371,17 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * Calls [configure] with a [Platform] chosen based on other applied Gradle plugins.
    */
   @Incubating
+  @Deprecated("Use configureBasedOnAppliedPlugins with JavadocJar instead of Boolean")
+  public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean) {
+    configureBasedOnAppliedPlugins(sourcesJar, defaultJavaDocOption(javadocJar))
+  }
+
+  /**
+   * Calls [configure] with a [Platform] chosen based on other applied Gradle plugins.
+   */
+  @Incubating
   @JvmOverloads
-  public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: Boolean = true) {
+  public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: JavadocJar = defaultJavaDocOption(true)) {
     // has already been called before by the user or from finalizeDsl
     if (platform.isPresent) {
       return
@@ -385,16 +396,15 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
         configure(
           KotlinMultiplatform(
-            javadocJar = defaultJavaDocOption(javadocJar, plainJavadocSupported = false),
+            javadocJar = javadocJar,
             sourcesJar = sourcesJar,
             androidVariantsToPublish = variants,
-            forceAndroidVariantsIfNotEmpty = false,
           ),
         )
       }
       project.plugins.hasPlugin("com.android.library") -> {
         val variant = project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
-        configure(AndroidSingleVariantLibrary(variant, sourcesJar, javadocJar))
+        configure(AndroidSingleVariantLibrary(javadocJar, sourcesJar, variant))
       }
       project.plugins.hasPlugin("com.android.fused-library") -> {
         configure(AndroidFusedLibrary())
@@ -402,13 +412,13 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       project.plugins.hasPlugin("com.gradle.plugin-publish") ->
         configure(GradlePublishPlugin())
       project.plugins.hasPlugin("java-gradle-plugin") ->
-        configure(GradlePlugin(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
+        configure(GradlePlugin(javadocJar, sourcesJar))
       project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
-        configure(KotlinJvm(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
+        configure(KotlinJvm(javadocJar, sourcesJar))
       project.plugins.hasPlugin("java-library") ->
-        configure(JavaLibrary(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
+        configure(JavaLibrary(javadocJar, sourcesJar))
       project.plugins.hasPlugin("java") ->
-        configure(JavaLibrary(defaultJavaDocOption(javadocJar, plainJavadocSupported = true), sourcesJar))
+        configure(JavaLibrary(javadocJar, sourcesJar))
       project.plugins.hasPlugin("java-platform") ->
         configure(JavaPlatform())
       project.plugins.hasPlugin("version-catalog") ->
@@ -417,44 +427,25 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
   }
 
-  private fun defaultJavaDocOption(javadocJar: Boolean, plainJavadocSupported: Boolean): JavadocJar {
-    return if (!javadocJar) {
-      JavadocJar.None()
-    } else if (project.plugins.hasPlugin("org.jetbrains.dokka-javadoc")) {
-      JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
-    } else if (project.plugins.hasPlugin("org.jetbrains.dokka")) {
+  private fun defaultJavaDocOption(javadocJar: Boolean): JavadocJar = when {
+    !javadocJar -> JavadocJar.None()
+    project.plugins.hasPlugin("org.jetbrains.dokka-javadoc") -> JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
+    project.plugins.hasPlugin("org.jetbrains.dokka") -> {
       // only dokka v2 has an extension
-      if (project.extensions.findByName("dokka") != null) {
-        JavadocJar.Dokka("dokkaGeneratePublicationHtml")
-      } else {
-        error("Dokka in v2 mode is required when using Dokka")
+      check(project.extensions.findByName("dokka") != null) {
+        "Dokka in v2 mode is required when using Dokka"
       }
-    } else if (plainJavadocSupported) {
-      project.tasks.withType(Javadoc::class.java).configureEach {
-        val options = it.options as StandardJavadocDocletOptions
-        val javaVersion = project.javaVersion()
-        if (javaVersion.isJava9Compatible) {
-          options.addBooleanOption("html5", true)
-        }
-      }
-      return JavadocJar.Javadoc()
-    } else {
-      JavadocJar.Empty()
+      JavadocJar.Dokka("dokkaGeneratePublicationHtml")
     }
+    !project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> JavadocJar.Javadoc()
+    else -> JavadocJar.Empty()
   }
 
-  private fun findOptionalProperty(propertyName: String): String? = if (buildFeatures.isolatedProjects.active.get()) {
-    // There is currently no way to search hierarchically for a project property in an isolated
-    // projects safe way:
-    // https://github.com/gradle/gradle/issues/29600#issuecomment-2306054264
-    // Projects applying this plugin must either use the DSL to specify values for the POM
-    // properties, or use the values provided by the root gradle properties.
-    project.providers.gradleProperty(propertyName).orNull
-  } else {
-    // TODO: we can't call 'providers.gradleProperty' instead due to
-    //  https://github.com/gradle/gradle/issues/23572
-    //  https://github.com/gradle/gradle/issues/29600
-    @Suppress("GradleProjectIsolation")
-    project.findProperty(propertyName)?.toString()
+  // ExtraPropertiesExtension is IP safe and contains properties from both the root `gradle.properties`
+  // and the subproject's `gradle.properties`.
+  // https://github.com/gradle/gradle/issues/29600#issuecomment-3580868326
+  private fun findOptionalProperty(propertyName: String): String? {
+    val extras = checkNotNull(project.extensions.findByType(ExtraPropertiesExtension::class.java))
+    return if (extras.has(propertyName)) extras.get(propertyName)?.toString() else null
   }
 }

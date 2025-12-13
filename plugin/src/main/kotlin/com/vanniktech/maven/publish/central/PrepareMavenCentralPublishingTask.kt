@@ -38,6 +38,21 @@ internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
       localRepository.deleteRecursively()
     }
 
+    check(
+      buildService
+        .get()
+        .parameters.repositoryUsername.isPresent,
+    ) {
+      "mavenCentralUsername not found, which is required for publishing to Maven Central."
+    }
+    check(
+      buildService
+        .get()
+        .parameters.repositoryPassword.isPresent,
+    ) {
+      "mavenCentralPassword not found, which is required for publishing to Maven Central."
+    }
+
     buildService.get().registerProject(projectGroup.get(), artifactId.get(), version.get(), localRepository)
   }
 
