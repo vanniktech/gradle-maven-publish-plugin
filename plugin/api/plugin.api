@@ -56,6 +56,15 @@ public final class com/vanniktech/maven/publish/AndroidSingleVariantLibrary : co
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/vanniktech/maven/publish/DeploymentValidation : java/lang/Enum {
+	public static final field NONE Lcom/vanniktech/maven/publish/DeploymentValidation;
+	public static final field PUBLISH Lcom/vanniktech/maven/publish/DeploymentValidation;
+	public static final field VALIDATE Lcom/vanniktech/maven/publish/DeploymentValidation;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/vanniktech/maven/publish/DeploymentValidation;
+	public static fun values ()[Lcom/vanniktech/maven/publish/DeploymentValidation;
+}
+
 public final class com/vanniktech/maven/publish/GradlePlugin : com/vanniktech/maven/publish/Platform {
 	public fun <init> ()V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;)V
@@ -182,8 +191,9 @@ public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public final fun pomFromGradleProperties ()V
 	public final fun publishToMavenCentral ()V
 	public final fun publishToMavenCentral (Z)V
+	public final fun publishToMavenCentral (ZLcom/vanniktech/maven/publish/DeploymentValidation;)V
 	public final fun publishToMavenCentral (ZZ)V
-	public static synthetic fun publishToMavenCentral$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;ZZILjava/lang/Object;)V
+	public static synthetic fun publishToMavenCentral$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;ZLcom/vanniktech/maven/publish/DeploymentValidation;ILjava/lang/Object;)V
 	public final fun signAllPublications ()V
 }
 

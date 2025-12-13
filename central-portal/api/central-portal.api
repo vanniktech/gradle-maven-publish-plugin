@@ -3,7 +3,7 @@ public final class com/vanniktech/maven/publish/portal/SonatypeCentralPortal {
 	public final fun deleteDeployment (Ljava/lang/String;)V
 	public final fun publishDeployment (Ljava/lang/String;)V
 	public final fun upload (Ljava/lang/String;Lcom/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType;Ljava/io/File;)Ljava/lang/String;
-	public final fun validateDeployment (Ljava/lang/String;)V
+	public final fun validateDeployment (Ljava/lang/String;Z)V
 }
 
 public final class com/vanniktech/maven/publish/portal/SonatypeCentralPortal$PublishingType : java/lang/Enum {

@@ -1,5 +1,6 @@
 package com.vanniktech.maven.publish.central
 
+import com.vanniktech.maven.publish.DeploymentValidation
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -15,7 +16,7 @@ internal abstract class EnableAutomaticMavenCentralPublishingTask : DefaultTask(
   abstract val buildService: Property<MavenCentralBuildService>
 
   @get:Internal
-  abstract val validateDeployment: Property<Boolean>
+  abstract val validateDeployment: Property<DeploymentValidation>
 
   @TaskAction
   fun enableAutomaticPublishing() {
@@ -27,7 +28,7 @@ internal abstract class EnableAutomaticMavenCentralPublishingTask : DefaultTask(
 
     fun TaskContainer.registerEnableAutomaticMavenCentralPublishingTask(
       buildService: Provider<MavenCentralBuildService>,
-      validateDeployment: Boolean,
+      validateDeployment: DeploymentValidation,
     ): TaskProvider<EnableAutomaticMavenCentralPublishingTask> = register(NAME, EnableAutomaticMavenCentralPublishingTask::class.java) {
       it.description = "Enables automatic publishing for Maven Central"
       it.buildService.set(buildService)

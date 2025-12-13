@@ -1,6 +1,10 @@
 package com.vanniktech.maven.publish.central
 
 import com.vanniktech.maven.publish.BuildConfig
+import com.vanniktech.maven.publish.DeploymentValidation
+import com.vanniktech.maven.publish.closeTimeout
+import com.vanniktech.maven.publish.connectTimeout
+import com.vanniktech.maven.publish.pollIntervalSeconds
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.AUTOMATIC
 import com.vanniktech.maven.publish.portal.SonatypeCentralPortal.PublishingType.USER_MANAGED
@@ -31,7 +35,7 @@ internal abstract class MavenCentralBuildService :
     val repositoryPassword: Property<String>
     val okhttpTimeoutSeconds: Property<Long>
     val closeTimeoutSeconds: Property<Long>
-    val pollIntervalSeconds: Property<Long>
+    val pollIntervalMillis: Property<Long>
     val rootBuildDirectory: DirectoryProperty
   }
 
@@ -49,7 +53,7 @@ internal abstract class MavenCentralBuildService :
       userAgentVersion = BuildConfig.VERSION_NAME,
       okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
       closeTimeoutSeconds = parameters.closeTimeoutSeconds.get(),
-      pollIntervalMs = parameters.pollIntervalSeconds.get() * 1000L,
+      pollIntervalMs = parameters.pollIntervalMillis.get(),
       logger = logger,
     )
   }
@@ -81,10 +85,12 @@ internal abstract class MavenCentralBuildService :
   /**
    * Is only allowed to be called from task actions.
    */
-  fun enableAutomaticPublishing(validateDeployment: Boolean) {
+  fun enableAutomaticPublishing(validateDeployment: DeploymentValidation) {
     endOfBuildActions += EndOfBuildAction.Publish
-    if (validateDeployment) {
-      endOfBuildActions += EndOfBuildAction.Validate
+    when (validateDeployment) {
+      DeploymentValidation.NONE -> {}
+      DeploymentValidation.VALIDATE -> endOfBuildActions += EndOfBuildAction.Validate(waitForPublishing = false)
+      DeploymentValidation.PUBLISH -> endOfBuildActions += EndOfBuildAction.Validate(waitForPublishing = true)
     }
   }
 
@@ -159,8 +165,9 @@ internal abstract class MavenCentralBuildService :
       val deploymentId = centralPortal.upload(deploymentName, publishingType, zipFile)
       this.deploymentId = deploymentId
 
-      if (actions.contains(EndOfBuildAction.Validate)) {
-        centralPortal.validateDeployment(deploymentId)
+      val validate = actions.find { it is EndOfBuildAction.Validate } as EndOfBuildAction.Validate?
+      if (validate != null) {
+        centralPortal.validateDeployment(deploymentId, validate.waitForPublishing)
       } else {
         logger.lifecycle("Skipping deployment validation!")
       }
@@ -184,25 +191,13 @@ internal abstract class MavenCentralBuildService :
       rootBuildDirectory: Directory,
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
     ): Provider<MavenCentralBuildService> {
-      val okhttpTimeout = project.providers
-        .gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
-        .map { it.toLong() }
-        .orElse(60)
-      val closeTimeout = project.providers
-        .gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
-        .map { it.toLong() }
-        .orElse(60 * 15)
-      val pollIntervalSeconds = project.providers
-        .gradleProperty("SONATYPE_POLL_INTERVAL_SECONDS")
-        .map { it.toLong() }
-        .orElse(5L)
       val service = gradle.sharedServices.registerIfAbsent(NAME, MavenCentralBuildService::class.java) {
         it.maxParallelUsages.set(1)
         it.parameters.repositoryUsername.set(repositoryUsername)
         it.parameters.repositoryPassword.set(repositoryPassword)
-        it.parameters.okhttpTimeoutSeconds.set(okhttpTimeout)
-        it.parameters.closeTimeoutSeconds.set(closeTimeout)
-        it.parameters.pollIntervalSeconds.set(pollIntervalSeconds)
+        it.parameters.okhttpTimeoutSeconds.set(project.connectTimeout().get().inWholeSeconds)
+        it.parameters.closeTimeoutSeconds.set(project.closeTimeout().get().inWholeSeconds)
+        it.parameters.pollIntervalMillis.set(project.pollIntervalSeconds().get().inWholeMilliseconds)
         it.parameters.rootBuildDirectory.set(rootBuildDirectory)
       }
       buildEventsListenerRegistry.onTaskCompletion(service)
