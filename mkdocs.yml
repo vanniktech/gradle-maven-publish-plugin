@@ -10,12 +10,27 @@ copyright: 'Copyright (C) 2018 Vanniktech - Niklas Baudy'
 theme:
   name: 'material'
   palette:
-    primary: 'cyan'
-    accent: 'purple'
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: 'white'
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: 'black'
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: 'Lato'
+    code: 'JetBrains Mono'
   features:
     - navigation.sections
     - navigation.tracking
     - navigation.tabs
+    - content.code.copy
+    - content.code.select
     - content.tabs.link
     - toc.integrate
     - content.action.edit
