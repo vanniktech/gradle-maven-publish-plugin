@@ -506,35 +506,17 @@ public sealed interface JavadocJar {
   public class Dokka private constructor(
     internal val wrapper: DokkaTaskWrapper,
   ) : JavadocJar {
-    internal sealed interface DokkaTaskWrapper {
-      fun asProvider(project: Project): Provider<*>
-    }
-
-    internal data class StringDokkaTaskWrapper(
-      val value: String,
-    ) : DokkaTaskWrapper {
-      override fun asProvider(project: Project): Provider<*> = project.tasks.named(value)
-    }
-
-    internal data class StringProviderDokkaTaskWrapper(
-      val value: Provider<String>,
-    ) : DokkaTaskWrapper {
-      override fun asProvider(project: Project): Provider<*> = value.flatMap { name -> project.tasks.named(name) }
-    }
-
-    internal data class DirectDokkaTaskWrapper(
-      val value: TaskProvider<*>,
-    ) : DokkaTaskWrapper {
-      override fun asProvider(project: Project): Provider<*> = value
-    }
-
-    public constructor(taskName: String) : this(StringDokkaTaskWrapper(taskName))
-    public constructor(taskName: Provider<String>) : this(StringProviderDokkaTaskWrapper(taskName))
-    public constructor(task: TaskProvider<*>) : this(DirectDokkaTaskWrapper(task))
+    public constructor(taskName: String) : this({ it.tasks.named(taskName) })
+    public constructor(taskName: Provider<String>) : this({ taskName.flatMap(it.tasks::named) })
+    public constructor(task: TaskProvider<*>) : this({ task })
 
     override fun equals(other: Any?): Boolean = other is Dokka && wrapper == other.wrapper
 
     override fun hashCode(): Int = wrapper.hashCode()
+
+    internal fun interface DokkaTaskWrapper {
+      fun asProvider(project: Project): Provider<*>
+    }
   }
 }
 
