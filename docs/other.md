@@ -214,8 +214,8 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
 === "gradle.properties"
 
     ```properties
-    GROUP=com.test.mylibrary
-    POM_ARTIFACT_ID=mylibrary-runtime
+    GROUP=com.example.mylibrary
+    POM_ARTIFACT_ID=library-name
     VERSION_NAME=3.0.5
 
     # the following is optional
