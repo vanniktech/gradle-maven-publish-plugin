@@ -154,7 +154,7 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
         url.set("https://github.com/username/mylibrary/")
         licenses {
           license {
-            name.set("The Apache License, Version 2.0")
+            name.set("Apache-2.0")
             url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
             distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
           }
@@ -190,7 +190,7 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
         url = "https://github.com/username/mylibrary/"
         licenses {
           license {
-            name = "The Apache License, Version 2.0"
+            name = "Apache-2.0"
             url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
             distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
           }
