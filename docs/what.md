@@ -99,7 +99,7 @@ the specified variant instead of publishing all of them.
     import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 
     mavenPublishing {
-      // the first parameter represennts which variant is published
+      // the first parameter represents which variant is published
       // the second whether to publish a sources jar
       // the third whether to publish a javadoc jar
       configure(new AndroidSingleVariantLibrary("release", true, true))
@@ -123,7 +123,7 @@ For projects using the `com.android.fused-library` plugin.
 === "build.gradle"
 
     ```groovy
-    import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+    import com.vanniktech.maven.publish.AndroidFusedLibrary
 
     mavenPublishing {
       configure(new AndroidFusedLibrary())
@@ -142,7 +142,7 @@ For projects using the `com.android.fused-library` plugin.
 !!! info
 
     Configuring source and javadoc publishing is currently not possible and the
-    plugin will always publush empty jars for them.
+    plugin will always publish empty jars for them.
 
 
 ## Java Library
