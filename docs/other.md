@@ -64,9 +64,9 @@ A new repository to publish to can be added like this
                 name = "myRepo"
                 url = uri(layout.buildDirectory.dir("repo"))
                 // or
-                url = uri("http://my.org/repo")
+                url = uri("https://my.org/repo")
                 // or when a separate snapshot repository is required
-                url = uri(if (version.toString().endsWith("SNAPSHOT")) "http://my.org/repos/snapshots" else "http://my.org/repos/releases")
+                url = uri(if (version.toString().endsWith("SNAPSHOT")) "https://my.org/repos/snapshots" else "https://my.org/repos/releases")
             }
 
             // more repositories can go here
@@ -83,9 +83,9 @@ A new repository to publish to can be added like this
                 name = "myRepo"
                 url = layout.buildDirectory.dir('repo')
                 // or
-                url = "http://my.org/repo"
+                url = "https://my.org/repo"
                 // or when a separate snapshot repository is required
-                url = version.toString().endsWith("SNAPSHOT") ? "http://my.org/repos/snapshots" : "http://my.org/repos/releases"
+                url = version.toString().endsWith("SNAPSHOT") ? "https://my.org/repos/snapshots" : "https://my.org/repos/releases"
             }
 
             // more repositories can go here
@@ -155,8 +155,8 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
         licenses {
           license {
             name.set("Apache-2.0")
-            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-            distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+            distribution.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
           }
         }
         developers {
@@ -191,8 +191,8 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
         licenses {
           license {
             name = "Apache-2.0"
-            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
           }
         }
         developers {

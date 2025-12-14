@@ -99,8 +99,8 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
         licenses {
           license {
             name.set("Apache-2.0")
-            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-            distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+            distribution.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
           }
         }
         developers {
@@ -133,8 +133,8 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
         licenses {
           license {
             name = "Apache-2.0"
-            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
           }
         }
         developers {
