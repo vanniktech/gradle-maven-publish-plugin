@@ -15,19 +15,19 @@ the most common repository for opensource projects.
 
 Add the plugin to any Gradle project that should be published
 
-=== "build.gradle"
-
-    ```groovy
-    plugins {
-      id "com.vanniktech.maven.publish" version "<latest-version>"
-    }
-    ```
-
 === "build.gradle.kts"
 
     ```kotlin
     plugins {
       id("com.vanniktech.maven.publish") version "<latest-version>"
+    }
+    ```
+
+=== "build.gradle"
+
+    ```groovy
+    plugins {
+      id "com.vanniktech.maven.publish" version "<latest-version>"
     }
     ```
 
@@ -49,9 +49,9 @@ After applying the plugin the first step is to enable publishing to Maven Centra
 is to add it is as a target and enable GPG signing which is a Central requirement.
 This can be done through either the DSL or by setting Gradle properties.
 
-=== "build.gradle"
+=== "build.gradle.kts"
 
-    ```groovy
+    ```kotlin
     mavenPublishing {
       publishToMavenCentral()
 
@@ -59,9 +59,9 @@ This can be done through either the DSL or by setting Gradle properties.
     }
     ```
 
-=== "build.gradle.kts"
+=== "build.gradle"
 
-    ```kotlin
+    ```groovy
     mavenPublishing {
       publishToMavenCentral()
 
@@ -84,40 +84,6 @@ as well as some general information about the project like a url and the used
 license.
 
 This configuration also determines the coordinates (`group:artifactId:version`) used to consume the library.
-
-=== "build.gradle"
-
-    ```groovy
-    mavenPublishing {
-      coordinates("com.example.mylibrary", "library-name", "1.0.3-SNAPSHOT")
-
-      pom {
-        name = "My Library"
-        description = "A description of what my library does."
-        inceptionYear = "2020"
-        url = "https://github.com/username/mylibrary/"
-        licenses {
-          license {
-            name = "The Apache License, Version 2.0"
-            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-          }
-        }
-        developers {
-          developer {
-            id = "username"
-            name = "User Name"
-            url = "https://github.com/username/"
-          }
-        }
-        scm {
-          url = "https://github.com/username/mylibrary/"
-          connection = "scm:git:git://github.com/username/mylibrary.git"
-          developerConnection = "scm:git:ssh://git@github.com/username/mylibrary.git"
-        }
-      }
-    }
-    ```
 
 === "build.gradle.kts"
 
@@ -148,6 +114,40 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
           url.set("https://github.com/username/mylibrary/")
           connection.set("scm:git:git://github.com/username/mylibrary.git")
           developerConnection.set("scm:git:ssh://git@github.com/username/mylibrary.git")
+        }
+      }
+    }
+    ```
+
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      coordinates("com.example.mylibrary", "library-name", "1.0.3-SNAPSHOT")
+
+      pom {
+        name = "My Library"
+        description = "A description of what my library does."
+        inceptionYear = "2020"
+        url = "https://github.com/username/mylibrary/"
+        licenses {
+          license {
+            name = "The Apache License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+        developers {
+          developer {
+            id = "username"
+            name = "User Name"
+            url = "https://github.com/username/"
+          }
+        }
+        scm {
+          url = "https://github.com/username/mylibrary/"
+          connection = "scm:git:git://github.com/username/mylibrary.git"
+          developerConnection = "scm:git:ssh://git@github.com/username/mylibrary.git"
         }
       }
     }
@@ -305,12 +305,13 @@ For automatic publishing use one of the following options
     ./gradlew publishAndReleaseToMavenCentral
     ```
 
-=== "build.gradle"
+=== "build.gradle.kts"
 
-    When calling `publishToMavenCentral` in the DSL add `true` as a parameter.
-    ```groovy
+    When calling `publishToMavenCentral` in the DSL add `automaticRelease = true` as a parameter to
+    make any publish task also take care of step 3.
+    ```properties
     mavenPublishing {
-      publishToMavenCentral(true)
+      publishToMavenCentral(automaticRelease = true)
 
       // rest of publishing config
     }
@@ -321,13 +322,12 @@ For automatic publishing use one of the following options
     ./gradlew publishToMavenCentral
     ```
 
-=== "build.gradle.kts"
+=== "build.gradle"
 
-    When calling `publishToMavenCentral` in the DSL add `automaticRelease = true` as a parameter to
-    make any publish task also take care of step 3.
-    ```properties
+    When calling `publishToMavenCentral` in the DSL add `true` as a parameter.
+    ```groovy
     mavenPublishing {
-      publishToMavenCentral(automaticRelease = true)
+      publishToMavenCentral(true)
 
       // rest of publishing config
     }
@@ -368,21 +368,21 @@ The validation process:
 Deployment validation for automatic releases is enabled by default and waits for publishing to finish. If you prefer
 to only wait for the validations to succeed, you can change the validation to `VALIDATE`:
 
-=== "build.gradle"
-
-    ```groovy
-    mavenPublishing {
-      publishToMavenCentral(true, DeploymentValidation.VALIDATE) // automaticRelease = true, validateDeployment = VALIDATE
-
-      // rest of publishing config
-    }
-    ```
-
 === "build.gradle.kts"
 
     ```kotlin
     mavenPublishing {
       publishToMavenCentral(automaticRelease = true, validateDeployment = DeploymentValidation.VALIDATE)
+
+      // rest of publishing config
+    }
+    ```
+
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      publishToMavenCentral(true, DeploymentValidation.VALIDATE) // automaticRelease = true, validateDeployment = VALIDATE
 
       // rest of publishing config
     }
@@ -397,21 +397,21 @@ to only wait for the validations to succeed, you can change the validation to `V
 
 If you prefer to check validation status manually, you can disable automatic validation:
 
-=== "build.gradle"
-
-    ```groovy
-    mavenPublishing {
-      publishToMavenCentral(true, DeploymentValidation.NONE) // automaticRelease = true, validateDeployment = NONE
-
-      // rest of publishing config
-    }
-    ```
-
 === "build.gradle.kts"
 
     ```kotlin
     mavenPublishing {
       publishToMavenCentral(automaticRelease = true, validateDeployment = DeploymentValidation.NONE)
+
+      // rest of publishing config
+    }
+    ```
+
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      publishToMavenCentral(true, DeploymentValidation.NONE) // automaticRelease = true, validateDeployment = NONE
 
       // rest of publishing config
     }
