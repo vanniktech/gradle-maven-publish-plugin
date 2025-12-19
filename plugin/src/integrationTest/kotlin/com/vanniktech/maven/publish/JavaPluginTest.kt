@@ -2,13 +2,29 @@ package com.vanniktech.maven.publish
 
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
-import com.vanniktech.maven.publish.ProjectResultSubject.Companion.assertThat
+import com.vanniktech.maven.publish.util.KgpVersion
+import com.vanniktech.maven.publish.util.KgpVersionProvider
+import com.vanniktech.maven.publish.util.PluginPublishVersion
+import com.vanniktech.maven.publish.util.PluginPublishVersionProvider
+import com.vanniktech.maven.publish.util.PomDependency
+import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertThat
+import com.vanniktech.maven.publish.util.SourceFile
+import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
+import com.vanniktech.maven.publish.util.javaGradlePluginKotlinProjectSpec
+import com.vanniktech.maven.publish.util.javaGradlePluginProjectSpec
+import com.vanniktech.maven.publish.util.javaGradlePluginWithGradlePluginPublish
+import com.vanniktech.maven.publish.util.javaLibraryProjectSpec
+import com.vanniktech.maven.publish.util.javaPlatformProjectSpec
+import com.vanniktech.maven.publish.util.javaProjectSpec
+import com.vanniktech.maven.publish.util.javaTestFixturesPlugin
+import com.vanniktech.maven.publish.util.stdlibCommon
+import com.vanniktech.maven.publish.util.versionCatalogProjectSpec
 
 class JavaPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun javaProject() {
     val project = javaProjectSpec()
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -28,7 +44,7 @@ class JavaPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun javaLibraryProject() {
     val project = javaLibraryProjectSpec()
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -53,7 +69,7 @@ class JavaPluginTest : BasePluginTest() {
       sourceFiles = default.sourceFiles +
         SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java"),
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -78,7 +94,7 @@ class JavaPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun javaGradlePluginProject() {
     val project = javaGradlePluginProjectSpec()
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -107,10 +123,10 @@ class JavaPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun javaGradlePluginWithPluginPublishProject(
-    @TestParameter(valuesProvider = GradlePluginPublishVersionProvider::class) gradlePluginPublish: GradlePluginPublish,
+    @TestParameter(valuesProvider = PluginPublishVersionProvider::class) pluginPublishVersion: PluginPublishVersion,
   ) {
-    val project = javaGradlePluginWithGradlePluginPublish(gradlePluginPublish)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val project = javaGradlePluginWithGradlePluginPublish(pluginPublishVersion)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -139,19 +155,19 @@ class JavaPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun javaGradlePluginKotlinProject(
-    @TestParameter(valuesProvider = KotlinVersionProvider::class) kotlinVersion: KotlinVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
   ) {
-    kotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
+    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = javaGradlePluginKotlinProjectSpec(kotlinVersion)
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val project = javaGradlePluginKotlinProjectSpec(kgpVersion)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).artifact("jar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(kotlinStdlibJdk(kotlinVersion))
+    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
@@ -181,7 +197,7 @@ class JavaPluginTest : BasePluginTest() {
         }
         """.trimIndent(),
     )
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
@@ -201,7 +217,7 @@ class JavaPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun javaPlatformProject() {
     val project = javaPlatformProjectSpec()
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).pom().exists()
@@ -220,7 +236,7 @@ class JavaPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun versionCatalogProject() {
     val project = versionCatalogProjectSpec()
-    val result = project.run(fixtures, testProjectDir, testOptions)
+    val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("toml").exists()

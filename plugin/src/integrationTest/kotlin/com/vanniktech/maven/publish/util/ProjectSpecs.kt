@@ -1,9 +1,7 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
-import com.vanniktech.maven.publish.AgpVersion.Companion.AGP_9_0_0
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.DOKKA_STABLE
-import java.nio.file.Paths
-import kotlin.io.path.absolute
+import com.vanniktech.maven.publish.util.AgpVersion.Companion.AGP_9_0_0
 
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
@@ -21,9 +19,7 @@ val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 val dokkaPlugin = PluginSpec("org.jetbrains.dokka", DOKKA_STABLE)
 val dokkaJavadocPlugin = PluginSpec("org.jetbrains.dokka-javadoc", DOKKA_STABLE)
 
-val fixtures = Paths.get("src/integrationTest/fixtures2").absolute()
-
-val defaultProperties = mapOf(
+private val defaultProperties = mapOf(
   "POM_NAME" to "Gradle Maven Publish Plugin Test Artifact",
   "POM_DESCRIPTION" to "Testing the Gradle Maven Publish Plugin",
   "POM_INCEPTION_YEAR" to "2018",
@@ -93,15 +89,15 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
   basePluginConfig = "configure(new GradlePlugin(new JavadocJar.Empty(), true))",
 )
 
-fun javaGradlePluginWithGradlePluginPublish(gradlePluginPublish: GradlePluginPublish): ProjectSpec {
+fun javaGradlePluginWithGradlePluginPublish(pluginPublishVersion: PluginPublishVersion): ProjectSpec {
   val base = javaGradlePluginProjectSpec()
   return base.copy(
-    plugins = base.plugins + gradlePluginPublishPlugin.copy(version = gradlePluginPublish.value),
+    plugins = base.plugins + gradlePluginPublishPlugin.copy(version = pluginPublishVersion.value),
     basePluginConfig = "configure(new GradlePublishPlugin())",
   )
 }
 
-fun javaGradlePluginKotlinProjectSpec(version: KotlinVersion): ProjectSpec {
+fun javaGradlePluginKotlinProjectSpec(version: KgpVersion): ProjectSpec {
   val plainJavaGradlePluginProject = javaGradlePluginProjectSpec()
   return plainJavaGradlePluginProject.copy(
     plugins = plainJavaGradlePluginProject.plugins + kotlinJvmPlugin.copy(version = version.value),
@@ -111,7 +107,7 @@ fun javaGradlePluginKotlinProjectSpec(version: KotlinVersion): ProjectSpec {
   )
 }
 
-fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
+fun kotlinJvmProjectSpec(version: KgpVersion) = ProjectSpec(
   plugins = listOf(
     kotlinJvmPlugin.copy(version = version.value),
   ),
@@ -126,7 +122,7 @@ fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
   basePluginConfig = "configure(new KotlinJvm(new JavadocJar.Empty(), true))",
 )
 
-fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
+fun kotlinMultiplatformProjectSpec(version: KgpVersion) = ProjectSpec(
   plugins = listOf(
     kotlinMultiplatformPlugin.copy(version = version.value),
   ),
@@ -173,8 +169,8 @@ fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
 )
 
 // TODO remove when min AGP version is AGP 9
-fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
-  val baseProject = kotlinMultiplatformProjectSpec(kotlinVersion)
+fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kgpVersion: KgpVersion): ProjectSpec {
+  val baseProject = kotlinMultiplatformProjectSpec(kgpVersion)
   return baseProject.copy(
     plugins = baseProject.plugins + listOf(androidLibraryPlugin.copy(version = agpVersion.value)),
     sourceFiles = baseProject.sourceFiles + listOf(
@@ -206,11 +202,8 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
   )
 }
 
-fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(
-  agpVersion: AgpVersion,
-  kotlinVersion: KotlinVersion,
-): ProjectSpec {
-  val baseProject = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kotlinVersion)
+fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(agpVersion: AgpVersion, kgpVersion: KgpVersion): ProjectSpec {
+  val baseProject = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kgpVersion)
   return baseProject.copy(
     basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty()))",
     buildFileExtra = baseProject.buildFileExtra +
@@ -225,8 +218,8 @@ fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(
   )
 }
 
-fun kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
-  val baseProject = kotlinMultiplatformProjectSpec(kotlinVersion)
+fun kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion: AgpVersion, kgpVersion: KgpVersion): ProjectSpec {
+  val baseProject = kotlinMultiplatformProjectSpec(kgpVersion)
   return baseProject.copy(
     plugins = baseProject.plugins + listOf(androidMultiplatformLibraryPlugin.copy(version = agpVersion.value)),
     sourceFiles = baseProject.sourceFiles + listOf(
@@ -274,12 +267,12 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     """.trimIndent(),
 )
 
-fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kotlinVersion: KotlinVersion): ProjectSpec {
+fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kgpVersion: KgpVersion): ProjectSpec {
   val plainAndroidProject = androidLibraryProjectSpec(agpVersion)
   val plugins = if (agpVersion >= AGP_9_0_0) {
     plainAndroidProject.plugins
   } else {
-    plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kotlinVersion.value)
+    plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kgpVersion.value)
   }
   return plainAndroidProject.copy(
     plugins = plugins,

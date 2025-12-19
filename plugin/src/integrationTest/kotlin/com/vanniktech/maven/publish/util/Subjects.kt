@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
 import com.autonomousapps.kit.truth.BuildResultSubject.Companion.buildResults
 import com.autonomousapps.kit.truth.BuildTaskSubject
@@ -9,9 +9,9 @@ import com.google.common.truth.FailureMetadata
 import com.google.common.truth.Subject
 import com.google.common.truth.Truth.assertAbout
 import com.google.common.truth.Truth.assertThat
-import com.vanniktech.maven.publish.ArtifactSubject.Companion.artifact
-import com.vanniktech.maven.publish.PomSubject.Companion.pomSubject
-import com.vanniktech.maven.publish.SourcesJarSubject.Companion.sourcesJarSubject
+import com.vanniktech.maven.publish.util.ArtifactSubject.Companion.artifact
+import com.vanniktech.maven.publish.util.PomSubject.Companion.pomSubject
+import com.vanniktech.maven.publish.util.SourcesJarSubject.Companion.sourcesJarSubject
 import java.io.StringWriter
 import java.nio.file.Path
 import java.util.zip.ZipEntry
@@ -30,10 +30,11 @@ class ProjectResultSubject private constructor(
   private val result: ProjectResult,
 ) : Subject(failureMetadata, result) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ProjectResultSubject, ProjectResult> =
-      Factory { metadata, actual -> ProjectResultSubject(metadata, actual!!) }
+    private val factory = Factory<ProjectResultSubject, ProjectResult> { metadata, actual ->
+      ProjectResultSubject(metadata, requireNotNull(actual))
+    }
 
-    fun projectResult() = BUILD_RESULT_SUBJECT_FACTORY
+    fun projectResult() = factory
 
     fun assertThat(actual: ProjectResult): ProjectResultSubject = assertAbout(projectResult()).that(actual)
   }
@@ -77,23 +78,25 @@ class ProjectResultSubject private constructor(
 
   private fun artifactPath(suffix: String, extension: String): Path = with(result.projectSpec) {
     return result.repo
-      .resolve(group!!.replace(".", "/"))
-      .resolve(artifactId!!)
-      .resolve(version!!)
+      .resolve(group.replace(".", "/"))
+      .resolve(artifactId)
+      .resolve(version)
       .resolve("$artifactId-$version$suffix.$extension")
   }
 }
 
-open class ArtifactSubject internal constructor(
+open class ArtifactSubject(
   failureMetadata: FailureMetadata,
   private val artifact: Path,
   private val result: ProjectResult,
 ) : Subject(failureMetadata, artifact) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY: Factory<ArtifactSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> ArtifactSubject(metadata, actual!!.first, actual.second) }
+    private val factory = Factory<ArtifactSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+      requireNotNull(actual)
+      ArtifactSubject(metadata, actual.first, actual.second)
+    }
 
-    fun artifact() = BUILD_RESULT_SUBJECT_FACTORY
+    fun artifact() = factory
   }
 
   fun exists() {
@@ -211,10 +214,12 @@ class SourcesJarSubject private constructor(
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY: Factory<SourcesJarSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> SourcesJarSubject(metadata, actual!!.first, actual.second) }
+    private val factory = Factory<SourcesJarSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+      requireNotNull(actual)
+      SourcesJarSubject(metadata, actual.first, actual.second)
+    }
 
-    fun sourcesJarSubject() = BUILD_RESULT_SUBJECT_FACTORY
+    fun sourcesJarSubject() = factory
   }
 
   fun containsAllSourceFiles() {
@@ -245,10 +250,12 @@ class PomSubject private constructor(
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
   companion object {
-    private val BUILD_RESULT_SUBJECT_FACTORY: Factory<PomSubject, Pair<Path, ProjectResult>> =
-      Factory { metadata, actual -> PomSubject(metadata, actual!!.first, actual.second) }
+    private val factory = Factory<PomSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+      requireNotNull(actual)
+      PomSubject(metadata, actual.first, actual.second)
+    }
 
-    fun pomSubject() = BUILD_RESULT_SUBJECT_FACTORY
+    fun pomSubject() = factory
   }
 
   fun matchesExpectedPom(vararg dependencies: PomDependency) {
@@ -273,9 +280,9 @@ class PomSubject private constructor(
     pomWriter.write(actualWriter, actualModel)
 
     val expectedModel = modelFactory(
-      result.projectSpec.group!!,
-      result.projectSpec.artifactId!!,
-      result.projectSpec.version!!,
+      result.projectSpec.group,
+      result.projectSpec.artifactId,
+      result.projectSpec.version,
       packaging,
       dependencies,
       dependencyManagementDependencies,

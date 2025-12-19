@@ -1,4 +1,4 @@
-package com.vanniktech.maven.publish
+package com.vanniktech.maven.publish.util
 
 import com.google.common.truth.TruthJUnit.assume
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig as Versions
@@ -61,7 +61,7 @@ class AgpVersion(
   }
 }
 
-class KotlinVersion(
+class KgpVersion(
   override val value: String,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
   val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.min(),
@@ -71,16 +71,16 @@ class KotlinVersion(
   companion object {
     val VERSIONS = setOf(
       // minimum supported
-      KotlinVersion(Versions.KOTLIN_MIN),
+      KgpVersion(Versions.KOTLIN_MIN),
       // latest versions of each type
-      KotlinVersion(Versions.KOTLIN_STABLE),
-      KotlinVersion(Versions.KOTLIN_RC),
-      KotlinVersion(Versions.KOTLIN_BETA),
-      KotlinVersion(Versions.KOTLIN_ALPHA),
+      KgpVersion(Versions.KOTLIN_STABLE),
+      KgpVersion(Versions.KOTLIN_RC),
+      KgpVersion(Versions.KOTLIN_BETA),
+      KgpVersion(Versions.KOTLIN_ALPHA),
     )
 
     // versions used for checks instead of test matrix
-    val KOTLIN_2_2_10 = KotlinVersion("2.2.10")
+    val KOTLIN_2_2_10 = KgpVersion("2.2.10")
   }
 }
 
@@ -108,18 +108,18 @@ class GradleVersion(
   }
 }
 
-class GradlePluginPublish(
+class PluginPublishVersion(
   override val value: String,
 ) : ComparableVersion("PluginPublish") {
   companion object {
     val VERSIONS = setOf(
       // minimum supported
-      GradlePluginPublish("1.0.0"),
+      PluginPublishVersion("1.0.0"),
       // latest versions of each type
-      GradlePluginPublish(Versions.GRADLE_PUBLISH_STABLE),
-      GradlePluginPublish(Versions.GRADLE_PUBLISH_RC),
-      GradlePluginPublish(Versions.GRADLE_PUBLISH_BETA),
-      GradlePluginPublish(Versions.GRADLE_PUBLISH_ALPHA),
+      PluginPublishVersion(Versions.GRADLE_PUBLISH_STABLE),
+      PluginPublishVersion(Versions.GRADLE_PUBLISH_RC),
+      PluginPublishVersion(Versions.GRADLE_PUBLISH_BETA),
+      PluginPublishVersion(Versions.GRADLE_PUBLISH_ALPHA),
     )
   }
 }
@@ -131,7 +131,7 @@ fun GradleVersion.assumeSupportedJdkVersion() {
   }
 }
 
-fun KotlinVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
+fun KgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
   assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
   assume().that(gradleVersion).isAtLeast(minGradleVersion)
   if (firstUnsupportedJdkVersion != null) {
