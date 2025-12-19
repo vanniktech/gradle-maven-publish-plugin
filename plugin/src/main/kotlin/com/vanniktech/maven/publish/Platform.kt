@@ -61,7 +61,7 @@ public data class JavaLibrary @JvmOverloads constructor(
     sourcesJar: Boolean,
   ) : this(
     javadocJar = javadocJar,
-    sourcesJar = if (sourcesJar) SourcesJar.Sources() else SourcesJar.Empty()
+    sourcesJar = if (sourcesJar) SourcesJar.Sources() else SourcesJar.Empty(),
   )
 
   override fun configure(project: Project) {
