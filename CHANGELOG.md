@@ -11,6 +11,9 @@
 - When enabling Maven Central publishing through the DSL, the `mavenCentralDeploymentValidation` and
   `mavenCentralAutomaticPublishing` are used for the default values of the 2 parameters when they are not passed
   explicitly. This allows to more easily override them in certain environments.
+- Deprecate some `MavenPublishBaseExtension.configureBasedOnAppliedPlugins(...)` overloads.
+- Deprecate constructors of `Platform` subclasses, you can use the new overloads instead.
+- Support configuring `SourcesJar` and `JavadocJar` options as parameters.
 
 **BREAKING**
 - Mark `DirectorySignatureType` internal.

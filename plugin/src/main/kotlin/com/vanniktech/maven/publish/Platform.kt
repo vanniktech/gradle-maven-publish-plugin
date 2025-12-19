@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
  */
 public sealed class Platform {
   public abstract val javadocJar: JavadocJar
-  public abstract val sourcesJar: Boolean
+  public abstract val sourcesJar: SourcesJar
 
   internal abstract fun configure(project: Project)
 }
@@ -51,7 +51,7 @@ public sealed class Platform {
  */
 public data class JavaLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true,
+  override val sourcesJar: SourcesJar = SourcesJar.Sources,
 ) : Platform() {
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("java") || project.plugins.hasPlugin("java-library")) {
@@ -83,7 +83,7 @@ public data class JavaLibrary @JvmOverloads constructor(
  */
 public data class GradlePlugin @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true,
+  override val sourcesJar: SourcesJar = SourcesJar.Sources,
 ) : Platform() {
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("java-gradle-plugin")) {
@@ -102,7 +102,7 @@ public data class GradlePlugin @JvmOverloads constructor(
  */
 public class GradlePublishPlugin : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.Javadoc()
-  override val sourcesJar: Boolean = true
+  override val sourcesJar: SourcesJar = SourcesJar.Sources
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("com.gradle.plugin-publish")) {
@@ -146,7 +146,7 @@ public class GradlePublishPlugin : Platform() {
  */
 public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true,
+  override val sourcesJar: SourcesJar = SourcesJar.Sources,
   val variant: String = "release",
 ) : Platform() {
   @JvmOverloads
@@ -157,7 +157,7 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
     publishJavadocJar: Boolean,
   ) : this(
     javadocJar = if (publishJavadocJar) JavadocJar.Javadoc() else JavadocJar.None(),
-    sourcesJar = sourcesJar,
+    sourcesJar = if (sourcesJar) SourcesJar.Sources else SourcesJar.None,
     variant = variant,
   )
 
@@ -169,7 +169,7 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
     val library = project.extensions.findByType(LibraryExtension::class.java)!!
     library.publishing {
       singleVariant(variant) {
-        if (sourcesJar) {
+        if (sourcesJar == SourcesJar.Sources) {
           withSourcesJar()
         }
         if (javadocJar is JavadocJar.Javadoc) {
@@ -224,7 +224,7 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
  */
 public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true,
+  override val sourcesJar: SourcesJar = SourcesJar.Sources,
   val includedBuildTypeValues: Set<String> = emptySet(),
   val includedFlavorDimensionsAndValues: Map<String, Set<String>> = emptyMap(),
 ) : Platform() {
@@ -237,7 +237,7 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
     includedFlavorDimensionsAndValues: Map<String, Set<String>> = emptyMap(),
   ) : this(
     javadocJar = if (publishJavadocJar) JavadocJar.Javadoc() else JavadocJar.None(),
-    sourcesJar = sourcesJar,
+    sourcesJar = if (sourcesJar) SourcesJar.Sources else SourcesJar.None,
     includedBuildTypeValues = includedBuildTypeValues,
     includedFlavorDimensionsAndValues = includedFlavorDimensionsAndValues,
   )
@@ -261,7 +261,7 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
           }
         }
 
-        if (sourcesJar) {
+        if (sourcesJar == SourcesJar.Sources) {
           withSourcesJar()
         }
         if (javadocJar is JavadocJar.Javadoc) {
@@ -301,7 +301,7 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
 @Incubating
 public class AndroidFusedLibrary : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.Empty()
-  override val sourcesJar: Boolean = false
+  override val sourcesJar: SourcesJar = SourcesJar.Empty
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("com.android.fused-library")) {
@@ -335,9 +335,21 @@ public class AndroidFusedLibrary : Platform() {
  */
 public data class KotlinMultiplatform @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true,
+  override val sourcesJar: SourcesJar = SourcesJar.Sources,
   val androidVariantsToPublish: List<String> = listOf("release"),
 ) : Platform() {
+  @JvmOverloads
+  @Deprecated("Use constructor with SourcesJar instead of Boolean")
+  public constructor(
+    javadocJar: JavadocJar = JavadocJar.Empty(),
+    sourcesJar: Boolean = true,
+    androidVariantsToPublish: List<String>,
+  ) : this(
+    javadocJar = javadocJar,
+    sourcesJar = if (sourcesJar) SourcesJar.Sources else SourcesJar.None,
+    androidVariantsToPublish = androidVariantsToPublish,
+  )
+
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
       "Calling configure(KotlinMultiplatform(...)) requires the org.jetbrains.kotlin.multiplatform plugin to be applied"
@@ -348,7 +360,7 @@ public data class KotlinMultiplatform @JvmOverloads constructor(
     }
 
     project.extensions.configure(KotlinMultiplatformExtension::class.java) {
-      it.withSourcesJar(sourcesJar)
+      it.withSourcesJar(sourcesJar == SourcesJar.Sources)
 
       if (androidVariantsToPublish.isNotEmpty()) {
         it.targets.configureEach { target ->
@@ -381,7 +393,7 @@ public data class KotlinMultiplatform @JvmOverloads constructor(
  */
 public data class KotlinJvm @JvmOverloads constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
-  override val sourcesJar: Boolean = true,
+  override val sourcesJar: SourcesJar = SourcesJar.Sources,
 ) : Platform() {
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
@@ -417,7 +429,7 @@ public data class KotlinJvm @JvmOverloads constructor(
  */
 public class JavaPlatform : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.None()
-  override val sourcesJar: Boolean = false
+  override val sourcesJar: SourcesJar = SourcesJar.None
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("java-platform")) {
@@ -451,7 +463,7 @@ public class JavaPlatform : Platform() {
  */
 public class VersionCatalog : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.None()
-  override val sourcesJar: Boolean = false
+  override val sourcesJar: SourcesJar = SourcesJar.None
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("version-catalog")) {
@@ -520,20 +532,43 @@ public sealed interface JavadocJar {
   }
 }
 
+public sealed interface SourcesJar {
+  /**
+   * Do not create a sources jar. This option is not compatible with Maven Central.
+   */
+  public data object None : SourcesJar
+
+  /**
+   * Creates an empty sources jar to satisfy maven central requirements.
+   */
+  public data object Empty : SourcesJar
+
+  /**
+   * Creates a regular sources jar using Gradle's default `sourcesJar` task.
+   */
+  public data object Sources : SourcesJar
+}
+
 private const val PUBLICATION_NAME = "maven"
 
-private fun MavenPublication.withJavaSourcesJar(enabled: Boolean, project: Project, configureArchives: Boolean = false) {
-  if (enabled) {
-    project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
-  } else {
-    val task = project.tasks.register("emptySourcesJar", Jar::class.java) {
-      it.archiveClassifier.set("sources")
-      if (configureArchives) {
-        it.archiveBaseName.set(project.name)
-        it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
-      }
+private fun MavenPublication.withJavaSourcesJar(sourcesJar: SourcesJar, project: Project, configureArchives: Boolean = false) {
+  when (sourcesJar) {
+    SourcesJar.Sources -> {
+      project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
     }
-    artifact(task)
+
+    SourcesJar.Empty -> {
+      val task = project.tasks.register("emptySourcesJar", Jar::class.java) {
+        it.archiveClassifier.set("sources")
+        if (configureArchives) {
+          it.archiveBaseName.set(project.name)
+          it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
+        }
+      }
+      artifact(task)
+    }
+
+    SourcesJar.None -> Unit
   }
 }
 
@@ -555,9 +590,9 @@ private fun MavenPublication.withJavadocJar(
   }
 }
 
-private fun setupTestFixtures(project: Project, sourcesJar: Boolean) {
+private fun setupTestFixtures(project: Project, sourcesJar: SourcesJar) {
   project.plugins.withId("java-test-fixtures") {
-    if (sourcesJar) {
+    if (sourcesJar == SourcesJar.Sources) {
       addTestFixturesSourcesJar(project)
     }
 

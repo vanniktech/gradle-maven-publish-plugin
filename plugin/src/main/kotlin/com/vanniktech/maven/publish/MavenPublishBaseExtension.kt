@@ -405,7 +405,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   @Incubating
   @Deprecated("Use configureBasedOnAppliedPlugins with JavadocJar instead of Boolean")
   public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean) {
-    configureBasedOnAppliedPlugins(sourcesJar, defaultJavaDocOption(javadocJar))
+    configureBasedOnAppliedPlugins(sourcesJar = if (sourcesJar) SourcesJar.Sources else SourcesJar.Empty)
   }
 
   /**
@@ -413,7 +413,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    */
   @Incubating
   @JvmOverloads
-  public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: JavadocJar = defaultJavaDocOption(true)) {
+  public fun configureBasedOnAppliedPlugins(
+    sourcesJar: SourcesJar = SourcesJar.Sources,
+    javadocJar: JavadocJar = defaultJavaDocOption(true),
+  ) {
     // has already been called before by the user or from finalizeDsl
     if (platform.isPresent) {
       return

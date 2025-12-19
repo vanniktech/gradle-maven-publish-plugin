@@ -50,7 +50,7 @@ fun javaProjectSpec() = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   ),
-  basePluginConfig = "configure(new JavaLibrary(new JavadocJar.Empty(), true))",
+  basePluginConfig = "configure(new JavaLibrary(new JavadocJar.Empty()))",
 )
 
 fun javaLibraryProjectSpec() = ProjectSpec(
@@ -64,7 +64,7 @@ fun javaLibraryProjectSpec() = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   ),
-  basePluginConfig = "configure(new JavaLibrary(new JavadocJar.Empty(), true))",
+  basePluginConfig = "configure(new JavaLibrary(new JavadocJar.Empty()))",
 )
 
 fun javaGradlePluginProjectSpec() = ProjectSpec(
@@ -90,7 +90,7 @@ fun javaGradlePluginProjectSpec() = ProjectSpec(
         }
     }
     """.trimIndent(),
-  basePluginConfig = "configure(new GradlePlugin(new JavadocJar.Empty(), true))",
+  basePluginConfig = "configure(new GradlePlugin(new JavadocJar.Empty()))",
 )
 
 fun javaGradlePluginWithGradlePluginPublish(gradlePluginPublish: GradlePluginPublish): ProjectSpec {
@@ -123,7 +123,7 @@ fun kotlinJvmProjectSpec(version: KotlinVersion) = ProjectSpec(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
     SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
   ),
-  basePluginConfig = "configure(new KotlinJvm(new JavadocJar.Empty(), true))",
+  basePluginConfig = "configure(new KotlinJvm(new JavadocJar.Empty()))",
 )
 
 fun kotlinMultiplatformProjectSpec(version: KotlinVersion) = ProjectSpec(
@@ -183,7 +183,7 @@ fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kot
       SourceFile("androidRelease", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
     ),
     // needs to explicitly specify release to match the main plugin default behavior
-    basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty(), true, [\"release\"]))",
+    basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty(), SourcesJar.Sources.INSTANCE, [\"release\"]))",
     buildFileExtra = baseProject.buildFileExtra +
       """
 
@@ -257,7 +257,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
   ),
-  basePluginConfig = "configure(new AndroidSingleVariantLibrary(\"release\", true, true))",
+  basePluginConfig = "configure(new AndroidSingleVariantLibrary(new JavadocJar.Javadoc(), SourcesJar.Sources.INSTANCE, 'release'))",
   buildFileExtra =
     """
     android {
