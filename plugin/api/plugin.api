@@ -191,10 +191,10 @@ public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public fun <init> (Lorg/gradle/api/Project;Lorg/gradle/build/event/BuildEventsListenerRegistry;Lorg/gradle/api/configuration/BuildFeatures;)V
 	public final fun configure (Lcom/vanniktech/maven/publish/Platform;)V
 	public final fun configureBasedOnAppliedPlugins ()V
-	public final fun configureBasedOnAppliedPlugins (Lcom/vanniktech/maven/publish/SourcesJar;)V
-	public final fun configureBasedOnAppliedPlugins (Lcom/vanniktech/maven/publish/SourcesJar;Lcom/vanniktech/maven/publish/JavadocJar;)V
+	public final fun configureBasedOnAppliedPlugins (Lcom/vanniktech/maven/publish/JavadocJar;)V
+	public final fun configureBasedOnAppliedPlugins (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)V
 	public final fun configureBasedOnAppliedPlugins (ZZ)V
-	public static synthetic fun configureBasedOnAppliedPlugins$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Lcom/vanniktech/maven/publish/SourcesJar;Lcom/vanniktech/maven/publish/JavadocJar;ILjava/lang/Object;)V
+	public static synthetic fun configureBasedOnAppliedPlugins$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILjava/lang/Object;)V
 	public final fun coordinates (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public static synthetic fun coordinates$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
 	public final fun pom (Lorg/gradle/api/Action;)V
