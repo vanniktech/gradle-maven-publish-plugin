@@ -1,7 +1,7 @@
 [versions]
 gradle = "9.4.0-milestone-3"
 
-kotlin = "2.3.0-RC3"
+kotlin = "2.3.0"
 
 android-gradle = "9.0.0-rc01"
 
