@@ -67,7 +67,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   public fun publishToMavenCentral(automaticRelease: Boolean, validateDeployment: Boolean) {
     publishToMavenCentral(
       automaticRelease = automaticRelease,
-      validateDeployment = if (validateDeployment) DeploymentValidation.PUBLISH else DeploymentValidation.NONE,
+      validateDeployment = if (validateDeployment) DeploymentValidation.VALIDATED else DeploymentValidation.NONE,
     )
   }
 
