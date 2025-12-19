@@ -2,33 +2,33 @@ public final class com/vanniktech/maven/publish/AndroidFusedLibrary : com/vannik
 	public fun <init> ()V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public fun hashCode ()I
 }
 
 public final class com/vanniktech/maven/publish/AndroidMultiVariantLibrary : com/vanniktech/maven/publish/Platform {
 	public fun <init> ()V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;)V
-	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Z)V
-	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/Set;)V
-	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/Set;Ljava/util/Map;)V
-	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/Set;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/Set;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/Set;Ljava/util/Map;)V
+	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/Set;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Z)V
 	public fun <init> (ZZ)V
 	public fun <init> (ZZLjava/util/Set;)V
 	public fun <init> (ZZLjava/util/Set;Ljava/util/Map;)V
 	public synthetic fun <init> (ZZLjava/util/Set;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public final fun component2 ()Z
+	public final fun component2 ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public final fun component3 ()Ljava/util/Set;
 	public final fun component4 ()Ljava/util/Map;
-	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/Set;Ljava/util/Map;)Lcom/vanniktech/maven/publish/AndroidMultiVariantLibrary;
-	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/AndroidMultiVariantLibrary;Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/Set;Ljava/util/Map;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/AndroidMultiVariantLibrary;
+	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/Set;Ljava/util/Map;)Lcom/vanniktech/maven/publish/AndroidMultiVariantLibrary;
+	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/AndroidMultiVariantLibrary;Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/Set;Ljava/util/Map;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/AndroidMultiVariantLibrary;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getIncludedBuildTypeValues ()Ljava/util/Set;
 	public final fun getIncludedFlavorDimensionsAndValues ()Ljava/util/Map;
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -36,21 +36,21 @@ public final class com/vanniktech/maven/publish/AndroidMultiVariantLibrary : com
 public final class com/vanniktech/maven/publish/AndroidSingleVariantLibrary : com/vanniktech/maven/publish/Platform {
 	public fun <init> ()V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;)V
-	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Z)V
-	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/lang/String;)V
-	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/lang/String;)V
+	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;Z)V
 	public fun <init> (Ljava/lang/String;ZZ)V
 	public synthetic fun <init> (Ljava/lang/String;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Z)V
 	public final fun component1 ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public final fun component2 ()Z
+	public final fun component2 ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/lang/String;)Lcom/vanniktech/maven/publish/AndroidSingleVariantLibrary;
-	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/AndroidSingleVariantLibrary;Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/lang/String;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/AndroidSingleVariantLibrary;
+	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/lang/String;)Lcom/vanniktech/maven/publish/AndroidSingleVariantLibrary;
+	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/AndroidSingleVariantLibrary;Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/lang/String;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/AndroidSingleVariantLibrary;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public final fun getVariant ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -68,15 +68,17 @@ public final class com/vanniktech/maven/publish/DeploymentValidation : java/lang
 public final class com/vanniktech/maven/publish/GradlePlugin : com/vanniktech/maven/publish/Platform {
 	public fun <init> ()V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)V
+	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Z)V
 	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public final fun component2 ()Z
-	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Z)Lcom/vanniktech/maven/publish/GradlePlugin;
-	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/GradlePlugin;Lcom/vanniktech/maven/publish/JavadocJar;ZILjava/lang/Object;)Lcom/vanniktech/maven/publish/GradlePlugin;
+	public final fun component2 ()Lcom/vanniktech/maven/publish/SourcesJar;
+	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)Lcom/vanniktech/maven/publish/GradlePlugin;
+	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/GradlePlugin;Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/GradlePlugin;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -85,22 +87,24 @@ public final class com/vanniktech/maven/publish/GradlePublishPlugin : com/vannik
 	public fun <init> ()V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public fun hashCode ()I
 }
 
 public final class com/vanniktech/maven/publish/JavaLibrary : com/vanniktech/maven/publish/Platform {
 	public fun <init> ()V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)V
+	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Z)V
 	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public final fun component2 ()Z
-	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Z)Lcom/vanniktech/maven/publish/JavaLibrary;
-	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/JavaLibrary;Lcom/vanniktech/maven/publish/JavadocJar;ZILjava/lang/Object;)Lcom/vanniktech/maven/publish/JavaLibrary;
+	public final fun component2 ()Lcom/vanniktech/maven/publish/SourcesJar;
+	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)Lcom/vanniktech/maven/publish/JavaLibrary;
+	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/JavaLibrary;Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/JavaLibrary;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -109,7 +113,7 @@ public final class com/vanniktech/maven/publish/JavaPlatform : com/vanniktech/ma
 	public fun <init> ()V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public fun hashCode ()I
 }
 
@@ -145,15 +149,17 @@ public final class com/vanniktech/maven/publish/JavadocJar$None : com/vanniktech
 public final class com/vanniktech/maven/publish/KotlinJvm : com/vanniktech/maven/publish/Platform {
 	public fun <init> ()V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)V
+	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Z)V
 	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public final fun component2 ()Z
-	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Z)Lcom/vanniktech/maven/publish/KotlinJvm;
-	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/KotlinJvm;Lcom/vanniktech/maven/publish/JavadocJar;ZILjava/lang/Object;)Lcom/vanniktech/maven/publish/KotlinJvm;
+	public final fun component2 ()Lcom/vanniktech/maven/publish/SourcesJar;
+	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)Lcom/vanniktech/maven/publish/KotlinJvm;
+	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/KotlinJvm;Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/KotlinJvm;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -161,18 +167,22 @@ public final class com/vanniktech/maven/publish/KotlinJvm : com/vanniktech/maven
 public final class com/vanniktech/maven/publish/KotlinMultiplatform : com/vanniktech/maven/publish/Platform {
 	public fun <init> ()V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/List;)V
+	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Z)V
 	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;)V
 	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Z)V
 	public final fun component1 ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public final fun component2 ()Z
+	public final fun component2 ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public final fun component3 ()Ljava/util/List;
-	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;)Lcom/vanniktech/maven/publish/KotlinMultiplatform;
-	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/KotlinMultiplatform;Lcom/vanniktech/maven/publish/JavadocJar;ZLjava/util/List;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/KotlinMultiplatform;
+	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/List;)Lcom/vanniktech/maven/publish/KotlinMultiplatform;
+	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/KotlinMultiplatform;Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;Ljava/util/List;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/KotlinMultiplatform;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAndroidVariantsToPublish ()Ljava/util/List;
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -181,10 +191,10 @@ public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public fun <init> (Lorg/gradle/api/Project;Lorg/gradle/build/event/BuildEventsListenerRegistry;Lorg/gradle/api/configuration/BuildFeatures;)V
 	public final fun configure (Lcom/vanniktech/maven/publish/Platform;)V
 	public final fun configureBasedOnAppliedPlugins ()V
-	public final fun configureBasedOnAppliedPlugins (Z)V
-	public final fun configureBasedOnAppliedPlugins (ZLcom/vanniktech/maven/publish/JavadocJar;)V
+	public final fun configureBasedOnAppliedPlugins (Lcom/vanniktech/maven/publish/SourcesJar;)V
+	public final fun configureBasedOnAppliedPlugins (Lcom/vanniktech/maven/publish/SourcesJar;Lcom/vanniktech/maven/publish/JavadocJar;)V
 	public final fun configureBasedOnAppliedPlugins (ZZ)V
-	public static synthetic fun configureBasedOnAppliedPlugins$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;ZLcom/vanniktech/maven/publish/JavadocJar;ILjava/lang/Object;)V
+	public static synthetic fun configureBasedOnAppliedPlugins$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Lcom/vanniktech/maven/publish/SourcesJar;Lcom/vanniktech/maven/publish/JavadocJar;ILjava/lang/Object;)V
 	public final fun coordinates (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public static synthetic fun coordinates$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
 	public final fun pom (Lorg/gradle/api/Action;)V
@@ -211,14 +221,35 @@ public abstract class com/vanniktech/maven/publish/MavenPublishPlugin : org/grad
 
 public abstract class com/vanniktech/maven/publish/Platform {
 	public abstract fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public abstract fun getSourcesJar ()Z
+	public abstract fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
+}
+
+public abstract interface class com/vanniktech/maven/publish/SourcesJar {
+}
+
+public final class com/vanniktech/maven/publish/SourcesJar$Empty : com/vanniktech/maven/publish/SourcesJar {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+}
+
+public final class com/vanniktech/maven/publish/SourcesJar$None : com/vanniktech/maven/publish/SourcesJar {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+}
+
+public final class com/vanniktech/maven/publish/SourcesJar$Sources : com/vanniktech/maven/publish/SourcesJar {
+	public fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 }
 
 public final class com/vanniktech/maven/publish/VersionCatalog : com/vanniktech/maven/publish/Platform {
 	public fun <init> ()V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
-	public fun getSourcesJar ()Z
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 	public fun hashCode ()I
 }
 

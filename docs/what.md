@@ -15,6 +15,61 @@ It is possible to configure publishing for the following Gradle plugins:
 - [`java-platform`](#java-platform)
 - [`version-catalog`](#version-catalog)
 
+## Automatic plugin selection
+
+To automatically select what to publish based on already applied plugins call
+`configureBasedOnAppliedPlugins(...)`. This is called automatically by the
+`com.vanniktech.maven.publish` plugin, you only need to call this yourself when
+using `com.vanniktech.maven.publish.base` or when you want to configure the
+sources and javadoc jars that are being published.
+
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
+
+    mavenPublishing {
+      configureBasedOnAppliedPlugins(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources()
+      )
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
+
+    mavenPublishing {
+      configureBasedOnAppliedPlugins(
+        // configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
+      )
+    }
+    ```
+
+
 ## Android Library (multiple variants)
 
 For projects using the `com.android.library` plugin. This will publish all variants of the project (e.g. both
@@ -24,15 +79,62 @@ For projects using the `com.android.library` plugin. This will publish all varia
 
     ```groovy
     import com.vanniktech.maven.publish.AndroidMultiVariantLibrary
+    import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
-      // the first parameter represents whether to publish a sources jar
-      // the second whether to publish a javadoc jar
-      configure(new AndroidMultiVariantLibrary(true, true))
-      // or to limit which build types to include
-      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"] as Set))
-      // or to limit which flavors to include, the map key is a flavor dimension, the set contains the flavors
-      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"] as Set, ["store": ["google", "samsung"] as Set]))
+      configure(new AndroidMultiVariantLibrary(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources()
+      ))
+
+      // or
+
+      configure(new AndroidMultiVariantLibrary(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources(),
+        // limit which build types to include
+        ["beta", "release"] as Set
+      ))
+
+      // or
+
+      configure(new AndroidMultiVariantLibrary(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources(),
+        // limit which build types to include
+        ["beta", "release"] as Set,
+        // limit which flavors to include
+        // the map key is a flavor dimension, the set contains the flavors
+        ["store": ["google", "samsung"] as Set]
+      ))
     }
     ```
 
@@ -40,29 +142,52 @@ For projects using the `com.android.library` plugin. This will publish all varia
 
     ```kotlin
     import com.vanniktech.maven.publish.AndroidMultiVariantLibrary
+    import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
       configure(AndroidMultiVariantLibrary(
-        // whether to publish a sources jar
-        sourcesJar = true,
-        // whether to publish a javadoc jar
-        publishJavadocJar = true,
+        // configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
       ))
       // or
       configure(AndroidMultiVariantLibrary(
-        // whether to publish a sources jar
-        sourcesJar = true,
-        // whether to publish a javadoc jar
-        publishJavadocJar = true,
+        // configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
         // limit which build types to include
         includedBuildTypeValues = setOf("beta", "release"),
       ))
       // or
       configure(AndroidMultiVariantLibrary(
-        // whether to publish a sources jar
-        sourcesJar = true,
-        // whether to publish a javadoc jar
-        publishJavadocJar = true,
+        // configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
         // limit which build types to include
         includedBuildTypeValues = setOf("beta", "release"),
         // limit which flavors to include, the map key is a flavor dimension, the set contains the flavors
@@ -80,12 +205,25 @@ the specified variant instead of publishing all of them.
 
     ```groovy
     import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+    import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
-      // the first parameter represennts which variant is published
-      // the second whether to publish a sources jar
-      // the third whether to publish a javadoc jar
-      configure(new AndroidSingleVariantLibrary("release", true, true))
+      configure(new AndroidSingleVariantLibrary(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources(),
+        // which variant is published
+        "release"
+      ))
     }
     ```
 
@@ -93,15 +231,24 @@ the specified variant instead of publishing all of them.
 
     ```kotlin
     import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+    import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
       configure(AndroidSingleVariantLibrary(
+        // configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
         // the published variant
         variant = "release",
-        // whether to publish a sources jar
-        sourcesJar = true,
-        // whether to publish a javadoc jar
-        publishJavadocJar = true,
       ))
     }
     ```
@@ -115,6 +262,8 @@ For projects using the `com.android.fused-library` plugin.
 
     ```groovy
     import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+    import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
       configure(new AndroidFusedLibrary())
@@ -138,12 +287,16 @@ For projects using the `com.android.fused-library` plugin.
 
 !!! warning
 
-    Signing is currently unsupported for Android fused libraries.
+    Signing is currently unsupported for Android fused libraries because of an
+    [issue](https://issuetracker.google.com/issues/466503466) in the Android
+    Gradle plugin.
 
 !!! info
 
-    Configuring source and javadoc publishing is currently not possible and the
-    plugin will always publush empty jars for them.
+    Configuring source and javadoc publishing is currently not possible. For
+    javadoc jars the plugin will always publish empty jars. For the sources jar
+    the plugin will publish and empty jar for Android Gradle Plugin 8.x and a jar
+    produced automatically by the Android Gradle Plugin on version 9.0 and newer.
 
 
 ## Java Library
@@ -155,14 +308,22 @@ For projects using the `java-library` plugin.
     ```groovy
     import com.vanniktech.maven.publish.JavaLibrary
     import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
-      // the first parameter configures the -javadoc artifact, possible values:
-      // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an empty jar
-      // - `JavadocJar.Javadoc()` to publish standard javadocs
-      // the second whether to publish a sources jar
-      configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
+      configure(new JavaLibrary(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources()
+      ))
     }
     ```
 
@@ -171,6 +332,7 @@ For projects using the `java-library` plugin.
     ```kotlin
     import com.vanniktech.maven.publish.JavaLibrary
     import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
       configure(JavaLibrary(
@@ -178,9 +340,12 @@ For projects using the `java-library` plugin.
         // - `JavadocJar.None()` don't publish this artifact
         // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Javadoc()` to publish standard javadocs
-        javadocJar = JavadocJar.Javadoc(),
-        // whether to publish a sources jar
-        sourcesJar = true,
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
       ))
     }
     ```
@@ -194,14 +359,22 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
     ```groovy
     import com.vanniktech.maven.publish.KotlinJvm
     import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
-      // the first parameter configures the -javadoc artifact, possible values:
-      // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an empty jar
-      // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-      // the second whether to publish a sources jar
-      configure(new KotlinJvm(new JavadocJar.Dokka("dokkaHtml"), true))
+      configure(new KotlinJvm(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources()
+      ))
     }
     ```
 
@@ -210,6 +383,7 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
     ```kotlin
     import com.vanniktech.maven.publish.KotlinJvm
     import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
       configure(KotlinJvm(
@@ -217,9 +391,12 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
         // - `JavadocJar.None()` don't publish this artifact
         // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-        javadocJar = JavadocJar.Dokka("dokkaHtml"),
-        // whether to publish a sources jar
-        sourcesJar = true,
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
       ))
     }
     ```
@@ -233,16 +410,24 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
     ```groovy
     import com.vanniktech.maven.publish.KotlinMultiplatform
     import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
-      // the parameter configures the -javadoc artifact, possible values:
-      // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an empty jar
-      // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-      // the second whether to publish a sources jar
-      // the third parameters configures which Android library variants to publish if this project has an Android target
-      // defaults to "release" when using the main plugin and nothing for the base plugin
-      configure(new KotlinMultiplatform(new JavadocJar.Dokka("dokkaHtml"), true, ["debug", "release"]))
+      configure(new KotlinMultiplatform(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources(),
+        // configure which Android library variants to publish if this project has an Android target
+        // defaults to "release" when using the main plugin and nothing for the base plugin
+        ["debug", "release"]
+      ))
     }
     ```
 
@@ -251,6 +436,7 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
     ```kotlin
     import com.vanniktech.maven.publish.KotlinMultiplatform
     import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
       // sources publishing is always enabled by the Kotlin Multiplatform plugin
@@ -259,9 +445,12 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
         // - `JavadocJar.None()` don't publish this artifact
         // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-        javadocJar = JavadocJar.Dokka("dokkaHtml"),
-        // whether to publish a sources jar
-        sourcesJar = true,
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
         // configure which Android library variants to publish if this project has an Android target
         // defaults to "release" when using the main plugin and nothing for the base plugin
         androidVariantsToPublish = listOf("debug", "release"),
@@ -284,14 +473,22 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
     ```groovy
     import com.vanniktech.maven.publish.GradlePlugin
     import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
-      // the first parameter configures the -javadoc artifact, possible values:
-      // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an empty jar
-      // - `JavadocJar.Javadoc()` to publish standard javadocs
-      // the second whether to publish a sources jar
-      configure(new GradlePlugin(new JavadocJar.Javadoc(), true))
+      configure(new GradlePlugin(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources()
+      ))
     }
     ```
 
@@ -300,6 +497,7 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
     ```kotlin
     import com.vanniktech.maven.publish.GradlePlugin
     import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.SourcesJar
 
     mavenPublishing {
       configure(GradlePlugin(
@@ -308,9 +506,12 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
         // - `JavadocJar.Empty()` publish an empty jar
         // - `JavadocJar.Javadoc()` to publish standard javadocs
         // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
-        javadocJar = JavadocJar.Javadoc(),
-        // whether to publish a sources jar
-        sourcesJar = true,
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
       ))
     }
     ```
