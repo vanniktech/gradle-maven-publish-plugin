@@ -609,7 +609,7 @@ private fun MavenPublication.withJavaSourcesJar(
   multipleTasks: Boolean,
   configureArchives: Boolean = false,
 ) = when (sourcesJar) {
-  is SourcesJar.None -> {}
+  is SourcesJar.None -> Unit
   is SourcesJar.Sources -> {
     project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
   }
