@@ -37,6 +37,61 @@ class ProjectResultSubject private constructor(
     fun projectResult() = factory
 
     fun assertThat(actual: ProjectResult): ProjectResultSubject = assertAbout(projectResult()).that(actual)
+
+    fun assertSingleArtifactCommon(result: ProjectResult, artifactExtension: String = "jar", enableSigning: Boolean = true) {
+      assertThat(result).outcome().succeeded()
+      assertThat(result).artifact(artifactExtension).exists()
+      assertThat(result).pom().exists()
+      assertThat(result).module().exists()
+      assertThat(result).sourcesJar().exists()
+      assertThat(result).javadocJar().exists()
+      if (enableSigning) {
+        assertThat(result).artifact(artifactExtension).isSigned()
+        assertThat(result).pom().isSigned()
+        assertThat(result).module().isSigned()
+        assertThat(result).sourcesJar().isSigned()
+        assertThat(result).javadocJar().isSigned()
+      }
+    }
+
+    fun assertKotlinArtifactsCommon(
+      result: ProjectResult,
+      kgpVersion: KgpVersion,
+      containsAndroidTarget: Boolean = true,
+      enableSigning: Boolean = true,
+    ) {
+      assertSingleArtifactCommon(result, enableSigning = enableSigning)
+      assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon().copy(scope = "runtime"))
+      assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
+
+      result.withArtifactIdSuffix("jvm").let { jvmResult ->
+        assertSingleArtifactCommon(jvmResult, enableSigning = enableSigning)
+        assertThat(jvmResult).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
+        assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
+      }
+
+      result.withArtifactIdSuffix("linuxx64").let { linuxResult ->
+        assertSingleArtifactCommon(linuxResult, "klib", enableSigning = enableSigning)
+        assertThat(linuxResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibCommon())
+        assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
+      }
+
+      result.withArtifactIdSuffix("nodejs").let { nodejsResult ->
+        assertSingleArtifactCommon(nodejsResult, "klib", enableSigning = enableSigning)
+        assertThat(nodejsResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
+        assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
+      }
+
+      if (containsAndroidTarget) {
+        result.withArtifactIdSuffix("android").let { androidReleaseResult ->
+          assertSingleArtifactCommon(androidReleaseResult, "aar", enableSigning = enableSigning)
+          assertThat(androidReleaseResult).pom().matchesExpectedPom("aar", kgpVersion.stdlibCommon())
+          assertThat(androidReleaseResult)
+            .sourcesJar()
+            .containsSourceSetFiles("commonMain", "androidMain", "androidRelease")
+        }
+      }
+    }
   }
 
   fun outcome(): BuildTaskSubject = check("outcome")
