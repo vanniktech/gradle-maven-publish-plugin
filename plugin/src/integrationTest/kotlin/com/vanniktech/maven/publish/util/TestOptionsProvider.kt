@@ -6,8 +6,8 @@ import com.vanniktech.maven.publish.IntegrationTestBuildConfig.TEST_CONFIG_METHO
 
 class TestOptionsConfigProvider : TestParameterValuesProvider() {
   override fun provideValues(context: Context?): List<TestOptions.Config> = when {
-    QUICK_TEST -> listOf(TestOptions.Config.BASE)
     TEST_CONFIG_METHOD.isNotBlank() -> listOf(TestOptions.Config.valueOf(TEST_CONFIG_METHOD))
+    QUICK_TEST -> listOf(TestOptions.Config.BASE)
     else -> TestOptions.Config.entries
   }
 }
