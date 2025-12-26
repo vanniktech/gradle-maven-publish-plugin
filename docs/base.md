@@ -8,19 +8,19 @@ configuration.
 
 Add the plugin to any Gradle project that should be published
 
-=== "build.gradle"
-
-    ```groovy
-    plugins {
-      id "com.vanniktech.maven.publish.base" version "<latest-version>"
-    }
-    ```
-
 === "build.gradle.kts"
 
     ```kotlin
     plugins {
       id("com.vanniktech.maven.publish.base") version "<latest-version>"
+    }
+    ```
+
+=== "build.gradle"
+
+    ```groovy
+    plugins {
+      id "com.vanniktech.maven.publish.base" version "<latest-version>"
     }
     ```
 
@@ -35,17 +35,17 @@ Follow the steps of the [Maven Central](central.md) or [other Maven repositories
 
 For the pom configuration via Gradle properties the following needs to be enabled in the DSL:
 
-=== "build.gradle"
+=== "build.gradle.kts"
 
-    ```groovy
+    ```kotlin
     mavenPublishing {
       pomFromGradleProperties()
     }
     ```
 
-=== "build.gradle.kts"
+=== "build.gradle"
 
-    ```kotlin
+    ```groovy
     mavenPublishing {
       pomFromGradleProperties()
     }
@@ -60,9 +60,9 @@ contains a detailed description of available options for each project type.
 It is also possible to get the automatic behavior of the main plugin by calling
 `configureBasedOnAppliedPlugins()` instead of `configure`
 
-=== "build.gradle"
+=== "build.gradle.kts"
 
-    ```groovy
+    ```kotlin
     mavenPublishing {
       configure(...)
       // or
@@ -70,9 +70,9 @@ It is also possible to get the automatic behavior of the main plugin by calling
     }
     ```
 
-=== "build.gradle.kts"
+=== "build.gradle"
 
-    ```kotlin
+    ```groovy
     mavenPublishing {
       configure(...)
       // or

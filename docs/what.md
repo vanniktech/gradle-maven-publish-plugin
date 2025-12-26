@@ -20,22 +20,6 @@ It is possible to configure publishing for the following Gradle plugins:
 For projects using the `com.android.library` plugin. This will publish all variants of the project (e.g. both
 `debug` and `release`) or a subset of specified variants.
 
-=== "build.gradle"
-
-    ```groovy
-    import com.vanniktech.maven.publish.AndroidMultiVariantLibrary
-
-    mavenPublishing {
-      // the first parameter represents whether to publish a sources jar
-      // the second whether to publish a javadoc jar
-      configure(new AndroidMultiVariantLibrary(true, true))
-      // or to limit which build types to include
-      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"] as Set))
-      // or to limit which flavors to include, the map key is a flavor dimension, the set contains the flavors
-      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"] as Set, ["store": ["google", "samsung"] as Set]))
-    }
-    ```
-
 === "build.gradle.kts"
 
     ```kotlin
@@ -71,23 +55,26 @@ For projects using the `com.android.library` plugin. This will publish all varia
     }
     ```
 
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.AndroidMultiVariantLibrary
+
+    mavenPublishing {
+      // the first parameter represents whether to publish a sources jar
+      // the second whether to publish a javadoc jar
+      configure(new AndroidMultiVariantLibrary(true, true))
+      // or to limit which build types to include
+      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"] as Set))
+      // or to limit which flavors to include, the map key is a flavor dimension, the set contains the flavors
+      configure(new AndroidMultiVariantLibrary(true, true, ["beta", "release"] as Set, ["store": ["google", "samsung"] as Set]))
+    }
+    ```
+
 ## Android Library (single variant)
 
 For projects using the `com.android.library` plugin. Compared to the multi variant version above this will only publish
 the specified variant instead of publishing all of them.
-
-=== "build.gradle"
-
-    ```groovy
-    import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-
-    mavenPublishing {
-      // the first parameter represennts which variant is published
-      // the second whether to publish a sources jar
-      // the third whether to publish a javadoc jar
-      configure(new AndroidSingleVariantLibrary("release", true, true))
-    }
-    ```
 
 === "build.gradle.kts"
 
@@ -106,20 +93,22 @@ the specified variant instead of publishing all of them.
     }
     ```
 
-
-## Android Fused Library
-
-For projects using the `com.android.fused-library` plugin.
-
 === "build.gradle"
 
     ```groovy
     import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 
     mavenPublishing {
-      configure(new AndroidFusedLibrary())
+      // the first parameter represents which variant is published
+      // the second whether to publish a sources jar
+      // the third whether to publish a javadoc jar
+      configure(new AndroidSingleVariantLibrary("release", true, true))
     }
     ```
+
+## Android Fused Library
+
+For projects using the `com.android.fused-library` plugin.
 
 === "build.gradle.kts"
 
@@ -128,6 +117,16 @@ For projects using the `com.android.fused-library` plugin.
 
     mavenPublishing {
       configure(AndroidFusedLibrary())
+    }
+    ```
+
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.AndroidFusedLibrary
+
+    mavenPublishing {
+      configure(new AndroidFusedLibrary())
     }
     ```
 
@@ -143,28 +142,12 @@ For projects using the `com.android.fused-library` plugin.
 !!! info
 
     Configuring source and javadoc publishing is currently not possible and the
-    plugin will always publush empty jars for them.
+    plugin will always publish empty jars for them.
 
 
 ## Java Library
 
 For projects using the `java-library` plugin.
-
-=== "build.gradle"
-
-    ```groovy
-    import com.vanniktech.maven.publish.JavaLibrary
-    import com.vanniktech.maven.publish.JavadocJar
-
-    mavenPublishing {
-      // the first parameter configures the -javadoc artifact, possible values:
-      // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an empty jar
-      // - `JavadocJar.Javadoc()` to publish standard javadocs
-      // the second whether to publish a sources jar
-      configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
-    }
-    ```
 
 === "build.gradle.kts"
 
@@ -185,25 +168,25 @@ For projects using the `java-library` plugin.
     }
     ```
 
-## Kotlin JVM Library
-
-For projects using the `org.jetbrains.kotlin.jvm` plugin.
-
 === "build.gradle"
 
     ```groovy
-    import com.vanniktech.maven.publish.KotlinJvm
+    import com.vanniktech.maven.publish.JavaLibrary
     import com.vanniktech.maven.publish.JavadocJar
 
     mavenPublishing {
       // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
       // - `JavadocJar.Empty()` publish an empty jar
-      // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+      // - `JavadocJar.Javadoc()` to publish standard javadocs
       // the second whether to publish a sources jar
-      configure(new KotlinJvm(new JavadocJar.Dokka("dokkaHtml"), true))
+      configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
     }
     ```
+
+## Kotlin JVM Library
+
+For projects using the `org.jetbrains.kotlin.jvm` plugin.
 
 === "build.gradle.kts"
 
@@ -224,27 +207,25 @@ For projects using the `org.jetbrains.kotlin.jvm` plugin.
     }
     ```
 
-## Kotlin Multiplatform Library
-
-For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
-
 === "build.gradle"
 
     ```groovy
-    import com.vanniktech.maven.publish.KotlinMultiplatform
+    import com.vanniktech.maven.publish.KotlinJvm
     import com.vanniktech.maven.publish.JavadocJar
 
     mavenPublishing {
-      // the parameter configures the -javadoc artifact, possible values:
+      // the first parameter configures the -javadoc artifact, possible values:
       // - `JavadocJar.None()` don't publish this artifact
       // - `JavadocJar.Empty()` publish an empty jar
       // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
       // the second whether to publish a sources jar
-      // the third parameters configures which Android library variants to publish if this project has an Android target
-      // defaults to "release" when using the main plugin and nothing for the base plugin
-      configure(new KotlinMultiplatform(new JavadocJar.Dokka("dokkaHtml"), true, ["debug", "release"]))
+      configure(new KotlinJvm(new JavadocJar.Dokka("dokkaHtml"), true))
     }
     ```
+
+## Kotlin Multiplatform Library
+
+For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
 
 === "build.gradle.kts"
 
@@ -269,6 +250,24 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
     }
     ```
 
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.KotlinMultiplatform
+    import com.vanniktech.maven.publish.JavadocJar
+
+    mavenPublishing {
+      // the parameter configures the -javadoc artifact, possible values:
+      // - `JavadocJar.None()` don't publish this artifact
+      // - `JavadocJar.Empty()` publish an empty jar
+      // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+      // the second whether to publish a sources jar
+      // the third parameters configures which Android library variants to publish if this project has an Android target
+      // defaults to "release" when using the main plugin and nothing for the base plugin
+      configure(new KotlinMultiplatform(new JavadocJar.Dokka("dokkaHtml"), true, ["debug", "release"]))
+    }
+    ```
+
 !!! info
 
     The `com.android.kotlin.multiplatform.library` plugin does not need any special configuration. When using it
@@ -278,22 +277,6 @@ For projects using the `org.jetbrains.kotlin.multiplatform` plugin.
 
 For projects using the `java-gradle-plugin` plugin. When also using `com.gradle.plugin-publish` please
 use [GradlePublishPlugin](#gradle-publish-plugin)
-
-=== "build.gradle"
-
-    ```groovy
-    import com.vanniktech.maven.publish.GradlePlugin
-    import com.vanniktech.maven.publish.JavadocJar
-
-    mavenPublishing {
-      // the first parameter configures the -javadoc artifact, possible values:
-      // - `JavadocJar.None()` don't publish this artifact
-      // - `JavadocJar.Empty()` publish an empty jar
-      // - `JavadocJar.Javadoc()` to publish standard javadocs
-      // the second whether to publish a sources jar
-      configure(new GradlePlugin(new JavadocJar.Javadoc(), true))
-    }
-    ```
 
 === "build.gradle.kts"
 
@@ -315,20 +298,26 @@ use [GradlePublishPlugin](#gradle-publish-plugin)
     }
     ```
 
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.GradlePlugin
+    import com.vanniktech.maven.publish.JavadocJar
+
+    mavenPublishing {
+      // the first parameter configures the -javadoc artifact, possible values:
+      // - `JavadocJar.None()` don't publish this artifact
+      // - `JavadocJar.Empty()` publish an empty jar
+      // - `JavadocJar.Javadoc()` to publish standard javadocs
+      // the second whether to publish a sources jar
+      configure(new GradlePlugin(new JavadocJar.Javadoc(), true))
+    }
+    ```
+
 ## Gradle Publish Plugin
 
 For projects using the `com.gradle.plugin-publish` plugin. This will always publish a sources jar
 and a javadoc jar.
-
-=== "build.gradle"
-
-    ```groovy
-    import com.vanniktech.maven.publish.GradlePublishPlugin
-
-    mavenPublishing {
-      configure(new GradlePublishPlugin())
-    }
-    ```
 
 === "build.gradle.kts"
 
@@ -340,20 +329,20 @@ and a javadoc jar.
     }
     ```
 
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.GradlePublishPlugin
+
+    mavenPublishing {
+      configure(new GradlePublishPlugin())
+    }
+    ```
+
 ## Java Platform
 
 
 For projects using the `java-platform` plugin.
-
-=== "build.gradle"
-
-    ```groovy
-    import com.vanniktech.maven.publish.JavaPlatform
-
-    mavenPublishing {
-      configure(new JavaPlatform())
-    }
-    ```
 
 === "build.gradle.kts"
 
@@ -365,21 +354,20 @@ For projects using the `java-platform` plugin.
     }
     ```
 
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.JavaPlatform
+
+    mavenPublishing {
+      configure(new JavaPlatform())
+    }
+    ```
 
 ## Version Catalog
 
 
 For projects using the `version-catalog` plugin.
-
-=== "build.gradle"
-
-    ```groovy
-    import com.vanniktech.maven.publish.VersionCatalog
-
-    mavenPublishing {
-      configure(new VersionCatalog())
-    }
-    ```
 
 === "build.gradle.kts"
 
@@ -388,5 +376,15 @@ For projects using the `version-catalog` plugin.
 
     mavenPublishing {
       configure(VersionCatalog())
+    }
+    ```
+
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.VersionCatalog
+
+    mavenPublishing {
+      configure(new VersionCatalog())
     }
     ```

@@ -7,19 +7,19 @@ projects see [Maven Central](central.md).
 
 Add the plugin to any Gradle project that should be published
 
-=== "build.gradle"
-
-    ```groovy
-    plugins {
-      id "com.vanniktech.maven.publish" version "<latest-version>"
-    }
-    ```
-
 === "build.gradle.kts"
 
     ```kotlin
     plugins {
       id("com.vanniktech.maven.publish") version "<latest-version>"
+    }
+    ```
+
+=== "build.gradle"
+
+    ```groovy
+    plugins {
+      id "com.vanniktech.maven.publish" version "<latest-version>"
     }
     ```
 
@@ -35,14 +35,6 @@ To modify these defaults it is possible to call `configure` in the DSL. For
 more check out the [what to publish page](what.md) which contains a detailed
 description of available options for each project type.
 
-=== "build.gradle"
-
-    ```groovy
-    mavenPublishing {
-      configure(...)
-    }
-    ```
-
 === "build.gradle.kts"
 
     ```kotlin
@@ -51,28 +43,17 @@ description of available options for each project type.
     }
     ```
 
-## Configuring the repository
-
-A new repository to publish to can be added like this
-
 === "build.gradle"
 
     ```groovy
-    publishing {
-        repositories {
-            maven {
-                name = "myRepo"
-                url = layout.buildDirectory.dir('repo')
-                // or
-                url = "http://my.org/repo"
-                // or when a separate snapshot repository is required
-                url = version.toString().endsWith("SNAPSHOT") ? "http://my.org/repos/snapshots" : "http://my.org/repos/releases"
-            }
-
-            // more repositories can go here
-        }
+    mavenPublishing {
+      configure(...)
     }
     ```
+
+## Configuring the repository
+
+A new repository to publish to can be added like this
 
 === "build.gradle.kts"
 
@@ -83,9 +64,28 @@ A new repository to publish to can be added like this
                 name = "myRepo"
                 url = uri(layout.buildDirectory.dir("repo"))
                 // or
-                url = uri("http://my.org/repo")
+                url = uri("https://my.org/repo")
                 // or when a separate snapshot repository is required
-                url = uri(if (version.toString().endsWith("SNAPSHOT")) "http://my.org/repos/snapshots" else "http://my.org/repos/releases")
+                url = uri(if (version.toString().endsWith("SNAPSHOT")) "https://my.org/repos/snapshots" else "https://my.org/repos/releases")
+            }
+
+            // more repositories can go here
+        }
+    }
+    ```
+
+=== "build.gradle"
+
+    ```groovy
+    publishing {
+        repositories {
+            maven {
+                name = "myRepo"
+                url = layout.buildDirectory.dir('repo')
+                // or
+                url = "https://my.org/repo"
+                // or when a separate snapshot repository is required
+                url = version.toString().endsWith("SNAPSHOT") ? "https://my.org/repos/snapshots" : "https://my.org/repos/releases"
             }
 
             // more repositories can go here
@@ -94,24 +94,6 @@ A new repository to publish to can be added like this
     ```
 
 ### Github Packages example
-
-=== "build.gradle"
-
-    ```groovy
-    publishing {
-        repositories {
-            maven {
-                name = "githubPackages"
-                url = "https://maven.pkg.github.com/your-org/your-project"
-                // username and password (a personal Github access token) should be specified as
-                // `githubPackagesUsername` and `githubPackagesPassword` Gradle properties or alternatively
-                // as `ORG_GRADLE_PROJECT_githubPackagesUsername` and `ORG_GRADLE_PROJECT_githubPackagesPassword`
-                // environment variables
-                credentials(PasswordCredentials)
-            }
-        }
-    }
-    ```
 
 === "build.gradle.kts"
 
@@ -131,6 +113,23 @@ A new repository to publish to can be added like this
     }
     ```
 
+=== "build.gradle"
+
+    ```groovy
+    publishing {
+        repositories {
+            maven {
+                name = "githubPackages"
+                url = "https://maven.pkg.github.com/your-org/your-project"
+                // username and password (a personal Github access token) should be specified as
+                // `githubPackagesUsername` and `githubPackagesPassword` Gradle properties or alternatively
+                // as `ORG_GRADLE_PROJECT_githubPackagesUsername` and `ORG_GRADLE_PROJECT_githubPackagesPassword`
+                // environment variables
+                credentials(PasswordCredentials)
+            }
+        }
+    }
+    ```
 
 ## Configuring the POM
 
@@ -139,42 +138,6 @@ as well as some general information about the project like an url and the used
 license.
 
 This configuration also determines the coordinates (`group:artifactId:version`) used to consume the library.
-
-=== "build.gradle"
-
-    ```groovy
-    mavenPublishing {
-      coordinates("com.example.mylibrary", "library-name", "1.0.3-SNAPSHOT")
-
-      // the following is optional
-
-      pom {
-        name = "My Library"
-        description = "A description of what my library does."
-        inceptionYear = "2020"
-        url = "https://github.com/username/mylibrary/"
-        licenses {
-          license {
-            name = "The Apache License, Version 2.0"
-            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-          }
-        }
-        developers {
-          developer {
-            id = "username"
-            name = "User Name"
-            url = "https://github.com/username/"
-          }
-        }
-        scm {
-          url = "https://github.com/username/mylibrary/"
-          connection = "scm:git:git://github.com/username/mylibrary.git"
-          developerConnection = "scm:git:ssh://git@github.com/username/mylibrary.git"
-        }
-      }
-    }
-    ```
 
 === "build.gradle.kts"
 
@@ -191,9 +154,9 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
         url.set("https://github.com/username/mylibrary/")
         licenses {
           license {
-            name.set("The Apache License, Version 2.0")
-            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-            distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            name.set("Apache-2.0")
+            url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+            distribution.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
           }
         }
         developers {
@@ -212,11 +175,47 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
     }
     ```
 
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      coordinates("com.example.mylibrary", "library-name", "1.0.3-SNAPSHOT")
+
+      // the following is optional
+
+      pom {
+        name = "My Library"
+        description = "A description of what my library does."
+        inceptionYear = "2020"
+        url = "https://github.com/username/mylibrary/"
+        licenses {
+          license {
+            name = "Apache-2.0"
+            url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+        developers {
+          developer {
+            id = "username"
+            name = "User Name"
+            url = "https://github.com/username/"
+          }
+        }
+        scm {
+          url = "https://github.com/username/mylibrary/"
+          connection = "scm:git:git://github.com/username/mylibrary.git"
+          developerConnection = "scm:git:ssh://git@github.com/username/mylibrary.git"
+        }
+      }
+    }
+    ```
+
 === "gradle.properties"
 
     ```properties
-    GROUP=com.test.mylibrary
-    POM_ARTIFACT_ID=mylibrary-runtime
+    GROUP=com.example.mylibrary
+    POM_ARTIFACT_ID=library-name
     VERSION_NAME=3.0.5
 
     # the following is optional
