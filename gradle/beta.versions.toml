@@ -1,9 +1,9 @@
 [versions]
-gradle = "9.3.0-rc-1"
+gradle = "9.3.0-rc-2"
 
 kotlin = "2.3.0"
 
-android-gradle = "9.0.0-rc01"
+android-gradle = "9.0.0-rc02"
 
 gradle-plugin-publish = "2.0.0"
 
