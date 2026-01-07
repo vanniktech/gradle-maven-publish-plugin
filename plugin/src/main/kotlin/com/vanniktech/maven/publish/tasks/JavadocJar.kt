@@ -46,13 +46,13 @@ public abstract class JavadocJar : Jar() {
         it.updateArchivesBaseNameWithPrefix(project, prefix)
       }
 
-    private fun prefixedTaskName(name: String, prefix: String?): String = if (prefix != null) {
+    internal fun prefixedTaskName(name: String, prefix: String?): String = if (prefix != null) {
       "${prefix}${name.replaceFirstChar { it.titlecase(Locale.US) }}"
     } else {
       name
     }
 
-    private fun Jar.updateArchivesBaseNameWithPrefix(project: Project, prefix: String?) {
+    internal fun Jar.updateArchivesBaseNameWithPrefix(project: Project, prefix: String?) {
       if (prefix != null) {
         archiveBaseName.set(project.baseExtension.artifactId.map { "$it-$prefix" })
       }

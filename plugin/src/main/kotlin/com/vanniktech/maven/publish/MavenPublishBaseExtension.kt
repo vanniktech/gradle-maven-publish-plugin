@@ -405,7 +405,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   @Incubating
   @Deprecated("Use configureBasedOnAppliedPlugins with JavadocJar instead of Boolean")
   public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean) {
-    configureBasedOnAppliedPlugins(sourcesJar, defaultJavaDocOption(javadocJar))
+    configureBasedOnAppliedPlugins(
+      sourcesJar = if (sourcesJar) SourcesJar.Sources() else SourcesJar.Empty(),
+      javadocJar = defaultJavaDocOption(javadocJar),
+    )
   }
 
   /**
@@ -413,7 +416,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    */
   @Incubating
   @JvmOverloads
-  public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean = true, javadocJar: JavadocJar = defaultJavaDocOption(true)) {
+  public fun configureBasedOnAppliedPlugins(
+    javadocJar: JavadocJar = defaultJavaDocOption(true),
+    sourcesJar: SourcesJar = SourcesJar.Sources(),
+  ) {
     // has already been called before by the user or from finalizeDsl
     if (platform.isPresent) {
       return
@@ -426,13 +432,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         } else {
           listOf(project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release")
         }
-        configure(
-          KotlinMultiplatform(
-            javadocJar = javadocJar,
-            sourcesJar = sourcesJar,
-            androidVariantsToPublish = variants,
-          ),
-        )
+        configure(KotlinMultiplatform(javadocJar, sourcesJar, variants))
       }
       project.plugins.hasPlugin("com.android.library") -> {
         val variant = project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
