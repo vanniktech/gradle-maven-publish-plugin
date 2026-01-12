@@ -354,25 +354,25 @@ For automatic publishing use one of the following options
 ### Deployment validation
 
 When automatic releases are enabled, the plugin automatically monitors the deployment status until it reaches
-a terminal state (`PUBLISHED` or `FAILED`).
+a terminal state (`VALIDATED` or `FAILED`).
 
 The validation process:
 
 - Polls the deployment status every 5 seconds (configurable via `SONATYPE_POLL_INTERVAL_SECONDS` property)
-- Only stops when reaching a terminal state (`PUBLISHED` or `FAILED`)
+- Only stops when reaching a terminal state (`VALIDATED` or `FAILED`)
 - Times out after 60 minutes by default (configurable via `SONATYPE_CLOSE_TIMEOUT_SECONDS` property)
 - Fails the build if the deployment enters the `FAILED` state, displaying validation errors
 
 #### Changing automatic validation
 
 Deployment validation for automatic releases is enabled by default and waits for publishing to finish. If you prefer
-to only wait for the validations to succeed, you can change the validation to `VALIDATE`:
+to only wait for the validations to succeed, you can change the validation to `PUBLISHED`:
 
 === "build.gradle"
 
     ```groovy
     mavenPublishing {
-      publishToMavenCentral(true, DeploymentValidation.VALIDATE) // automaticRelease = true, validateDeployment = VALIDATE
+      publishToMavenCentral(true, DeploymentValidation.PUBLISHED) // automaticRelease = true, validateDeployment = PUBLISHED
 
       // rest of publishing config
     }
@@ -382,7 +382,7 @@ to only wait for the validations to succeed, you can change the validation to `V
 
     ```kotlin
     mavenPublishing {
-      publishToMavenCentral(automaticRelease = true, validateDeployment = DeploymentValidation.VALIDATE)
+      publishToMavenCentral(automaticRelease = true, validateDeployment = DeploymentValidation.PUBLISHED)
 
       // rest of publishing config
     }
@@ -391,7 +391,7 @@ to only wait for the validations to succeed, you can change the validation to `V
 === "gradle.properties"
 
     ```properties
-    mavenCentralDeploymentValidation=VALIDATE
+    mavenCentralDeploymentValidation=PUBLISHED
     ```
 
 

@@ -37,11 +37,11 @@ internal fun Project.validateDeployment(): DeploymentValidation {
   if (automatic != null) {
     return automatic.toDeploymentValidation()
   }
-  return providers.gradleProperty("SONATYPE_DEPLOYMENT_VALIDATION").getOrElse("true").toDeploymentValidation()
+  return providers.gradleProperty("SONATYPE_DEPLOYMENT_VALIDATION").getOrElse("VALIDATE").toDeploymentValidation()
 }
 
 private fun String.toDeploymentValidation() = when (this) {
-  "true" -> DeploymentValidation.PUBLISH
+  "true" -> DeploymentValidation.VALIDATED
   "false" -> DeploymentValidation.NONE
   else -> DeploymentValidation.valueOf(this)
 }
@@ -62,7 +62,7 @@ internal fun Project.connectTimeout(): Provider<Duration> = providers
 internal fun Project.closeTimeout(): Provider<Duration> = providers
   .gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
   .map { it.toLong().seconds }
-  .orElse(60.minutes)
+  .orElse(15.minutes)
 
 internal fun Project.pollIntervalSeconds(): Provider<Duration> = providers
   .gradleProperty("SONATYPE_POLL_INTERVAL_SECONDS")

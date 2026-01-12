@@ -89,8 +89,8 @@ internal abstract class MavenCentralBuildService :
     endOfBuildActions += EndOfBuildAction.Publish
     when (validateDeployment) {
       DeploymentValidation.NONE -> {}
-      DeploymentValidation.VALIDATE -> endOfBuildActions += EndOfBuildAction.Validate(waitForPublishing = false)
-      DeploymentValidation.PUBLISH -> endOfBuildActions += EndOfBuildAction.Validate(waitForPublishing = true)
+      DeploymentValidation.VALIDATED -> endOfBuildActions += EndOfBuildAction.Validate(waitForPublishing = false)
+      DeploymentValidation.PUBLISHED -> endOfBuildActions += EndOfBuildAction.Validate(waitForPublishing = true)
     }
   }
 

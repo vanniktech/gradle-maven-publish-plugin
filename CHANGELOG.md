@@ -10,7 +10,9 @@
 **Behavior changes**
 - When calling `configure` manually to configure what to publish and not passing `javadocJar` explicity,
   the plugin now defaults to publishing an empty javadoc jar.
-- Changed the default `SONATYPE_CLOSE_TIMEOUT_SECONDS` to 60 minutes.
+- `validateDeployment` now has the `DeploymentValidation` enum as type instead of being a boolean. The default
+  is now to just wait for the `VALIDATED` state. The previous behavior can be achieved by setting it to PUBLISHED.
+  `NONE` can be used for disabling the validation completely.
 
 **Features**
 - Android projects now support using Dokka for javadoc creation, this will happen automatically
@@ -18,12 +20,14 @@
 - Added consistent `JavadocJar` and `SourcesJar` options to `configureBasedOnAppliedPlugins` and to all
   applicable project types that can be passed to `configure`. The previous `Boolean` based versions have
   been deprecated.
-- `validateDeployment` now has the `DeploymentValidation` enum as type instead of being a boolean. This
-  allows setting it to `VALIDATE` which only waits for validations instead of the full publishing process.
 - When enabling Maven Central publishing through the DSL, the `mavenCentralDeploymentValidation` and
   `mavenCentralAutomaticPublishing` are used for the default values of the 2 parameters when they are not passed
   explicitly. This allows to more easily override them in certain environments.
+- When isolated projects is enabled the module/project specific `gradle.properties` files are now considered in
+  the same way they are when isolated projects is disabled.
 
+**Improvements**
+- Better error message when Maven Central credentials are missing.
 
 #### Minimum supported versions
 - JDK 17
