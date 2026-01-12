@@ -58,8 +58,8 @@ public final class com/vanniktech/maven/publish/AndroidSingleVariantLibrary : co
 
 public final class com/vanniktech/maven/publish/DeploymentValidation : java/lang/Enum {
 	public static final field NONE Lcom/vanniktech/maven/publish/DeploymentValidation;
-	public static final field PUBLISH Lcom/vanniktech/maven/publish/DeploymentValidation;
-	public static final field VALIDATE Lcom/vanniktech/maven/publish/DeploymentValidation;
+	public static final field PUBLISHED Lcom/vanniktech/maven/publish/DeploymentValidation;
+	public static final field VALIDATED Lcom/vanniktech/maven/publish/DeploymentValidation;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/vanniktech/maven/publish/DeploymentValidation;
 	public static fun values ()[Lcom/vanniktech/maven/publish/DeploymentValidation;
