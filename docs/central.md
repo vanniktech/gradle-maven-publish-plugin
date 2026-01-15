@@ -365,8 +365,8 @@ The validation process:
 
 #### Changing automatic validation
 
-Deployment validation for automatic releases is enabled by default and waits for publishing to finish. If you prefer
-to only wait for the validations to succeed, you can change the validation to `PUBLISHED`:
+Deployment validation for automatic releases is enabled by default and waits only for the validation to succeed.
+If you prefer to wait for publishing to finish, you can change the validation to `PUBLISHED`:
 
 === "build.gradle"
 
