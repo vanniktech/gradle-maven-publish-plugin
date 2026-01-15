@@ -37,7 +37,7 @@ internal fun Project.validateDeployment(): DeploymentValidation {
   if (automatic != null) {
     return automatic.toDeploymentValidation()
   }
-  return providers.gradleProperty("SONATYPE_DEPLOYMENT_VALIDATION").getOrElse("VALIDATE").toDeploymentValidation()
+  return providers.gradleProperty("SONATYPE_DEPLOYMENT_VALIDATION").getOrElse("VALIDATED").toDeploymentValidation()
 }
 
 private fun String.toDeploymentValidation() = when (this) {
