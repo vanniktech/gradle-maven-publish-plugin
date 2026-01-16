@@ -50,7 +50,7 @@ class AgpVersion(
       // minimum supported
       AgpVersion(Versions.ANDROID_GRADLE_MIN),
       // latest versions of each type
-      AgpVersion(Versions.ANDROID_GRADLE_STABLE),
+      AgpVersion(Versions.ANDROID_GRADLE_STABLE, minGradleVersion = GradleVersion.GRADLE_9_1_0),
       AgpVersion(Versions.ANDROID_GRADLE_RC, minGradleVersion = GradleVersion.GRADLE_9_1_0),
       AgpVersion(Versions.ANDROID_GRADLE_BETA, minGradleVersion = GradleVersion.GRADLE_9_1_0),
       AgpVersion(Versions.ANDROID_GRADLE_ALPHA, minGradleVersion = GradleVersion.GRADLE_9_1_0),
