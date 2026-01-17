@@ -144,7 +144,11 @@ val integrationTest by tasks.registering(Test::class) {
   useJUnitPlatform()
   testLogging.showStandardStreams = true
   maxHeapSize = "2g"
-  maxParallelForks = Runtime.getRuntime().availableProcessors()
+  maxParallelForks = if (System.getenv("CI") != null) {
+    Runtime.getRuntime().availableProcessors() / 2
+  } else {
+    Runtime.getRuntime().availableProcessors()
+  }
   jvmArgs(
     "--add-opens",
     "java.base/java.lang.invoke=ALL-UNNAMED",
