@@ -2,6 +2,8 @@ package com.vanniktech.maven.publish
 
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.util.KgpVersion
+import com.vanniktech.maven.publish.util.ProjectResult
+import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertSingleArtifactCommon
 import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.util.TestOptions
 import com.vanniktech.maven.publish.util.TestOptions.Signing.NO_SIGNING
@@ -26,15 +28,7 @@ class DokkaPluginTest : BasePluginTest() {
     )
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
-    assertThat(result).module().exists()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().containsFiles(ignoreAdditionalFiles = true, "index.html")
+    assertSingleJarCommon(result, kgpVersion)
   }
 
   @TestParameterInjectorTest
@@ -50,14 +44,13 @@ class DokkaPluginTest : BasePluginTest() {
     )
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).pom().exists()
+    assertSingleJarCommon(result, kgpVersion)
+  }
+
+  private fun assertSingleJarCommon(result: ProjectResult, kgpVersion: KgpVersion) {
+    assertSingleArtifactCommon(result, enableSigning = false)
     assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
-    assertThat(result).module().exists()
-    assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
     assertThat(result).javadocJar().containsFiles(ignoreAdditionalFiles = true, "index.html")
   }
 }
