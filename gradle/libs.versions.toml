@@ -27,7 +27,7 @@ slf4j = "1.7.36"
 [libraries]
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 android-pluginApi = { module = "com.android.tools.build:gradle-api", version.ref = "android-gradle" }
-maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.36.0-rc2"
+maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.36.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
