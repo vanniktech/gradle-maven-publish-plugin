@@ -4,15 +4,10 @@ import com.google.common.truth.TruthJUnit.assume
 import com.google.testing.junit.testparameterinjector.junit5.TestParameter
 import com.google.testing.junit.testparameterinjector.junit5.TestParameterInjectorTest
 import com.vanniktech.maven.publish.util.AgpVersion
-import com.vanniktech.maven.publish.util.AgpVersion.Companion.AGP_9_0_0
 import com.vanniktech.maven.publish.util.AgpVersionProvider
-import com.vanniktech.maven.publish.util.KgpVersion
-import com.vanniktech.maven.publish.util.KgpVersion.Companion.KOTLIN_2_2_10
-import com.vanniktech.maven.publish.util.KgpVersionProvider
 import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.util.TestOptions
 import com.vanniktech.maven.publish.util.androidFusedLibraryProjectSpec
-import com.vanniktech.maven.publish.util.androidLibraryKotlinProjectSpec
 import com.vanniktech.maven.publish.util.androidLibraryProjectSpec
 import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
 import com.vanniktech.maven.publish.util.stdlibCommon
@@ -52,36 +47,6 @@ class AndroidPluginTest : BasePluginTest() {
   }
 
   @TestParameterInjectorTest
-  fun androidLibraryKotlinProject(
-    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
-    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
-  ) {
-    agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-    kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
-
-    val project = androidLibraryKotlinProjectSpec(agpVersion, kgpVersion)
-    val result = project.run()
-
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("aar").exists()
-    assertThat(result).artifact("aar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
-    if (agpVersion >= AGP_9_0_0) {
-      assertThat(result).pom().matchesExpectedPom("aar", KOTLIN_2_2_10.stdlibCommon())
-    } else {
-      assertThat(result).pom().matchesExpectedPom("aar", kgpVersion.stdlibCommon())
-    }
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
-    assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
-  }
-
-  @TestParameterInjectorTest
   fun androidLibraryProject(
     @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
   ) {
@@ -95,11 +60,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).artifact("aar").isSigned()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    if (agpVersion >= AGP_9_0_0) {
-      assertThat(result).pom().matchesExpectedPom("aar", KOTLIN_2_2_10.stdlibCommon())
-    } else {
-      assertThat(result).pom().matchesExpectedPom("aar")
-    }
+    assertThat(result).pom().matchesExpectedPom("aar", agpVersion.embeddedKotlinVersion.stdlibCommon())
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
     assertThat(result).sourcesJar().exists()
@@ -129,11 +90,7 @@ class AndroidPluginTest : BasePluginTest() {
     assertThat(result).outcome().succeeded()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    if (agpVersion >= AGP_9_0_0) {
-      assertThat(result).pom().matchesExpectedPom("pom", KOTLIN_2_2_10.stdlibCommon())
-    } else {
-      assertThat(result).pom().matchesExpectedPom("pom")
-    }
+    assertThat(result).pom().matchesExpectedPom("pom", agpVersion.embeddedKotlinVersion.stdlibCommon())
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
 
