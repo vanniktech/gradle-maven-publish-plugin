@@ -1,6 +1,26 @@
 # Change Log
 
-## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.35.0...HEAD) *(2025-xx-xx)*
+## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.36.0...HEAD) *(2026-xx-xx)*
+
+
+#### Minimum supported versions
+- JDK 17
+- Gradle 9.0.0
+- Android Gradle Plugin 8.13.0
+- Kotlin Gradle Plugin 2.2.0
+
+#### Compatibility tested up to
+- JDK 25
+- Gradle 9.3.0
+- Gradle 9.4.0-milestone-4
+- Android Gradle Plugin 8.13.2
+- Android Gradle Plugin 9.0.0
+- Android Gradle Plugin 9.1.0-alpha05
+- Kotlin Gradle Plugin 2.3.0
+- Kotlin Gradle Plugin 2.3.20-Beta1
+
+
+## [0.36.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.36.0) *(2026-01-13)*
 
 **BREAKING**
 - Updated minimum supported JDK, Gradle, Android Gradle Plugin and Kotlin versions.
@@ -8,11 +28,11 @@
 - Mark `DirectorySignatureType` internal.
 
 **Behavior changes**
-- When calling `configure` manually to configure what to publish and not passing `javadocJar` explicity,
-  the plugin now defaults to publishing an empty javadoc jar.
 - `validateDeployment` now has the `DeploymentValidation` enum as type instead of being a boolean. The default
-  is now to just wait for the `VALIDATED` state. The previous behavior can be achieved by setting it to PUBLISHED.
+  is now to just wait for the `VALIDATED` state. The previous behavior can be achieved by setting it to `PUBLISHED`.
   `NONE` can be used for disabling the validation completely.
+- When calling `configure(...)` manually to configure what to publish and not passing `javadocJar` explicity,
+  the plugin now defaults to publishing an empty javadoc jar.
 
 **Features**
 - Android projects now support using Dokka for javadoc creation, this will happen automatically
@@ -37,12 +57,13 @@
 
 #### Compatibility tested up to
 - JDK 25
-- Gradle 9.2.1
-- Gradle 9.3.0-rc-1
-- Gradle 9.4.0-milestone-3
+- Gradle 9.3.0
+- Gradle 9.4.0-milestone-4
 - Android Gradle Plugin 8.13.2
-- Android Gradle Plugin 9.0.0-rc01
+- Android Gradle Plugin 9.0.0
+- Android Gradle Plugin 9.1.0-alpha05
 - Kotlin Gradle Plugin 2.3.0
+- Kotlin Gradle Plugin 2.3.20-Beta1
 
 
 ## [0.35.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.35.0) *(2025-11-11)*
