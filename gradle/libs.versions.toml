@@ -1,8 +1,8 @@
 [versions]
 jdkRelease = "17"
 minGradle = "9.0.0"
-minAgp = "8.13.0"
-minKgp = "2.2.0"
+minAgp = "9.0.0"
+minKgp = "2.2.10"
 
 gradle = "9.3.1"
 
