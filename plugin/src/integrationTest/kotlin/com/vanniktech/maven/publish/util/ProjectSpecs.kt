@@ -1,7 +1,6 @@
 package com.vanniktech.maven.publish.util
 
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig.DOKKA_STABLE
-import com.vanniktech.maven.publish.util.AgpVersion.Companion.AGP_9_0_0
 
 val javaPlugin = PluginSpec("java")
 val javaLibraryPlugin = PluginSpec("java-library")
@@ -168,57 +167,7 @@ fun kotlinMultiplatformProjectSpec(version: KgpVersion) = ProjectSpec(
     """.trimIndent(),
 )
 
-// TODO remove when min AGP version is AGP 9
-fun kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion: AgpVersion, kgpVersion: KgpVersion): ProjectSpec {
-  val baseProject = kotlinMultiplatformProjectSpec(kgpVersion)
-  return baseProject.copy(
-    plugins = baseProject.plugins + listOf(androidLibraryPlugin.copy(version = agpVersion.value)),
-    sourceFiles = baseProject.sourceFiles + listOf(
-      SourceFile("androidMain", "kotlin", "com/vanniktech/maven/publish/test/AndroidTestClass.kt"),
-      SourceFile("androidDebug", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
-      SourceFile("androidRelease", "kotlin", "com/vanniktech/maven/publish/test/ExpectedTestClass.kt"),
-    ),
-    // needs to explicitly specify release to match the main plugin default behavior
-    basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty(), true, [\"release\"]))",
-    buildFileExtra = baseProject.buildFileExtra +
-      """
-
-      android {
-        compileSdk = 34
-        namespace = "com.test.library"
-      }
-
-      kotlin {
-        androidTarget {}
-
-        jvmToolchain(11)
-      }
-      """.trimIndent(),
-    propertiesExtra =
-      """
-      android.builtInKotlin=false
-      android.newDsl=false
-      """.trimIndent(),
-  )
-}
-
-fun kotlinMultiplatformWithAndroidLibraryAndSpecifiedVariantsProjectSpec(agpVersion: AgpVersion, kgpVersion: KgpVersion): ProjectSpec {
-  val baseProject = kotlinMultiplatformWithAndroidLibraryProjectSpec(agpVersion, kgpVersion)
-  return baseProject.copy(
-    basePluginConfig = "configure(new KotlinMultiplatform(new JavadocJar.Empty()))",
-    buildFileExtra = baseProject.buildFileExtra +
-      """
-
-      kotlin {
-        androidTarget {
-          publishLibraryVariants("release", "debug")
-        }
-      }
-      """.trimIndent(),
-  )
-}
-
-fun kotlinMultiplatformWithModernAndroidLibraryProjectSpec(agpVersion: AgpVersion, kgpVersion: KgpVersion): ProjectSpec {
+fun kotlinMultiplatformWithAndroidProjectSpec(agpVersion: AgpVersion, kgpVersion: KgpVersion): ProjectSpec {
   val baseProject = kotlinMultiplatformProjectSpec(kgpVersion)
   return baseProject.copy(
     plugins = baseProject.plugins + listOf(androidMultiplatformLibraryPlugin.copy(version = agpVersion.value)),
@@ -249,6 +198,7 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   properties = defaultProperties,
   sourceFiles = listOf(
     SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
+    SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
   ),
   basePluginConfig = "configure(new AndroidSingleVariantLibrary(\"release\", true, true))",
   buildFileExtra =
@@ -256,6 +206,10 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     android {
         compileSdk = 34
         namespace = "com.test.library"
+
+        kotlin {
+          jvmToolchain(11)
+        }
     }
 
     // disable the dokka task to speed up Android tests significantly
@@ -267,28 +221,6 @@ fun androidLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
     """.trimIndent(),
 )
 
-fun androidLibraryKotlinProjectSpec(agpVersion: AgpVersion, kgpVersion: KgpVersion): ProjectSpec {
-  val plainAndroidProject = androidLibraryProjectSpec(agpVersion)
-  val plugins = if (agpVersion >= AGP_9_0_0) {
-    plainAndroidProject.plugins
-  } else {
-    plainAndroidProject.plugins + kotlinAndroidPlugin.copy(version = kgpVersion.value)
-  }
-  return plainAndroidProject.copy(
-    plugins = plugins,
-    sourceFiles = plainAndroidProject.sourceFiles + listOf(
-      SourceFile("main", "kotlin", "com/vanniktech/maven/publish/test/KotlinTestClass.kt"),
-    ),
-    buildFileExtra = plainAndroidProject.buildFileExtra +
-      """
-
-      kotlin {
-        jvmToolchain(11)
-      }
-      """.trimIndent(),
-  )
-}
-
 fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   plugins = listOf(
     androidFusedLibraryPlugin.copy(version = version.value),
@@ -299,12 +231,11 @@ fun androidFusedLibraryProjectSpec(version: AgpVersion) = ProjectSpec(
   properties = defaultProperties,
   sourceFiles = emptyList(),
   basePluginConfig = "configure(new AndroidFusedLibrary())",
-  // TODO remove old min sdk syntax when min AGP version is 9
   buildFileExtra =
     """
     androidFusedLibrary {
         namespace = "com.test.library"
-        ${if (version >= AGP_9_0_0) "minSdk { version = release(34) }" else "minSdk = 29" }
+        minSdk { version = release(34) }
     }
     """.trimIndent(),
   // TODO remove when stable

@@ -1,6 +1,5 @@
 package com.vanniktech.maven.publish
 
-import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.dsl.LibraryExtension
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.prefixedTaskName
@@ -327,7 +326,7 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
 @Incubating
 public class AndroidFusedLibrary : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.Empty()
-  override val sourcesJar: SourcesJar = SourcesJar.Empty()
+  override val sourcesJar: SourcesJar = SourcesJar.Sources()
 
   override fun configure(project: Project) {
     check(project.plugins.hasPlugin("com.android.fused-library")) {
@@ -336,9 +335,6 @@ public class AndroidFusedLibrary : Platform() {
 
     project.mavenPublications {
       it.withJavadocJar(javadocJar, project, multipleTasks = false, configureArchives = true)
-      if (AndroidPluginVersion.getCurrent() < AndroidPluginVersion(9, 0, 0).alpha(9)) {
-        it.withJavaSourcesJar(sourcesJar, project, multipleTasks = false, configureArchives = true)
-      }
     }
   }
 
