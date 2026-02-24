@@ -126,28 +126,28 @@ This configuration also determines the coordinates (`group:artifactId:version`) 
       coordinates("com.example.mylibrary", "mylibrary-runtime", "1.0.3-SNAPSHOT")
 
       pom {
-        name.set("My Library")
-        description.set("A description of what my library does.")
-        inceptionYear.set("2020")
-        url.set("https://github.com/username/mylibrary/")
+        name = "My Library"
+        description = "A description of what my library does."
+        inceptionYear = "2020"
+        url = "https://github.com/username/mylibrary/"
         licenses {
           license {
-            name.set("The Apache License, Version 2.0")
-            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-            distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            name = "The Apache License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
           }
         }
         developers {
           developer {
-            id.set("username")
-            name.set("User Name")
-            url.set("https://github.com/username/")
+            id = "username"
+            name = "User Name"
+            url = "https://github.com/username/"
           }
         }
         scm {
-          url.set("https://github.com/username/mylibrary/")
-          connection.set("scm:git:git://github.com/username/mylibrary.git")
-          developerConnection.set("scm:git:ssh://git@github.com/username/mylibrary.git")
+          url = "https://github.com/username/mylibrary/"
+          connection = "scm:git:git://github.com/username/mylibrary.git"
+          developerConnection = "scm:git:ssh://git@github.com/username/mylibrary.git"
         }
       }
     }
