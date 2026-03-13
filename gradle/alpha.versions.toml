@@ -1,5 +1,5 @@
 [versions]
-gradle = "9.5.0-milestone-5"
+gradle = "9.5.0-milestone-6"
 
 kotlin = "2.3.20-RC2"
 
