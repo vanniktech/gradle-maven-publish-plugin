@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish.util
 
 import com.google.common.truth.TruthJUnit.assume
 import com.vanniktech.maven.publish.IntegrationTestBuildConfig as Versions
+import com.vanniktech.maven.publish.util.KgpVersion.Companion.KOTLIN_2_2_10
 import net.swiftzer.semver.SemVer
 import org.gradle.api.JavaVersion
 
@@ -40,24 +41,22 @@ sealed class ComparableVersion(
 
 class AgpVersion(
   override val value: String,
+  val embeddedKotlinVersion: KgpVersion,
   val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
-  val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.min(),
+  val minGradleVersion: GradleVersion = GradleVersion.GRADLE_9_1_0,
   val firstUnsupportedJdkVersion: JavaVersion? = null,
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("AGP") {
   companion object {
     val VERSIONS = setOf(
       // minimum supported
-      AgpVersion(Versions.ANDROID_GRADLE_MIN),
+      AgpVersion(Versions.ANDROID_GRADLE_MIN, KOTLIN_2_2_10),
       // latest versions of each type
-      AgpVersion(Versions.ANDROID_GRADLE_STABLE, minGradleVersion = GradleVersion.GRADLE_9_1_0),
-      AgpVersion(Versions.ANDROID_GRADLE_RC, minGradleVersion = GradleVersion.GRADLE_9_1_0),
-      AgpVersion(Versions.ANDROID_GRADLE_BETA, minGradleVersion = GradleVersion.GRADLE_9_1_0),
-      AgpVersion(Versions.ANDROID_GRADLE_ALPHA, minGradleVersion = GradleVersion.GRADLE_9_1_0),
+      AgpVersion(Versions.ANDROID_GRADLE_STABLE, KOTLIN_2_2_10),
+      AgpVersion(Versions.ANDROID_GRADLE_RC, KOTLIN_2_2_10),
+      AgpVersion(Versions.ANDROID_GRADLE_BETA, KOTLIN_2_2_10),
+      AgpVersion(Versions.ANDROID_GRADLE_ALPHA, KOTLIN_2_2_10),
     )
-
-    // versions used for checks instead of test matrix
-    val AGP_9_0_0 = AgpVersion("9.0.0-alpha01")
   }
 }
 
