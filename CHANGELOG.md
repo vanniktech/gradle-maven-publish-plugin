@@ -2,11 +2,13 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.36.0...HEAD) *(2026-xx-xx)*
 
+**BREAKING**
+- Updated minimum supported Android Gradle Plugin version.
 
 #### Minimum supported versions
 - JDK 17
 - Gradle 9.0.0
-- Android Gradle Plugin 8.13.0
+- Android Gradle Plugin 9.0.0
 - Kotlin Gradle Plugin 2.2.0
 
 #### Compatibility tested up to
