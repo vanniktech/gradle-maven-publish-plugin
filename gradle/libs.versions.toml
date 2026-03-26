@@ -10,7 +10,7 @@ kotlin = "2.3.10"
 
 android-gradle = "9.1.0"
 
-dokka = "2.1.0"
+dokka = "2.2.0"
 
 gradle-plugin-publish = "1.3.1"
 
