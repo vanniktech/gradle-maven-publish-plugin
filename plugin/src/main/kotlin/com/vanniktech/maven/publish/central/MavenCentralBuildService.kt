@@ -164,6 +164,7 @@ internal abstract class MavenCentralBuildService :
 
       val deploymentId = centralPortal.upload(deploymentName, publishingType, zipFile)
       this.deploymentId = deploymentId
+      logger.lifecycle("Uploaded bundle to Central Portal as $publishingType, deployment id: $deploymentId")
 
       val validate = actions.find { it is EndOfBuildAction.Validate } as EndOfBuildAction.Validate?
       if (validate != null) {
