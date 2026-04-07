@@ -38,10 +38,3 @@ tasks.withType(KotlinCompile::class.java) {
     freeCompilerArgs.add("-Xjdk-release=${libs.versions.jdkRelease.get()}")
   }
 }
-
-tasks.check {
-  dependsOn(
-    // TODO: https://youtrack.jetbrains.com/issue/KT-78525
-    tasks.checkLegacyAbi,
-  )
-}
