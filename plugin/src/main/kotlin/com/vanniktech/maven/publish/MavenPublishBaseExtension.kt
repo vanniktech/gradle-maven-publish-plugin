@@ -172,10 +172,14 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * # if key was created with a password
    * signingInMemoryKeyPassword=secret
    * ```
-   * `gpg2 --export-secret-keys --armor KEY_ID` can be used to export they key for this. The exported key is taken
-   * without the first line and without the last 2 lines, all line breaks should be removed as well. The in memory
-   * properties can also be provided as environment variables by prefixing them with `ORG_GRADLE_PROJECT_`, e.g.
-   * `ORG_GRADLE_PROJECT_signingInMemoryKey`.
+   * `gpg2 --export-secret-keys --armor KEY_ID` can be used to export the key for this.
+   *
+   * How to supply the key depends on the delivery method:
+   * - **Environment variables** (`ORG_GRADLE_PROJECT_signingInMemoryKey`): the full ASCII-armored output can be used
+   *   as-is. The plugin strips the headers and collapses it to a single-line bare base64 value automatically.
+   * - **`gradle.properties`**: the file format silently truncates multi-line values to the first line, so the key
+   *   must be provided already reduced to a single-line bare base64 string (no `-----BEGIN/END-----` headers,
+   *   no checksum line, no newlines).
    *
    * More information about signing as well as different ways to provide credentials
    * can be found in the [Gradle documentation](https://docs.gradle.org/current/userguide/signing_plugin.html)
@@ -192,7 +196,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     if (inMemoryKey.isPresent) {
       val inMemoryKeyId = project.providers.gradleProperty("signingInMemoryKeyId")
       val inMemoryKeyPassword = project.providers.gradleProperty("signingInMemoryKeyPassword").orElse("")
-      project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId.orNull, inMemoryKey.get(), inMemoryKeyPassword.get())
+      val normalizedKey = InMemorySigningKey(inMemoryKey.get()).normalizedKey
+      project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId.orNull, normalizedKey, inMemoryKeyPassword.get())
     }
 
     project.mavenPublications { publication ->
