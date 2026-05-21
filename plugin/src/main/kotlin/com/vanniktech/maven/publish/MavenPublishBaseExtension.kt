@@ -13,6 +13,7 @@ import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
@@ -120,8 +121,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
 
     val buildService = project.registerMavenCentralBuildService(
-      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
-      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
+      repositoryUsername = credentialProperty("mavenCentralUsername"),
+      repositoryPassword = credentialProperty("mavenCentralPassword"),
       rootBuildDirectory = @Suppress("UnstableApiUsage") project.layout.settingsDirectory.dir("build"),
       buildEventsListenerRegistry = buildEventsListenerRegistry,
     )
@@ -480,4 +481,11 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     val extras = checkNotNull(project.extensions.findByType(ExtraPropertiesExtension::class.java))
     return if (extras.has(propertyName)) extras.get(propertyName)?.toString() else null
   }
+
+  // Resolves a credential value from a Gradle property, falling back to a value set on the
+  // extra properties of the project (for example set by extra["mavenCentralUsername"] = ...).
+  private fun credentialProperty(propertyName: String): Provider<String> =
+    project.providers.gradleProperty(propertyName).orElse(
+      project.provider { findOptionalProperty(propertyName) },
+    )
 }

@@ -2,6 +2,13 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.36.0...HEAD) *(2026-xx-xx)*
 
+**Features**
+
+- `mavenCentralUsername` / `mavenCentralPassword` can now also be set via `extra["mavenCentralUsername"]` /
+  `extra["mavenCentralPassword"]` on the project, in addition to the existing Gradle property sources
+  (`gradle.properties`, `-P`, `ORG_GRADLE_PROJECT_*`). Gradle properties still take precedence, the extras
+  lookup is only used as a fallback. This makes it possible to set credentials from a secret manager inside
+  the build script.
 
 #### Minimum supported versions
 - JDK 17
