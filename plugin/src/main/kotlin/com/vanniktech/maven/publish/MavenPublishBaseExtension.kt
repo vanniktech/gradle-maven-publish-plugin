@@ -484,8 +484,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
 
   // Resolves a credential value from a Gradle property, falling back to a value set on the
   // extra properties of the project (for example set by extra["mavenCentralUsername"] = ...).
-  private fun credentialProperty(propertyName: String): Provider<String> =
-    project.providers.gradleProperty(propertyName).orElse(
-      project.provider { findOptionalProperty(propertyName) },
-    )
+  private fun credentialProperty(propertyName: String): Provider<String> = project.providers.gradleProperty(propertyName).orElse(
+    project.provider { findOptionalProperty(propertyName) },
+  )
 }
