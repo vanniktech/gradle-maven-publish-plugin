@@ -250,7 +250,11 @@ EdLCEJA+3IIiw4qM5hnMw=
 -----END PGP PRIVATE KEY BLOCK-----
 ```
 
-Make sure to copy this string in its entirety.
+How you supply this key depends on the delivery method:
+
+**Environment variables** (recommended): copy the full ASCII-armored output as-is into `ORG_GRADLE_PROJECT_signingInMemoryKey`. The plugin will automatically strip the headers and collapse it to the single-line format that Gradle requires.
+
+**`gradle.properties`**: the properties file format silently truncates multi-line values to the first line, so the full armored format cannot be used here. Instead, manually strip the key to a bare single-line base64 string: remove the `-----BEGIN PGP PRIVATE KEY BLOCK-----` and `-----END PGP PRIVATE KEY BLOCK-----` lines, the blank line, the checksum line (starting with `=`), and all line breaks from the remaining base64 content.
 
 ## Publishing snapshots
 
