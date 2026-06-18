@@ -57,3 +57,4 @@ androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0-alpha05"
 [plugins]
 buildconfig = "com.github.gmazzo.buildconfig:6.0.9"
 android-lint = { id = "com.android.lint", version.ref = "android-gradle" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
