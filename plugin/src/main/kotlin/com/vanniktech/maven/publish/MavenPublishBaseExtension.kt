@@ -13,6 +13,7 @@ import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
@@ -39,6 +40,12 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     .convention(project.provider { project.version.toString() })
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val platform: Property<Platform> = project.objects.property(Platform::class.java)
+  private val excludeSignatureChecksums: Property<Boolean> = project.objects
+    .property(Boolean::class.java)
+    .convention(project.provider { project.excludeSignatureChecksums() })
+  private val checksums: SetProperty<Checksum> = project.objects
+    .setProperty(Checksum::class.java)
+    .convention(project.provider { project.checksums() })
 
   /**
    * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
@@ -126,7 +133,15 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       buildEventsListenerRegistry = buildEventsListenerRegistry,
     )
 
-    val prepareTask = project.tasks.registerPrepareMavenCentralPublishingTask(buildService, groupId, artifactId, version, localRepository)
+    val prepareTask = project.tasks.registerPrepareMavenCentralPublishingTask(
+      buildService,
+      groupId,
+      artifactId,
+      version,
+      localRepository,
+      excludeSignatureChecksums,
+      checksums.map { checksums -> checksums.map { it.extension }.toSet() },
+    )
     val enableAutomaticTask = project.tasks.registerEnableAutomaticMavenCentralPublishingTask(buildService, validateDeployment)
 
     project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
@@ -151,6 +166,40 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
 
     project.tasks.registerDropMavenCentralDeploymentTask(buildService)
+  }
+
+  /**
+   * Controls whether checksum files for signature (`.asc`) files are excluded when publishing to Maven Central.
+   *
+   * Gradle generates `.asc.md5`, `.asc.sha1`, `.asc.sha256` and `.asc.sha512` files for every signature, but these
+   * are not needed by Maven Central. See [gradle/gradle#20232](https://github.com/gradle/gradle/issues/20232).
+   *
+   * This is enabled by default and can also be controlled through the `mavenCentralExcludeSignatureChecksums`
+   * Gradle property.
+   *
+   * @param exclude whether to exclude signature checksum files from the deployment
+   */
+  @JvmOverloads
+  public fun excludeSignatureChecksums(exclude: Boolean = true) {
+    excludeSignatureChecksums.set(exclude)
+    excludeSignatureChecksums.finalizeValue()
+  }
+
+  /**
+   * Sets which checksum files are published to Maven Central.
+   *
+   * Gradle generates [Checksum.MD5], [Checksum.SHA1], [Checksum.SHA256] and [Checksum.SHA512] checksums for every
+   * published file, but neither Gradle nor Maven Central read the `sha256` and `sha512` ones. By default only
+   * [Checksum.MD5] and [Checksum.SHA1] are published.
+   *
+   * This can also be controlled through the `mavenCentralChecksums` Gradle property as a comma separated list, e.g.
+   * `mavenCentralChecksums=md5,sha1`.
+   *
+   * @param checksums the checksum files to publish
+   */
+  public fun checksums(vararg checksums: Checksum) {
+    this.checksums.set(checksums.toSet())
+    this.checksums.finalizeValue()
   }
 
   /**

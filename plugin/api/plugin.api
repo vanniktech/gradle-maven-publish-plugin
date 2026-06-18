@@ -56,6 +56,16 @@ public final class com/vanniktech/maven/publish/AndroidSingleVariantLibrary : co
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/vanniktech/maven/publish/Checksum : java/lang/Enum {
+	public static final field MD5 Lcom/vanniktech/maven/publish/Checksum;
+	public static final field SHA1 Lcom/vanniktech/maven/publish/Checksum;
+	public static final field SHA256 Lcom/vanniktech/maven/publish/Checksum;
+	public static final field SHA512 Lcom/vanniktech/maven/publish/Checksum;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/vanniktech/maven/publish/Checksum;
+	public static fun values ()[Lcom/vanniktech/maven/publish/Checksum;
+}
+
 public final class com/vanniktech/maven/publish/DeploymentValidation : java/lang/Enum {
 	public static final field NONE Lcom/vanniktech/maven/publish/DeploymentValidation;
 	public static final field PUBLISHED Lcom/vanniktech/maven/publish/DeploymentValidation;
@@ -189,6 +199,7 @@ public final class com/vanniktech/maven/publish/KotlinMultiplatform : com/vannik
 
 public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public fun <init> (Lorg/gradle/api/Project;Lorg/gradle/build/event/BuildEventsListenerRegistry;Lorg/gradle/api/configuration/BuildFeatures;)V
+	public final fun checksums ([Lcom/vanniktech/maven/publish/Checksum;)V
 	public final fun configure (Lcom/vanniktech/maven/publish/Platform;)V
 	public final fun configureBasedOnAppliedPlugins ()V
 	public final fun configureBasedOnAppliedPlugins (Lcom/vanniktech/maven/publish/JavadocJar;)V
@@ -197,6 +208,9 @@ public abstract class com/vanniktech/maven/publish/MavenPublishBaseExtension {
 	public static synthetic fun configureBasedOnAppliedPlugins$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILjava/lang/Object;)V
 	public final fun coordinates (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public static synthetic fun coordinates$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
+	public final fun excludeSignatureChecksums ()V
+	public final fun excludeSignatureChecksums (Z)V
+	public static synthetic fun excludeSignatureChecksums$default (Lcom/vanniktech/maven/publish/MavenPublishBaseExtension;ZILjava/lang/Object;)V
 	public final fun pom (Lorg/gradle/api/Action;)V
 	public final fun pomFromGradleProperties ()V
 	public final fun publishToMavenCentral ()V

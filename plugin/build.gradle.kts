@@ -175,6 +175,7 @@ val integrationTest by tasks.registering(Test::class) {
 }
 
 tasks.test {
+  useJUnitPlatform()
   // The generated build config fails the test task.
   failOnNoDiscoveredTests = false
 }

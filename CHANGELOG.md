@@ -2,6 +2,12 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.36.0...HEAD) *(2026-xx-xx)*
 
+- When publishing to Maven Central, redundant checksum files are now excluded by default: checksums of `.asc`
+  signature files ([gradle/gradle#20232](https://github.com/gradle/gradle/issues/20232)) and the `sha256`/`sha512`
+  checksums, which are never read by Gradle or Maven Central. The published checksums can be configured through
+  `checksums(...)` in the DSL or the `mavenCentralChecksums` Gradle property (default `md5,sha1`). Signature checksum
+  exclusion can be controlled through `excludeSignatureChecksums()` or the `mavenCentralExcludeSignatureChecksums`
+  Gradle property.
 
 #### Minimum supported versions
 - JDK 17

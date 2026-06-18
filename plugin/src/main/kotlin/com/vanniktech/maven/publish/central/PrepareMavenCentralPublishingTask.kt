@@ -5,6 +5,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -25,6 +26,12 @@ internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
 
   @get:Internal
   abstract val localRepository: DirectoryProperty
+
+  @get:Input
+  abstract val excludeSignatureChecksums: Property<Boolean>
+
+  @get:Input
+  abstract val allowedChecksumExtensions: SetProperty<String>
 
   @get:Internal
   abstract val buildService: Property<MavenCentralBuildService>
@@ -53,7 +60,14 @@ internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
       "mavenCentralPassword not found, which is required for publishing to Maven Central."
     }
 
-    buildService.get().registerProject(projectGroup.get(), artifactId.get(), version.get(), localRepository)
+    buildService.get().registerProject(
+      projectGroup.get(),
+      artifactId.get(),
+      version.get(),
+      localRepository,
+      excludeSignatureChecksums.get(),
+      allowedChecksumExtensions.get(),
+    )
   }
 
   companion object {
@@ -65,12 +79,16 @@ internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
       artifactId: Provider<String>,
       version: Provider<String>,
       localRepository: Provider<Directory>,
+      excludeSignatureChecksums: Provider<Boolean>,
+      allowedChecksumExtensions: Provider<out Set<String>>,
     ): TaskProvider<PrepareMavenCentralPublishingTask> = register(NAME, PrepareMavenCentralPublishingTask::class.java) {
       it.description = "Prepare for publishing to Maven Central"
       it.projectGroup.set(group)
       it.artifactId.set(artifactId)
       it.version.set(version)
       it.localRepository.set(localRepository)
+      it.excludeSignatureChecksums.set(excludeSignatureChecksums)
+      it.allowedChecksumExtensions.set(allowedChecksumExtensions)
       it.buildService.set(buildService)
       it.usesService(buildService)
     }
