@@ -106,7 +106,7 @@ class GradleVersion(
     // versions used for checks instead of test matrix
     val GRADLE_9_1_0 = GradleVersion("9.1.0")
     val GRADLE_9_6_0 = GradleVersion("9.6.0")
-    val GRADLE_9_7_0 = GradleVersion("9.6.0")
+    val GRADLE_9_7_0 = GradleVersion("9.7.0")
   }
 }
 
