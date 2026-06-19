@@ -43,6 +43,12 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build --stacktrace -PtestJavaVersion=${{ matrix.test_java_version }} -PtestConfigMethod=${{ matrix.test_config_method }}
 
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v6
+        if: success() || failure()
+        with:
+          report_paths: '**/build/test-results/**/TEST-*.xml'
+
   # Status check that is required in branch protection rules.
   build-status:
     needs:
