@@ -19,9 +19,7 @@ dependencies {
 kotlin {
   explicitApi()
   @OptIn(ExperimentalAbiValidation::class)
-  abiValidation {
-    enabled = true
-  }
+  abiValidation()
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -37,11 +35,4 @@ tasks.withType(KotlinCompile::class.java) {
     jvmTarget.set(JvmTarget.fromTarget(libs.versions.jdkRelease.get()))
     freeCompilerArgs.add("-Xjdk-release=${libs.versions.jdkRelease.get()}")
   }
-}
-
-tasks.check {
-  dependsOn(
-    // TODO: https://youtrack.jetbrains.com/issue/KT-78525
-    tasks.checkLegacyAbi,
-  )
 }

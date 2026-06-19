@@ -46,6 +46,26 @@ private fun String.toDeploymentValidation() = when (this) {
   else -> DeploymentValidation.valueOf(this)
 }
 
+internal fun Project.excludeSignatureChecksums(): Boolean {
+  val exclude = providers.gradleProperty("mavenCentralExcludeSignatureChecksums").orNull
+  if (exclude != null) {
+    return exclude.toBoolean()
+  }
+  return true
+}
+
+internal fun Project.checksums(): List<Checksum> {
+  val checksums = providers.gradleProperty("mavenCentralChecksums").orNull
+  if (checksums != null) {
+    return checksums
+      .split(",")
+      .map { it.trim() }
+      .filter { it.isNotEmpty() }
+      .map { Checksum.fromExtension(it) }
+  }
+  return Checksum.DEFAULT
+}
+
 internal fun Project.signAllPublications(): Boolean {
   val sign = providers.gradleProperty("signAllPublications").orNull
   if (sign != null) {
