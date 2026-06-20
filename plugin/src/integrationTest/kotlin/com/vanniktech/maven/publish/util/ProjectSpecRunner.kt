@@ -85,6 +85,7 @@ private fun ProjectSpec.pluginsBlock(options: TestOptions) = buildString {
   val pluginVersion = IntegrationTestBuildConfig.VERSION_NAME
   when (options.config) {
     TestOptions.Config.BASE -> appendLine(" id \"com.vanniktech.maven.publish.base\" version \"${pluginVersion}\"")
+
     TestOptions.Config.DSL,
     TestOptions.Config.PROPERTIES,
     -> appendLine(" id \"com.vanniktech.maven.publish\" version \"${pluginVersion}\"")
@@ -100,10 +101,12 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String = when (op
     }
     """.trimIndent()
   }
+
   TestOptions.Config.BASE,
   TestOptions.Config.DSL,
-  -> listOfNotNull(
-    """
+  -> {
+    listOfNotNull(
+      """
 
        mavenPublishing {
          ${if (options.config == TestOptions.Config.BASE) basePluginConfig else ""}
@@ -113,46 +116,47 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String = when (op
 
          pom {
       """,
-    "    name = \"${properties["POM_NAME"]}\"".takeIf { properties.containsKey("POM_NAME") },
-    "    description = \"${properties["POM_DESCRIPTION"]}\"".takeIf { properties.containsKey("POM_DESCRIPTION") },
-    "    inceptionYear = \"${properties["POM_INCEPTION_YEAR"]}\"".takeIf { properties.containsKey("POM_INCEPTION_YEAR") },
-    "    url = \"${properties["POM_URL"]}\"".takeIf { properties.containsKey("POM_URL") },
-    """
-    licenses {
-      license {
-        name = "${properties["POM_LICENCE_NAME"]}"
-        url = "${properties["POM_LICENCE_URL"]}"
-        distribution = "${properties["POM_LICENCE_DIST"]}"
+      "    name = \"${properties["POM_NAME"]}\"".takeIf { properties.containsKey("POM_NAME") },
+      "    description = \"${properties["POM_DESCRIPTION"]}\"".takeIf { properties.containsKey("POM_DESCRIPTION") },
+      "    inceptionYear = \"${properties["POM_INCEPTION_YEAR"]}\"".takeIf { properties.containsKey("POM_INCEPTION_YEAR") },
+      "    url = \"${properties["POM_URL"]}\"".takeIf { properties.containsKey("POM_URL") },
+      """
+      licenses {
+        license {
+          name = "${properties["POM_LICENCE_NAME"]}"
+          url = "${properties["POM_LICENCE_URL"]}"
+          distribution = "${properties["POM_LICENCE_DIST"]}"
+        }
       }
-    }
-    """.trimIndent().takeIf {
-      properties.containsKey("POM_LICENCE_NAME")
-    },
-    """
-    developers {
-      developer {
-        id = "${properties["POM_DEVELOPER_ID"]}"
-        name = "${properties["POM_DEVELOPER_NAME"]}"
-        url = "${properties["POM_DEVELOPER_URL"]}"
+      """.trimIndent().takeIf {
+        properties.containsKey("POM_LICENCE_NAME")
+      },
+      """
+      developers {
+        developer {
+          id = "${properties["POM_DEVELOPER_ID"]}"
+          name = "${properties["POM_DEVELOPER_NAME"]}"
+          url = "${properties["POM_DEVELOPER_URL"]}"
+        }
       }
-    }
-    """.trimIndent().takeIf {
-      properties.containsKey("POM_DEVELOPER_ID")
-    },
-    """
-    scm {
-      url = "${properties["POM_SCM_URL"]}"
-      connection = "${properties["POM_SCM_CONNECTION"]}"
-      developerConnection = "${properties["POM_SCM_DEV_CONNECTION"]}"
-    }
-    """.trimIndent().takeIf {
-      properties.containsKey("POM_SCM_URL")
-    },
-    """
+      """.trimIndent().takeIf {
+        properties.containsKey("POM_DEVELOPER_ID")
+      },
+      """
+      scm {
+        url = "${properties["POM_SCM_URL"]}"
+        connection = "${properties["POM_SCM_CONNECTION"]}"
+        developerConnection = "${properties["POM_SCM_DEV_CONNECTION"]}"
       }
-    }
-    """.trimIndent(),
-  ).joinToString(separator = "\n")
+      """.trimIndent().takeIf {
+        properties.containsKey("POM_SCM_URL")
+      },
+      """
+        }
+      }
+      """.trimIndent(),
+    ).joinToString(separator = "\n")
+  }
 }
 
 private fun writeSettingFile(path: Path) {
@@ -220,9 +224,11 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
         appendLine()
         when (options.signing) {
           TestOptions.Signing.NO_SIGNING -> {}
+
           TestOptions.Signing.GPG_KEY -> {
             appendLine("signAllPublications=true")
           }
+
           TestOptions.Signing.IN_MEMORY_KEY -> {
             appendLine("signAllPublications=true")
           }
@@ -231,11 +237,13 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
 
       when (options.signing) {
         TestOptions.Signing.NO_SIGNING -> {}
+
         TestOptions.Signing.GPG_KEY -> {
           appendLine("signing.keyId=B89C4055")
           appendLine("signing.password=test")
           appendLine("signing.secretKeyRingFile=${path.parent.absolutePathString()}/test-secring.gpg")
         }
+
         TestOptions.Signing.IN_MEMORY_KEY -> {
           appendLine(
             "signingInMemoryKey=lQdGBF4jUfwBEACblZV4uBViHcYLOb2280tEpr64iB9b6YRkWil3EODiiLd9JS3V7+BWpZ" +

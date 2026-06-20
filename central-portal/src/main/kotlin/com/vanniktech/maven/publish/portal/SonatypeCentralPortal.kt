@@ -118,20 +118,28 @@ public class SonatypeCentralPortal(
         lastState = status.deploymentState
 
         when (status.deploymentState) {
-          DeploymentState.PENDING -> logger.warn("Deployment is pending validation")
-          DeploymentState.VALIDATING -> logger.warn("Deployment is being validated")
+          DeploymentState.PENDING -> {
+            logger.warn("Deployment is pending validation")
+          }
+
+          DeploymentState.VALIDATING -> {
+            logger.warn("Deployment is being validated")
+          }
+
           DeploymentState.VALIDATED -> {
             logger.warn("Deployment has been validated successfully")
             if (!waitForPublishing) {
               return
             }
           }
+
           DeploymentState.PUBLISHING -> {
             logger.warn("Deployment is being published to Maven Central")
             if (!waitForPublishing) {
               return
             }
           }
+
           DeploymentState.PUBLISHED -> {
             logger.warn("Deployment has been published to Maven Central")
             return

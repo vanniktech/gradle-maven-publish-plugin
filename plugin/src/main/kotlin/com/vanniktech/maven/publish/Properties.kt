@@ -14,7 +14,9 @@ internal fun Project.mavenCentralPublishing(): Boolean {
   }
   return when (providers.gradleProperty("SONATYPE_HOST").orNull) {
     null -> false
+
     "CENTRAL_PORTAL" -> true
+
     else -> error(
       """
       OSSRH was shut down on June 30, 2025. Migrate to CENTRAL_PORTAL instead.

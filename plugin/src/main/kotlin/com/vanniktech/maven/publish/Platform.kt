@@ -609,10 +609,14 @@ private fun MavenPublication.withJavaSourcesJar(
   multipleTasks: Boolean,
   configureArchives: Boolean = false,
 ) = when (sourcesJar) {
-  is SourcesJar.None -> Unit
+  is SourcesJar.None -> {
+    Unit
+  }
+
   is SourcesJar.Sources -> {
     project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
   }
+
   is SourcesJar.Empty -> {
     val prefix = name.takeIf { multipleTasks }
     val taskName = prefixedTaskName("emptySourcesJar", prefix)

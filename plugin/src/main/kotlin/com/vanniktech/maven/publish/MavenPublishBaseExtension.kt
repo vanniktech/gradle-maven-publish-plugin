@@ -483,34 +483,59 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         }
         configure(KotlinMultiplatform(javadocJar, sourcesJar, variants))
       }
+
       project.plugins.hasPlugin("com.android.library") -> {
         val variant = project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
         configure(AndroidSingleVariantLibrary(javadocJar, sourcesJar, variant))
       }
+
       project.plugins.hasPlugin("com.android.fused-library") -> {
         configure(AndroidFusedLibrary())
       }
-      project.plugins.hasPlugin("com.gradle.plugin-publish") ->
+
+      project.plugins.hasPlugin("com.gradle.plugin-publish") -> {
         configure(GradlePublishPlugin())
-      project.plugins.hasPlugin("java-gradle-plugin") ->
+      }
+
+      project.plugins.hasPlugin("java-gradle-plugin") -> {
         configure(GradlePlugin(javadocJar, sourcesJar))
-      project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") ->
+      }
+
+      project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") -> {
         configure(KotlinJvm(javadocJar, sourcesJar))
-      project.plugins.hasPlugin("java-library") ->
+      }
+
+      project.plugins.hasPlugin("java-library") -> {
         configure(JavaLibrary(javadocJar, sourcesJar))
-      project.plugins.hasPlugin("java") ->
+      }
+
+      project.plugins.hasPlugin("java") -> {
         configure(JavaLibrary(javadocJar, sourcesJar))
-      project.plugins.hasPlugin("java-platform") ->
+      }
+
+      project.plugins.hasPlugin("java-platform") -> {
         configure(JavaPlatform())
-      project.plugins.hasPlugin("version-catalog") ->
+      }
+
+      project.plugins.hasPlugin("version-catalog") -> {
         configure(VersionCatalog())
-      else -> project.logger.warn("No compatible plugin found in project ${project.path} for publishing")
+      }
+
+      else -> {
+        project.logger.warn("No compatible plugin found in project ${project.path} for publishing")
+      }
     }
   }
 
   private fun defaultJavaDocOption(javadocJar: Boolean): JavadocJar = when {
-    !javadocJar -> JavadocJar.None()
-    project.plugins.hasPlugin("org.jetbrains.dokka-javadoc") -> JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
+    !javadocJar -> {
+      JavadocJar.None()
+    }
+
+    project.plugins.hasPlugin("org.jetbrains.dokka-javadoc") -> {
+      JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
+    }
+
     project.plugins.hasPlugin("org.jetbrains.dokka") -> {
       // only dokka v2 has an extension
       check(project.extensions.findByName("dokka") != null) {
@@ -518,8 +543,14 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       }
       JavadocJar.Dokka("dokkaGeneratePublicationHtml")
     }
-    !project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> JavadocJar.Javadoc()
-    else -> JavadocJar.Empty()
+
+    !project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> {
+      JavadocJar.Javadoc()
+    }
+
+    else -> {
+      JavadocJar.Empty()
+    }
   }
 
   // ExtraPropertiesExtension is IP safe and contains properties from both the root `gradle.properties`
