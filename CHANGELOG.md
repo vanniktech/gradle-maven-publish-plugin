@@ -1,13 +1,6 @@
 # Change Log
 
-## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.36.0...HEAD) *(2026-xx-xx)*
-
-- When publishing to Maven Central, redundant checksum files are now excluded by default: checksums of `.asc`
-  signature files ([gradle/gradle#20232](https://github.com/gradle/gradle/issues/20232)) and the `sha256`/`sha512`
-  checksums, which are never read by Gradle or Maven Central. The published checksums can be configured through
-  `checksums(...)` in the DSL or the `mavenCentralChecksums` Gradle property (default `md5,sha1`). Signature checksum
-  exclusion can be controlled through `excludeSignatureChecksums()` or the `mavenCentralExcludeSignatureChecksums`
-  Gradle property.
+## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.37.0...HEAD) *(2026-xx-xx)*
 
 #### Minimum supported versions
 - JDK 17
@@ -16,14 +9,39 @@
 - Kotlin Gradle Plugin 2.2.0
 
 #### Compatibility tested up to
-- JDK 25
-- Gradle 9.3.0
-- Gradle 9.4.0-milestone-4
-- Android Gradle Plugin 8.13.2
-- Android Gradle Plugin 9.0.0
-- Android Gradle Plugin 9.1.0-alpha05
-- Kotlin Gradle Plugin 2.3.0
-- Kotlin Gradle Plugin 2.3.20-Beta1
+- JDK 26
+- Gradle 9.6.0
+- Gradle 9.7.0-milestone-1
+- Android Gradle Plugin 9.2.1
+- Android Gradle Plugin 9.3.0-rc01
+- Android Gradle Plugin 9.4.0-alpha01
+- Kotlin Gradle Plugin 2.4.0
+
+
+## [0.37.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.37.0) *(2026-06-21)*
+
+- When publishing to Maven Central, redundant checksum files are now excluded by default: checksums of `.asc`
+  signature files ([gradle/gradle#20232](https://github.com/gradle/gradle/issues/20232)) and the `sha256`/`sha512`
+  checksums, which are never read by Gradle or Maven Central. The published checksums can be configured through
+  `checksums(...)` in the DSL or the `mavenCentralChecksums` Gradle property (default `md5,sha1`). Signature checksum
+  exclusion can be controlled through `excludeSignatureChecksums()` or the `mavenCentralExcludeSignatureChecksums`
+  Gradle property.
+- Maven Central deployment id is being logged after upload.
+
+#### Minimum supported versions
+- JDK 17
+- Gradle 9.0.0
+- Android Gradle Plugin 8.13.0
+- Kotlin Gradle Plugin 2.2.0
+
+#### Compatibility tested up to
+- JDK 26
+- Gradle 9.6.0
+- Gradle 9.7.0-milestone-1
+- Android Gradle Plugin 9.2.1
+- Android Gradle Plugin 9.3.0-rc01
+- Android Gradle Plugin 9.4.0-alpha01
+- Kotlin Gradle Plugin 2.4.0
 
 
 ## [0.36.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.36.0) *(2026-01-13)*
