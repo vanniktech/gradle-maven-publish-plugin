@@ -77,6 +77,45 @@ This can be done through either the DSL or by setting Gradle properties.
     signAllPublications=true
     ```
 
+## Redundant checksum files
+
+Gradle generates a `md5`, `sha1`, `sha256` and `sha512` checksum for every
+published file, including for the `.asc` signature files. Maven Central does not
+need most of these, so by default the plugin:
+
+* excludes checksums of signature files (`.asc.md5`, `.asc.sha1`, `.asc.sha256`,
+  `.asc.sha512`), see [gradle/gradle#20232](https://github.com/gradle/gradle/issues/20232)
+* only publishes `md5` and `sha1` checksums, as `sha256` and `sha512` are never
+  read by Gradle or Maven Central
+
+The set of published checksums can be changed and the signature checksum
+exclusion can be turned off if needed.
+
+=== "build.gradle"
+
+    ```groovy
+    mavenPublishing {
+      checksums(Checksum.MD5, Checksum.SHA1, Checksum.SHA256, Checksum.SHA512)
+      excludeSignatureChecksums(false)
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    mavenPublishing {
+      checksums(Checksum.MD5, Checksum.SHA1, Checksum.SHA256, Checksum.SHA512)
+      excludeSignatureChecksums(false)
+    }
+    ```
+
+=== "gradle.properties"
+
+    ```properties
+    mavenCentralChecksums=md5,sha1,sha256,sha512
+    mavenCentralExcludeSignatureChecksums=false
+    ```
+
 ## Configuring the POM
 
 The pom is published alongside the project and contains the project coordinates

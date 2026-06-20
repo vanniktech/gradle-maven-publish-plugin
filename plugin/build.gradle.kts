@@ -37,7 +37,7 @@ val integrationTestSourceSet = sourceSets.create("integrationTest") {
   compileClasspath += configurations.testRuntimeClasspath.get()
   runtimeClasspath += output + compileClasspath
 }
-val integrationTestImplementation by configurations.getting {
+val integrationTestImplementation = configurations.getByName("integrationTestImplementation") {
   extendsFrom(configurations.testImplementation.get())
 }
 
@@ -121,7 +121,7 @@ tasks.validatePlugins {
   enableStricterValidation = true
 }
 
-val integrationTest by tasks.registering(Test::class) {
+val integrationTest = tasks.register("integrationTest", Test::class) {
   dependsOn(
     tasks.publishToMavenLocal,
     project(projects.centralPortal.path).tasks.publishToMavenLocal,
@@ -158,12 +158,6 @@ val integrationTest by tasks.registering(Test::class) {
     "java.base/java.util=ALL-UNNAMED",
   )
 
-  beforeTest(
-    closureOf<TestDescriptor> {
-      logger.lifecycle("Running test: ${this.className} ${this.displayName}")
-    },
-  )
-
   develocity {
     testRetry {
       if (providers.environmentVariable("CI").isPresent) {
@@ -175,6 +169,7 @@ val integrationTest by tasks.registering(Test::class) {
 }
 
 tasks.test {
+  useJUnitPlatform()
   // The generated build config fails the test task.
   failOnNoDiscoveredTests = false
 }

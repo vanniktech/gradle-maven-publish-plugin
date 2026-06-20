@@ -5,4 +5,6 @@ import java.io.File
 internal data class MavenCentralProject(
   val coordinates: MavenCentralCoordinates,
   val localRepository: File,
+  val excludeSignatureChecksums: Boolean,
+  val allowedChecksumExtensions: Set<String>,
 )
