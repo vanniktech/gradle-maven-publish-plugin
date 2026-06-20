@@ -48,7 +48,8 @@ class AgpVersion(
   companion object {
     val VERSIONS = setOf(
       // minimum supported
-      AgpVersion(Versions.ANDROID_GRADLE_MIN,
+      AgpVersion(
+        Versions.ANDROID_GRADLE_MIN,
         firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_6_0,
         firstUnsupportedJdkVersion = JavaVersion.VERSION_26,
       ),
