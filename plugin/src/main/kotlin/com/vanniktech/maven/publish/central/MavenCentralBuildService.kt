@@ -69,13 +69,20 @@ internal abstract class MavenCentralBuildService :
   /**
    * Is only allowed to be called from task actions.
    */
-  fun registerProject(group: String, artifactId: String, version: String, localRepository: File) {
+  fun registerProject(
+    group: String,
+    artifactId: String,
+    version: String,
+    localRepository: File,
+    excludeSignatureChecksums: Boolean,
+    allowedChecksumExtensions: Set<String>,
+  ) {
     if (version.endsWith("-SNAPSHOT")) {
       return
     }
 
     val coordinates = MavenCentralCoordinates(group, artifactId, version)
-    val project = MavenCentralProject(coordinates, localRepository)
+    val project = MavenCentralProject(coordinates, localRepository, excludeSignatureChecksums, allowedChecksumExtensions)
     projectsToPublish.add(project)
 
     endOfBuildActions += EndOfBuildAction.Upload
@@ -152,7 +159,8 @@ internal abstract class MavenCentralBuildService :
       projectsToPublish.forEach { project ->
         project.localRepository
           .walkTopDown()
-          .filter { it.isFile && !it.name.contains("maven-metadata") }
+          .filter { it.isFile }
+          .filter { shouldIncludeInDeployment(it.name, project.excludeSignatureChecksums, project.allowedChecksumExtensions) }
           .forEach {
             val entry = ZipEntry(it.toRelativeString(project.localRepository))
             out.putNextEntry(entry)

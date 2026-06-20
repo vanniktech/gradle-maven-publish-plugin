@@ -48,7 +48,7 @@ class AgpVersion(
   companion object {
     val VERSIONS = setOf(
       // minimum supported
-      AgpVersion(Versions.ANDROID_GRADLE_MIN),
+      AgpVersion(Versions.ANDROID_GRADLE_MIN, firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_6_0),
       // latest versions of each type
       AgpVersion(Versions.ANDROID_GRADLE_STABLE, minGradleVersion = GradleVersion.GRADLE_9_1_0),
       AgpVersion(Versions.ANDROID_GRADLE_RC, minGradleVersion = GradleVersion.GRADLE_9_1_0),
@@ -71,7 +71,7 @@ class KgpVersion(
   companion object {
     val VERSIONS = setOf(
       // minimum supported
-      KgpVersion(Versions.KOTLIN_MIN),
+      KgpVersion(Versions.KOTLIN_MIN, firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_7_0),
       // latest versions of each type
       KgpVersion(Versions.KOTLIN_STABLE),
       KgpVersion(Versions.KOTLIN_RC),
@@ -105,6 +105,8 @@ class GradleVersion(
 
     // versions used for checks instead of test matrix
     val GRADLE_9_1_0 = GradleVersion("9.1.0")
+    val GRADLE_9_6_0 = GradleVersion("9.6.0")
+    val GRADLE_9_7_0 = GradleVersion("9.7.0-milestone-1")
   }
 }
 
