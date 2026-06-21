@@ -1,5 +1,3 @@
-import org.gradle.api.internal.FeaturePreviews
-
 rootProject.name = "gradle-maven-publish-plugin"
 
 pluginManagement {
