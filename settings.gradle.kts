@@ -1,3 +1,5 @@
+import org.gradle.api.internal.FeaturePreviews
+
 rootProject.name = "gradle-maven-publish-plugin"
 
 pluginManagement {
@@ -58,6 +60,7 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+enableFeaturePreview("NO_IMPLICIT_LOOKUP_IN_PARENT_PROJECTS")
 
 include(":plugin")
 include(":central-portal")
