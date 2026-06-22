@@ -1,6 +1,6 @@
 #!/usr/bin/env kotlin
 
-@file:DependsOn("com.freeletics.gradle:scripts-formatting-jvm:0.37.0")
+@file:DependsOn("com.freeletics.gradle:scripts-formatting-jvm:0.38.0")
 
 import com.freeletics.gradle.scripts.KtLintCli
 import com.github.ajalt.clikt.core.main
