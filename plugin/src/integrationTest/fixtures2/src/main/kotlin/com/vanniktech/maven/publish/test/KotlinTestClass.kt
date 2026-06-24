@@ -1,8 +1,6 @@
 package com.vanniktech.maven.publish.test
 
-/**
- * Just a test class with Javadoc.
- */
+/** Just a test class with Javadoc. */
 object KotlinTestClass {
   /**
    * Main method which does something.

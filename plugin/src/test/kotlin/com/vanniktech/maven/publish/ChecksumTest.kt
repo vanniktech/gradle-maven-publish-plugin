@@ -27,9 +27,10 @@ class ChecksumTest {
 
   @Test
   fun `fromExtension fails for unknown extension`() {
-    val exception = assertThrows<IllegalArgumentException> {
-      Checksum.fromExtension("sha384")
-    }
+    val exception =
+      assertThrows<IllegalArgumentException> {
+        Checksum.fromExtension("sha384")
+      }
     assertThat(exception).hasMessageThat().contains("sha384")
   }
 }

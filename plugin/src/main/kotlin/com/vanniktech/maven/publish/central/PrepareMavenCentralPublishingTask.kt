@@ -15,59 +15,47 @@ import org.gradle.api.tasks.UntrackedTask
 
 @UntrackedTask(because = "Not worth tracking")
 internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
-  @get:Internal
-  abstract val projectGroup: Property<String>
+  @get:Internal abstract val projectGroup: Property<String>
 
-  @get:Input
-  abstract val artifactId: Property<String>
+  @get:Input abstract val artifactId: Property<String>
 
-  @get:Input
-  abstract val version: Property<String>
+  @get:Input abstract val version: Property<String>
 
-  @get:Internal
-  abstract val localRepository: DirectoryProperty
+  @get:Internal abstract val localRepository: DirectoryProperty
 
-  @get:Input
-  abstract val excludeSignatureChecksums: Property<Boolean>
+  @get:Input abstract val excludeSignatureChecksums: Property<Boolean>
 
-  @get:Input
-  abstract val allowedChecksumExtensions: SetProperty<String>
+  @get:Input abstract val allowedChecksumExtensions: SetProperty<String>
 
-  @get:Internal
-  abstract val buildService: Property<MavenCentralBuildService>
+  @get:Internal abstract val buildService: Property<MavenCentralBuildService>
 
   @TaskAction
   fun registerProject() {
     val localRepository = localRepository.asFile.get()
 
-    // delete local repository from previous publishing attempts to ensure only current files are published.
+    // delete local repository from previous publishing attempts to ensure only current files are
+    // published.
     if (localRepository.exists()) {
       localRepository.deleteRecursively()
     }
 
-    check(
-      buildService
-        .get()
-        .parameters.repositoryUsername.isPresent,
-    ) {
+    check(buildService.get().parameters.repositoryUsername.isPresent) {
       "mavenCentralUsername not found, which is required for publishing to Maven Central."
     }
-    check(
-      buildService
-        .get()
-        .parameters.repositoryPassword.isPresent,
-    ) {
+    check(buildService.get().parameters.repositoryPassword.isPresent) {
       "mavenCentralPassword not found, which is required for publishing to Maven Central."
     }
 
-    buildService.get().registerProject(
-      projectGroup.get(),
-      artifactId.get(),
-      version.get(),
-      localRepository,
-      excludeSignatureChecksums.get(),
-      allowedChecksumExtensions.get(),
-    )
+    buildService
+      .get()
+      .registerProject(
+        projectGroup.get(),
+        artifactId.get(),
+        version.get(),
+        localRepository,
+        excludeSignatureChecksums.get(),
+        allowedChecksumExtensions.get(),
+      )
   }
 
   companion object {
@@ -81,16 +69,17 @@ internal abstract class PrepareMavenCentralPublishingTask : DefaultTask() {
       localRepository: Provider<Directory>,
       excludeSignatureChecksums: Provider<Boolean>,
       allowedChecksumExtensions: Provider<out Set<String>>,
-    ): TaskProvider<PrepareMavenCentralPublishingTask> = register(NAME, PrepareMavenCentralPublishingTask::class.java) {
-      it.description = "Prepare for publishing to Maven Central"
-      it.projectGroup.set(group)
-      it.artifactId.set(artifactId)
-      it.version.set(version)
-      it.localRepository.set(localRepository)
-      it.excludeSignatureChecksums.set(excludeSignatureChecksums)
-      it.allowedChecksumExtensions.set(allowedChecksumExtensions)
-      it.buildService.set(buildService)
-      it.usesService(buildService)
-    }
+    ): TaskProvider<PrepareMavenCentralPublishingTask> =
+      register(NAME, PrepareMavenCentralPublishingTask::class.java) {
+        it.description = "Prepare for publishing to Maven Central"
+        it.projectGroup.set(group)
+        it.artifactId.set(artifactId)
+        it.version.set(version)
+        it.localRepository.set(localRepository)
+        it.excludeSignatureChecksums.set(excludeSignatureChecksums)
+        it.allowedChecksumExtensions.set(allowedChecksumExtensions)
+        it.buildService.set(buildService)
+        it.usesService(buildService)
+      }
   }
 }

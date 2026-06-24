@@ -28,25 +28,24 @@ public class SonatypeCentralPortal(
   private val logger: Logger,
 ) {
   private val service by lazy {
-    val moshi = Moshi
-      .Builder()
-      .add(KotlinJsonAdapterFactory())
-      .build()
+    val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
-    val okHttpClient = OkHttpClient
-      .Builder()
-      .addInterceptor(SonatypeCentralPortalOkHttpInterceptor(usertoken, userAgentName, userAgentVersion))
-      .connectTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
-      .readTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
-      .writeTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
-      .build()
-    val retrofit = Retrofit
-      .Builder()
-      .client(okHttpClient)
-      .baseUrl(baseUrl)
-      .addConverterFactory(ScalarsConverterFactory.create())
-      .addConverterFactory(MoshiConverterFactory.create(moshi))
-      .build()
+    val okHttpClient =
+      OkHttpClient.Builder()
+        .addInterceptor(
+          SonatypeCentralPortalOkHttpInterceptor(usertoken, userAgentName, userAgentVersion)
+        )
+        .connectTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
+        .readTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
+        .writeTimeout(okhttpTimeoutSeconds, TimeUnit.SECONDS)
+        .build()
+    val retrofit =
+      Retrofit.Builder()
+        .client(okHttpClient)
+        .baseUrl(baseUrl)
+        .addConverterFactory(ScalarsConverterFactory.create())
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .build()
 
     retrofit.create(SonatypeCentralPortalService::class.java)
   }
@@ -57,7 +56,7 @@ public class SonatypeCentralPortal(
       throw IOException(
         "Failed to delete deploymentId $deploymentId code: ${deleteDeploymentResponse.code()} msg: ${
           deleteDeploymentResponse.errorBody()?.string()
-        }",
+        }"
       )
     }
   }
@@ -68,7 +67,7 @@ public class SonatypeCentralPortal(
       throw IOException(
         "Failed to delete deploymentId $deploymentId code: ${publishDeploymentResponse.code()} msg: ${
           publishDeploymentResponse.errorBody()?.string()
-        }",
+        }"
       )
     }
   }
@@ -106,13 +105,14 @@ public class SonatypeCentralPortal(
         throw IOException(
           "Failed to check deployment status for $deploymentId code: ${statusResponse.code()} msg: ${
             statusResponse.errorBody()?.string()
-          }",
+          }"
         )
       }
 
-      val status = checkNotNull(statusResponse.body()) {
-        "Status response body is null for deployment $deploymentId"
-      }
+      val status =
+        checkNotNull(statusResponse.body()) {
+          "Status response body is null for deployment $deploymentId"
+        }
 
       if (status.deploymentState != lastState) {
         lastState = status.deploymentState
@@ -156,9 +156,7 @@ public class SonatypeCentralPortal(
                 }
               } ?: "No error details available"
 
-            throw IOException(
-              "Deployment $deploymentId failed validation:\n$errorMessages",
-            )
+            throw IOException("Deployment $deploymentId failed validation:\n$errorMessages")
           }
         }
       }
@@ -168,7 +166,7 @@ public class SonatypeCentralPortal(
 
     throw IOException(
       "Deployment validation timed out after ${closeTimeoutSeconds}s. " +
-        "Last known state: ${lastState ?: "UNKNOWN"}",
+        "Last known state: ${lastState ?: "UNKNOWN"}"
     )
   }
 

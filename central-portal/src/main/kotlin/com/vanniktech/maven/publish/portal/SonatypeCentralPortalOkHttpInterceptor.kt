@@ -11,7 +11,10 @@ internal class SonatypeCentralPortalOkHttpInterceptor(
   override fun intercept(chain: Interceptor.Chain): Response {
     val requestBuilder = chain.request().newBuilder()
 
-    requestBuilder.addHeader("Accept", "application/json") // request json by default, XML is returned else
+    requestBuilder.addHeader(
+      "Accept",
+      "application/json",
+    ) // request json by default, XML is returned else
     requestBuilder.addHeader("Authorization", "Bearer $usertoken")
     requestBuilder.addHeader("User-Agent", "$userAgentName/$userAgentVersion")
 

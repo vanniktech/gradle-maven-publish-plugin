@@ -24,18 +24,19 @@ fun ProjectSpec.run(fixtures: Path, temp: Path, options: TestOptions): ProjectRe
   val task = ":module:publishAllPublicationsToTestFolderRepository"
   val arguments = mutableListOf(task, "--stacktrace", "--configuration-cache")
 
-  val result = GradleRunner
-    .create()
-    .withGradleVersion(options.gradleVersion.value)
-    .withProjectDir(project.toFile())
-    .withDebug(true)
-    .withArguments(arguments)
-    .apply {
-      @Suppress("KotlinConstantConditions") // Conditioned by build config.
-      if (!QUICK_TEST) {
-        withTestKitDir(temp.resolve("test-kit-dir").toFile())
+  val result =
+    GradleRunner.create()
+      .withGradleVersion(options.gradleVersion.value)
+      .withProjectDir(project.toFile())
+      .withDebug(true)
+      .withArguments(arguments)
+      .apply {
+        @Suppress("KotlinConstantConditions") // Conditioned by build config.
+        if (!QUICK_TEST) {
+          withTestKitDir(temp.resolve("test-kit-dir").toFile())
+        }
       }
-    }.build()
+      .build()
 
   return ProjectResult(
     result = result,
@@ -66,7 +67,8 @@ private fun ProjectSpec.writeBuildFile(path: Path, repo: Path, options: TestOpti
 
     $buildFileExtra
 
-    """.trimIndent(),
+    """
+      .trimIndent()
   )
 }
 
@@ -84,29 +86,31 @@ private fun ProjectSpec.pluginsBlock(options: TestOptions) = buildString {
 
   val pluginVersion = IntegrationTestBuildConfig.VERSION_NAME
   when (options.config) {
-    TestOptions.Config.BASE -> appendLine(" id \"com.vanniktech.maven.publish.base\" version \"${pluginVersion}\"")
+    TestOptions.Config.BASE ->
+      appendLine(" id \"com.vanniktech.maven.publish.base\" version \"${pluginVersion}\"")
 
     TestOptions.Config.DSL,
-    TestOptions.Config.PROPERTIES,
-    -> appendLine(" id \"com.vanniktech.maven.publish\" version \"${pluginVersion}\"")
+    TestOptions.Config.PROPERTIES ->
+      appendLine(" id \"com.vanniktech.maven.publish\" version \"${pluginVersion}\"")
   }
 
   appendLine("}")
 }
 
-private fun ProjectSpec.publishingBlock(options: TestOptions): String = when (options.config) {
-  TestOptions.Config.PROPERTIES -> {
-    """
-    mavenPublishing {
-    }
-    """.trimIndent()
-  }
-
-  TestOptions.Config.BASE,
-  TestOptions.Config.DSL,
-  -> {
-    listOfNotNull(
+private fun ProjectSpec.publishingBlock(options: TestOptions): String =
+  when (options.config) {
+    TestOptions.Config.PROPERTIES -> {
       """
+      mavenPublishing {
+      }
+      """
+        .trimIndent()
+    }
+
+    TestOptions.Config.BASE,
+    TestOptions.Config.DSL -> {
+      listOfNotNull(
+          """
 
        mavenPublishing {
          ${if (options.config == TestOptions.Config.BASE) basePluginConfig else ""}
@@ -116,11 +120,13 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String = when (op
 
          pom {
       """,
-      "    name = \"${properties["POM_NAME"]}\"".takeIf { properties.containsKey("POM_NAME") },
-      "    description = \"${properties["POM_DESCRIPTION"]}\"".takeIf { properties.containsKey("POM_DESCRIPTION") },
-      "    inceptionYear = \"${properties["POM_INCEPTION_YEAR"]}\"".takeIf { properties.containsKey("POM_INCEPTION_YEAR") },
-      "    url = \"${properties["POM_URL"]}\"".takeIf { properties.containsKey("POM_URL") },
-      """
+          "    name = \"${properties["POM_NAME"]}\"".takeIf { properties.containsKey("POM_NAME") },
+          "    description = \"${properties["POM_DESCRIPTION"]}\""
+            .takeIf { properties.containsKey("POM_DESCRIPTION") },
+          "    inceptionYear = \"${properties["POM_INCEPTION_YEAR"]}\""
+            .takeIf { properties.containsKey("POM_INCEPTION_YEAR") },
+          "    url = \"${properties["POM_URL"]}\"".takeIf { properties.containsKey("POM_URL") },
+          """
       licenses {
         license {
           name = "${properties["POM_LICENCE_NAME"]}"
@@ -128,10 +134,12 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String = when (op
           distribution = "${properties["POM_LICENCE_DIST"]}"
         }
       }
-      """.trimIndent().takeIf {
-        properties.containsKey("POM_LICENCE_NAME")
-      },
       """
+            .trimIndent()
+            .takeIf {
+              properties.containsKey("POM_LICENCE_NAME")
+            },
+          """
       developers {
         developer {
           id = "${properties["POM_DEVELOPER_ID"]}"
@@ -139,25 +147,31 @@ private fun ProjectSpec.publishingBlock(options: TestOptions): String = when (op
           url = "${properties["POM_DEVELOPER_URL"]}"
         }
       }
-      """.trimIndent().takeIf {
-        properties.containsKey("POM_DEVELOPER_ID")
-      },
       """
+            .trimIndent()
+            .takeIf {
+              properties.containsKey("POM_DEVELOPER_ID")
+            },
+          """
       scm {
         url = "${properties["POM_SCM_URL"]}"
         connection = "${properties["POM_SCM_CONNECTION"]}"
         developerConnection = "${properties["POM_SCM_DEV_CONNECTION"]}"
       }
-      """.trimIndent().takeIf {
-        properties.containsKey("POM_SCM_URL")
-      },
       """
-        }
-      }
-      """.trimIndent(),
-    ).joinToString(separator = "\n")
+            .trimIndent()
+            .takeIf {
+              properties.containsKey("POM_SCM_URL")
+            },
+          """
+            }
+          }
+          """
+            .trimIndent(),
+        )
+        .joinToString(separator = "\n")
+    }
   }
-}
 
 private fun writeSettingFile(path: Path) {
   val googleMaven =
@@ -169,7 +183,8 @@ private fun writeSettingFile(path: Path) {
         includeGroupAndSubgroups("com.google")
       }
     }
-    """.trimIndent()
+    """
+      .trimIndent()
   path.writeText(
     """
     pluginManagement {
@@ -191,7 +206,8 @@ private fun writeSettingFile(path: Path) {
     rootProject.name = "default-root-project-name"
 
     include(":module")
-    """.trimIndent(),
+    """
+      .trimIndent()
   )
 }
 
@@ -241,7 +257,9 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
         TestOptions.Signing.GPG_KEY -> {
           appendLine("signing.keyId=B89C4055")
           appendLine("signing.password=test")
-          appendLine("signing.secretKeyRingFile=${path.parent.absolutePathString()}/test-secring.gpg")
+          appendLine(
+            "signing.secretKeyRingFile=${path.parent.absolutePathString()}/test-secring.gpg"
+          )
         }
 
         TestOptions.Signing.IN_MEMORY_KEY -> {
@@ -318,13 +336,13 @@ private fun ProjectSpec.writeGradleProperties(path: Path, options: TestOptions) 
               "IM2XlgK/XgoyxIPdikiWam5aDNLb2+E+sU3o52EdTL/yBg7tdaWBf42GoGC8di/rSmpul89VHtejoDAzJlUtw9NE7wmMRhxJPriW32" +
               "PbIvcMlsk0JFlQpPBKK1Kkxttni68IWxuLKrsthXEqSerqV86L7fdtEtXONnjKxRPgT6omSbgDsBZjn8Om8h8fC5ZmZNDp6Cfchdp1" +
               "oKANA7vimtuplILcGmqQ7bfvUmf2v+PbE4xcBxGO5UM4Il2s30KxZh5v89frKX7i8bXuQUOIGQI+X7zyVxtLmIdzWZe5Z4+Vb5D/q0" +
-              "3nk7LqZfwn90YtUFgFApuYKEa5GVl3BYmAeH47ms3loMAR1r9pip+B1QLwEdLCEJA+3IIiw4qM5hnMw=",
+              "3nk7LqZfwn90YtUFgFApuYKEa5GVl3BYmAeH47ms3loMAR1r9pip+B1QLwEdLCEJA+3IIiw4qM5hnMw="
           )
           appendLine("signingInMemoryKeyId=B89C4055")
           appendLine("signingInMemoryKeyPassword=test")
         }
       }
-    },
+    }
   )
 }
 

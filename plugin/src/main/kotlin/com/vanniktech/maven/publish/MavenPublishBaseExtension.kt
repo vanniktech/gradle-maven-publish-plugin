@@ -22,85 +22,102 @@ import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningPlugin
 import org.gradle.plugins.signing.type.pgp.ArmoredSignatureType
 
-public abstract class MavenPublishBaseExtension @Inject constructor(
+public abstract class MavenPublishBaseExtension
+@Inject
+constructor(
   private val project: Project,
   private val buildEventsListenerRegistry: BuildEventsListenerRegistry,
   private val buildFeatures: BuildFeatures,
 ) {
   private val mavenCentral: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val signing: Property<Boolean> = project.objects.property(Boolean::class.java)
-  internal val groupId: Property<String> = project.objects
-    .property(String::class.java)
-    .convention(project.provider { project.group.toString() })
-  internal val artifactId: Property<String> = project.objects
-    .property(String::class.java)
-    .convention(project.provider { project.name.toString() })
-  internal val version: Property<String> = project.objects
-    .property(String::class.java)
-    .convention(project.provider { project.version.toString() })
+  internal val groupId: Property<String> =
+    project.objects
+      .property(String::class.java)
+      .convention(project.provider { project.group.toString() })
+  internal val artifactId: Property<String> =
+    project.objects
+      .property(String::class.java)
+      .convention(project.provider { project.name.toString() })
+  internal val version: Property<String> =
+    project.objects
+      .property(String::class.java)
+      .convention(project.provider { project.version.toString() })
   private val pomFromProperties: Property<Boolean> = project.objects.property(Boolean::class.java)
   private val platform: Property<Platform> = project.objects.property(Platform::class.java)
-  private val excludeSignatureChecksums: Property<Boolean> = project.objects
-    .property(Boolean::class.java)
-    .convention(project.provider { project.excludeSignatureChecksums() })
-  private val checksums: SetProperty<Checksum> = project.objects
-    .setProperty(Checksum::class.java)
-    .convention(project.provider { project.checksums() })
+  private val excludeSignatureChecksums: Property<Boolean> =
+    project.objects
+      .property(Boolean::class.java)
+      .convention(project.provider { project.excludeSignatureChecksums() })
+  private val checksums: SetProperty<Checksum> =
+    project.objects
+      .setProperty(Checksum::class.java)
+      .convention(project.provider { project.checksums() })
 
   /**
-   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
-   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
-   * `publish` task.
+   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository.
+   * Gradle will then automatically create a `publishAllPublicationsToMavenCentralRepository` task
+   * as well as include it in the general `publish` task.
    *
-   * When the [automaticRelease] parameter is `true` the created deployment will be released automatically to
-   * Maven Central without any additional manual steps needed. When [automaticRelease] is not set or `false`
-   * the deployment has to be manually released through the [Central Portal website](https://central.sonatype.com/publishing/deployments).
+   * When the [automaticRelease] parameter is `true` the created deployment will be released
+   * automatically to Maven Central without any additional manual steps needed. When
+   * [automaticRelease] is not set or `false` the deployment has to be manually released through the
+   * [Central Portal website](https://central.sonatype.com/publishing/deployments).
    *
-   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
-   * repository instead.
+   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's
+   * snapshot repository instead.
    *
-   * This expects you provide the username and password of a user token through Gradle properties called
-   * `mavenCentralUsername` and `mavenCentralPassword`. See [here](https://central.sonatype.org/publish/generate-portal-token/)
-   * for how to obtain a user token.
+   * This expects you provide the username and password of a user token through Gradle properties
+   * called `mavenCentralUsername` and `mavenCentralPassword`. See
+   * [here](https://central.sonatype.org/publish/generate-portal-token/) for how to obtain a user
+   * token.
    *
-   * When [validateDeployment] is `true` (the default), the plugin will monitor the deployment status after upload
-   * and wait until it reaches a terminal state (`PUBLISHED` or `FAILED`). Deployment validation only happens
-   * when [automaticRelease] is `true`.
+   * When [validateDeployment] is `true` (the default), the plugin will monitor the deployment
+   * status after upload and wait until it reaches a terminal state (`PUBLISHED` or `FAILED`).
+   * Deployment validation only happens when [automaticRelease] is `true`.
    *
-   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
-   * @param validateDeployment whether to wait for the deployment to be validated and published at the end of the build
+   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the
+   *   end of the build
+   * @param validateDeployment whether to wait for the deployment to be validated and published at
+   *   the end of the build
    */
   @Deprecated("Use publishToMavenCentral with DeploymentValidation instead of Boolean")
   public fun publishToMavenCentral(automaticRelease: Boolean, validateDeployment: Boolean) {
     publishToMavenCentral(
       automaticRelease = automaticRelease,
-      validateDeployment = if (validateDeployment) DeploymentValidation.VALIDATED else DeploymentValidation.NONE,
+      validateDeployment =
+        if (validateDeployment) DeploymentValidation.VALIDATED else DeploymentValidation.NONE,
     )
   }
 
   /**
-   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository. Gradle will then
-   * automatically create a `publishAllPublicationsToMavenCentralRepository` task as well as include it in the general
-   * `publish` task.
+   * Sets up Maven Central publishing through Sonatype OSSRH by configuring the target repository.
+   * Gradle will then automatically create a `publishAllPublicationsToMavenCentralRepository` task
+   * as well as include it in the general `publish` task.
    *
-   * When the [automaticRelease] parameter is `true` the created deployment will be released automatically to
-   * Maven Central without any additional manual steps needed. When [automaticRelease] is not set or `false`
-   * the deployment has to be manually released through the [Central Portal website](https://central.sonatype.com/publishing/deployments).
+   * When the [automaticRelease] parameter is `true` the created deployment will be released
+   * automatically to Maven Central without any additional manual steps needed. When
+   * [automaticRelease] is not set or `false` the deployment has to be manually released through the
+   * [Central Portal website](https://central.sonatype.com/publishing/deployments).
    *
-   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's snapshot
-   * repository instead.
+   * If the current version ends with `-SNAPSHOT` the artifacts will be published to Sonatype's
+   * snapshot repository instead.
    *
-   * This expects you provide the username and password of a user token through Gradle properties called
-   * `mavenCentralUsername` and `mavenCentralPassword`. See [here](https://central.sonatype.org/publish/generate-portal-token/)
-   * for how to obtain a user token.
+   * This expects you provide the username and password of a user token through Gradle properties
+   * called `mavenCentralUsername` and `mavenCentralPassword`. See
+   * [here](https://central.sonatype.org/publish/generate-portal-token/) for how to obtain a user
+   * token.
    *
-   * When [validateDeployment] is `PUBLISH` (the default), the plugin will monitor the deployment status after upload
-   * and wait until it reaches a terminal state (`PUBLISHED` or `FAILED`). Setting it to `VALIDATE` will wait for the
-   * Central Portal validations to succeed but not until the publishing process finished. Deployment validation only
-   * happens when [automaticRelease] is `true`.
+   * When [validateDeployment] is `PUBLISH` (the default), the plugin will monitor the deployment
+   * status after upload and wait until it reaches a terminal state (`PUBLISHED` or `FAILED`).
+   * Setting it to `VALIDATE` will wait for the Central Portal validations to succeed but not until
+   * the publishing process finished. Deployment validation only happens when [automaticRelease] is
+   * `true`.
    *
-   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the end of the build
-   * @param validateDeployment whether to wait for the deployment to be validated and published at the end of the build
+   * @param automaticRelease whether a non SNAPSHOT build should be released automatically at the
+   *   end of the build
+   * @param validateDeployment whether to wait for the deployment to be validated and published at
+   *   the end of the build
    */
   @JvmOverloads
   public fun publishToMavenCentral(
@@ -113,9 +130,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     val localRepository = project.layout.buildDirectory.dir("publishing/mavenCentral")
     val versionIsSnapshot = version.map { it.endsWith("-SNAPSHOT") }
 
-    val repository = project.gradlePublishing.repositories.maven { repo ->
-      repo.name = "mavenCentral"
-    }
+    val repository =
+      project.gradlePublishing.repositories.maven { repo ->
+        repo.name = "mavenCentral"
+      }
 
     project.afterEvaluate {
       if (versionIsSnapshot.get()) {
@@ -126,23 +144,30 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
       }
     }
 
-    val buildService = project.registerMavenCentralBuildService(
-      repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
-      repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
-      rootBuildDirectory = @Suppress("UnstableApiUsage") project.layout.settingsDirectory.dir("build"),
-      buildEventsListenerRegistry = buildEventsListenerRegistry,
-    )
+    val buildService =
+      project.registerMavenCentralBuildService(
+        repositoryUsername = project.providers.gradleProperty("mavenCentralUsername"),
+        repositoryPassword = project.providers.gradleProperty("mavenCentralPassword"),
+        rootBuildDirectory =
+          @Suppress("UnstableApiUsage") project.layout.settingsDirectory.dir("build"),
+        buildEventsListenerRegistry = buildEventsListenerRegistry,
+      )
 
-    val prepareTask = project.tasks.registerPrepareMavenCentralPublishingTask(
-      buildService,
-      groupId,
-      artifactId,
-      version,
-      localRepository,
-      excludeSignatureChecksums,
-      checksums.map { checksums -> checksums.map { it.extension }.toSet() },
-    )
-    val enableAutomaticTask = project.tasks.registerEnableAutomaticMavenCentralPublishingTask(buildService, validateDeployment)
+    val prepareTask =
+      project.tasks.registerPrepareMavenCentralPublishingTask(
+        buildService,
+        groupId,
+        artifactId,
+        version,
+        localRepository,
+        excludeSignatureChecksums,
+        checksums.map { checksums -> checksums.map { it.extension }.toSet() },
+      )
+    val enableAutomaticTask =
+      project.tasks.registerEnableAutomaticMavenCentralPublishingTask(
+        buildService,
+        validateDeployment,
+      )
 
     project.tasks.withType(PublishToMavenRepository::class.java).configureEach { publishTask ->
       if (publishTask.name.endsWith("ToMavenCentralRepository")) {
@@ -169,13 +194,15 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   }
 
   /**
-   * Controls whether checksum files for signature (`.asc`) files are excluded when publishing to Maven Central.
+   * Controls whether checksum files for signature (`.asc`) files are excluded when publishing to
+   * Maven Central.
    *
-   * Gradle generates `.asc.md5`, `.asc.sha1`, `.asc.sha256` and `.asc.sha512` files for every signature, but these
-   * are not needed by Maven Central. See [gradle/gradle#20232](https://github.com/gradle/gradle/issues/20232).
+   * Gradle generates `.asc.md5`, `.asc.sha1`, `.asc.sha256` and `.asc.sha512` files for every
+   * signature, but these are not needed by Maven Central. See
+   * [gradle/gradle#20232](https://github.com/gradle/gradle/issues/20232).
    *
-   * This is enabled by default and can also be controlled through the `mavenCentralExcludeSignatureChecksums`
-   * Gradle property.
+   * This is enabled by default and can also be controlled through the
+   * `mavenCentralExcludeSignatureChecksums` Gradle property.
    *
    * @param exclude whether to exclude signature checksum files from the deployment
    */
@@ -188,12 +215,12 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   /**
    * Sets which checksum files are published to Maven Central.
    *
-   * Gradle generates [Checksum.MD5], [Checksum.SHA1], [Checksum.SHA256] and [Checksum.SHA512] checksums for every
-   * published file, but neither Gradle nor Maven Central read the `sha256` and `sha512` ones. By default only
-   * [Checksum.MD5] and [Checksum.SHA1] are published.
+   * Gradle generates [Checksum.MD5], [Checksum.SHA1], [Checksum.SHA256] and [Checksum.SHA512]
+   * checksums for every published file, but neither Gradle nor Maven Central read the `sha256` and
+   * `sha512` ones. By default only [Checksum.MD5] and [Checksum.SHA1] are published.
    *
-   * This can also be controlled through the `mavenCentralChecksums` Gradle property as a comma separated list, e.g.
-   * `mavenCentralChecksums=md5,sha1`.
+   * This can also be controlled through the `mavenCentralChecksums` Gradle property as a comma
+   * separated list, e.g. `mavenCentralChecksums=md5,sha1`.
    *
    * @param checksums the checksum files to publish
    */
@@ -203,8 +230,9 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   }
 
   /**
-   * Automatically apply Gradle's `signing` plugin and configure all publications to be signed. If signing credentials
-   * are not configured this will fail the build unless the current version is a `SNAPSHOT`.
+   * Automatically apply Gradle's `signing` plugin and configure all publications to be signed. If
+   * signing credentials are not configured this will fail the build unless the current version is a
+   * `SNAPSHOT`.
    *
    * Signing can be done using a local `secring.gpg` by setting these Gradle properties:
    * ```
@@ -213,7 +241,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * signing.secretKeyRingFile=/Users/me/.gnupg/secring.gpg
    * ```
    *
-   * Alternatively an in memory key can be used by exporting an ascii-armored GPG key and setting these Gradle properties:
+   * Alternatively an in memory key can be used by exporting an ascii-armored GPG key and setting
+   * these Gradle properties:
    * ```
    * signingInMemoryKey=exported_ascii_armored_key
    * # optional
@@ -221,13 +250,15 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
    * # if key was created with a password
    * signingInMemoryKeyPassword=secret
    * ```
-   * `gpg2 --export-secret-keys --armor KEY_ID` can be used to export they key for this. The exported key is taken
-   * without the first line and without the last 2 lines, all line breaks should be removed as well. The in memory
-   * properties can also be provided as environment variables by prefixing them with `ORG_GRADLE_PROJECT_`, e.g.
+   *
+   * `gpg2 --export-secret-keys --armor KEY_ID` can be used to export they key for this. The
+   * exported key is taken without the first line and without the last 2 lines, all line breaks
+   * should be removed as well. The in memory properties can also be provided as environment
+   * variables by prefixing them with `ORG_GRADLE_PROJECT_`, e.g.
    * `ORG_GRADLE_PROJECT_signingInMemoryKey`.
    *
-   * More information about signing as well as different ways to provide credentials
-   * can be found in the [Gradle documentation](https://docs.gradle.org/current/userguide/signing_plugin.html)
+   * More information about signing as well as different ways to provide credentials can be found in
+   * the [Gradle documentation](https://docs.gradle.org/current/userguide/signing_plugin.html)
    */
   public fun signAllPublications() {
     signing.set(true)
@@ -236,35 +267,47 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     project.plugins.apply(SigningPlugin::class.java)
     project.gradleSigning.setRequired(version.map { !it.endsWith("-SNAPSHOT") })
 
-    // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is implemented
+    // TODO update in memory set up once https://github.com/gradle/gradle/issues/16056 is
+    // implemented
     val inMemoryKey = project.providers.gradleProperty("signingInMemoryKey")
     if (inMemoryKey.isPresent) {
       val inMemoryKeyId = project.providers.gradleProperty("signingInMemoryKeyId")
-      val inMemoryKeyPassword = project.providers.gradleProperty("signingInMemoryKeyPassword").orElse("")
-      project.gradleSigning.useInMemoryPgpKeys(inMemoryKeyId.orNull, inMemoryKey.get(), inMemoryKeyPassword.get())
+      val inMemoryKeyPassword =
+        project.providers.gradleProperty("signingInMemoryKeyPassword").orElse("")
+      project.gradleSigning.useInMemoryPgpKeys(
+        inMemoryKeyId.orNull,
+        inMemoryKey.get(),
+        inMemoryKeyPassword.get(),
+      )
     }
 
     project.mavenPublications { publication ->
       project.gradleSigning.sign(publication)
     }
 
-    // TODO: https://youtrack.jetbrains.com/issue/KT-61313/ https://github.com/gradle/gradle/issues/26132
+    // TODO: https://youtrack.jetbrains.com/issue/KT-61313/
+    // https://github.com/gradle/gradle/issues/26132
     project.plugins.withId("org.jetbrains.kotlin.multiplatform") {
       project.tasks.withType(Sign::class.java).configureEach {
-        it.signatureType = DirectorySignatureType(
-          it.signatureType ?: ArmoredSignatureType(),
-          project.layout.buildDirectory.dir("signatures/${it.name}"),
-        )
+        it.signatureType =
+          DirectorySignatureType(
+            it.signatureType ?: ArmoredSignatureType(),
+            project.layout.buildDirectory.dir("signatures/${it.name}"),
+          )
       }
     }
   }
 
   /**
-   * Set the Maven coordinates consisting of [groupId], [artifactId] and [version] for this project. In the case of
-   * Kotlin Multiplatform projects the given [artifactId] is used together with the platform targets resulting in
-   * artifactIds like `[artifactId]-jvm`.
+   * Set the Maven coordinates consisting of [groupId], [artifactId] and [version] for this project.
+   * In the case of Kotlin Multiplatform projects the given [artifactId] is used together with the
+   * platform targets resulting in artifactIds like `[artifactId]-jvm`.
    */
-  public fun coordinates(groupId: String? = null, artifactId: String? = null, version: String? = null) {
+  public fun coordinates(
+    groupId: String? = null,
+    artifactId: String? = null,
+    version: String? = null,
+  ) {
     groupId?.also { groupId(it) }
     artifactId?.also { artifactId(it) }
     version?.also { version(it) }
@@ -303,13 +346,14 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     return if (publication.artifactId == projectName) {
       this
     } else if (publication.artifactId.startsWith("$projectName-")) {
-      // Publications for specific platform targets use derived artifact ids (e.g. library, library-jvm,
+      // Publications for specific platform targets use derived artifact ids (e.g. library,
+      // library-jvm,
       // library-js) and the suffix needs to be preserved
       publication.artifactId.replace("$projectName-", "$this-")
     } else {
       throw IllegalStateException(
         "The plugin can't handle the publication ${publication.name} artifactId " +
-          "${publication.artifactId} in project $projectName",
+          "${publication.artifactId} in project $projectName"
       )
     }
   }
@@ -326,7 +370,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   /**
    * Configures the POM that will be published.
    *
-   * See the [Gradle publishing guide](https://docs.gradle.org/current/userguide/publishing_maven.html#sec:modifying_the_generated_pom)
+   * See the
+   * [Gradle publishing guide](https://docs.gradle.org/current/userguide/publishing_maven.html#sec:modifying_the_generated_pom)
    * for how to use it.
    */
   public fun pom(configure: Action<in MavenPom>) {
@@ -335,9 +380,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
   }
 
-  /**
-   * Configures the POM through Gradle properties.
-   */
+  /** Configures the POM through Gradle properties. */
   @Incubating
   public fun pomFromGradleProperties() {
     pomFromProperties.set(true)
@@ -438,8 +481,8 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
   }
 
   /**
-   * Configures a [Platform] which will automatically set up the artifacts that should get published, including javadoc
-   * and sources jars depending on the option.
+   * Configures a [Platform] which will automatically set up the artifacts that should get
+   * published, including javadoc and sources jars depending on the option.
    */
   public fun configure(platform: Platform) {
     this.platform.set(platform)
@@ -448,9 +491,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     platform.configure(project)
   }
 
-  /**
-   * Calls [configure] with a [Platform] chosen based on other applied Gradle plugins.
-   */
+  /** Calls [configure] with a [Platform] chosen based on other applied Gradle plugins. */
   @Incubating
   @Deprecated("Use configureBasedOnAppliedPlugins with JavadocJar instead of Boolean")
   public fun configureBasedOnAppliedPlugins(sourcesJar: Boolean, javadocJar: Boolean) {
@@ -460,9 +501,7 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     )
   }
 
-  /**
-   * Calls [configure] with a [Platform] chosen based on other applied Gradle plugins.
-   */
+  /** Calls [configure] with a [Platform] chosen based on other applied Gradle plugins. */
   @Incubating
   @JvmOverloads
   public fun configureBasedOnAppliedPlugins(
@@ -476,16 +515,20 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
 
     when {
       project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> {
-        val variants = if (project.plugins.hasPlugin("com.android.kotlin.multiplatform.library")) {
-          emptyList()
-        } else {
-          listOf(project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release")
-        }
+        val variants =
+          if (project.plugins.hasPlugin("com.android.kotlin.multiplatform.library")) {
+            emptyList()
+          } else {
+            listOf(
+              project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
+            )
+          }
         configure(KotlinMultiplatform(javadocJar, sourcesJar, variants))
       }
 
       project.plugins.hasPlugin("com.android.library") -> {
-        val variant = project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
+        val variant =
+          project.providers.gradleProperty("ANDROID_VARIANT_TO_PUBLISH").orNull ?: "release"
         configure(AndroidSingleVariantLibrary(javadocJar, sourcesJar, variant))
       }
 
@@ -527,33 +570,35 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
     }
   }
 
-  private fun defaultJavaDocOption(javadocJar: Boolean): JavadocJar = when {
-    !javadocJar -> {
-      JavadocJar.None()
-    }
-
-    project.plugins.hasPlugin("org.jetbrains.dokka-javadoc") -> {
-      JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
-    }
-
-    project.plugins.hasPlugin("org.jetbrains.dokka") -> {
-      // only dokka v2 has an extension
-      check(project.extensions.findByName("dokka") != null) {
-        "Dokka in v2 mode is required when using Dokka"
+  private fun defaultJavaDocOption(javadocJar: Boolean): JavadocJar =
+    when {
+      !javadocJar -> {
+        JavadocJar.None()
       }
-      JavadocJar.Dokka("dokkaGeneratePublicationHtml")
+
+      project.plugins.hasPlugin("org.jetbrains.dokka-javadoc") -> {
+        JavadocJar.Dokka("dokkaGeneratePublicationJavadoc")
+      }
+
+      project.plugins.hasPlugin("org.jetbrains.dokka") -> {
+        // only dokka v2 has an extension
+        check(project.extensions.findByName("dokka") != null) {
+          "Dokka in v2 mode is required when using Dokka"
+        }
+        JavadocJar.Dokka("dokkaGeneratePublicationHtml")
+      }
+
+      !project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> {
+        JavadocJar.Javadoc()
+      }
+
+      else -> {
+        JavadocJar.Empty()
+      }
     }
 
-    !project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform") -> {
-      JavadocJar.Javadoc()
-    }
-
-    else -> {
-      JavadocJar.Empty()
-    }
-  }
-
-  // ExtraPropertiesExtension is IP safe and contains properties from both the root `gradle.properties`
+  // ExtraPropertiesExtension is IP safe and contains properties from both the root
+  // `gradle.properties`
   // and the subproject's `gradle.properties`.
   // https://github.com/gradle/gradle/issues/29600#issuecomment-3580868326
   private fun findOptionalProperty(propertyName: String): String? {

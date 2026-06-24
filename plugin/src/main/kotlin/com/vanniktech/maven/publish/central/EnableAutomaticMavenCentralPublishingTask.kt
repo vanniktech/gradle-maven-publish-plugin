@@ -12,11 +12,9 @@ import org.gradle.api.tasks.UntrackedTask
 
 @UntrackedTask(because = "Not worth tracking")
 internal abstract class EnableAutomaticMavenCentralPublishingTask : DefaultTask() {
-  @get:Internal
-  abstract val buildService: Property<MavenCentralBuildService>
+  @get:Internal abstract val buildService: Property<MavenCentralBuildService>
 
-  @get:Internal
-  abstract val validateDeployment: Property<DeploymentValidation>
+  @get:Internal abstract val validateDeployment: Property<DeploymentValidation>
 
   @TaskAction
   fun enableAutomaticPublishing() {
@@ -29,11 +27,12 @@ internal abstract class EnableAutomaticMavenCentralPublishingTask : DefaultTask(
     fun TaskContainer.registerEnableAutomaticMavenCentralPublishingTask(
       buildService: Provider<MavenCentralBuildService>,
       validateDeployment: DeploymentValidation,
-    ): TaskProvider<EnableAutomaticMavenCentralPublishingTask> = register(NAME, EnableAutomaticMavenCentralPublishingTask::class.java) {
-      it.description = "Enables automatic publishing for Maven Central"
-      it.buildService.set(buildService)
-      it.validateDeployment.set(validateDeployment)
-      it.usesService(buildService)
-    }
+    ): TaskProvider<EnableAutomaticMavenCentralPublishingTask> =
+      register(NAME, EnableAutomaticMavenCentralPublishingTask::class.java) {
+        it.description = "Enables automatic publishing for Maven Central"
+        it.buildService.set(buildService)
+        it.validateDeployment.set(validateDeployment)
+        it.usesService(buildService)
+      }
   }
 }

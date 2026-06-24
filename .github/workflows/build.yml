@@ -37,9 +37,6 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v6
 
-      - name: Run ktlint
-        run: ./kotlinw ktlint.main.kts --fail-on-changes
-
       - name: Build with Gradle
         run: ./gradlew build --stacktrace -PtestJavaVersion=${{ matrix.test_java_version }} -PtestConfigMethod=${{ matrix.test_config_method }}
 

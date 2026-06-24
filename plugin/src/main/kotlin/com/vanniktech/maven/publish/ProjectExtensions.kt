@@ -42,7 +42,8 @@ internal fun Project.isAtLeastKgp(id: String, version: String): Boolean {
 }
 
 internal fun isAtLeastAgp(version: String): Boolean {
-  // Drop everything after '-' to ignore rc/beta/alpha suffixes. If you want to compare those, use the rc/beta/alpha functions in AndroidPluginVersion.
+  // Drop everything after '-' to ignore rc/beta/alpha suffixes. If you want to compare those, use
+  // the rc/beta/alpha functions in AndroidPluginVersion.
   val (major, minor, patch) = version.takeWhile { it != '-' }.split(".").map { it.toInt() }
   return AndroidPluginVersion.getCurrent() >= AndroidPluginVersion(major, minor, patch)
 }

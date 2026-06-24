@@ -28,7 +28,8 @@ abstract class BasePluginTest {
   lateinit var gradleVersion: GradleVersion
     private set
 
-  open val testOptions get() = TestOptions(config, IN_MEMORY_KEY, gradleVersion)
+  open val testOptions
+    get() = TestOptions(config, IN_MEMORY_KEY, gradleVersion)
 
   fun ProjectSpec.run(options: TestOptions = testOptions) = run(fixtures, testProjectDir, options)
 

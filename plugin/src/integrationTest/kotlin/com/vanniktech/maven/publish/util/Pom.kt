@@ -14,11 +14,14 @@ data class PomDependency(
   val scope: String?,
 )
 
-fun KgpVersion.stdlibCommon() = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", value, "compile")
+fun KgpVersion.stdlibCommon() =
+  PomDependency("org.jetbrains.kotlin", "kotlin-stdlib", value, "compile")
 
-fun KgpVersion.stdlibJs() = PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", value, "compile")
+fun KgpVersion.stdlibJs() =
+  PomDependency("org.jetbrains.kotlin", "kotlin-stdlib-js", value, "compile")
 
-fun KgpVersion.domApiCompat() = PomDependency("org.jetbrains.kotlin", "kotlin-dom-api-compat", value, "compile")
+fun KgpVersion.domApiCompat() =
+  PomDependency("org.jetbrains.kotlin", "kotlin-dom-api-compat", value, "compile")
 
 fun createPom(
   groupId: String,
@@ -28,7 +31,15 @@ fun createPom(
   dependencies: List<PomDependency>,
   dependencyManagementDependencies: List<PomDependency>,
 ): Model {
-  val model = createMinimalPom(groupId, artifactId, version, packaging, dependencies, dependencyManagementDependencies)
+  val model =
+    createMinimalPom(
+      groupId,
+      artifactId,
+      version,
+      packaging,
+      dependencies,
+      dependencyManagementDependencies,
+    )
 
   model.name = "Gradle Maven Publish Plugin Test Artifact"
   model.description = "Testing the Gradle Maven Publish Plugin"
@@ -39,20 +50,22 @@ fun createPom(
       name = "Apache-2.0"
       url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
       distribution = "repo"
-    },
+    }
   )
   model.addDeveloper(
     Developer().apply {
       id = "vanniktech"
       name = "Niklas Baudy"
       url = "https://github.com/vanniktech/"
-    },
+    }
   )
-  model.scm = Scm().apply {
-    connection = "scm:git:git://github.com/vanniktech/gradle-maven-publish-plugin.git"
-    developerConnection = "scm:git:ssh://git@github.com/vanniktech/gradle-maven-publish-plugin.git"
-    url = "https://github.com/vanniktech/gradle-maven-publish-plugin/"
-  }
+  model.scm =
+    Scm().apply {
+      connection = "scm:git:git://github.com/vanniktech/gradle-maven-publish-plugin.git"
+      developerConnection =
+        "scm:git:ssh://git@github.com/vanniktech/gradle-maven-publish-plugin.git"
+      url = "https://github.com/vanniktech/gradle-maven-publish-plugin/"
+    }
 
   return model
 }
@@ -64,30 +77,33 @@ fun createMinimalPom(
   packaging: String?,
   dependencies: List<PomDependency>,
   dependencyManagementDependencies: List<PomDependency>,
-): Model = Model().also { model ->
-  model.modelVersion = "4.0.0"
-  model.modelEncoding = "UTF-8"
-  model.groupId = groupId
-  model.artifactId = artifactId
-  model.version = version
-  if (packaging != null) {
-    model.packaging = packaging
-  }
-  dependencies.distinct().forEach {
-    model.addDependency(it.toDependency())
-  }
-  if (dependencyManagementDependencies.isNotEmpty()) {
-    model.dependencyManagement = DependencyManagement().apply {
-      dependencyManagementDependencies.distinct().forEach {
-        addDependency(it.toDependency())
-      }
+): Model =
+  Model().also { model ->
+    model.modelVersion = "4.0.0"
+    model.modelEncoding = "UTF-8"
+    model.groupId = groupId
+    model.artifactId = artifactId
+    model.version = version
+    if (packaging != null) {
+      model.packaging = packaging
+    }
+    dependencies.distinct().forEach {
+      model.addDependency(it.toDependency())
+    }
+    if (dependencyManagementDependencies.isNotEmpty()) {
+      model.dependencyManagement =
+        DependencyManagement().apply {
+          dependencyManagementDependencies.distinct().forEach {
+            addDependency(it.toDependency())
+          }
+        }
     }
   }
-}
 
-private fun PomDependency.toDependency() = Dependency().also {
-  it.groupId = groupId
-  it.artifactId = artifactId
-  it.version = version
-  it.scope = scope
-}
+private fun PomDependency.toDependency() =
+  Dependency().also {
+    it.groupId = groupId
+    it.artifactId = artifactId
+    it.version = version
+    it.scope = scope
+  }

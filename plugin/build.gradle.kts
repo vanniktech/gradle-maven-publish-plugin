@@ -19,27 +19,31 @@ gradlePlugin {
       id = "com.vanniktech.maven.publish"
       implementationClass = "com.vanniktech.maven.publish.MavenPublishPlugin"
       displayName = "Gradle Maven Publish Plugin"
-      description = "Gradle plugin that configures publish tasks to automatically upload all of your Java, Kotlin, " +
-        "Gradle, or Android libraries to any Maven instance."
+      description =
+        "Gradle plugin that configures publish tasks to automatically upload all of your Java, Kotlin, " +
+          "Gradle, or Android libraries to any Maven instance."
     }
     create("mavenPublishBasePlugin") {
       id = "com.vanniktech.maven.publish.base"
       implementationClass = "com.vanniktech.maven.publish.MavenPublishBasePlugin"
       displayName = "Gradle Maven Publish Base Plugin"
-      description = "Gradle plugin that configures publish tasks to automatically upload all of your Java, Kotlin, " +
-        "Gradle, or Android libraries to any Maven instance."
+      description =
+        "Gradle plugin that configures publish tasks to automatically upload all of your Java, Kotlin, " +
+          "Gradle, or Android libraries to any Maven instance."
     }
   }
 }
 
-val integrationTestSourceSet = sourceSets.create("integrationTest") {
-  compileClasspath += sourceSets["main"].output
-  compileClasspath += configurations.testRuntimeClasspath.get()
-  runtimeClasspath += output + compileClasspath
-}
-val integrationTestImplementation = configurations.getByName("integrationTestImplementation") {
-  extendsFrom(configurations.testImplementation.get())
-}
+val integrationTestSourceSet =
+  sourceSets.create("integrationTest") {
+    compileClasspath += sourceSets["main"].output
+    compileClasspath += configurations.testRuntimeClasspath.get()
+    runtimeClasspath += output + compileClasspath
+  }
+val integrationTestImplementation =
+  configurations.getByName("integrationTestImplementation") {
+    extendsFrom(configurations.testImplementation.get())
+  }
 
 configurations.named(API_ELEMENTS_CONFIGURATION_NAME) {
   attributes.attribute(
@@ -121,52 +125,54 @@ tasks.validatePlugins {
   enableStricterValidation = true
 }
 
-val integrationTest = tasks.register("integrationTest", Test::class) {
-  dependsOn(
-    tasks.publishToMavenLocal,
-    project(projects.centralPortal.path).tasks.publishToMavenLocal,
-  )
-  mustRunAfter(tasks.test)
+val integrationTest =
+  tasks.register("integrationTest", Test::class) {
+    dependsOn(
+      tasks.publishToMavenLocal,
+      project(projects.centralPortal.path).tasks.publishToMavenLocal,
+    )
+    mustRunAfter(tasks.test)
 
-  description = "Runs the integration tests."
-  group = "verification"
+    description = "Runs the integration tests."
+    group = "verification"
 
-  testClassesDirs = integrationTestSourceSet.output.classesDirs
-  classpath = integrationTestSourceSet.runtimeClasspath
+    testClassesDirs = integrationTestSourceSet.output.classesDirs
+    classpath = integrationTestSourceSet.runtimeClasspath
 
-  val testJavaVersion = providers.gradleProperty("testJavaVersion").orNull
-  if (testJavaVersion != null && testJavaVersion != "latest") {
-    javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(testJavaVersion)
+    val testJavaVersion = providers.gradleProperty("testJavaVersion").orNull
+    if (testJavaVersion != null && testJavaVersion != "latest") {
+      javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(testJavaVersion)
+      }
     }
-  }
 
-  useJUnitPlatform()
-  testLogging.showStandardStreams = true
-  maxHeapSize = "2g"
-  maxParallelForks = if (System.getenv("CI") != null) {
-    Runtime.getRuntime().availableProcessors() / 2
-  } else {
-    Runtime.getRuntime().availableProcessors()
-  }
-  jvmArgs(
-    "--add-opens",
-    "java.base/java.lang.invoke=ALL-UNNAMED",
-    "--add-opens",
-    "java.base/java.net=ALL-UNNAMED",
-    "--add-opens",
-    "java.base/java.util=ALL-UNNAMED",
-  )
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
+    maxHeapSize = "2g"
+    maxParallelForks =
+      if (System.getenv("CI") != null) {
+        Runtime.getRuntime().availableProcessors() / 2
+      } else {
+        Runtime.getRuntime().availableProcessors()
+      }
+    jvmArgs(
+      "--add-opens",
+      "java.base/java.lang.invoke=ALL-UNNAMED",
+      "--add-opens",
+      "java.base/java.net=ALL-UNNAMED",
+      "--add-opens",
+      "java.base/java.util=ALL-UNNAMED",
+    )
 
-  develocity {
-    testRetry {
-      if (providers.environmentVariable("CI").isPresent) {
-        maxRetries = 2
-        maxFailures = 10
+    develocity {
+      testRetry {
+        if (providers.environmentVariable("CI").isPresent) {
+          maxRetries = 2
+          maxFailures = 10
+        }
       }
     }
   }
-}
 
 tasks.test {
   useJUnitPlatform()
@@ -179,9 +185,10 @@ tasks.check {
 }
 
 tasks.clean {
-  delete += listOf(
-    dokka.dokkaPublications.html.map { it.outputDirectory },
-    // Generated by MkDocs.
-    rootDir.resolve("site"),
-  )
+  delete +=
+    listOf(
+      dokka.dokkaPublications.html.map { it.outputDirectory },
+      // Generated by MkDocs.
+      rootDir.resolve("site"),
+    )
 }

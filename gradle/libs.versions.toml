@@ -54,7 +54,11 @@ semver = "net.swiftzer.semver:semver:2.1.0"
 
 androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0"
 
+# Dummy to get renovate updates, the version is used in rootProject build.gradle with spotless.
+ktfmt = "com.facebook:ktfmt:0.63"
+
 [plugins]
 buildconfig = "com.github.gmazzo.buildconfig:6.0.10"
 android-lint = { id = "com.android.lint", version.ref = "android-gradle" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+spotless = "com.diffplug.spotless:8.7.0"

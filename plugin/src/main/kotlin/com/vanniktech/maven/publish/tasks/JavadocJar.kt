@@ -16,19 +16,24 @@ public abstract class JavadocJar : Jar() {
   }
 
   internal companion object {
-    internal fun Project.javadocJarTask(javadocJar: JavadocJarOption, prefix: String?): TaskProvider<out Jar>? = when (javadocJar) {
-      is JavadocJarOption.None -> null
-      is JavadocJarOption.Empty -> emptyJavadocJar(prefix)
-      is JavadocJarOption.Javadoc -> plainJavadocJar(prefix)
-      is JavadocJarOption.Dokka -> dokkaJavadocJar(prefix, javadocJar.wrapper)
-    }
+    internal fun Project.javadocJarTask(
+      javadocJar: JavadocJarOption,
+      prefix: String?,
+    ): TaskProvider<out Jar>? =
+      when (javadocJar) {
+        is JavadocJarOption.None -> null
+        is JavadocJarOption.Empty -> emptyJavadocJar(prefix)
+        is JavadocJarOption.Javadoc -> plainJavadocJar(prefix)
+        is JavadocJarOption.Dokka -> dokkaJavadocJar(prefix, javadocJar.wrapper)
+      }
 
-    private fun Project.emptyJavadocJar(prefix: String?): TaskProvider<out Jar> = tasks.register(
-      prefixedTaskName("emptyJavadocJar", prefix),
-      JavadocJar::class.java,
-    ) {
-      it.updateArchivesBaseNameWithPrefix(project, prefix)
-    }
+    private fun Project.emptyJavadocJar(prefix: String?): TaskProvider<out Jar> =
+      tasks.register(
+        prefixedTaskName("emptyJavadocJar", prefix),
+        JavadocJar::class.java,
+      ) {
+        it.updateArchivesBaseNameWithPrefix(project, prefix)
+      }
 
     private fun Project.plainJavadocJar(prefix: String?): TaskProvider<out Jar> =
       tasks.register(prefixedTaskName("plainJavadocJar", prefix), JavadocJar::class.java) {
@@ -38,7 +43,10 @@ public abstract class JavadocJar : Jar() {
         it.updateArchivesBaseNameWithPrefix(project, prefix)
       }
 
-    private fun Project.dokkaJavadocJar(prefix: String?, dokkaTaskWrapper: DokkaTaskWrapper): TaskProvider<out Jar> =
+    private fun Project.dokkaJavadocJar(
+      prefix: String?,
+      dokkaTaskWrapper: DokkaTaskWrapper,
+    ): TaskProvider<out Jar> =
       tasks.register(prefixedTaskName("dokkaJavadocJar", prefix), JavadocJar::class.java) {
         val dokkaTask = dokkaTaskWrapper.asProvider(project)
         it.dependsOn(dokkaTask)
@@ -46,11 +54,12 @@ public abstract class JavadocJar : Jar() {
         it.updateArchivesBaseNameWithPrefix(project, prefix)
       }
 
-    internal fun prefixedTaskName(name: String, prefix: String?): String = if (prefix != null) {
-      "${prefix}${name.replaceFirstChar { it.titlecase(Locale.US) }}"
-    } else {
-      name
-    }
+    internal fun prefixedTaskName(name: String, prefix: String?): String =
+      if (prefix != null) {
+        "${prefix}${name.replaceFirstChar { it.titlecase(Locale.US) }}"
+      } else {
+        name
+      }
 
     internal fun Jar.updateArchivesBaseNameWithPrefix(project: Project, prefix: String?) {
       if (prefix != null) {

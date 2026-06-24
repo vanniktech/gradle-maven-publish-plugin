@@ -20,16 +20,17 @@ class SonatypeCentralPortalTest {
     mockWebServer = MockWebServer()
     mockWebServer.start()
 
-    portal = SonatypeCentralPortal(
-      baseUrl = mockWebServer.url("/").toString(),
-      usertoken = "dGVzdDp0b2tlbg==", // base64 "test:token"
-      userAgentName = "test-agent",
-      userAgentVersion = "1.0.0",
-      okhttpTimeoutSeconds = 5,
-      closeTimeoutSeconds = 30,
-      pollIntervalMs = 0L,
-      logger = logger,
-    )
+    portal =
+      SonatypeCentralPortal(
+        baseUrl = mockWebServer.url("/").toString(),
+        usertoken = "dGVzdDp0b2tlbg==", // base64 "test:token"
+        userAgentName = "test-agent",
+        userAgentVersion = "1.0.0",
+        okhttpTimeoutSeconds = 5,
+        closeTimeoutSeconds = 30,
+        pollIntervalMs = 0L,
+        logger = logger,
+      )
   }
 
   @AfterEach
@@ -51,8 +52,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PENDING",
             "purls": []
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     // Second response: VALIDATING
@@ -67,8 +69,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "VALIDATING",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     // Third response: VALIDATED
@@ -83,8 +86,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "VALIDATED",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     // Fourth response: PUBLISHED
@@ -99,8 +103,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PUBLISHED",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", true)
@@ -122,8 +127,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "VALIDATED",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     // Second response: PUBLISHED
@@ -138,8 +144,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PUBLISHED",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", true)
@@ -161,8 +168,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PUBLISHING",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     // Second response: PUBLISHED
@@ -177,8 +185,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PUBLISHED",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", true)
@@ -199,8 +208,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PUBLISHED",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", true)
@@ -222,8 +232,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "VALIDATING",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
     // Second response: VALIDATED
     mockWebServer.enqueue(
@@ -237,8 +248,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "VALIDATED",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", false)
@@ -260,8 +272,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "VALIDATED",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", false)
@@ -283,8 +296,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PUBLISHING",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", false)
@@ -305,8 +319,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PUBLISHED",
             "purls": ["pkg:maven/com.example/test@1.0.0"]
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", false)
@@ -335,13 +350,15 @@ class SonatypeCentralPortalTest {
               ]
             }
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
-    val exception = assertThrows<IOException> {
-      portal.validateDeployment("test-id-123", true)
-    }
+    val exception =
+      assertThrows<IOException> {
+        portal.validateDeployment("test-id-123", true)
+      }
 
     assertThat(exception.message).contains("Deployment test-id-123 failed validation")
     assertThat(exception.message).contains("Publication pom.xml:")
@@ -363,13 +380,15 @@ class SonatypeCentralPortalTest {
             "deploymentState": "FAILED",
             "purls": []
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
-    val exception = assertThrows<IOException> {
-      portal.validateDeployment("test-id-123", true)
-    }
+    val exception =
+      assertThrows<IOException> {
+        portal.validateDeployment("test-id-123", true)
+      }
 
     assertThat(exception.message).contains("Deployment test-id-123 failed validation")
     assertThat(exception.message).contains("No error details available")
@@ -377,15 +396,12 @@ class SonatypeCentralPortalTest {
 
   @Test
   fun `validateDeployment fails when API returns error response`() {
-    mockWebServer.enqueue(
-      MockResponse()
-        .setResponseCode(401)
-        .setBody("Unauthorized"),
-    )
+    mockWebServer.enqueue(MockResponse().setResponseCode(401).setBody("Unauthorized"))
 
-    val exception = assertThrows<IOException> {
-      portal.validateDeployment("test-id-123", true)
-    }
+    val exception =
+      assertThrows<IOException> {
+        portal.validateDeployment("test-id-123", true)
+      }
 
     assertThat(exception.message).contains("Failed to check deployment status")
     assertThat(exception.message).contains("401")
@@ -394,16 +410,17 @@ class SonatypeCentralPortalTest {
   @Test
   fun `validateDeployment times out when validation takes too long`() {
     // Create a portal with very short timeout
-    val shortTimeoutPortal = SonatypeCentralPortal(
-      baseUrl = mockWebServer.url("/").toString(),
-      usertoken = "dGVzdDp0b2tlbg==",
-      userAgentName = "test-agent",
-      userAgentVersion = "1.0.0",
-      okhttpTimeoutSeconds = 5,
-      closeTimeoutSeconds = 1, // 1 second timeout
-      pollIntervalMs = 100L, // Small interval to allow timeout to trigger
-      logger = logger,
-    )
+    val shortTimeoutPortal =
+      SonatypeCentralPortal(
+        baseUrl = mockWebServer.url("/").toString(),
+        usertoken = "dGVzdDp0b2tlbg==",
+        userAgentName = "test-agent",
+        userAgentVersion = "1.0.0",
+        okhttpTimeoutSeconds = 5,
+        closeTimeoutSeconds = 1, // 1 second timeout
+        pollIntervalMs = 100L, // Small interval to allow timeout to trigger
+        logger = logger,
+      )
 
     // Always return PENDING
     repeat(20) {
@@ -418,14 +435,16 @@ class SonatypeCentralPortalTest {
               "deploymentState": "PENDING",
               "purls": []
             }
-            """.trimIndent(),
-          ),
+            """
+              .trimIndent()
+          )
       )
     }
 
-    val exception = assertThrows<IOException> {
-      shortTimeoutPortal.validateDeployment("test-id-123", true)
-    }
+    val exception =
+      assertThrows<IOException> {
+        shortTimeoutPortal.validateDeployment("test-id-123", true)
+      }
 
     assertThat(exception.message).contains("Deployment validation timed out")
     assertThat(exception.message).contains("Last known state: PENDING")
@@ -445,8 +464,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PENDING",
             "purls": []
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     mockWebServer.enqueue(
@@ -460,8 +480,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PENDING",
             "purls": []
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     mockWebServer.enqueue(
@@ -475,8 +496,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "VALIDATED",
             "purls": []
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     mockWebServer.enqueue(
@@ -490,8 +512,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PUBLISHED",
             "purls": []
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", true)
@@ -511,8 +534,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "VALIDATED",
             "purls": []
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     mockWebServer.enqueue(
@@ -526,8 +550,9 @@ class SonatypeCentralPortalTest {
             "deploymentState": "PUBLISHED",
             "purls": []
           }
-          """.trimIndent(),
-        ),
+          """
+            .trimIndent()
+        )
     )
 
     portal.validateDeployment("test-id-123", true)

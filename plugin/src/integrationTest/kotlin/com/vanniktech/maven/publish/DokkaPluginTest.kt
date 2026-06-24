@@ -11,19 +11,22 @@ import com.vanniktech.maven.publish.util.kotlinJvmProjectSpec
 import com.vanniktech.maven.publish.util.stdlibCommon
 
 class DokkaPluginTest : BasePluginTest() {
-  override val testOptions get() = TestOptions(config, NO_SIGNING, gradleVersion)
+  override val testOptions
+    get() = TestOptions(config, NO_SIGNING, gradleVersion)
 
   @TestParameterInjectorTest
   fun dokka() {
     val kgpVersion = KgpVersion.VERSIONS.last()
     val original = kotlinJvmProjectSpec(kgpVersion)
-    val project = original.copy(
-      plugins = original.plugins + dokkaPlugin,
-      basePluginConfig = original.basePluginConfig.replace(
-        "JavadocJar.Empty()",
-        "JavadocJar.Dokka(\"dokkaGeneratePublicationHtml\")",
-      ),
-    )
+    val project =
+      original.copy(
+        plugins = original.plugins + dokkaPlugin,
+        basePluginConfig =
+          original.basePluginConfig.replace(
+            "JavadocJar.Empty()",
+            "JavadocJar.Dokka(\"dokkaGeneratePublicationHtml\")",
+          ),
+      )
     val result = project.run()
 
     assertThat(result).outcome().succeeded()
@@ -41,13 +44,15 @@ class DokkaPluginTest : BasePluginTest() {
   fun dokkaJavadoc() {
     val kgpVersion = KgpVersion.VERSIONS.last()
     val original = kotlinJvmProjectSpec(kgpVersion)
-    val project = original.copy(
-      plugins = original.plugins + dokkaJavadocPlugin,
-      basePluginConfig = original.basePluginConfig.replace(
-        "JavadocJar.Empty()",
-        "JavadocJar.Dokka(\"dokkaGeneratePublicationJavadoc\")",
-      ),
-    )
+    val project =
+      original.copy(
+        plugins = original.plugins + dokkaJavadocPlugin,
+        basePluginConfig =
+          original.basePluginConfig.replace(
+            "JavadocJar.Empty()",
+            "JavadocJar.Dokka(\"dokkaGeneratePublicationJavadoc\")",
+          ),
+      )
     val result = project.run()
 
     assertThat(result).outcome().succeeded()

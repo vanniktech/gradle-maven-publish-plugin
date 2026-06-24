@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 /**
- * Represents a platform that the plugin supports to publish. For example [JavaLibrary], [AndroidMultiVariantLibrary] or
- * [KotlinMultiplatform]. When a platform is configured through [MavenPublishBaseExtension.configure] the plugin
- * will automatically set up the artifacts that should get published, including javadoc and sources jars depending
- * on the option.
+ * Represents a platform that the plugin supports to publish. For example [JavaLibrary],
+ * [AndroidMultiVariantLibrary] or [KotlinMultiplatform]. When a platform is configured through
+ * [MavenPublishBaseExtension.configure] the plugin will automatically set up the artifacts that
+ * should get published, including javadoc and sources jars depending on the option.
  */
 public sealed class Platform {
   public abstract val javadocJar: JavadocJar
@@ -31,9 +31,9 @@ public sealed class Platform {
 }
 
 /**
- * To be used for `java` and `java-library` projects. Applying this creates a publication for the component called
- * `java`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
- * be added to the publication.
+ * To be used for `java` and `java-library` projects. Applying this creates a publication for the
+ * component called `java`. Depending on the passed parameters for [javadocJar] and [sourcesJar],
+ * `-javadoc` and `-sources` jars will be added to the publication.
  *
  * Equivalent Gradle set up:
  * ```
@@ -49,9 +49,11 @@ public sealed class Platform {
  *   withSourcesJar()
  *   withJavadocJar()
  * }
- ```
+ * ```
  */
-public data class JavaLibrary @JvmOverloads constructor(
+public data class JavaLibrary
+@JvmOverloads
+constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: SourcesJar = SourcesJar.Sources(),
 ) : Platform() {
@@ -80,9 +82,9 @@ public data class JavaLibrary @JvmOverloads constructor(
 }
 
 /**
- * To be used for `java-gradle-plugin` projects. Uses the default publication that gets created by that plugin.
- * Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will be added to
- * the publication.
+ * To be used for `java-gradle-plugin` projects. Uses the default publication that gets created by
+ * that plugin. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and
+ * `-sources` jars will be added to the publication.
  *
  * Equivalent Gradle set up:
  * ```
@@ -90,9 +92,11 @@ public data class JavaLibrary @JvmOverloads constructor(
  *   withSourcesJar()
  *   withJavadocJar()
  * }
-```
+ * ```
  */
-public data class GradlePlugin @JvmOverloads constructor(
+public data class GradlePlugin
+@JvmOverloads
+constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: SourcesJar = SourcesJar.Sources(),
 ) : Platform() {
@@ -118,7 +122,8 @@ public data class GradlePlugin @JvmOverloads constructor(
 }
 
 /**
- * To be used for `com.gradle.plugin-publish` projects. Uses the default publication that gets created by that plugin.
+ * To be used for `com.gradle.plugin-publish` projects. Uses the default publication that gets
+ * created by that plugin.
  */
 public class GradlePublishPlugin : Platform() {
   override val javadocJar: JavadocJar = JavadocJar.Javadoc()
@@ -138,9 +143,9 @@ public class GradlePublishPlugin : Platform() {
 }
 
 /**
- * To be used for `com.android.library` projects. Applying this creates a publication for the component of the given
- * `variant`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
- * be added to the publication.
+ * To be used for `com.android.library` projects. Applying this creates a publication for the
+ * component of the given `variant`. Depending on the passed parameters for [javadocJar] and
+ * [sourcesJar], `-javadoc` and `-sources` jars will be added to the publication.
  *
  * Equivalent Gradle set up:
  * ```
@@ -162,9 +167,11 @@ public class GradlePublishPlugin : Platform() {
  *     }
  *   }
  * }
- *```
+ * ```
  */
-public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
+public data class AndroidSingleVariantLibrary
+@JvmOverloads
+constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: SourcesJar = SourcesJar.Sources(),
   val variant: String = "release",
@@ -199,7 +206,8 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
     }
 
     project.afterEvaluate {
-      val component = project.components.findByName(variant) ?: throw MissingVariantException(variant)
+      val component =
+        project.components.findByName(variant) ?: throw MissingVariantException(variant)
       project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
         it.from(component)
 
@@ -215,12 +223,13 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
 }
 
 /**
- * To be used for `com.android.library` projects. Applying this creates a publication for the component of the given
- * variants. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
- * be added to the publication.
+ * To be used for `com.android.library` projects. Applying this creates a publication for the
+ * component of the given variants. Depending on the passed parameters for [javadocJar] and
+ * [sourcesJar], `-javadoc` and `-sources` jars will be added to the publication.
  *
- * If the [includedBuildTypeValues] and [includedFlavorDimensionsAndValues] parameters are not provided or
- * empty all variants will be published. Otherwise, only variants matching those filters will be included.
+ * If the [includedBuildTypeValues] and [includedFlavorDimensionsAndValues] parameters are not
+ * provided or empty all variants will be published. Otherwise, only variants matching those filters
+ * will be included.
  *
  * Equivalent Gradle set up (AGP 7.1.1):
  * ```
@@ -245,7 +254,9 @@ public data class AndroidSingleVariantLibrary @JvmOverloads constructor(
  * }
  * ```
  */
-public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
+public data class AndroidMultiVariantLibrary
+@JvmOverloads
+constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: SourcesJar = SourcesJar.Sources(),
   val includedBuildTypeValues: Set<String> = emptySet(),
@@ -294,7 +305,9 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
     }
 
     project.afterEvaluate {
-      val component = project.components.findByName(PUBLICATION_NAME) ?: throw MissingVariantException(PUBLICATION_NAME)
+      val component =
+        project.components.findByName(PUBLICATION_NAME)
+          ?: throw MissingVariantException(PUBLICATION_NAME)
       project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
         it.from(component)
 
@@ -310,8 +323,8 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
 }
 
 /**
- * To be used for `com.android.fused-library` projects. Applying this creates a publication for the library with
- * empty source and javadoc jars.
+ * To be used for `com.android.fused-library` projects. Applying this creates a publication for the
+ * library with empty source and javadoc jars.
  *
  * Equivalent Gradle set up:
  * ```
@@ -348,9 +361,9 @@ public class AndroidFusedLibrary : Platform() {
 }
 
 /**
- * To be used for `org.jetbrains.kotlin.multiplatform` projects. Uses the default publications that gets created by
- * that plugin, including the automatically created `-sources` jars. Depending on the passed parameters for [javadocJar],
- * `-javadoc` will be added to the publications.
+ * To be used for `org.jetbrains.kotlin.multiplatform` projects. Uses the default publications that
+ * gets created by that plugin, including the automatically created `-sources` jars. Depending on
+ * the passed parameters for [javadocJar], `-javadoc` will be added to the publications.
  *
  * Equivalent Gradle set up:
  * ```
@@ -359,7 +372,9 @@ public class AndroidFusedLibrary : Platform() {
  *
  * This does not include javadoc jars because there are no APIs for that available.
  */
-public data class KotlinMultiplatform @JvmOverloads constructor(
+public data class KotlinMultiplatform
+@JvmOverloads
+constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: SourcesJar = SourcesJar.Sources(),
   val androidVariantsToPublish: List<String> = listOf("release"),
@@ -404,9 +419,9 @@ public data class KotlinMultiplatform @JvmOverloads constructor(
 }
 
 /**
- * To be used for `org.jetbrains.kotlin.jvm` projects. Applying this creates a publication for the component called
- * `java`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will be
- * added to the publication.
+ * To be used for `org.jetbrains.kotlin.jvm` projects. Applying this creates a publication for the
+ * component called `java`. Depending on the passed parameters for [javadocJar] and [sourcesJar],
+ * `-javadoc` and `-sources` jars will be added to the publication.
  *
  * Equivalent Gradle set up:
  * ```
@@ -417,9 +432,12 @@ public data class KotlinMultiplatform @JvmOverloads constructor(
  *   }
  * }
  * ```
+ *
  * This does not include javadoc jars because there are no APIs for that available.
  */
-public data class KotlinJvm @JvmOverloads constructor(
+public data class KotlinJvm
+@JvmOverloads
+constructor(
   override val javadocJar: JavadocJar = JavadocJar.Empty(),
   override val sourcesJar: SourcesJar = SourcesJar.Sources(),
 ) : Platform() {
@@ -450,8 +468,8 @@ public data class KotlinJvm @JvmOverloads constructor(
 }
 
 /**
- * To be used for `java-platforms` projects. Applying this creates a publication for the component called
- * `javaPlatform`.
+ * To be used for `java-platforms` projects. Applying this creates a publication for the component
+ * called `javaPlatform`.
  *
  * Equivalent Gradle set up:
  * ```
@@ -484,8 +502,8 @@ public class JavaPlatform : Platform() {
 }
 
 /**
- * To be used for `version-catalog` projects. Applying this creates a publication for the component called
- * `versionCatalog`.
+ * To be used for `version-catalog` projects. Applying this creates a publication for the component
+ * called `versionCatalog`.
  *
  * Equivalent Gradle set up:
  * ```
@@ -517,31 +535,23 @@ public class VersionCatalog : Platform() {
   override fun hashCode(): Int = this::class.hashCode()
 }
 
-/**
- * Specifies how the sources jar should be created.
- */
+/** Specifies how the sources jar should be created. */
 public sealed interface SourcesJar {
-  /**
-   * Do not create a sources jar. This option is not compatible with Maven Central.
-   */
+  /** Do not create a sources jar. This option is not compatible with Maven Central. */
   public class None : SourcesJar {
     override fun equals(other: Any?): Boolean = other is None
 
     override fun hashCode(): Int = this::class.hashCode()
   }
 
-  /**
-   * Creates an empty sources jar to satisfy maven central requirements.
-   */
+  /** Creates an empty sources jar to satisfy maven central requirements. */
   public class Empty : SourcesJar {
     override fun equals(other: Any?): Boolean = other is Empty
 
     override fun hashCode(): Int = this::class.hashCode()
   }
 
-  /**
-   * Creates a regular sources jar containing the project's sources.
-   */
+  /** Creates a regular sources jar containing the project's sources. */
   public class Sources : SourcesJar {
     override fun equals(other: Any?): Boolean = other is Sources
 
@@ -549,31 +559,23 @@ public sealed interface SourcesJar {
   }
 }
 
-/**
- * Specifies how the javadoc jar should be created.
- */
+/** Specifies how the javadoc jar should be created. */
 public sealed interface JavadocJar {
-  /**
-   * Do not create a javadoc jar. This option is not compatible with Maven Central.
-   */
+  /** Do not create a javadoc jar. This option is not compatible with Maven Central. */
   public class None : JavadocJar {
     override fun equals(other: Any?): Boolean = other is None
 
     override fun hashCode(): Int = this::class.hashCode()
   }
 
-  /**
-   * Creates an empty javadoc jar to satisfy maven central requirements.
-   */
+  /** Creates an empty javadoc jar to satisfy maven central requirements. */
   public class Empty : JavadocJar {
     override fun equals(other: Any?): Boolean = other is Empty
 
     override fun hashCode(): Int = this::class.hashCode()
   }
 
-  /**
-   * Creates a regular javadoc jar using Gradle's default `javadoc` task.
-   */
+  /** Creates a regular javadoc jar using Gradle's default `javadoc` task. */
   public class Javadoc : JavadocJar {
     override fun equals(other: Any?): Boolean = other is Javadoc
 
@@ -581,14 +583,14 @@ public sealed interface JavadocJar {
   }
 
   /**
-   * Creates a javadoc jar using Dokka's output. The argument is the name of the dokka task that should be used
-   * for that purpose.
+   * Creates a javadoc jar using Dokka's output. The argument is the name of the dokka task that
+   * should be used for that purpose.
    */
-  public class Dokka private constructor(
-    internal val wrapper: DokkaTaskWrapper,
-  ) : JavadocJar {
+  public class Dokka private constructor(internal val wrapper: DokkaTaskWrapper) : JavadocJar {
     public constructor(taskName: String) : this({ it.tasks.named(taskName) })
+
     public constructor(taskName: Provider<String>) : this({ taskName.flatMap(it.tasks::named) })
+
     public constructor(task: TaskProvider<*>) : this({ task })
 
     override fun equals(other: Any?): Boolean = other is Dokka && wrapper == other.wrapper
@@ -608,29 +610,31 @@ private fun MavenPublication.withJavaSourcesJar(
   project: Project,
   multipleTasks: Boolean,
   configureArchives: Boolean = false,
-) = when (sourcesJar) {
-  is SourcesJar.None -> {
-    Unit
-  }
-
-  is SourcesJar.Sources -> {
-    project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
-  }
-
-  is SourcesJar.Empty -> {
-    val prefix = name.takeIf { multipleTasks }
-    val taskName = prefixedTaskName("emptySourcesJar", prefix)
-    val task = project.tasks.register(taskName, Jar::class.java) {
-      it.archiveClassifier.set("sources")
-      if (configureArchives) {
-        it.updateArchivesBaseNameWithPrefix(project, prefix)
-        it.archiveBaseName.set(project.name)
-        it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
-      }
+) =
+  when (sourcesJar) {
+    is SourcesJar.None -> {
+      Unit
     }
-    artifact(task)
+
+    is SourcesJar.Sources -> {
+      project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
+    }
+
+    is SourcesJar.Empty -> {
+      val prefix = name.takeIf { multipleTasks }
+      val taskName = prefixedTaskName("emptySourcesJar", prefix)
+      val task =
+        project.tasks.register(taskName, Jar::class.java) {
+          it.archiveClassifier.set("sources")
+          if (configureArchives) {
+            it.updateArchivesBaseNameWithPrefix(project, prefix)
+            it.archiveBaseName.set(project.name)
+            it.destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
+          }
+        }
+      artifact(task)
+    }
   }
-}
 
 private fun MavenPublication.withJavadocJar(
   javadocJar: JavadocJar,
@@ -667,11 +671,10 @@ private fun setupTestFixtures(project: Project, sourcesJar: SourcesJar) {
   }
 }
 
-private class MissingVariantException(
-  name: String,
-) : RuntimeException(
+private class MissingVariantException(name: String) :
+  RuntimeException(
     "Invalid MavenPublish Configuration. Unable to find variant to publish named $name." +
       " By default the publish plugin will publish the variant called \"release\". To modify this behavior" +
       " either call configure(AndroidSingleVariantLibrary(\"variant-to-publish\")) or " +
-      " configure(AndroidMultiVariantLibrary()) to publish all flavors.",
+      " configure(AndroidMultiVariantLibrary()) to publish all flavors."
   )

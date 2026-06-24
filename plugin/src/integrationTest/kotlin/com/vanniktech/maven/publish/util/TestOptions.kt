@@ -23,11 +23,10 @@ data class TestOptions(
   }
 }
 
-sealed class ComparableVersion(
-  private val name: String,
-) : Comparable<ComparableVersion> {
+sealed class ComparableVersion(private val name: String) : Comparable<ComparableVersion> {
   abstract val value: String
-  val semVer: SemVer get() = SemVer.parse(value)
+  val semVer: SemVer
+    get() = SemVer.parse(value)
 
   override fun compareTo(other: ComparableVersion): Int = semVer.compareTo(other.semVer)
 
@@ -46,23 +45,24 @@ class AgpVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("AGP") {
   companion object {
-    val VERSIONS = setOf(
-      // minimum supported
-      AgpVersion(
-        Versions.ANDROID_GRADLE_MIN,
-        firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_6_0,
-        firstUnsupportedJdkVersion = JavaVersion.VERSION_26,
-      ),
-      // latest versions of each type
-      AgpVersion(
-        Versions.ANDROID_GRADLE_STABLE,
-        minGradleVersion = GradleVersion.GRADLE_9_1_0,
-        firstUnsupportedJdkVersion = JavaVersion.VERSION_26,
-      ),
-      AgpVersion(Versions.ANDROID_GRADLE_RC, minGradleVersion = GradleVersion.GRADLE_9_1_0),
-      AgpVersion(Versions.ANDROID_GRADLE_BETA, minGradleVersion = GradleVersion.GRADLE_9_1_0),
-      AgpVersion(Versions.ANDROID_GRADLE_ALPHA, minGradleVersion = GradleVersion.GRADLE_9_1_0),
-    )
+    val VERSIONS =
+      setOf(
+        // minimum supported
+        AgpVersion(
+          Versions.ANDROID_GRADLE_MIN,
+          firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_6_0,
+          firstUnsupportedJdkVersion = JavaVersion.VERSION_26,
+        ),
+        // latest versions of each type
+        AgpVersion(
+          Versions.ANDROID_GRADLE_STABLE,
+          minGradleVersion = GradleVersion.GRADLE_9_1_0,
+          firstUnsupportedJdkVersion = JavaVersion.VERSION_26,
+        ),
+        AgpVersion(Versions.ANDROID_GRADLE_RC, minGradleVersion = GradleVersion.GRADLE_9_1_0),
+        AgpVersion(Versions.ANDROID_GRADLE_BETA, minGradleVersion = GradleVersion.GRADLE_9_1_0),
+        AgpVersion(Versions.ANDROID_GRADLE_ALPHA, minGradleVersion = GradleVersion.GRADLE_9_1_0),
+      )
 
     // versions used for checks instead of test matrix
     val AGP_9_0_0 = AgpVersion("9.0.0-alpha01")
@@ -77,15 +77,16 @@ class KgpVersion(
   val firstUnsupportedGradleVersion: GradleVersion? = null,
 ) : ComparableVersion("KGP") {
   companion object {
-    val VERSIONS = setOf(
-      // minimum supported
-      KgpVersion(Versions.KOTLIN_MIN, firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_7_0),
-      // latest versions of each type
-      KgpVersion(Versions.KOTLIN_STABLE),
-      KgpVersion(Versions.KOTLIN_RC),
-      KgpVersion(Versions.KOTLIN_BETA),
-      KgpVersion(Versions.KOTLIN_ALPHA),
-    )
+    val VERSIONS =
+      setOf(
+        // minimum supported
+        KgpVersion(Versions.KOTLIN_MIN, firstUnsupportedGradleVersion = GradleVersion.GRADLE_9_7_0),
+        // latest versions of each type
+        KgpVersion(Versions.KOTLIN_STABLE),
+        KgpVersion(Versions.KOTLIN_RC),
+        KgpVersion(Versions.KOTLIN_BETA),
+        KgpVersion(Versions.KOTLIN_ALPHA),
+      )
 
     // versions used for checks instead of test matrix
     val KOTLIN_2_2_10 = KgpVersion("2.2.10")
@@ -98,18 +99,19 @@ class GradleVersion(
   val firstUnsupportedJdkVersion: JavaVersion? = null,
 ) : ComparableVersion("Gradle") {
   companion object {
-    val VERSIONS = setOf(
-      // minimum supported
-      GradleVersion(
-        value = Versions.GRADLE_MIN,
-        firstUnsupportedJdkVersion = JavaVersion.VERSION_25,
-      ),
-      // latest versions of each type
-      GradleVersion(Versions.GRADLE_STABLE),
-      GradleVersion(Versions.GRADLE_RC),
-      GradleVersion(Versions.GRADLE_BETA),
-      GradleVersion(Versions.GRADLE_ALPHA),
-    )
+    val VERSIONS =
+      setOf(
+        // minimum supported
+        GradleVersion(
+          value = Versions.GRADLE_MIN,
+          firstUnsupportedJdkVersion = JavaVersion.VERSION_25,
+        ),
+        // latest versions of each type
+        GradleVersion(Versions.GRADLE_STABLE),
+        GradleVersion(Versions.GRADLE_RC),
+        GradleVersion(Versions.GRADLE_BETA),
+        GradleVersion(Versions.GRADLE_ALPHA),
+      )
 
     // versions used for checks instead of test matrix
     val GRADLE_9_1_0 = GradleVersion("9.1.0")
@@ -118,19 +120,18 @@ class GradleVersion(
   }
 }
 
-class PluginPublishVersion(
-  override val value: String,
-) : ComparableVersion("PluginPublish") {
+class PluginPublishVersion(override val value: String) : ComparableVersion("PluginPublish") {
   companion object {
-    val VERSIONS = setOf(
-      // minimum supported
-      PluginPublishVersion("1.0.0"),
-      // latest versions of each type
-      PluginPublishVersion(Versions.GRADLE_PUBLISH_STABLE),
-      PluginPublishVersion(Versions.GRADLE_PUBLISH_RC),
-      PluginPublishVersion(Versions.GRADLE_PUBLISH_BETA),
-      PluginPublishVersion(Versions.GRADLE_PUBLISH_ALPHA),
-    )
+    val VERSIONS =
+      setOf(
+        // minimum supported
+        PluginPublishVersion("1.0.0"),
+        // latest versions of each type
+        PluginPublishVersion(Versions.GRADLE_PUBLISH_STABLE),
+        PluginPublishVersion(Versions.GRADLE_PUBLISH_RC),
+        PluginPublishVersion(Versions.GRADLE_PUBLISH_BETA),
+        PluginPublishVersion(Versions.GRADLE_PUBLISH_ALPHA),
+      )
   }
 }
 

@@ -13,8 +13,7 @@ import org.gradle.api.tasks.options.Option
 
 @UntrackedTask(because = "Not worth tracking")
 internal abstract class DropMavenCentralDeploymentTask : DefaultTask() {
-  @get:Internal
-  abstract val buildService: Property<MavenCentralBuildService>
+  @get:Internal abstract val buildService: Property<MavenCentralBuildService>
 
   @get:Input
   @get:Option(option = "deployment-id", description = "Specify which deployment to drop.")
@@ -29,12 +28,13 @@ internal abstract class DropMavenCentralDeploymentTask : DefaultTask() {
     private const val NAME = "dropMavenCentralDeployment"
 
     fun TaskContainer.registerDropMavenCentralDeploymentTask(
-      buildService: Provider<MavenCentralBuildService>,
-    ): TaskProvider<DropMavenCentralDeploymentTask> = register(NAME, DropMavenCentralDeploymentTask::class.java) {
-      it.description = "Drops the deployment with the supplied id"
-      it.group = "publishing"
-      it.buildService.set(buildService)
-      it.usesService(buildService)
-    }
+      buildService: Provider<MavenCentralBuildService>
+    ): TaskProvider<DropMavenCentralDeploymentTask> =
+      register(NAME, DropMavenCentralDeploymentTask::class.java) {
+        it.description = "Drops the deployment with the supplied id"
+        it.group = "publishing"
+        it.buildService.set(buildService)
+        it.usesService(buildService)
+      }
   }
 }

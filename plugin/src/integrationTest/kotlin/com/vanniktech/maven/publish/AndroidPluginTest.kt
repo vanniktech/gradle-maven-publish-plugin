@@ -22,7 +22,7 @@ import org.junit.jupiter.api.condition.JRE
 class AndroidPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun androidFusedLibraryProject(
-    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
+    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
@@ -83,7 +83,7 @@ class AndroidPluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun androidLibraryProject(
-    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
+    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion
   ) {
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
@@ -115,15 +115,15 @@ class AndroidPluginTest : BasePluginTest() {
   )
   @TestParameterInjectorTest
   fun androidMultiVariantLibraryProject(
-    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion,
+    @TestParameter(valuesProvider = AgpVersionProvider::class) agpVersion: AgpVersion
   ) {
     // regular plugin does not have a way to enable multi variant config
     assume().that(config).isEqualTo(TestOptions.Config.BASE)
     agpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = androidLibraryProjectSpec(agpVersion).copy(
-      basePluginConfig = "configure(new AndroidMultiVariantLibrary(true, true))",
-    )
+    val project =
+      androidLibraryProjectSpec(agpVersion)
+        .copy(basePluginConfig = "configure(new AndroidMultiVariantLibrary(true, true))")
     val result = project.run()
 
     assertThat(result).outcome().succeeded()

@@ -51,9 +51,10 @@ public abstract class MavenPublishBasePlugin : Plugin<Project> {
   }
 
   private companion object {
-    val KOTLIN_PLUGIN_IDS = listOf(
-      "org.jetbrains.kotlin.jvm",
-      "org.jetbrains.kotlin.multiplatform",
-    )
+    val KOTLIN_PLUGIN_IDS =
+      listOf(
+        "org.jetbrains.kotlin.jvm",
+        "org.jetbrains.kotlin.multiplatform",
+      )
   }
 }

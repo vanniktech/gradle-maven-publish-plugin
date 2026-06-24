@@ -13,8 +13,8 @@ import org.gradle.api.plugins.internal.JvmPluginsHelper
 import org.gradle.internal.component.external.model.ProjectDerivedCapability
 
 /**
- * Gradle currently doesn't publish a sources jar for test fixtures and the APIs to add
- * one are internal.
+ * Gradle currently doesn't publish a sources jar for test fixtures and the APIs to add one are
+ * internal.
  *
  * https://github.com/gradle/gradle/issues/20539
  */
@@ -24,22 +24,26 @@ internal fun addTestFixturesSourcesJar(project: Project) {
   val testFixturesSourceSet = extension.sourceSets.maybeCreate(testFixtureSourceSetName)
   val projectInternal = project as ProjectInternal
   val projectDerivedCapability = ProjectDerivedCapability(projectInternal, "testFixtures")
-  val sourceElements = JvmPluginsHelper.createDocumentationVariantWithArtifact(
-    testFixturesSourceSet.sourcesElementsConfigurationName,
-    testFixtureSourceSetName,
-    DocsType.SOURCES,
-    setOf(projectDerivedCapability),
-    testFixturesSourceSet.sourcesJarTaskName,
-    testFixturesSourceSet.allSource,
-    projectInternal,
-  )
+  val sourceElements =
+    JvmPluginsHelper.createDocumentationVariantWithArtifact(
+      testFixturesSourceSet.sourcesElementsConfigurationName,
+      testFixtureSourceSetName,
+      DocsType.SOURCES,
+      setOf(projectDerivedCapability),
+      testFixturesSourceSet.sourcesJarTaskName,
+      testFixturesSourceSet.allSource,
+      projectInternal,
+    )
   val component = project.components.findByName("java") as AdhocComponentWithVariants
-  component.addVariantsFromConfiguration(sourceElements, JavaConfigurationVariantMapping("compile", true))
+  component.addVariantsFromConfiguration(
+    sourceElements,
+    JavaConfigurationVariantMapping("compile", true),
+  )
 }
 
 /**
- * Gradle will put the project group and version into capabilities instead of using
- * the publication, this can lead to invalid published metadata
+ * Gradle will put the project group and version into capabilities instead of using the publication,
+ * this can lead to invalid published metadata
  *
  * https://github.com/gradle/gradle/issues/23354
  */

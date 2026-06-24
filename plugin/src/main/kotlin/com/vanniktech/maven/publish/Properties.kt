@@ -17,12 +17,14 @@ internal fun Project.mavenCentralPublishing(): Boolean {
 
     "CENTRAL_PORTAL" -> true
 
-    else -> error(
-      """
-      OSSRH was shut down on June 30, 2025. Migrate to CENTRAL_PORTAL instead.
-      See more info at https://central.sonatype.org/news/20250326_ossrh_sunset.
-      """.trimIndent(),
-    )
+    else ->
+      error(
+        """
+        OSSRH was shut down on June 30, 2025. Migrate to CENTRAL_PORTAL instead.
+        See more info at https://central.sonatype.org/news/20250326_ossrh_sunset.
+        """
+          .trimIndent()
+      )
   }
 }
 
@@ -39,14 +41,18 @@ internal fun Project.validateDeployment(): DeploymentValidation {
   if (automatic != null) {
     return automatic.toDeploymentValidation()
   }
-  return providers.gradleProperty("SONATYPE_DEPLOYMENT_VALIDATION").getOrElse("VALIDATED").toDeploymentValidation()
+  return providers
+    .gradleProperty("SONATYPE_DEPLOYMENT_VALIDATION")
+    .getOrElse("VALIDATED")
+    .toDeploymentValidation()
 }
 
-private fun String.toDeploymentValidation() = when (this) {
-  "true" -> DeploymentValidation.VALIDATED
-  "false" -> DeploymentValidation.NONE
-  else -> DeploymentValidation.valueOf(this)
-}
+private fun String.toDeploymentValidation() =
+  when (this) {
+    "true" -> DeploymentValidation.VALIDATED
+    "false" -> DeploymentValidation.NONE
+    else -> DeploymentValidation.valueOf(this)
+  }
 
 internal fun Project.excludeSignatureChecksums(): Boolean {
   val exclude = providers.gradleProperty("mavenCentralExcludeSignatureChecksums").orNull
@@ -76,17 +82,20 @@ internal fun Project.signAllPublications(): Boolean {
   return providers.gradleProperty("RELEASE_SIGNING_ENABLED").getOrElse("false").toBoolean()
 }
 
-internal fun Project.connectTimeout(): Provider<Duration> = providers
-  .gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
-  .map { it.toLong().seconds }
-  .orElse(60.seconds)
+internal fun Project.connectTimeout(): Provider<Duration> =
+  providers
+    .gradleProperty("SONATYPE_CONNECT_TIMEOUT_SECONDS")
+    .map { it.toLong().seconds }
+    .orElse(60.seconds)
 
-internal fun Project.closeTimeout(): Provider<Duration> = providers
-  .gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
-  .map { it.toLong().seconds }
-  .orElse(15.minutes)
+internal fun Project.closeTimeout(): Provider<Duration> =
+  providers
+    .gradleProperty("SONATYPE_CLOSE_TIMEOUT_SECONDS")
+    .map { it.toLong().seconds }
+    .orElse(15.minutes)
 
-internal fun Project.pollIntervalSeconds(): Provider<Duration> = providers
-  .gradleProperty("SONATYPE_POLL_INTERVAL_SECONDS")
-  .map { it.toLong().seconds }
-  .orElse(5.seconds)
+internal fun Project.pollIntervalSeconds(): Provider<Duration> =
+  providers
+    .gradleProperty("SONATYPE_POLL_INTERVAL_SECONDS")
+    .map { it.toLong().seconds }
+    .orElse(5.seconds)

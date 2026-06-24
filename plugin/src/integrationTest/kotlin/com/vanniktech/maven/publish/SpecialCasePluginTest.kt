@@ -17,26 +17,27 @@ import com.vanniktech.maven.publish.util.stdlibCommon
 import com.vanniktech.maven.publish.util.stdlibJs
 
 class SpecialCasePluginTest : BasePluginTest() {
-  override val testOptions get() = TestOptions(config, NO_SIGNING, gradleVersion)
+  override val testOptions
+    get() = TestOptions(config, NO_SIGNING, gradleVersion)
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId(
-    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion
   ) {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = kotlinMultiplatformProjectSpec(kgpVersion).copy(
-      defaultProjectName = "foo",
-      artifactId = "foo-bar",
-    )
+    val project =
+      kotlinMultiplatformProjectSpec(kgpVersion)
+        .copy(
+          defaultProjectName = "foo",
+          artifactId = "foo-bar",
+        )
     val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(
-      kgpVersion.stdlibCommon().copy(scope = "runtime"),
-    )
+    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon().copy(scope = "runtime"))
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
@@ -66,7 +67,9 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(nodejsResult).outcome().succeeded()
     assertThat(nodejsResult).artifact("klib").exists()
     assertThat(nodejsResult).pom().exists()
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
+    assertThat(nodejsResult)
+      .pom()
+      .matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).sourcesJar().exists()
     assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
@@ -75,22 +78,22 @@ class SpecialCasePluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun artifactIdThatContainsProjectNameProducesCorrectArtifactId2(
-    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion
   ) {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
-    val project = kotlinMultiplatformProjectSpec(kgpVersion).copy(
-      defaultProjectName = "foo",
-      artifactId = "bar-foo",
-    )
+    val project =
+      kotlinMultiplatformProjectSpec(kgpVersion)
+        .copy(
+          defaultProjectName = "foo",
+          artifactId = "bar-foo",
+        )
     val result = project.run()
 
     assertThat(result).outcome().succeeded()
     assertThat(result).artifact("jar").exists()
     assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(
-      kgpVersion.stdlibCommon().copy(scope = "runtime"),
-    )
+    assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon().copy(scope = "runtime"))
     assertThat(result).module().exists()
     assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
@@ -120,7 +123,9 @@ class SpecialCasePluginTest : BasePluginTest() {
     assertThat(nodejsResult).outcome().succeeded()
     assertThat(nodejsResult).artifact("klib").exists()
     assertThat(nodejsResult).pom().exists()
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
+    assertThat(nodejsResult)
+      .pom()
+      .matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
     assertThat(nodejsResult).module().exists()
     assertThat(nodejsResult).sourcesJar().exists()
     assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
@@ -129,9 +134,7 @@ class SpecialCasePluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun minimalPomProject() {
-    val project = javaProjectSpec().copy(
-      properties = emptyMap(),
-    )
+    val project = javaProjectSpec().copy(properties = emptyMap())
     val result = project.run()
 
     assertThat(result).outcome().succeeded()
@@ -146,24 +149,28 @@ class SpecialCasePluginTest : BasePluginTest() {
 
   @TestParameterInjectorTest
   fun groupAndVersionFromProjectProject() {
-    val project = javaProjectSpec().copy(
-      group = "",
-      artifactId = "",
-      version = "",
-      buildFileExtra =
-        """
-        group = "com.example.test2"
-        version = "3.2.1"
-        """.trimIndent(),
-    )
+    val project =
+      javaProjectSpec()
+        .copy(
+          group = "",
+          artifactId = "",
+          version = "",
+          buildFileExtra =
+            """
+            group = "com.example.test2"
+            version = "3.2.1"
+            """
+              .trimIndent(),
+        )
     val result = project.run()
 
-    val resultSpec = project.copy(
-      group = "com.example.test2",
-      // the project name is used as default value for the artifact id
-      artifactId = "module",
-      version = "3.2.1",
-    )
+    val resultSpec =
+      project.copy(
+        group = "com.example.test2",
+        // the project name is used as default value for the artifact id
+        artifactId = "module",
+        version = "3.2.1",
+      )
     val actualResult = result.copy(projectSpec = resultSpec)
     assertThat(actualResult).outcome().succeeded()
     assertThat(actualResult).artifact("jar").exists()

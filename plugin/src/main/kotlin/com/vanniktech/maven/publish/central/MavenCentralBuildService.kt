@@ -27,9 +27,7 @@ import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 
 internal abstract class MavenCentralBuildService :
-  BuildService<MavenCentralBuildService.Params>,
-  AutoCloseable,
-  OperationCompletionListener {
+  BuildService<MavenCentralBuildService.Params>, AutoCloseable, OperationCompletionListener {
   internal interface Params : BuildServiceParameters {
     val repositoryUsername: Property<String>
     val repositoryPassword: Property<String>
@@ -44,11 +42,13 @@ internal abstract class MavenCentralBuildService :
   private val centralPortal by lazy {
     SonatypeCentralPortal(
       baseUrl = "https://central.sonatype.com",
-      usertoken = Base64
-        .getEncoder()
-        .encode(
-          "${parameters.repositoryUsername.get()}:${parameters.repositoryPassword.get()}".toByteArray(),
-        ).toString(Charsets.UTF_8),
+      usertoken =
+        Base64.getEncoder()
+          .encode(
+            "${parameters.repositoryUsername.get()}:${parameters.repositoryPassword.get()}"
+              .toByteArray()
+          )
+          .toString(Charsets.UTF_8),
       userAgentName = BuildConfig.PLUGIN_NAME,
       userAgentVersion = BuildConfig.VERSION_NAME,
       okhttpTimeoutSeconds = parameters.okhttpTimeoutSeconds.get(),
@@ -66,9 +66,7 @@ internal abstract class MavenCentralBuildService :
 
   private var buildIsSuccess: Boolean = true
 
-  /**
-   * Is only allowed to be called from task actions.
-   */
+  /** Is only allowed to be called from task actions. */
   fun registerProject(
     group: String,
     artifactId: String,
@@ -82,16 +80,20 @@ internal abstract class MavenCentralBuildService :
     }
 
     val coordinates = MavenCentralCoordinates(group, artifactId, version)
-    val project = MavenCentralProject(coordinates, localRepository, excludeSignatureChecksums, allowedChecksumExtensions)
+    val project =
+      MavenCentralProject(
+        coordinates,
+        localRepository,
+        excludeSignatureChecksums,
+        allowedChecksumExtensions,
+      )
     projectsToPublish.add(project)
 
     endOfBuildActions += EndOfBuildAction.Upload
     endOfBuildActions += EndOfBuildAction.Drop(runAfterFailure = true)
   }
 
-  /**
-   * Is only allowed to be called from task actions.
-   */
+  /** Is only allowed to be called from task actions. */
   fun enableAutomaticPublishing(validateDeployment: DeploymentValidation) {
     endOfBuildActions += EndOfBuildAction.Publish
     when (validateDeployment) {
@@ -108,8 +110,8 @@ internal abstract class MavenCentralBuildService :
   }
 
   /**
-   * Is only allowed to be called from task actions. Tasks calling this must run after tasks
-   * that call [registerProject].
+   * Is only allowed to be called from task actions. Tasks calling this must run after tasks that
+   * call [registerProject].
    */
   fun dropDeployment(deploymentId: String) {
     this.deploymentId = deploymentId
@@ -130,35 +132,37 @@ internal abstract class MavenCentralBuildService :
       // surround with try catch since failing again on cleanup actions causes confusion
       try {
         runEndOfBuildActions(endOfBuildActions.filter { it.runAfterFailure })
-      } catch (_: IOException) {
-      }
+      } catch (_: IOException) {}
     }
   }
 
   private fun runEndOfBuildActions(actions: List<EndOfBuildAction>) {
     if (actions.contains(EndOfBuildAction.Upload)) {
       val coordinates = projectsToPublish.map { it.coordinates }.toSet()
-      val deploymentName = if (coordinates.size == 1) {
-        val coordinate = coordinates.single()
-        "${coordinate.group}-${coordinate.artifactId}-${coordinate.version}"
-      } else if (coordinates.distinctBy { it.group + it.version }.size == 1) {
-        val coordinate = coordinates.first()
-        "${coordinate.group}-${coordinate.version}"
-      } else {
-        val coordinate = coordinates.first()
-        "${coordinate.group}-${System.currentTimeMillis()}"
-      }
+      val deploymentName =
+        if (coordinates.size == 1) {
+          val coordinate = coordinates.single()
+          "${coordinate.group}-${coordinate.artifactId}-${coordinate.version}"
+        } else if (coordinates.distinctBy { it.group + it.version }.size == 1) {
+          val coordinate = coordinates.first()
+          "${coordinate.group}-${coordinate.version}"
+        } else {
+          val coordinate = coordinates.first()
+          "${coordinate.group}-${System.currentTimeMillis()}"
+        }
 
-      val publishingType = if (actions.contains(EndOfBuildAction.Publish)) {
-        AUTOMATIC
-      } else {
-        USER_MANAGED
-      }
+      val publishingType =
+        if (actions.contains(EndOfBuildAction.Publish)) {
+          AUTOMATIC
+        } else {
+          USER_MANAGED
+        }
 
-      val zipFile = parameters.rootBuildDirectory
-        .file("publish/$deploymentName-${System.currentTimeMillis()}.zip")
-        .get()
-        .asFile
+      val zipFile =
+        parameters.rootBuildDirectory
+          .file("publish/$deploymentName-${System.currentTimeMillis()}.zip")
+          .get()
+          .asFile
       zipFile.parentFile.mkdirs()
       check(zipFile.createNewFile()) { "$zipFile already exists" }
       val out = ZipOutputStream(zipFile.outputStream())
@@ -166,7 +170,13 @@ internal abstract class MavenCentralBuildService :
         project.localRepository
           .walkTopDown()
           .filter { it.isFile }
-          .filter { shouldIncludeInDeployment(it.name, project.excludeSignatureChecksums, project.allowedChecksumExtensions) }
+          .filter {
+            shouldIncludeInDeployment(
+              it.name,
+              project.excludeSignatureChecksums,
+              project.allowedChecksumExtensions,
+            )
+          }
           .forEach {
             val entry = ZipEntry(it.toRelativeString(project.localRepository))
             out.putNextEntry(entry)
@@ -178,7 +188,9 @@ internal abstract class MavenCentralBuildService :
 
       val deploymentId = centralPortal.upload(deploymentName, publishingType, zipFile)
       this.deploymentId = deploymentId
-      logger.lifecycle("Uploaded bundle to Central Portal as $publishingType, deployment id: $deploymentId")
+      logger.lifecycle(
+        "Uploaded bundle to Central Portal as $publishingType, deployment id: $deploymentId"
+      )
 
       val validate = actions.find { it is EndOfBuildAction.Validate } as EndOfBuildAction.Validate?
       if (validate != null) {
@@ -206,15 +218,18 @@ internal abstract class MavenCentralBuildService :
       rootBuildDirectory: Directory,
       buildEventsListenerRegistry: BuildEventsListenerRegistry,
     ): Provider<MavenCentralBuildService> {
-      val service = gradle.sharedServices.registerIfAbsent(NAME, MavenCentralBuildService::class.java) {
-        it.maxParallelUsages.set(1)
-        it.parameters.repositoryUsername.set(repositoryUsername)
-        it.parameters.repositoryPassword.set(repositoryPassword)
-        it.parameters.okhttpTimeoutSeconds.set(project.connectTimeout().get().inWholeSeconds)
-        it.parameters.closeTimeoutSeconds.set(project.closeTimeout().get().inWholeSeconds)
-        it.parameters.pollIntervalMillis.set(project.pollIntervalSeconds().get().inWholeMilliseconds)
-        it.parameters.rootBuildDirectory.set(rootBuildDirectory)
-      }
+      val service =
+        gradle.sharedServices.registerIfAbsent(NAME, MavenCentralBuildService::class.java) {
+          it.maxParallelUsages.set(1)
+          it.parameters.repositoryUsername.set(repositoryUsername)
+          it.parameters.repositoryPassword.set(repositoryPassword)
+          it.parameters.okhttpTimeoutSeconds.set(project.connectTimeout().get().inWholeSeconds)
+          it.parameters.closeTimeoutSeconds.set(project.closeTimeout().get().inWholeSeconds)
+          it.parameters.pollIntervalMillis.set(
+            project.pollIntervalSeconds().get().inWholeMilliseconds
+          )
+          it.parameters.rootBuildDirectory.set(rootBuildDirectory)
+        }
       buildEventsListenerRegistry.onTaskCompletion(service)
       return service
     }

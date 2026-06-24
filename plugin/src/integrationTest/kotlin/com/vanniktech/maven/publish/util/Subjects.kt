@@ -25,64 +25,59 @@ import org.apache.maven.model.Model
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer
 
-class ProjectResultSubject private constructor(
+class ProjectResultSubject
+private constructor(
   failureMetadata: FailureMetadata,
   private val result: ProjectResult,
 ) : Subject(failureMetadata, result) {
   companion object {
-    private val factory = Factory<ProjectResultSubject, ProjectResult> { metadata, actual ->
-      ProjectResultSubject(metadata, requireNotNull(actual))
-    }
+    private val factory =
+      Factory<ProjectResultSubject, ProjectResult> { metadata, actual ->
+        ProjectResultSubject(metadata, requireNotNull(actual))
+      }
 
     fun projectResult() = factory
 
-    fun assertThat(actual: ProjectResult): ProjectResultSubject = assertAbout(projectResult()).that(actual)
+    fun assertThat(actual: ProjectResult): ProjectResultSubject =
+      assertAbout(projectResult()).that(actual)
   }
 
-  fun outcome(): BuildTaskSubject = check("outcome")
-    .about(buildResults())
-    .that(result.result)
-    .task(result.task)
+  fun outcome(): BuildTaskSubject =
+    check("outcome").about(buildResults()).that(result.result).task(result.task)
 
-  fun artifact(extension: String): ArtifactSubject = check("artifact")
-    .about(artifact())
-    .that(artifactPath("", extension) to result)
+  fun artifact(extension: String): ArtifactSubject =
+    check("artifact").about(artifact()).that(artifactPath("", extension) to result)
 
-  fun artifact(qualifier: String, extension: String): ArtifactSubject = check("artifact")
-    .about(artifact())
-    .that(artifactPath("-$qualifier", extension) to result)
+  fun artifact(qualifier: String, extension: String): ArtifactSubject =
+    check("artifact").about(artifact()).that(artifactPath("-$qualifier", extension) to result)
 
-  fun sourcesJar(): SourcesJarSubject = check("sourcesJar")
-    .about(sourcesJarSubject())
-    .that(artifactPath("-sources", "jar") to result)
+  fun sourcesJar(): SourcesJarSubject =
+    check("sourcesJar").about(sourcesJarSubject()).that(artifactPath("-sources", "jar") to result)
 
-  fun sourcesJar(qualifier: String): SourcesJarSubject = check("sourcesJar")
-    .about(sourcesJarSubject())
-    .that(artifactPath("-$qualifier-sources", "jar") to result)
+  fun sourcesJar(qualifier: String): SourcesJarSubject =
+    check("sourcesJar")
+      .about(sourcesJarSubject())
+      .that(artifactPath("-$qualifier-sources", "jar") to result)
 
-  fun javadocJar(): ArtifactSubject = check("javadocJar")
-    .about(artifact())
-    .that(artifactPath("-javadoc", "jar") to result)
+  fun javadocJar(): ArtifactSubject =
+    check("javadocJar").about(artifact()).that(artifactPath("-javadoc", "jar") to result)
 
-  fun javadocJar(qualifier: String): ArtifactSubject = check("javadocJar")
-    .about(artifact())
-    .that(artifactPath("-$qualifier-javadoc", "jar") to result)
+  fun javadocJar(qualifier: String): ArtifactSubject =
+    check("javadocJar").about(artifact()).that(artifactPath("-$qualifier-javadoc", "jar") to result)
 
-  fun pom(): PomSubject = check("pom")
-    .about(pomSubject())
-    .that(artifactPath("", "pom") to result)
+  fun pom(): PomSubject = check("pom").about(pomSubject()).that(artifactPath("", "pom") to result)
 
-  fun module(): ArtifactSubject = check("module")
-    .about(artifact())
-    .that(artifactPath("", "module") to result)
+  fun module(): ArtifactSubject =
+    check("module").about(artifact()).that(artifactPath("", "module") to result)
 
-  private fun artifactPath(suffix: String, extension: String): Path = with(result.projectSpec) {
-    return result.repo
-      .resolve(group.replace(".", "/"))
-      .resolve(artifactId)
-      .resolve(version)
-      .resolve("$artifactId-$version$suffix.$extension")
-  }
+  private fun artifactPath(suffix: String, extension: String): Path =
+    with(result.projectSpec) {
+      return result.repo
+        .resolve(group.replace(".", "/"))
+        .resolve(artifactId)
+        .resolve(version)
+        .resolve("$artifactId-$version$suffix.$extension")
+    }
 }
 
 open class ArtifactSubject(
@@ -91,32 +86,25 @@ open class ArtifactSubject(
   private val result: ProjectResult,
 ) : Subject(failureMetadata, artifact) {
   companion object {
-    private val factory = Factory<ArtifactSubject, Pair<Path, ProjectResult>> { metadata, actual ->
-      requireNotNull(actual)
-      ArtifactSubject(metadata, actual.first, actual.second)
-    }
+    private val factory =
+      Factory<ArtifactSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+        requireNotNull(actual)
+        ArtifactSubject(metadata, actual.first, actual.second)
+      }
 
     fun artifact() = factory
   }
 
   fun exists() {
     if (!artifact.exists()) {
-      val files = result.repo
-        .toFile()
-        .walkTopDown()
-        .filter { it.isFile }
-        .toList()
+      val files = result.repo.toFile().walkTopDown().filter { it.isFile }.toList()
       failWithActual(fact("expected to exist", artifact), fact("but repo contained", files))
     }
   }
 
   fun doesNotExist() {
     if (artifact.exists()) {
-      val files = result.repo
-        .toFile()
-        .walkTopDown()
-        .filter { it.isFile }
-        .toList()
+      val files = result.repo.toFile().walkTopDown().filter { it.isFile }.toList()
       failWithActual(fact("expected not to exist", artifact), fact("but repo contained", files))
     }
   }
@@ -156,11 +144,14 @@ open class ArtifactSubject(
     fileContent: (T) -> String?,
   ) {
     val zip = ZipFile(artifact.toFile())
-    val zipFiles = zip
-      .entries()
-      .toList()
-      .filter { zipEntry -> !zipEntry.isDirectory && filesToIgnore.none { zipEntry.name.contains(it) } }
-      .toMutableList()
+    val zipFiles =
+      zip
+        .entries()
+        .toList()
+        .filter { zipEntry ->
+          !zipEntry.isDirectory && filesToIgnore.none { zipEntry.name.contains(it) }
+        }
+        .toMutableList()
 
     val missingFiles = mutableListOf<String>()
     val notMatchingFiles = mutableListOf<Fact>()
@@ -173,14 +164,11 @@ open class ArtifactSubject(
       } else {
         zipFiles.remove(entry)
 
-        val content = zip
-          .getInputStream(entry)
-          ?.reader()
-          ?.buffered()
-          ?.readText()
+        val content = zip.getInputStream(entry)?.reader()?.buffered()?.readText()
         val expectedContent = fileContent(sourceFile)
         if (expectedContent != null && expectedContent != content) {
-          notMatchingFiles += fact("expected ${fileDescriptor(sourceFile)} to equal", expectedContent)
+          notMatchingFiles +=
+            fact("expected ${fileDescriptor(sourceFile)} to equal", expectedContent)
           notMatchingFiles += fact("but was", content)
         }
       }
@@ -208,16 +196,18 @@ open class ArtifactSubject(
   }
 }
 
-class SourcesJarSubject private constructor(
+class SourcesJarSubject
+private constructor(
   failureMetadata: FailureMetadata,
   artifact: Path,
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
   companion object {
-    private val factory = Factory<SourcesJarSubject, Pair<Path, ProjectResult>> { metadata, actual ->
-      requireNotNull(actual)
-      SourcesJarSubject(metadata, actual.first, actual.second)
-    }
+    private val factory =
+      Factory<SourcesJarSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+        requireNotNull(actual)
+        SourcesJarSubject(metadata, actual.first, actual.second)
+      }
 
     fun sourcesJarSubject() = factory
   }
@@ -236,7 +226,8 @@ class SourcesJarSubject private constructor(
       filesToIgnore = listOf("META-INF", "BuildConfig.java"),
       failWhenAdditionalFilesFound = true,
       fileMatcher = { sourceFile, zipEntry ->
-        zipEntry.name == sourceFile.file || zipEntry.name == "${sourceFile.sourceSet}/${sourceFile.file}"
+        zipEntry.name == sourceFile.file ||
+          zipEntry.name == "${sourceFile.sourceSet}/${sourceFile.file}"
       },
       fileDescriptor = { "${it.sourceSet}/${it.file}" },
       fileContent = { it.resolveIn(result.project).readText() },
@@ -244,16 +235,18 @@ class SourcesJarSubject private constructor(
   }
 }
 
-class PomSubject private constructor(
+class PomSubject
+private constructor(
   failureMetadata: FailureMetadata,
   private val artifact: Path,
   private val result: ProjectResult,
 ) : ArtifactSubject(failureMetadata, artifact, result) {
   companion object {
-    private val factory = Factory<PomSubject, Pair<Path, ProjectResult>> { metadata, actual ->
-      requireNotNull(actual)
-      PomSubject(metadata, actual.first, actual.second)
-    }
+    private val factory =
+      Factory<PomSubject, Pair<Path, ProjectResult>> { metadata, actual ->
+        requireNotNull(actual)
+        PomSubject(metadata, actual.first, actual.second)
+      }
 
     fun pomSubject() = factory
   }
@@ -270,7 +263,9 @@ class PomSubject private constructor(
     packaging: String? = null,
     dependencies: List<PomDependency> = emptyList(),
     dependencyManagementDependencies: List<PomDependency> = emptyList(),
-    modelFactory: (String, String, String, String?, List<PomDependency>, List<PomDependency>) -> Model = ::createPom,
+    modelFactory:
+      (String, String, String, String?, List<PomDependency>, List<PomDependency>) -> Model =
+      ::createPom,
   ) {
     val pomWriter = MavenXpp3Writer()
 
@@ -279,14 +274,15 @@ class PomSubject private constructor(
     val actualWriter = StringWriter()
     pomWriter.write(actualWriter, actualModel)
 
-    val expectedModel = modelFactory(
-      result.projectSpec.group,
-      result.projectSpec.artifactId,
-      result.projectSpec.version,
-      packaging,
-      dependencies,
-      dependencyManagementDependencies,
-    )
+    val expectedModel =
+      modelFactory(
+        result.projectSpec.group,
+        result.projectSpec.artifactId,
+        result.projectSpec.version,
+        packaging,
+        dependencies,
+        dependencyManagementDependencies,
+      )
     expectedModel.sortDependencies()
     val expectedWriter = StringWriter()
     pomWriter.write(expectedWriter, expectedModel)
@@ -301,7 +297,8 @@ class PomSubject private constructor(
     }
   }
 
-  private val comparator = compareBy<Dependency> {
-    "${it.scope} ${it.groupId}:${it.artifactId}:${it.version}@${it.classifier}"
-  }
+  private val comparator =
+    compareBy<Dependency> {
+      "${it.scope} ${it.groupId}:${it.artifactId}:${it.version}@${it.classifier}"
+    }
 }

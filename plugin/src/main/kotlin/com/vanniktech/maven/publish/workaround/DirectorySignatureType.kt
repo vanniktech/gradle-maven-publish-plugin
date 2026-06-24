@@ -12,18 +12,14 @@ import org.gradle.plugins.signing.type.AbstractSignatureType
 import org.gradle.plugins.signing.type.SignatureType
 
 /**
- * Creates signature files in a separate given directory to avoid
- * Gradle complaining about task depedencies missing when running
- * KMP tests and signing in the same build.
+ * Creates signature files in a separate given directory to avoid Gradle complaining about task
+ * depedencies missing when running KMP tests and signing in the same build.
  *
- * https://youtrack.jetbrains.com/issue/KT-61313/
- * https://github.com/gradle/gradle/issues/26132
+ * https://youtrack.jetbrains.com/issue/KT-61313/ https://github.com/gradle/gradle/issues/26132
  */
 internal class DirectorySignatureType(
-  @Nested
-  val actual: SignatureType,
-  @Internal
-  val directory: Provider<Directory>,
+  @Nested val actual: SignatureType,
+  @Internal val directory: Provider<Directory>,
 ) : AbstractSignatureType() {
   override fun fileFor(toSign: File): File {
     val original = super.fileFor(toSign)

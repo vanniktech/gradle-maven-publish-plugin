@@ -64,11 +64,17 @@ class JavaPluginTest : BasePluginTest() {
   @TestParameterInjectorTest
   fun javaLibraryWithTestFixturesProject() {
     val default = javaLibraryProjectSpec()
-    val project = default.copy(
-      plugins = default.plugins + javaTestFixturesPlugin,
-      sourceFiles = default.sourceFiles +
-        SourceFile("testFixtures", "java", "com/vanniktech/maven/publish/test/TestFixtureClass.java"),
-    )
+    val project =
+      default.copy(
+        plugins = default.plugins + javaTestFixturesPlugin,
+        sourceFiles =
+          default.sourceFiles +
+            SourceFile(
+              "testFixtures",
+              "java",
+              "com/vanniktech/maven/publish/test/TestFixtureClass.java",
+            ),
+      )
     val result = project.run()
 
     assertThat(result).outcome().succeeded()
@@ -115,15 +121,18 @@ class JavaPluginTest : BasePluginTest() {
     val pluginMarkerResult = result.copy(projectSpec = pluginMarkerSpec)
     assertThat(pluginMarkerResult).pom().exists()
     assertThat(pluginMarkerResult).pom().isSigned()
-    assertThat(pluginMarkerResult).pom().matchesExpectedPom(
-      "pom",
-      PomDependency("com.example", "test-artifact", "1.0.0", null),
-    )
+    assertThat(pluginMarkerResult)
+      .pom()
+      .matchesExpectedPom(
+        "pom",
+        PomDependency("com.example", "test-artifact", "1.0.0", null),
+      )
   }
 
   @TestParameterInjectorTest
   fun javaGradlePluginWithPluginPublishProject(
-    @TestParameter(valuesProvider = PluginPublishVersionProvider::class) pluginPublishVersion: PluginPublishVersion,
+    @TestParameter(valuesProvider = PluginPublishVersionProvider::class)
+    pluginPublishVersion: PluginPublishVersion
   ) {
     val project = javaGradlePluginWithGradlePluginPublish(pluginPublishVersion)
     val result = project.run()
@@ -147,15 +156,17 @@ class JavaPluginTest : BasePluginTest() {
     val pluginMarkerResult = result.copy(projectSpec = pluginMarkerSpec)
     assertThat(pluginMarkerResult).pom().exists()
     assertThat(pluginMarkerResult).pom().isSigned()
-    assertThat(pluginMarkerResult).pom().matchesExpectedPom(
-      "pom",
-      PomDependency("com.example", "test-artifact", "1.0.0", null),
-    )
+    assertThat(pluginMarkerResult)
+      .pom()
+      .matchesExpectedPom(
+        "pom",
+        PomDependency("com.example", "test-artifact", "1.0.0", null),
+      )
   }
 
   @TestParameterInjectorTest
   fun javaGradlePluginKotlinProject(
-    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion,
+    @TestParameter(valuesProvider = KgpVersionProvider::class) kgpVersion: KgpVersion
   ) {
     kgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion)
 
@@ -181,22 +192,27 @@ class JavaPluginTest : BasePluginTest() {
     val pluginMarkerResult = result.copy(projectSpec = pluginMarkerSpec)
     assertThat(pluginMarkerResult).pom().exists()
     assertThat(pluginMarkerResult).pom().isSigned()
-    assertThat(pluginMarkerResult).pom().matchesExpectedPom(
-      "pom",
-      PomDependency("com.example", "test-artifact", "1.0.0", null),
-    )
+    assertThat(pluginMarkerResult)
+      .pom()
+      .matchesExpectedPom(
+        "pom",
+        PomDependency("com.example", "test-artifact", "1.0.0", null),
+      )
   }
 
   @TestParameterInjectorTest
   fun javaLibraryWithToolchainProject() {
-    val project = javaLibraryProjectSpec().copy(
-      buildFileExtra =
-        """
-        java {
-          toolchain.languageVersion = JavaLanguageVersion.of(11)
-        }
-        """.trimIndent(),
-    )
+    val project =
+      javaLibraryProjectSpec()
+        .copy(
+          buildFileExtra =
+            """
+            java {
+              toolchain.languageVersion = JavaLanguageVersion.of(11)
+            }
+            """
+              .trimIndent()
+        )
     val result = project.run()
 
     assertThat(result).outcome().succeeded()
@@ -222,13 +238,16 @@ class JavaPluginTest : BasePluginTest() {
     assertThat(result).outcome().succeeded()
     assertThat(result).pom().exists()
     assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom(
-      packaging = "pom",
-      dependencyManagementDependencies = listOf(
-        PomDependency("commons-httpclient", "commons-httpclient", "3.1", null),
-        PomDependency("org.postgresql", "postgresql", "42.2.5", null),
-      ),
-    )
+    assertThat(result)
+      .pom()
+      .matchesExpectedPom(
+        packaging = "pom",
+        dependencyManagementDependencies =
+          listOf(
+            PomDependency("commons-httpclient", "commons-httpclient", "3.1", null),
+            PomDependency("org.postgresql", "postgresql", "42.2.5", null),
+          ),
+      )
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
   }
