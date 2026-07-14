@@ -6,7 +6,7 @@ minKgp = "2.2.0"
 
 gradle = "9.6.1"
 
-kotlin = "2.4.0"
+kotlin = "2.4.10"
 
 android-gradle = "9.2.1"
 
