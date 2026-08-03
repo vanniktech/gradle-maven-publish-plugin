@@ -7,6 +7,7 @@ import com.vanniktech.maven.publish.util.KgpVersionProvider
 import com.vanniktech.maven.publish.util.PluginPublishVersion
 import com.vanniktech.maven.publish.util.PluginPublishVersionProvider
 import com.vanniktech.maven.publish.util.PomDependency
+import com.vanniktech.maven.publish.util.ProjectResult
 import com.vanniktech.maven.publish.util.ProjectResultSubject.Companion.assertThat
 import com.vanniktech.maven.publish.util.SourceFile
 import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
@@ -26,19 +27,7 @@ class JavaPluginTest : BasePluginTest() {
     val project = javaProjectSpec()
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom()
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
-    assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
+    assertSingleJarCommon(result)
   }
 
   @TestParameterInjectorTest
@@ -46,19 +35,7 @@ class JavaPluginTest : BasePluginTest() {
     val project = javaLibraryProjectSpec()
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom()
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
-    assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
+    assertSingleJarCommon(result)
   }
 
   @TestParameterInjectorTest
@@ -71,19 +48,9 @@ class JavaPluginTest : BasePluginTest() {
     )
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
+    assertThat(result).hasSingleArtifactCommon()
     assertThat(result).pom().matchesExpectedPom()
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
     assertThat(result).sourcesJar().containsSourceSetFiles("main")
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
     assertThat(result).artifact("test-fixtures", "jar").exists()
     assertThat(result).artifact("test-fixtures", "jar").isSigned()
     assertThat(result).sourcesJar("test-fixtures").exists()
@@ -96,19 +63,7 @@ class JavaPluginTest : BasePluginTest() {
     val project = javaGradlePluginProjectSpec()
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom()
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
-    assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
+    assertSingleJarCommon(result)
 
     val pluginId = "com.example.test-plugin"
     val pluginMarkerSpec = project.copy(group = pluginId, artifactId = "$pluginId.gradle.plugin")
@@ -128,19 +83,7 @@ class JavaPluginTest : BasePluginTest() {
     val project = javaGradlePluginWithGradlePluginPublish(pluginPublishVersion)
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom()
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
-    assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
+    assertSingleJarCommon(result)
 
     val pluginId = "com.example.test-plugin"
     val pluginMarkerSpec = project.copy(group = pluginId, artifactId = "$pluginId.gradle.plugin")
@@ -162,19 +105,9 @@ class JavaPluginTest : BasePluginTest() {
     val project = javaGradlePluginKotlinProjectSpec(kgpVersion)
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
+    assertThat(result).hasSingleArtifactCommon()
     assertThat(result).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
     assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
 
     val pluginId = "com.example.test-plugin"
     val pluginMarkerSpec = project.copy(group = pluginId, artifactId = "$pluginId.gradle.plugin")
@@ -199,19 +132,7 @@ class JavaPluginTest : BasePluginTest() {
     )
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
-    assertThat(result).pom().matchesExpectedPom()
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
-    assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
+    assertSingleJarCommon(result)
   }
 
   @TestParameterInjectorTest
@@ -246,5 +167,11 @@ class JavaPluginTest : BasePluginTest() {
     assertThat(result).pom().matchesExpectedPom("toml")
     assertThat(result).module().exists()
     assertThat(result).module().isSigned()
+  }
+
+  private fun assertSingleJarCommon(result: ProjectResult) {
+    assertThat(result).hasSingleArtifactCommon()
+    assertThat(result).pom().matchesExpectedPom()
+    assertThat(result).sourcesJar().containsAllSourceFiles()
   }
 }
