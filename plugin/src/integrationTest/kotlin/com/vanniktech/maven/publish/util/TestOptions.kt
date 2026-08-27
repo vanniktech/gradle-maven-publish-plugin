@@ -134,6 +134,23 @@ class PluginPublishVersion(
   }
 }
 
+class ShadowVersion(
+  override val value: String,
+  val minJdkVersion: JavaVersion = JavaVersion.VERSION_17,
+  val minGradleVersion: GradleVersion = GradleVersion.VERSIONS.min(),
+  val firstUnsupportedJdkVersion: JavaVersion? = null,
+  val firstUnsupportedGradleVersion: GradleVersion? = null,
+) : ComparableVersion("Shadow") {
+  companion object {
+    val VERSIONS = setOf(
+      // minimum supported
+      ShadowVersion(Versions.SHADOW_MIN),
+      // latest versions of each type
+      ShadowVersion(Versions.SHADOW_STABLE),
+    )
+  }
+}
+
 fun GradleVersion.assumeSupportedJdkVersion() {
   assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
   if (firstUnsupportedJdkVersion != null) {
@@ -153,6 +170,17 @@ fun KgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) 
 }
 
 fun AgpVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
+  assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
+  assume().that(gradleVersion).isAtLeast(minGradleVersion)
+  if (firstUnsupportedJdkVersion != null) {
+    assume().that(JavaVersion.current()).isLessThan(firstUnsupportedJdkVersion)
+  }
+  if (firstUnsupportedGradleVersion != null) {
+    assume().that(gradleVersion).isLessThan(firstUnsupportedGradleVersion)
+  }
+}
+
+fun ShadowVersion.assumeSupportedJdkAndGradleVersion(gradleVersion: GradleVersion) {
   assume().that(JavaVersion.current()).isAtLeast(minJdkVersion)
   assume().that(gradleVersion).isAtLeast(minGradleVersion)
   if (firstUnsupportedJdkVersion != null) {
