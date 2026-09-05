@@ -3,6 +3,9 @@ jdkRelease = "17"
 minGradle = "9.0.0"
 minAgp = "8.13.0"
 minKgp = "2.2.0"
+minShadow = "9.1.0"
+
+shadow = "9.6.1"
 
 gradle = "9.7.1"
 
@@ -27,6 +30,7 @@ slf4j = "2.0.19"
 [libraries]
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 android-pluginApi = { module = "com.android.tools.build:gradle-api", version.ref = "android-gradle" }
+shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 maven-publish-plugin = "com.vanniktech:gradle-maven-publish-plugin:0.37.0"
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }

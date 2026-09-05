@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.dsl.LibraryExtension
+import com.github.jengelman.gradle.plugins.shadow.ShadowJavaPlugin
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.javadocJarTask
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.prefixedTaskName
 import com.vanniktech.maven.publish.tasks.JavadocJar.Companion.updateArchivesBaseNameWithPrefix
@@ -72,6 +73,51 @@ public data class JavaLibrary @JvmOverloads constructor(
     project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
       it.from(project.components.getByName("java"))
       it.withJavaSourcesJar(sourcesJar, project, multipleTasks = false)
+      it.withJavadocJar(javadocJar, project, multipleTasks = false)
+    }
+
+    setupTestFixtures(project, sourcesJar)
+  }
+}
+
+/**
+ * To be used for `com.gradleup.shadow` projects. Applying this creates a publication for the component called
+ * `shadow`. Depending on the passed parameters for [javadocJar] and [sourcesJar], `-javadoc` and `-sources` jars will
+ * be added to the publication.
+ *
+ * Equivalent Gradle set up:
+ * ```
+ * publishing {
+ *   publications {
+ *     create<MavenPublication>("maven") {
+ *       from(components["shadow"])
+ *     }
+ *   }
+ * }
+ *
+ * java {
+ *   withSourcesJar()
+ *   withJavadocJar()
+ * }
+ * ```
+ */
+public data class Shadow @JvmOverloads constructor(
+  override val javadocJar: JavadocJar = JavadocJar.Empty(),
+  override val sourcesJar: SourcesJar = SourcesJar.Sources(),
+) : Platform() {
+  override fun configure(project: Project) {
+    check(project.plugins.hasPlugin("com.gradleup.shadow")) {
+      "Calling configure(Shadow(...)) requires the com.gradleup.shadow plugin to be applied"
+    }
+
+    project.gradlePublishing.publications.create(PUBLICATION_NAME, MavenPublication::class.java) {
+      it.from(project.components.getByName(ShadowJavaPlugin.COMPONENT_NAME))
+      if (sourcesJar is SourcesJar.Sources) {
+        project.extensions.getByType(JavaPluginExtension::class.java).withSourcesJar()
+        it.artifact(project.tasks.named("sourcesJar"))
+      } else {
+        it.withJavaSourcesJar(sourcesJar, project, multipleTasks = false)
+      }
       it.withJavadocJar(javadocJar, project, multipleTasks = false)
     }
 
