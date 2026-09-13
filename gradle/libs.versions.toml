@@ -55,6 +55,6 @@ semver = "net.swiftzer.semver:semver:2.1.0"
 androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0"
 
 [plugins]
-buildconfig = "com.github.gmazzo.buildconfig:6.0.10"
+buildconfig = "com.github.gmazzo.buildconfig:6.1.0"
 android-lint = { id = "com.android.lint", version.ref = "android-gradle" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
