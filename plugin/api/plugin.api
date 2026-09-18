@@ -238,6 +238,22 @@ public abstract class com/vanniktech/maven/publish/Platform {
 	public abstract fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
 }
 
+public final class com/vanniktech/maven/publish/Shadow : com/vanniktech/maven/publish/Platform {
+	public fun <init> ()V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;)V
+	public fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)V
+	public synthetic fun <init> (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/vanniktech/maven/publish/JavadocJar;
+	public final fun component2 ()Lcom/vanniktech/maven/publish/SourcesJar;
+	public final fun copy (Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;)Lcom/vanniktech/maven/publish/Shadow;
+	public static synthetic fun copy$default (Lcom/vanniktech/maven/publish/Shadow;Lcom/vanniktech/maven/publish/JavadocJar;Lcom/vanniktech/maven/publish/SourcesJar;ILjava/lang/Object;)Lcom/vanniktech/maven/publish/Shadow;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getJavadocJar ()Lcom/vanniktech/maven/publish/JavadocJar;
+	public fun getSourcesJar ()Lcom/vanniktech/maven/publish/SourcesJar;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class com/vanniktech/maven/publish/SourcesJar {
 }
 
