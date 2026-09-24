@@ -10,11 +10,8 @@ import com.vanniktech.maven.publish.util.TestOptions.Signing.GPG_KEY
 import com.vanniktech.maven.publish.util.TestOptions.Signing.NO_SIGNING
 import com.vanniktech.maven.publish.util.assumeSupportedJdkAndGradleVersion
 import com.vanniktech.maven.publish.util.createMinimalPom
-import com.vanniktech.maven.publish.util.domApiCompat
 import com.vanniktech.maven.publish.util.javaProjectSpec
 import com.vanniktech.maven.publish.util.kotlinMultiplatformProjectSpec
-import com.vanniktech.maven.publish.util.stdlibCommon
-import com.vanniktech.maven.publish.util.stdlibJs
 
 class SpecialCasePluginTest : BasePluginTest() {
   override val testOptions get() = TestOptions(config, NO_SIGNING, gradleVersion)
@@ -31,46 +28,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     )
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(
-      kgpVersion.stdlibCommon().copy(scope = "runtime"),
-    )
-    assertThat(result).module().exists()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-    assertThat(result).javadocJar().exists()
-
-    val jvmResult = result.withArtifactIdSuffix("jvm")
-    assertThat(jvmResult).outcome().succeeded()
-    assertThat(jvmResult).artifact("jar").exists()
-    assertThat(jvmResult).pom().exists()
-    assertThat(jvmResult).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
-    assertThat(jvmResult).module().exists()
-    assertThat(jvmResult).sourcesJar().exists()
-    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
-    assertThat(jvmResult).javadocJar().exists()
-
-    val linuxResult = result.withArtifactIdSuffix("linuxx64")
-    assertThat(linuxResult).outcome().succeeded()
-    assertThat(linuxResult).artifact("klib").exists()
-    assertThat(linuxResult).pom().exists()
-    assertThat(linuxResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibCommon())
-    assertThat(linuxResult).module().exists()
-    assertThat(linuxResult).sourcesJar().exists()
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
-    assertThat(linuxResult).javadocJar().exists()
-
-    val nodejsResult = result.withArtifactIdSuffix("nodejs")
-    assertThat(nodejsResult).outcome().succeeded()
-    assertThat(nodejsResult).artifact("klib").exists()
-    assertThat(nodejsResult).pom().exists()
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
-    assertThat(nodejsResult).module().exists()
-    assertThat(nodejsResult).sourcesJar().exists()
-    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
-    assertThat(nodejsResult).javadocJar().exists()
+    assertThat(result).hasKotlinArtifactsCommon(kgpVersion, containsAndroidTarget = false, enableSigning = false)
   }
 
   @TestParameterInjectorTest
@@ -85,46 +43,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     )
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().matchesExpectedPom(
-      kgpVersion.stdlibCommon().copy(scope = "runtime"),
-    )
-    assertThat(result).module().exists()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().containsSourceSetFiles("commonMain")
-    assertThat(result).javadocJar().exists()
-
-    val jvmResult = result.withArtifactIdSuffix("jvm")
-    assertThat(jvmResult).outcome().succeeded()
-    assertThat(jvmResult).artifact("jar").exists()
-    assertThat(jvmResult).pom().exists()
-    assertThat(jvmResult).pom().matchesExpectedPom(kgpVersion.stdlibCommon())
-    assertThat(jvmResult).module().exists()
-    assertThat(jvmResult).sourcesJar().exists()
-    assertThat(jvmResult).sourcesJar().containsSourceSetFiles("commonMain", "jvmMain")
-    assertThat(jvmResult).javadocJar().exists()
-
-    val linuxResult = result.withArtifactIdSuffix("linuxx64")
-    assertThat(linuxResult).outcome().succeeded()
-    assertThat(linuxResult).artifact("klib").exists()
-    assertThat(linuxResult).pom().exists()
-    assertThat(linuxResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibCommon())
-    assertThat(linuxResult).module().exists()
-    assertThat(linuxResult).sourcesJar().exists()
-    assertThat(linuxResult).sourcesJar().containsSourceSetFiles("commonMain", "linuxX64Main")
-    assertThat(linuxResult).javadocJar().exists()
-
-    val nodejsResult = result.withArtifactIdSuffix("nodejs")
-    assertThat(nodejsResult).outcome().succeeded()
-    assertThat(nodejsResult).artifact("klib").exists()
-    assertThat(nodejsResult).pom().exists()
-    assertThat(nodejsResult).pom().matchesExpectedPom("klib", kgpVersion.stdlibJs(), kgpVersion.domApiCompat())
-    assertThat(nodejsResult).module().exists()
-    assertThat(nodejsResult).sourcesJar().exists()
-    assertThat(nodejsResult).sourcesJar().containsSourceSetFiles("commonMain", "nodeJsMain")
-    assertThat(nodejsResult).javadocJar().exists()
+    assertThat(result).hasKotlinArtifactsCommon(kgpVersion, containsAndroidTarget = false, enableSigning = false)
   }
 
   @TestParameterInjectorTest
@@ -134,14 +53,9 @@ class SpecialCasePluginTest : BasePluginTest() {
     )
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).pom().exists()
+    assertThat(result).hasSingleArtifactCommon(signed = false)
     assertThat(result).pom().matchesExpectedPom(modelFactory = ::createMinimalPom)
-    assertThat(result).module().exists()
-    assertThat(result).sourcesJar().exists()
     assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
   }
 
   @TestParameterInjectorTest
@@ -165,14 +79,9 @@ class SpecialCasePluginTest : BasePluginTest() {
       version = "3.2.1",
     )
     val actualResult = result.copy(projectSpec = resultSpec)
-    assertThat(actualResult).outcome().succeeded()
-    assertThat(actualResult).artifact("jar").exists()
-    assertThat(actualResult).pom().exists()
+    assertThat(actualResult).hasSingleArtifactCommon(signed = false)
     assertThat(actualResult).pom().matchesExpectedPom()
-    assertThat(actualResult).module().exists()
-    assertThat(actualResult).sourcesJar().exists()
     assertThat(actualResult).sourcesJar().containsAllSourceFiles()
-    assertThat(actualResult).javadocJar().exists()
   }
 
   @TestParameterInjectorTest
@@ -180,17 +89,7 @@ class SpecialCasePluginTest : BasePluginTest() {
     val project = javaProjectSpec()
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isNotSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isNotSigned()
-    assertThat(result).module().exists()
-    assertThat(result).module().isNotSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isNotSigned()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isNotSigned()
+    assertThat(result).hasSingleArtifactCommon(signed = false)
   }
 
   @TestParameterInjectorTest
@@ -198,18 +97,8 @@ class SpecialCasePluginTest : BasePluginTest() {
     val project = javaProjectSpec()
     val result = project.run(testOptions.copy(signing = GPG_KEY))
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("jar").exists()
-    assertThat(result).artifact("jar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
+    assertThat(result).hasSingleArtifactCommon()
     assertThat(result).pom().matchesExpectedPom()
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
     assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
   }
 }
