@@ -2,11 +2,14 @@
 
 ## [UNRELEASED](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.37.0...HEAD) *(2026-xx-xx)*
 
+- Add support for publishing with the Shadow plugin (`com.gradleup.shadow`), requiring minimum version 9.1.0.
+
 #### Minimum supported versions
 - JDK 17
 - Gradle 9.0.0
 - Android Gradle Plugin 8.13.0
 - Kotlin Gradle Plugin 2.2.0
+- Shadow Plugin 9.1.0
 
 #### Compatibility tested up to
 - JDK 26
@@ -16,6 +19,7 @@
 - Android Gradle Plugin 9.3.0-rc01
 - Android Gradle Plugin 9.4.0-alpha01
 - Kotlin Gradle Plugin 2.4.0
+- Shadow Plugin 9.6.1
 
 
 ## [0.37.0](https://github.com/vanniktech/gradle-maven-publish-plugin/releases/tag/0.37.0) *(2026-06-21)*
