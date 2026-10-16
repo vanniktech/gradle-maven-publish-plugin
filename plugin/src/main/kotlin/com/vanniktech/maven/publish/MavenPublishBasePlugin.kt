@@ -2,6 +2,7 @@ package com.vanniktech.maven.publish
 
 import com.vanniktech.maven.publish.BuildConfig.ANDROID_GRADLE_MIN
 import com.vanniktech.maven.publish.BuildConfig.KOTLIN_MIN
+import com.vanniktech.maven.publish.BuildConfig.SHADOW_MIN
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin as GradleMavenPublishPlugin
@@ -46,6 +47,21 @@ public abstract class MavenPublishBasePlugin : Plugin<Project> {
             t,
           )
         }
+      }
+    }
+    plugins.withId("com.gradleup.shadow") {
+      try {
+        if (!isAtLeastShadow()) {
+          error("You need Shadow version $SHADOW_MIN or newer")
+        }
+      } catch (t: Throwable) {
+        throw IllegalStateException(
+          "Make sure the Shadow version $SHADOW_MIN or newer is applied." +
+            "Otherwise, detected Shadow plugin com.gradleup.shadow but was not able to access Shadow plugin classes. Please make sure " +
+            "that the Shadow plugin and the publish plugin are applied to the same project. In many cases this means " +
+            "you need to add both the root project with `apply false`.",
+          t,
+        )
       }
     }
   }

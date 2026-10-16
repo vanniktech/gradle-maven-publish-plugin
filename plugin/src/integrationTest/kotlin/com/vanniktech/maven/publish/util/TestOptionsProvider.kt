@@ -39,3 +39,10 @@ class PluginPublishVersionProvider : TestParameterValuesProvider() {
     else -> PluginPublishVersion.VERSIONS.toList()
   }
 }
+
+class ShadowVersionProvider : TestParameterValuesProvider() {
+  override fun provideValues(context: Context?): List<ShadowVersion> = when {
+    QUICK_TEST -> listOf(ShadowVersion.VERSIONS.max())
+    else -> ShadowVersion.VERSIONS.toList()
+  }
+}
