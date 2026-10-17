@@ -591,3 +591,25 @@ For projects using the `version-catalog` plugin.
       configure(VersionCatalog())
     }
     ```
+
+## Conflicts with `java { withJavadocJar() }`
+
+This plugin creates the javadoc jar itself. Declaring it through the `java` extension as well makes
+two tasks write the same file, and publishing fails:
+
+```text
+A problem was found with the configuration of task ':plainJavadocJar' (type 'JavadocJar').
+  Reason: Task ':generateMetadataFileForMavenPublication' uses this output of task
+  ':plainJavadocJar' without declaring an explicit or implicit dependency.
+```
+
+Remove `withJavadocJar()` from the `java` extension. `withSourcesJar()` does not cause this problem
+and can stay.
+
+!!! info
+
+    Removing `withJavadocJar()` also changes the published Gradle Module Metadata. The
+    `javadocElements` variant is added by the `java` extension, not by this plugin, so it
+    disappears together with the declaration. The javadoc jar itself is still published as a
+    classifier artifact and Maven consumers resolve it as before, but Gradle consumers asking
+    for the javadoc variant will no longer find it.
