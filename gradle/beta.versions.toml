@@ -3,7 +3,7 @@ gradle = "9.8.1"
 
 kotlin = "2.5.0-Beta1"
 
-android-gradle = "9.4.1"
+android-gradle = "9.5.0"
 
 gradle-plugin-publish = "2.2.1"
 
