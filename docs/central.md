@@ -257,6 +257,40 @@ home `gradle.properties` file or to use environment variables (when publishing f
 Note that the username/password here is *not* the same one you use to login; Sonatype publishing
 requires a username/password that was generated via user tokens. The user token needs to be obtained on the [Central Portal](https://central.sonatype.org/publish/generate-portal-token/).
 
+### Signing configuration: the two formats explained
+
+There are two independent choices to make when configuring signing, which is why the examples
+above can look inconsistent:
+
+1. **Where the key lives** — a **keyring file** (`signing.keyId`, `signing.password`,
+   `signing.secretKeyRingFile`) versus an **in-memory ASCII-armored key**
+   (`signingInMemoryKey`, `signingInMemoryKeyId`, `signingInMemoryKeyPassword`).
+   The `signing.*` properties are defined by Gradle's own Signing plugin, whereas the
+   `signingInMemory*` properties are defined by this plugin. That difference in ownership is
+   the reason the two sets are not named alike.
+2. **How the values are supplied** — either in `~/.gradle/gradle.properties`, or as environment
+   variables using the `ORG_GRADLE_PROJECT_` prefix (which Gradle turns into project properties).
+
+Any combination of the two choices works. For reference, the four combinations are:
+
+| Key location | `~/.gradle/gradle.properties` | Environment variable |
+|---|---|---|
+| Keyring file | `signing.keyId=12345678`<br>`signing.password=some_password`<br>`signing.secretKeyRingFile=/path/to/secring.gpg` | See the note below on dotted names — prefer injecting a `gradle.properties` file in CI for this variant. |
+| In-memory key | `signingInMemoryKey=exported_ascii_armored_key`<br>`signingInMemoryKeyId=12345678`<br>`signingInMemoryKeyPassword=some_password` | `ORG_GRADLE_PROJECT_signingInMemoryKey=...`<br>`ORG_GRADLE_PROJECT_signingInMemoryKeyId=12345678`<br>`ORG_GRADLE_PROJECT_signingInMemoryKeyPassword=some_password` |
+
+The in-memory `gradle.properties` form above is the one used by this project's integration tests
+(`ProjectSpecRunner.kt`). The multi-line armored key must be written as a single value with its
+newlines preserved.
+
+!!! note "Why there is no environment-variable example for the keyring file"
+
+    The keyring-file properties contain a `.` (`signing.keyId`). Many shells do not allow a `.` in
+    an environment-variable name, so `ORG_GRADLE_PROJECT_signing.keyId` cannot be set directly in
+    those shells. For keyring-file signing on CI, write these three properties into a
+    `gradle.properties` file (for example from a CI secret) instead of passing them as environment
+    variables. The in-memory properties contain no `.`, so their `ORG_GRADLE_PROJECT_` environment
+    variables work everywhere.
+
 ### In memory GPG key
 
 To obtain the in memory signing key run the following command.
