@@ -29,26 +29,10 @@ class AndroidPluginTest : BasePluginTest() {
     val project = androidFusedLibraryProjectSpec(agpVersion)
     // TODO: signing plugin currently unsupported
     val result = project.run(testOptions.copy(signing = TestOptions.Signing.NO_SIGNING))
-
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("aar").exists()
-    // TODO: signing plugin currently unsupported
-    // assertThat(result).artifact("aar").isSigned()
-    assertThat(result).pom().exists()
-    // TODO: signing plugin currently unsupported
-    // assertThat(result).pom().isSigned()
+    assertThat(result).hasSingleArtifactCommon("aar", signed = false)
     assertThat(result).pom().matchesExpectedPom("aar")
-    assertThat(result).module().exists()
-    // TODO: signing plugin currently unsupported
-    // assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    // TODO: signing plugin currently unsupported
-    // assertThat(result).sourcesJar().isSigned()
     // TODO: actual sources jar currently unsupported
     // assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    // TODO: signing plugin currently unsupported
-    // assertThat(result).javadocJar().isSigned()
   }
 
   @TestParameterInjectorTest
@@ -62,23 +46,13 @@ class AndroidPluginTest : BasePluginTest() {
     val project = androidLibraryKotlinProjectSpec(agpVersion, kgpVersion)
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("aar").exists()
-    assertThat(result).artifact("aar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
+    assertThat(result).hasSingleArtifactCommon("aar")
     if (agpVersion >= AGP_9_0_0) {
       assertThat(result).pom().matchesExpectedPom("aar", KOTLIN_2_2_10.stdlibCommon())
     } else {
       assertThat(result).pom().matchesExpectedPom("aar", kgpVersion.stdlibCommon())
     }
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
     assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
   }
 
   @TestParameterInjectorTest
@@ -90,23 +64,13 @@ class AndroidPluginTest : BasePluginTest() {
     val project = androidLibraryProjectSpec(agpVersion)
     val result = project.run()
 
-    assertThat(result).outcome().succeeded()
-    assertThat(result).artifact("aar").exists()
-    assertThat(result).artifact("aar").isSigned()
-    assertThat(result).pom().exists()
-    assertThat(result).pom().isSigned()
+    assertThat(result).hasSingleArtifactCommon("aar")
     if (agpVersion >= AGP_9_0_0) {
       assertThat(result).pom().matchesExpectedPom("aar", KOTLIN_2_2_10.stdlibCommon())
     } else {
       assertThat(result).pom().matchesExpectedPom("aar")
     }
-    assertThat(result).module().exists()
-    assertThat(result).module().isSigned()
-    assertThat(result).sourcesJar().exists()
-    assertThat(result).sourcesJar().isSigned()
     assertThat(result).sourcesJar().containsAllSourceFiles()
-    assertThat(result).javadocJar().exists()
-    assertThat(result).javadocJar().isSigned()
   }
 
   @DisabledOnJre(
