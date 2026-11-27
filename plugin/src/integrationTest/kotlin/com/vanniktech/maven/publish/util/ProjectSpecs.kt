@@ -15,6 +15,7 @@ val kotlinAndroidPlugin = PluginSpec("org.jetbrains.kotlin.android")
 val androidLibraryPlugin = PluginSpec("com.android.library")
 val androidMultiplatformLibraryPlugin = PluginSpec("com.android.kotlin.multiplatform.library")
 val androidFusedLibraryPlugin = PluginSpec("com.android.fused-library")
+val shadowPlugin = PluginSpec("com.gradleup.shadow")
 val gradlePluginPublishPlugin = PluginSpec("com.gradle.plugin-publish")
 val dokkaPlugin = PluginSpec("org.jetbrains.dokka", DOKKA_STABLE)
 val dokkaJavadocPlugin = PluginSpec("org.jetbrains.dokka-javadoc", DOKKA_STABLE)
@@ -353,4 +354,19 @@ fun versionCatalogProjectSpec() = ProjectSpec(
         }
     }
     """.trimIndent(),
+)
+
+fun shadowProjectSpec(version: ShadowVersion) = ProjectSpec(
+  plugins = listOf(
+    javaPlugin,
+    shadowPlugin.copy(version = version.value),
+  ),
+  group = "com.example",
+  artifactId = "test-artifact",
+  version = "1.0.0",
+  properties = defaultProperties,
+  sourceFiles = listOf(
+    SourceFile("main", "java", "com/vanniktech/maven/publish/test/JavaTestClass.java"),
+  ),
+  basePluginConfig = "configure(new Shadow(new JavadocJar.Empty(), new SourcesJar.Sources()))",
 )

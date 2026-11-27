@@ -57,6 +57,7 @@ buildConfig {
     buildConfigField("VERSION_NAME", providers.gradleProperty("VERSION_NAME"))
     buildConfigField("ANDROID_GRADLE_MIN", libs.versions.minAgp)
     buildConfigField("KOTLIN_MIN", libs.versions.minKgp)
+    buildConfigField("SHADOW_MIN", libs.versions.minShadow)
   }
 
   sourceSets.named("main") {
@@ -84,6 +85,7 @@ buildConfig {
     buildConfigField("GRADLE_PUBLISH_BETA", beta.versions.gradle.plugin.publish)
     buildConfigField("GRADLE_PUBLISH_RC", rc.versions.gradle.plugin.publish)
     buildConfigField("GRADLE_PUBLISH_STABLE", libs.versions.gradle.plugin.publish)
+    buildConfigField("SHADOW_STABLE", libs.versions.shadow)
     buildConfigField("DOKKA_STABLE", libs.versions.dokka)
   }
 }
@@ -101,6 +103,7 @@ dependencies {
   compileOnly(libs.dokka)
   compileOnly(libs.kotlin.plugin)
   compileOnly(libs.android.pluginApi)
+  compileOnly(libs.shadow)
 
   implementation(projects.centralPortal)
 

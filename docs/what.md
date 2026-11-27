@@ -10,6 +10,7 @@ It is possible to configure publishing for the following Gradle plugins:
     - automatically includes `com.android.kotlin.multiplatform.library`
 - [`java`](#java-library)
 - [`java-library`](#java-library)
+- [`com.gradleup.shadow`](#shadow)
 - [`java-gradle-plugin`](#gradle-plugin)
 - [`com.gradle.plugin-publish`](#gradle-publish-plugin)
 - [`java-platform`](#java-platform)
@@ -349,6 +350,61 @@ For projects using the `java-library` plugin.
       ))
     }
     ```
+
+## Shadow
+
+For projects using the `com.gradleup.shadow` plugin. This will publish the `shadow` component.
+
+=== "build.gradle"
+
+    ```groovy
+    import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.Shadow
+    import com.vanniktech.maven.publish.SourcesJar
+
+    mavenPublishing {
+      configure(new Shadow(
+        // the first parameter configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        // - `JavadocJar.Dokka("dokkaHtml")` when using Kotlin with Dokka, where `dokkaHtml` is the name of the Dokka task that should be used as input
+        new JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        new SourcesJar.Sources()
+      ))
+    }
+    ```
+
+=== "build.gradle.kts"
+
+    ```kotlin
+    import com.vanniktech.maven.publish.JavadocJar
+    import com.vanniktech.maven.publish.Shadow
+    import com.vanniktech.maven.publish.SourcesJar
+
+    mavenPublishing {
+      configure(Shadow(
+        // configures the -javadoc artifact, possible values:
+        // - `JavadocJar.None()` don't publish this artifact
+        // - `JavadocJar.Empty()` publish an empty jar
+        // - `JavadocJar.Javadoc()` to publish standard javadocs
+        javadocJar = JavadocJar.Empty(),
+        // configures the -sources artifact, possible values:
+        // - `SourcesJar.None()` don't publish this artifact
+        // - `SourcesJar.Empty()` publish an empty jar
+        // - `SourcesJar.Sources()` publish the sources
+        sourcesJar = SourcesJar.Sources(),
+      ))
+    }
+    ```
+
+!!! note
+
+    If you want to publish **both** the standard JAR and the shadowed JAR as a variant in Gradle Module Metadata (using Shadow's `addShadowVariantIntoJavaComponent` feature), configure [`JavaLibrary`](#java-library) or [`KotlinJvm`](#kotlin-jvm-library) instead of `Shadow`.
 
 ## Kotlin JVM Library
 

@@ -501,6 +501,10 @@ public abstract class MavenPublishBaseExtension @Inject constructor(
         configure(GradlePlugin(javadocJar, sourcesJar))
       }
 
+      project.plugins.hasPlugin("com.gradleup.shadow") -> {
+        configure(Shadow(javadocJar, sourcesJar))
+      }
+
       project.plugins.hasPlugin("org.jetbrains.kotlin.jvm") -> {
         configure(KotlinJvm(javadocJar, sourcesJar))
       }

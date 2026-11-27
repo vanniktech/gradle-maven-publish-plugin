@@ -4,6 +4,7 @@ package com.vanniktech.maven.publish
 
 import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.github.jengelman.gradle.plugins.shadow.ShadowExtension
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
@@ -45,4 +46,12 @@ internal fun isAtLeastAgp(version: String): Boolean {
   // Drop everything after '-' to ignore rc/beta/alpha suffixes. If you want to compare those, use the rc/beta/alpha functions in AndroidPluginVersion.
   val (major, minor, patch) = version.takeWhile { it != '-' }.split(".").map { it.toInt() }
   return AndroidPluginVersion.getCurrent() >= AndroidPluginVersion(major, minor, patch)
+}
+
+internal fun isAtLeastShadow(): Boolean = try {
+  // Shadow 9.1.0 introduced addShadowVariantIntoJavaComponent on ShadowExtension to support publishing shadow variants from the Java component.
+  ShadowExtension::class.java.getMethod("getAddShadowVariantIntoJavaComponent")
+  true
+} catch (_: Throwable) {
+  false
 }
